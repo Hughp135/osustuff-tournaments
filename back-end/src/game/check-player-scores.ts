@@ -84,7 +84,7 @@ function scoreValidAndUnique(
   round: IRound,
   existingScores: IScore[],
 ) {
-  const correctBeatmap = score.beatmap_id === round.beatmap.beatmapId;
+  const correctBeatmap = score.beatmap_id === round.beatmap.beatmap_id;
   const correctDate = new Date(score.date) > (<any> round).createdAt;
 
   if (!correctBeatmap || !correctDate) {

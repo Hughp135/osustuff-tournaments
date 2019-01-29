@@ -11,9 +11,10 @@ import { BeatmapInfoComponent } from './components/game-lobby/beatmap-info/beatm
 import { ScoresListComponent } from './components/game-lobby/scores-list/scores-list.component';
 import { UserListComponent } from './components/game-lobby/user-list/user-list.component';
 import { ChatComponent } from './components/game-lobby/chat/chat.component';
+import { LobbiesListComponent } from './components/lobbies-list/lobbies-list.component';
 
 @NgModule({
-  declarations: [AppComponent, GameLobbyComponent, GameInfoComponent, BeatmapInfoComponent, ScoresListComponent, UserListComponent, ChatComponent],
+  declarations: [AppComponent, GameLobbyComponent, GameInfoComponent, BeatmapInfoComponent, ScoresListComponent, UserListComponent, ChatComponent, LobbiesListComponent],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule],
   providers: [ApiService],
   bootstrap: [AppComponent]

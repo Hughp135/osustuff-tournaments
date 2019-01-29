@@ -1,3 +1,4 @@
+import { IBeatmap } from './Round.model';
 import mongoose from 'mongoose';
 
 export interface IPlayer {
@@ -17,6 +18,7 @@ export interface IGame extends mongoose.Document {
   };
   roundNumber?: number;
   nextStageStarts?: Date;
+  beatmaps: IBeatmap[];
 }
 
 const GameSchema = new mongoose.Schema(
@@ -42,6 +44,7 @@ const GameSchema = new mongoose.Schema(
       },
     },
     nextStageStarts: { type: Date },
+    beatmaps: { type: [], required: true },
   },
   { timestamps: true },
 );

@@ -7,7 +7,7 @@ import winston from 'winston';
 import { nextRound } from './next-round';
 import { endGame } from './end-game';
 import { createGame } from './create-game';
-import { getUserRecent } from '../services/osu-api';
+import { getUserRecent, getRecentBeatmaps } from '../services/osu-api';
 
 let isMonitoring = false;
 
@@ -18,7 +18,7 @@ export async function startMonitoring() {
 
   isMonitoring = true;
 
-  await updateRunningGames();
+  await updateRunningGames(getRecentBeatmaps);
 }
 
 export function stopMonitoring() {
@@ -26,7 +26,7 @@ export function stopMonitoring() {
 }
 
 // Update games based on status
-export async function updateRunningGames() {
+export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   const games = await Game.find({
     status: ['new', 'in-progress', 'round-over'],
   });
@@ -34,7 +34,7 @@ export async function updateRunningGames() {
   if (games.length === 0) {
     console.log('creating a new game as none are running');
     // If no games are active, create a new one
-    await createGame();
+    await createGame(getRecentMaps);
   }
 
   await Promise.all(
@@ -57,7 +57,7 @@ export async function updateRunningGames() {
   // Call self again
   setTimeout(async () => {
     if (isMonitoring) {
-      await updateRunningGames();
+      await updateRunningGames(getRecentMaps);
     }
   }, 1000);
 }
@@ -80,7 +80,7 @@ async function startGame(game: IGame) {
     await setNextStageStartsAt(game, 5);
   } else if (game.nextStageStarts < new Date()) {
     // Start the first round
-    await nextRound(game, { beatmapId: '932223', title: 'test', duration: 30 });
+    await nextRound(game);
   }
 }
 
@@ -102,7 +102,7 @@ async function completeRound(game: IGame) {
   if (alivePlayers.length > 1) {
     console.log('players still alive, starting next round');
     // Start the next round
-    await nextRound(game, { beatmapId: '932223', title: 'test', duration: 30 });
+    await nextRound(game);
     await setNextStageStartsAt(game, 10);
   } else {
     // End the game

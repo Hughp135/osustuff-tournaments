@@ -10,7 +10,8 @@
         "object-literal-sort-keys": false,
         "no-angle-bracket-type-assertion": false,
         "arrow-parens": false,
-        "no-console": false
+        "no-console": false,
+        "no-var-requires": false
     },
     "rulesDirectory": []
 }

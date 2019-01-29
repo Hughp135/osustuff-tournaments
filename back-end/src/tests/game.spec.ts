@@ -1,5 +1,4 @@
-import { IGame, IPlayer } from './../models/Game.model';
-import { IBeatmap } from './../models/Beatmap.model';
+import { IGame } from './../models/Game.model';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import mongoose from 'mongoose';
@@ -12,12 +11,14 @@ import { updateRunningGames } from '../game/monitor-running-games';
 import sinon from 'sinon';
 import { Score } from '../models/Score.model';
 import { User } from '../models/User.model';
+const recentBeatmaps = require('./sample-beatmaps.json');
 
 mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
 chai.use(sinonChai);
 
 describe('game', () => {
+  const getRecentBeatmaps = async () => recentBeatmaps;
   before(async () => {
     await mongoose.connect(
       'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
@@ -28,12 +29,13 @@ describe('game', () => {
     await Game.deleteMany({});
     await Score.deleteMany({});
     await User.deleteMany({});
+    await Round.deleteMany({});
   });
   after(async () => {
     await mongoose.disconnect();
   });
   it('creates a game', async () => {
-    const game = await createGame();
+    const game = await createGame(getRecentBeatmaps);
 
     const found = <IGame> await Game.findById(game._id);
 
@@ -41,15 +43,10 @@ describe('game', () => {
       .to.have.property('status')
       .equal('new');
   });
-  it('goes to next round', async () => {
-    const game = await createGame();
-    const beatmap: IBeatmap = {
-      title: 'test beatmap',
-      beatmapId: '123',
-      duration: 30,
-    };
+  it.only('goes to next round', async () => {
+    const game = await createGame(getRecentBeatmaps);
 
-    await nextRound(game, beatmap);
+    await nextRound(game);
 
     const gameFromDb = <IGame> await Game.findById(game._id);
 
@@ -58,16 +55,9 @@ describe('game', () => {
     const round = <IRound> await Round.findById(gameFromDb.currentRound);
 
     expect(round)
-      .to.have.property('beatmap')
-      .deep.equals(beatmap);
+      .to.have.property('beatmap');
 
-    const beatmap2: IBeatmap = {
-      title: 'test beatmap2',
-      beatmapId: '234',
-      duration: 30,
-    };
-
-    await nextRound(game, beatmap2);
+    await nextRound(game);
 
     const updatedGame = <IGame> await Game.findById(game._id);
 
@@ -76,25 +66,19 @@ describe('game', () => {
     const round2 = <IRound> await Round.findById(updatedGame.currentRound);
 
     expect(round2)
-      .to.have.property('beatmap')
-      .deep.equals(beatmap2);
+      .to.have.property('beatmap');
 
     expect(updatedGame.roundNumber).to.equal(2);
   });
   it('auto progresses', async () => {
     const clock = sinon.useFakeTimers();
-    const game = await createGame();
-    const beatmap: IBeatmap = {
-      title: 'test beatmap',
-      beatmapId: '123',
-      duration: 10,
-    };
+    const game = await createGame(getRecentBeatmaps);
 
-    await nextRound(game, beatmap);
+    await nextRound(game);
 
     clock.tick(40001);
 
-    await updateRunningGames();
+    await updateRunningGames(getRecentBeatmaps);
 
     const updated = <IGame> await Game.findById(game._id);
 
@@ -104,7 +88,7 @@ describe('game', () => {
 
     clock.tick(10001);
 
-    await updateRunningGames();
+    await updateRunningGames(getRecentBeatmaps);
 
     const updated2 = <IGame> await Game.findById(game._id);
 

@@ -7,6 +7,8 @@ import { createGame } from './game/create-game';
 import { startMonitoring } from './game/monitor-running-games';
 import { startServer } from './api';
 import winston from 'winston';
+import { getRecentBeatmaps } from './services/osu-api';
+import { Round } from './models/Round.model';
 
 winston.add(new winston.transports.File({ filename: 'winston.log' }));
 winston.add(new winston.transports.Console());
@@ -21,13 +23,14 @@ mongoose.set('useCreateIndex', true);
 
   await Game.deleteMany({});
   await User.deleteMany({});
+  await Round.deleteMany({});
 
   const user = await User.create({
     username: 'Mongoose-',
   });
 
-  const game = await createGame();
-  await addPlayer(game, user);
+  // const game = await createGame(getRecentBeatmaps);
+  // await addPlayer(game, user);
 
   await startMonitoring();
 
