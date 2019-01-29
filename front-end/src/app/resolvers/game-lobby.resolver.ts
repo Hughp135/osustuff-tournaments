@@ -13,7 +13,7 @@ export class GameLobbyResolver implements Resolve<any> {
     router: ActivatedRouteSnapshot
   ): Promise<Observable<any> | any> {
     return {
-      lobbies: await this.gameService.getLobbies()
+      lobby: await this.gameService.getLobby()
     };
   }
 }

@@ -13,13 +13,21 @@
     - Username, stats summary
   - Chat box
 -->
-<div id="wrapper">
+<div class="wrapper">
   <div class="main">
-    <div class="game-info"></div>
-    <div class="user-list"></div>
+    <div class="game-info">
+      <app-game-info></app-game-info>
+      <app-beatmap-info></app-beatmap-info>
+      <app-scores-list></app-scores-list>
+    </div>
+    <div class="user-list">
+      <app-user-list></app-user-list>
+    </div>
   </div>
   <div class="lower">
-    <div class="chat-section"></div>
+    <div class="chat-section">
+      <app-chat></app-chat>
+    </div>
   </div>
 
 </div>

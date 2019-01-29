@@ -10,4 +10,8 @@ export class GameService {
   public async getLobbies() {
     return await this.apiService.get('lobbies').toPromise();
   }
+
+  public async getLobby() {
+    return await this.apiService.get('lobbies/1').toPromise();
+  }
 }
