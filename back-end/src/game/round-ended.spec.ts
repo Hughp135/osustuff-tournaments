@@ -16,7 +16,7 @@ mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
 chai.use(sinonChai);
 
-describe.only('check-player-scores', () => {
+describe('round-ended', () => {
   before(async () => {
     await mongoose.connect(
       'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
@@ -104,5 +104,59 @@ describe.only('check-player-scores', () => {
     expect(p1.alive).to.equal(true);
     expect(p2.alive).to.equal(false);
     expect(p3.alive).to.equal(false);
+  });
+  it('for 2 players with same score, earliest score date wins', async () => {
+    const u1 = await User.create({ username: '1' });
+    const u2 = await User.create({ username: '2' });
+    const game = await Game.create({});
+
+    await addPlayer(game, u2);
+    await addPlayer(game, u1);
+
+    const round = await Round.create({
+      beatmap: {
+        beatmapId: 'asd123',
+        title: 'b1',
+      },
+      gameId: game._id,
+    });
+    const baseScoreData = {
+      roundId: round._id,
+      rank: 'A',
+      mods: 0,
+      maxCombo: 10,
+      misses: 0,
+      date: new Date(),
+    };
+
+    await Score.create({
+      ...baseScoreData,
+      score: 1,
+      userId: u1._id,
+    });
+    await Score.create({
+      ...baseScoreData,
+      score: 2,
+      userId: u1._id,
+    });
+    const date = new Date();
+    date.setMinutes(date.getMinutes() - 1);
+
+    await Score.create({
+      ...baseScoreData,
+      score: 2,
+      userId: u2._id,
+      date,
+    });
+
+    await roundEnded(game, round);
+    const p1 = <IPlayer> (
+      game.players.find(p => p.userId.toString() === u1._id.toString())
+    );
+    const p2 = <IPlayer> (
+      game.players.find(p => p.userId.toString() === u2._id.toString())
+    );
+    expect(p1.alive).to.equal(false);
+    expect(p2.alive).to.equal(true);
   });
 });

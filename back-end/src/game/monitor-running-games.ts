@@ -27,7 +27,6 @@ export function stopMonitoring() {
 
 // Update games based on status
 export async function updateRunningGames() {
-  console.log('updating games');
   const games = await Game.find({
     status: ['new', 'in-progress', 'round-over'],
   });
@@ -41,12 +40,11 @@ export async function updateRunningGames() {
   await Promise.all(
     games.map(async game => {
       try {
-        const round = await Round.findById(game.currentRound);
         switch (game.status) {
           case 'new':
             return await startGame(game);
           case 'in-progress':
-            return await checkRoundEnded(game, <IRound> round);
+            return await checkRoundEnded(game);
           case 'round-over':
             return await completeRound(game);
         }
@@ -86,11 +84,12 @@ async function startGame(game: IGame) {
   }
 }
 
-async function checkRoundEnded(game: IGame, round: IRound) {
+async function checkRoundEnded(game: IGame) {
+  const round = <IRound> await Round.findById(game.currentRound);
+
   // Check if next round should start
   if (<Date> game.nextStageStarts < new Date()) {
-    game.status = 'checking-scores';
-    await game.save();
+    console.log('round ended');
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
     await setNextStageStartsAt(game, 30);

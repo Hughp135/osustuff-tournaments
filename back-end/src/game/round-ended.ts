@@ -1,17 +1,17 @@
-import { IGame, IPlayer } from './../models/Game.model';
+import { IGame } from './../models/Game.model';
 import { IRound } from './../models/Round.model';
 import { Score, IScore } from '../models/Score.model';
-import { User } from '../models/User.model';
 
 // Kills players with lowest score each round
 export async function roundEnded(game: IGame, round: IRound) {
   // Get scores sorted by score
   const scores = (await Score.find({ roundId: round._id }).sort({
     score: -1,
+    date: 1,
   })).reduce(
     // reduce to only 1 score per user
     (acc, curr) => {
-      if (!acc.find(s => s.userId === curr.userId)) {
+      if (!acc.some(s => s.userId === curr.userId)) {
         acc.push(curr);
       }
       return acc;

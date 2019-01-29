@@ -38,6 +38,10 @@ export async function checkRoundScores(
   round: IRound,
   getUserRecent: (u: string) => Promise<any>,
 ) {
+  console.log('checking scores');
+  game.status = 'checking-scores';
+  await game.save();
+
   const players = game.players.filter(p => p.alive);
 
   await Promise.all(
