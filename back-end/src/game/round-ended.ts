@@ -1,33 +1,35 @@
-import { IGame } from './../models/Game.model';
+import { IGame, IPlayer } from './../models/Game.model';
 import { IRound } from './../models/Round.model';
-import { Score } from '../models/Score.model';
+import { Score, IScore } from '../models/Score.model';
 import { User } from '../models/User.model';
 
-// Filters out players who lost the round based on score
+// Kills players with lowest score each round
 export async function roundEnded(game: IGame, round: IRound) {
-  game.status = 'round-over';
-  await game.save();
+  // Get scores sorted by score
+  const scores = (await Score.find({ roundId: round._id }).sort({
+    score: -1,
+  })).reduce(
+    // reduce to only 1 score per user
+    (acc, curr) => {
+      if (!acc.find(s => s.userId === curr.userId)) {
+        acc.push(curr);
+      }
+      return acc;
+    },
+    <IScore[]> [],
+  );
 
-  const scores = await Score.find({ roundId: round._id }).sort({ score: -1 });
+  // Half the number of alive players each round.
   const numberOfWinners = Math.max(1, Math.floor(scores.length / 2));
-  const winningScores = scores.splice(0, numberOfWinners);
-  const winningUserIds = <string[]> (await Promise.all(
-    winningScores.map(async s => {
-      const user = await User.findById(s.userId);
+  const winningScores = scores.slice(0, numberOfWinners);
 
-      return user && <string> user._id.toString();
-    }),
-  )).filter(u => !!u);
-
-  game.players.forEach(p => {
-    p.alive = winningUserIds.includes(p.userId.toString());
+  game.players.forEach(player => {
+    player.alive = winningScores.some(
+      s => s.userId.toString() === player.userId.toString(),
+    );
+    player.roundLostOn = player.alive ? undefined : <number> game.roundNumber;
   });
-
-  console.log('Winning players', game.players.filter(p => p.alive).length);
-
-  const date = new Date();
-  date.setSeconds(date.getSeconds() + 30);
-  game.nextStageStarts = date;
+  game.status = 'round-over';
 
   await game.save();
 }

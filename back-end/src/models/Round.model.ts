@@ -1,21 +1,22 @@
 import mongoose from 'mongoose';
 
 export interface IRound extends mongoose.Document {
-  endsAt: Date;
   beatmap: {
     title: string;
     beatmapId: string;
   };
+  gameId: mongoose.Types.ObjectId;
 }
 
 const RoundSchema = new mongoose.Schema(
   {
-    endsAt: { type: Date, required: true },
+    gameId: { type: mongoose.Types.ObjectId, required: true },
     beatmap: {
       type: {
         title: { type: String, required: true },
         beatmapId: { type: String, required: true },
       },
+      required: true,
     },
   },
   {
@@ -23,6 +24,9 @@ const RoundSchema = new mongoose.Schema(
   },
 );
 
-const Round: mongoose.Model<IRound> = mongoose.model<IRound>('Round', RoundSchema);
+const Round: mongoose.Model<IRound> = mongoose.model<IRound>(
+  'Round',
+  RoundSchema,
+);
 
 export { Round };

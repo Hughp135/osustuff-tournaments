@@ -7,6 +7,7 @@ describe.skip('osu-api', () => {
   it('gets user', async () => {
     const result = await getUser('Mongoose-');
     expect(result).to.exist; // tslint:disable-line:no-unused-expression
+    expect(result.username).to.equal('Mongoose-');
   });
   it('gets user recent scores', async () => {
     const result = await getUserRecent('Mongoose-');

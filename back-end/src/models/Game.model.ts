@@ -10,7 +10,7 @@ export interface IPlayer {
 export interface IGame extends mongoose.Document {
   players: IPlayer[];
   currentRound: mongoose.Types.ObjectId;
-  status: 'new' | 'in-progress' | 'round-over' | 'complete';
+  status: 'new' | 'in-progress' | 'checking-scores' | 'round-over' | 'complete';
   winningUser: {
     userId: mongoose.Schema.Types.ObjectId;
     username: string;

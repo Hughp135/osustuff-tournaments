@@ -8,9 +8,10 @@ import config from 'config';
 import { createGame } from '../game/create-game';
 import { nextRound } from '../game/next-round';
 import { Round, IRound } from '../models/Round.model';
-import { addPlayer } from '../game/add-player';
 import { updateRunningGames } from '../game/monitor-running-games';
 import sinon from 'sinon';
+import { Score } from '../models/Score.model';
+import { User } from '../models/User.model';
 
 mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
@@ -22,6 +23,14 @@ describe('game', () => {
       'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
       { useNewUrlParser: true },
     );
+  });
+  beforeEach(async () => {
+    await Game.deleteMany({});
+    await Score.deleteMany({});
+    await User.deleteMany({});
+  });
+  after(async () => {
+    await mongoose.disconnect();
   });
   it('creates a game', async () => {
     const game = await createGame();
@@ -37,6 +46,7 @@ describe('game', () => {
     const beatmap: IBeatmap = {
       title: 'test beatmap',
       beatmapId: '123',
+      duration: 30,
     };
 
     await nextRound(game, beatmap);
@@ -54,6 +64,7 @@ describe('game', () => {
     const beatmap2: IBeatmap = {
       title: 'test beatmap2',
       beatmapId: '234',
+      duration: 30,
     };
 
     await nextRound(game, beatmap2);
@@ -81,14 +92,14 @@ describe('game', () => {
 
     await nextRound(game, beatmap);
 
-    clock.tick(10001);
+    clock.tick(40001);
 
     await updateRunningGames();
 
     const updated = <IGame> await Game.findById(game._id);
 
     expect(updated.roundNumber).to.equal(1);
-    expect(updated.status).to.equal('checking-scores');
+    expect(updated.status).to.equal('round-over');
     expect(updated.nextStageStarts).to.exist; // tslint:disable-line:no-unused-expression
 
     clock.tick(10001);
@@ -97,8 +108,8 @@ describe('game', () => {
 
     const updated2 = <IGame> await Game.findById(game._id);
 
-    expect(updated2.status).to.equal('in-progress');
-    expect(updated2.roundNumber).to.equal(2);
+    expect(updated2.status).to.equal('complete');
+    expect(updated2.winningUser).to.equal(undefined);
 
     clock.restore();
   });

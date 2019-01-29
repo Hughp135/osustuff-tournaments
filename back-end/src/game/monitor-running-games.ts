@@ -1,12 +1,13 @@
 import { IGame } from './../models/Game.model';
 import { Game } from '../models/Game.model';
 import { Round, IRound } from '../models/Round.model';
-import { stopCheckingScores } from './check-player-scores';
+import { checkRoundScores } from './check-player-scores';
 import { roundEnded } from './round-ended';
 import winston from 'winston';
 import { nextRound } from './next-round';
 import { endGame } from './end-game';
 import { createGame } from './create-game';
+import { getUserRecent } from '../services/osu-api';
 
 let isMonitoring = false;
 
@@ -20,19 +21,20 @@ export async function startMonitoring() {
   await updateRunningGames();
 }
 
+export function stopMonitoring() {
+  isMonitoring = false;
+}
+
 // Update games based on status
 export async function updateRunningGames() {
-  if (!isMonitoring) {
-    return;
-  }
-
+  console.log('updating games');
   const games = await Game.find({
     status: ['new', 'in-progress', 'round-over'],
   });
 
   if (games.length === 0) {
     console.log('creating a new game as none are running');
-    // Keep at least 1 running game
+    // If no games are active, create a new one
     await createGame();
   }
 
@@ -56,7 +58,9 @@ export async function updateRunningGames() {
 
   // Call self again
   setTimeout(async () => {
-    await updateRunningGames();
+    if (isMonitoring) {
+      await updateRunningGames();
+    }
   }, 1000);
 }
 
@@ -75,10 +79,7 @@ async function startGame(game: IGame) {
   if (!game.nextStageStarts) {
     console.log('Beginning countdown....');
     // Set the countdown to start
-    const starts = new Date();
-    starts.setSeconds(starts.getSeconds() + 5);
-    game.nextStageStarts = starts;
-    await game.save();
+    await setNextStageStartsAt(game, 5);
   } else if (game.nextStageStarts < new Date()) {
     // Start the first round
     await nextRound(game, { beatmapId: '932223', title: 'test', duration: 30 });
@@ -88,8 +89,11 @@ async function startGame(game: IGame) {
 async function checkRoundEnded(game: IGame, round: IRound) {
   // Check if next round should start
   if (<Date> game.nextStageStarts < new Date()) {
-    await stopCheckingScores(game);
+    game.status = 'checking-scores';
+    await game.save();
+    await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
+    await setNextStageStartsAt(game, 30);
   }
 }
 
@@ -100,8 +104,18 @@ async function completeRound(game: IGame) {
     console.log('players still alive, starting next round');
     // Start the next round
     await nextRound(game, { beatmapId: '932223', title: 'test', duration: 30 });
+    await setNextStageStartsAt(game, 10);
   } else {
     // End the game
     await endGame(game);
   }
+}
+
+async function setNextStageStartsAt(game: IGame, seconds: number) {
+  const date = new Date();
+  date.setSeconds(date.getSeconds() + seconds);
+
+  // Update game status and set time to next stage
+  game.nextStageStarts = date;
+  await game.save();
 }

@@ -8,6 +8,7 @@ export interface IScore extends mongoose.Document {
   mods: number;
   misses: number;
   maxCombo: number;
+  date: Date;
 }
 
 const ScoreSchema = new mongoose.Schema(
@@ -19,6 +20,7 @@ const ScoreSchema = new mongoose.Schema(
     mods: { type: Number, required: true },
     maxCombo: { type: Number, required: true },
     misses: { type: Number, required: true },
+    date: { type: Date, required: true },
   },
   {
     timestamps: true,

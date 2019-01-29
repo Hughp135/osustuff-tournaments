@@ -33,6 +33,7 @@
     "express": "^4.16.4",
     "got": "^9.6.0",
     "mongoose": "^5.4.7",
+    "node-request-queue": "^1.0.2",
     "winston": "^3.2.0"
   }
 }
