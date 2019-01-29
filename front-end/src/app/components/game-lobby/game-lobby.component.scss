@@ -1,0 +1,33 @@
+#wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.main {
+  display: flex;
+  width: 100%;
+  height: 75vh;
+}
+
+.lower {
+  display: flex;
+  width: 100%;
+  height: 25vh;
+}
+
+.game-info {
+  flex: 1;
+}
+
+.user-list {
+  flex: 0 0 250px;
+  background: #dcdada;
+}
+
+.chat-section {
+  flex: 1;
+  background: #dcdada;
+}

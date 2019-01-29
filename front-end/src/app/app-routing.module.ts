@@ -7,7 +7,7 @@ const routes: Routes = [
   {
     path: '',
     component: GameLobbyComponent,
-    resolve: { GameLobbyResolver }
+    resolve: { data: GameLobbyResolver }
   }
 ];
 

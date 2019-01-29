@@ -7,7 +7,8 @@ const PORT = config.get('API_PORT');
 
 const app = express();
 
-app.get('/lobbies', async (req, res) => await getLobbies());
+app.get('', async (req, res) => res.send('Hello world!'));
+app.get('/lobbies', async (req, res) => res.json(await getLobbies()));
 
 export async function startServer() {
   await app.listen(PORT);
