@@ -16,9 +16,9 @@
 <div class="wrapper">
   <div class="main">
     <div class="game-info">
-      <app-game-info></app-game-info>
-      <app-beatmap-info></app-beatmap-info>
-      <app-scores-list></app-scores-list>
+      <app-game-info [game]="game"></app-game-info>
+      <app-beatmap-info *ngIf="showBeatmap"></app-beatmap-info>
+      <app-scores-list *ngIf="showScores"></app-scores-list>
     </div>
     <div class="user-list">
       <app-user-list></app-user-list>

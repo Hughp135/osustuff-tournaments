@@ -9,6 +9,7 @@ export interface IPlayer {
 }
 
 export interface IGame extends mongoose.Document {
+  title: string;
   players: IPlayer[];
   currentRound: mongoose.Types.ObjectId;
   status: 'new' | 'in-progress' | 'checking-scores' | 'round-over' | 'complete';
@@ -23,6 +24,10 @@ export interface IGame extends mongoose.Document {
 
 const GameSchema = new mongoose.Schema(
   {
+    title: {
+      type: String,
+      required: true,
+    },
     players: {
       type: [
         {

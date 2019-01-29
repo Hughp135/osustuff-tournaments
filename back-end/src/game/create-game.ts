@@ -24,7 +24,10 @@ export async function createGame(getRecentBeatmaps: () => Promise<any>): Promise
   //   roundBeatmaps.map(b => `${b.title} [${b.version}] ${b.difficultyrating}`),
   // );
 
-  const game = await Game.create({ beatmaps: roundBeatmaps });
+  const game = await Game.create({
+    title: 'osu! Battle Royale',
+    beatmaps: roundBeatmaps,
+   });
   return game;
 }
 

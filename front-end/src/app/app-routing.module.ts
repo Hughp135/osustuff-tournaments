@@ -1,3 +1,4 @@
+import { LobbiesListResolver } from './resolvers/lobbies-list.resolver';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { GameLobbyComponent } from './components/game-lobby/game-lobby.component';
@@ -8,9 +9,10 @@ const routes: Routes = [
   {
     path: '',
     component: LobbiesListComponent,
+    resolve: { data: LobbiesListResolver },
   },
   {
-    path: 'lobby',
+    path: 'lobbies/:id',
     component: GameLobbyComponent,
     resolve: { data: GameLobbyResolver }
   },
@@ -19,6 +21,6 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [GameLobbyResolver]
+  providers: [GameLobbyResolver, LobbiesListResolver]
 })
 export class AppRoutingModule {}

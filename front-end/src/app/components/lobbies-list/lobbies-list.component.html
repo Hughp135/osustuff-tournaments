@@ -1,3 +1,16 @@
-<p>
-  lobbies-list works!
-</p>
+<div class="ui inverted container">
+  <div class="ui inverted basic segment">
+    <h1>Lobbies List</h1>
+
+    <div class="ui link inverted relaxed divided list">
+      <a class="item" *ngFor="let lobby of lobbies" [routerLink]="['lobbies', lobby._id]">
+        <div class="content">
+          <div class="header">
+            {{ lobby.title }}
+          </div>
+          {{ lobby.status }}
+        </div>
+      </a>
+    </div>
+  </div>
+</div>

@@ -5,13 +5,16 @@
       osu! Battle Royale
     </div>
     <div class="column">
-      <h3>Current Round</h3>
-      Round 1
+      <h3>Status</h3>
+      {{ status }}
     </div>
     <div class="column">
       <h3>Time left</h3>
-      5:02
+      --:--
     </div>
   </div>
 </div>
 <div class="ui fitted divider"></div>
+<div class="ui inverted segment">
+  <app-join-game [game]="game"></app-join-game>
+</div>

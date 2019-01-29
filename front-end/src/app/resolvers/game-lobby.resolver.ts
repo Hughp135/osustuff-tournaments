@@ -10,10 +10,12 @@ export class GameLobbyResolver implements Resolve<any> {
   constructor(private gameService: GameService) {}
 
   async resolve(
-    router: ActivatedRouteSnapshot
+    route: ActivatedRouteSnapshot
   ): Promise<Observable<any> | any> {
+    const { id } = route.params;
+
     return {
-      lobby: await this.gameService.getLobby()
+      lobby: await this.gameService.getLobby(id)
     };
   }
 }

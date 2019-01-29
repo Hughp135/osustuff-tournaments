@@ -24,14 +24,21 @@ export class GameLobbyComponent implements OnInit {
     roundNumber?: number;
     nextStageStarts?: Date;
   };
-  constructor(route: ActivatedRoute) {
-    const sub = route.data.subscribe(({ data }) => {
-      this.game = data.lobby;
-      console.log(this.game);
-    });
-
-    sub.unsubscribe();
+  constructor(private route: ActivatedRoute) {
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    const { data } = this.route.snapshot.data;
+
+    this.game = data.lobby;
+    console.log(this.game);
+  }
+
+  get showBeatmap() {
+    return this.game.status !== 'new';
+  }
+
+  get showScores() {
+    return false;
+  }
 }

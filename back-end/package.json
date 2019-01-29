@@ -29,6 +29,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
     "config": "^3.0.1",
     "express": "^4.16.4",
     "got": "^9.6.0",

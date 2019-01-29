@@ -25,14 +25,14 @@ mongoose.set('useCreateIndex', true);
   await User.deleteMany({});
   await Round.deleteMany({});
 
-  const user = await User.create({
-    username: 'Mongoose-',
-  });
+  await startServer();
+
+  // const user = await User.create({
+  //   username: 'Mongoose-',
+  // });
 
   // const game = await createGame(getRecentBeatmaps);
   // await addPlayer(game, user);
 
   await startMonitoring();
-
-  await startServer();
 })().catch(e => console.error(e)); // tslint:disable-line

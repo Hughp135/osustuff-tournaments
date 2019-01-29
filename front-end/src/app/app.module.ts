@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,11 +13,22 @@ import { ScoresListComponent } from './components/game-lobby/scores-list/scores-
 import { UserListComponent } from './components/game-lobby/user-list/user-list.component';
 import { ChatComponent } from './components/game-lobby/chat/chat.component';
 import { LobbiesListComponent } from './components/lobbies-list/lobbies-list.component';
+import { JoinGameComponent } from './components/game-lobby/join-game/join-game.component';
 
 @NgModule({
-  declarations: [AppComponent, GameLobbyComponent, GameInfoComponent, BeatmapInfoComponent, ScoresListComponent, UserListComponent, ChatComponent, LobbiesListComponent],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule],
+  declarations: [
+    AppComponent,
+    GameLobbyComponent,
+    GameInfoComponent,
+    BeatmapInfoComponent,
+    ScoresListComponent,
+    UserListComponent,
+    ChatComponent,
+    LobbiesListComponent,
+    JoinGameComponent,
+  ],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule],
   providers: [ApiService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
