@@ -5,6 +5,11 @@ import { User } from './models/User.model';
 import { addPlayer } from './game/add-player';
 import { createGame } from './game/create-game';
 import { startMonitoring } from './game/monitor-running-games';
+import { startServer } from './api';
+import winston from 'winston';
+
+winston.add(new winston.transports.File({ filename: 'winston.log' }));
+winston.add(new winston.transports.Console());
 
 mongoose.set('useCreateIndex', true);
 
@@ -25,4 +30,6 @@ mongoose.set('useCreateIndex', true);
   await addPlayer(game, user);
 
   await startMonitoring();
+
+  await startServer();
 })().catch(e => console.error(e)); // tslint:disable-line

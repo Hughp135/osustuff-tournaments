@@ -1,10 +1,19 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { GameLobbyComponent } from './components/game-lobby/game-lobby.component';
+import { GameLobbyResolver } from './resolvers/game-lobby.resolver';
 
-const routes: Routes = [];
+const routes: Routes = [
+  {
+    path: '',
+    component: GameLobbyComponent,
+    resolve: { GameLobbyResolver }
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [GameLobbyResolver]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
