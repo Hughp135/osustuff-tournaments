@@ -21,7 +21,8 @@ export async function nextRound(game: IGame) {
 
   // Set time that round should last
   const date = new Date();
-  date.setSeconds(date.getSeconds() + parseFloat(beatmap.total_length) + 0);
+  date.setSeconds(date.getSeconds() + parseFloat(beatmap.total_length) + 60);
+  // date.setSeconds(date.getSeconds() + 20); // test
   game.nextStageStarts = date;
 
   await game.save();

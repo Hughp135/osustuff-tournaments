@@ -9,7 +9,11 @@
     padding: 0.5em 1em;
 
     &.dead {
-      background: rgba(200, 50, 50, 0.2);
+      background: rgba(200, 50, 50, 0.2) !important;
+    }
+
+    &.winner {
+      background: rgb(37, 126, 37) !important;
     }
 
     &:hover {

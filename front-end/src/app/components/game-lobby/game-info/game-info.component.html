@@ -1,5 +1,5 @@
 <div class="ui inverted segment no-bg">
-  <div class="ui four column inverted divided grid">
+  <div class="ui equal width inverted divided grid">
     <div class="column">
       <h5>Lobby Name</h5>
       osu! Battle Royale
@@ -8,9 +8,13 @@
       <h5>Status</h5>
       {{ status }}
     </div>
+    <div class="column" *ngIf="game.status === 'complete'">
+      <h5>Winner</h5>
+      {{ game.winningUser ? game.winningUser.username : 'No one won!' }}
+    </div>
     <div class="column">
       <h5>Round</h5>
-      {{ this.game.roundNumber || '-' }}
+      {{ game.roundNumber || '-' }}
     </div>
     <div class="column">
       <h5>Time left</h5>

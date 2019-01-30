@@ -15,22 +15,23 @@
 -->
 <div class="wrapper" *ngIf="game">
   <div class="header">
-    <app-game-info [game]="game"></app-game-info>
+    <app-game-info [game]="game" [timeLeft]="timeLeft"></app-game-info>
   </div>
   <div class="main">
     <div class="left">
       <div class="lobby-details">
         <app-join-game [game]="game" [inAnotherGame]="inAnotherGame" *ngIf="showJoinGame"></app-join-game>
+        <app-game-status [game]="game"></app-game-status>
         <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
         <app-beatmap-info [game]="game" *ngIf="showBeatmap"></app-beatmap-info>
-        <app-scores-list *ngIf="showScores"></app-scores-list>
+        <app-scores-list [scores]="game.scores" *ngIf="showScores"></app-scores-list>
       </div>
       <div class="chat-section">
         <app-chat></app-chat>
       </div>
     </div>
     <div class="right">
-      <app-user-list [players]="game.players"></app-user-list>
+      <app-user-list [players]="game.players" [winningUser]="game.winningUser && game.winningUser.username"></app-user-list>
     </div>
   </div>
 

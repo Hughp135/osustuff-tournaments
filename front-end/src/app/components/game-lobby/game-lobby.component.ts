@@ -7,19 +7,47 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
 
+export interface IPlayer {
+  username: string;
+  alive: boolean;
+  roundLostOn?: number;
+  osuUserId: number;
+  ppRank: number;
+  countryRank: number;
+  country: string;
+}
+
+export interface IGame {
+  _id: string;
+  title: string;
+  players: IPlayer[];
+  status: 'new' | 'in-progress' | 'checking-scores' | 'round-over' | 'complete';
+  winningUser: {
+    username: string;
+  };
+  roundNumber?: number;
+  nextStageStarts?: Date;
+  beatmaps: any[];
+  secondsToNextRound?: number;
+  scores?: any[];
+}
+
 @Component({
   selector: 'app-game-lobby',
   templateUrl: './game-lobby.component.html',
   styleUrls: ['./game-lobby.component.scss']
 })
+
+
 export class GameLobbyComponent implements OnInit, OnDestroy {
-  public game: any;
+  public game: IGame;
   public players: any;
   public subscriptions: Subscription[] = [];
   public currentGame: CurrentGame;
   public beatmaps: any;
   public showBeatmapList: boolean;
   private fetching = false;
+  public timeLeft: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,7 +61,8 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.game = data.lobby;
     this.beatmaps = data.beatmaps;
     this.players = data.players;
-    console.log(this.game);
+
+    this.getTimeLeft();
 
     const currentGameSub = this.settingsService.currentGame.subscribe(
       async val => {
@@ -41,11 +70,35 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         await this.fetch();
       }
     );
-    const pollGameSub = interval(15000).subscribe(async () => {
+    const pollGameSub = interval(5000).subscribe(async () => {
       await this.fetch();
     });
+    const timeLeftSub = interval(1000).subscribe(() => {
+      if (!this.game.secondsToNextRound) {
+        return;
+      }
 
-    this.subscriptions = [currentGameSub, pollGameSub];
+      // Take 1 second off time left every second
+      this.game.secondsToNextRound = Math.max(
+        0,
+        this.game.secondsToNextRound - 1
+      );
+      this.getTimeLeft();
+    });
+
+    this.subscriptions = [currentGameSub, pollGameSub, timeLeftSub];
+  }
+  private getTimeLeft() {
+    console.log(this.game);
+    if (!this.game.secondsToNextRound) {
+      this.timeLeft = `--:--`;
+      return;
+    }
+
+    const date = new Date();
+    date.setSeconds(date.getSeconds() + this.game.secondsToNextRound);
+    const { seconds, minutes } = getTimeComponents(date.getTime() - Date.now());
+    this.timeLeft = `${minutes}:${seconds}`;
   }
 
   ngOnDestroy() {
@@ -58,7 +111,11 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     }
 
     this.fetching = true;
-    this.game = <any>await this.gameService.getLobby(this.game._id);
+    try {
+      this.game = <any>await this.gameService.getLobby(this.game._id);
+    } catch (e) {
+      console.error(e);
+    }
     this.fetching = false;
     console.log(this.game);
   }
@@ -68,7 +125,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get showScores() {
-    return false;
+    return ['round-over', 'checking-scores'].includes(this.game.status);
   }
 
   get inAnotherGame() {
@@ -86,4 +143,20 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   get showBeatmaps() {
     return this.game.status === 'new' || this.showBeatmapList;
   }
+}
+
+
+export function getTimeComponents(t: number) {
+  const seconds = Math.floor((t / 1000) % 60);
+  const minutes = Math.max(0, Math.floor((t / 1000 / 60) % 60));
+  const hours = Math.max(0, Math.floor((t / (1000 * 60 * 60)) % 24));
+  const days = Math.max(0, Math.floor(t / (1000 * 60 * 60 * 24)));
+
+  return {
+    total: t,
+    days: days.toString(),
+    hours: hours.toString().padStart(2, '0'),
+    minutes: minutes.toString().padStart(2, '0'),
+    seconds: seconds.toString().padStart(2, '0')
+  };
 }

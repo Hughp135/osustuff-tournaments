@@ -1,14 +1,5 @@
+import { IPlayer } from './../game-lobby.component';
 import { Component, OnInit, Input } from '@angular/core';
-
-interface IPlayer {
-  username: string;
-  userId: string;
-  alive: boolean;
-  roundLostOn?: number;
-  osuUserId: number;
-  ppRank: number;
-  country: string;
-}
 
 @Component({
   selector: 'app-user-list',
@@ -17,6 +8,7 @@ interface IPlayer {
 })
 export class UserListComponent implements OnInit {
   @Input() players: IPlayer[];
+  @Input() winningUser: string;
 
   constructor() {}
 

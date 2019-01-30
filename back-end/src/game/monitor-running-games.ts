@@ -98,21 +98,23 @@ async function checkRoundEnded(game: IGame) {
 async function completeRound(game: IGame) {
   const alivePlayers = game.players.filter(p => p.alive);
 
-  if (alivePlayers.length > 1) {
-    console.log('players still alive, starting next round');
-    // Start the next round
-    await nextRound(game);
-    await setNextStageStartsAt(game, 10);
-  } else {
-    // End the game
-    await endGame(game);
-  }
+  // if (<Date> game.nextStageStarts < new Date()) {
+  //   if (alivePlayers.length > 1) {
+  //     console.log('players still alive, starting next round');
+  //     // Start the next round
+  //     await nextRound(game);
+  //     await setNextStageStartsAt(game, 10);
+  //   } else {
+  //     // End the game
+  //     await endGame(game);
+  //   }
+  // }
 }
 
 async function setNextStageStartsAt(game: IGame, seconds: number) {
   const date = new Date();
   date.setSeconds(date.getSeconds() + seconds);
-
+  console.log('next round starts at', date);
   // Update game status and set time to next stage
   game.nextStageStarts = date;
   await game.save();

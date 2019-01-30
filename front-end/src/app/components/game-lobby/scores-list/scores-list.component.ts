@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { getAppliedMods } from '../../../helpers/get-applied-mods';
 
 @Component({
   selector: 'app-scores-list',
@@ -6,10 +7,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./scores-list.component.scss']
 })
 export class ScoresListComponent implements OnInit {
+  @Input() scores;
 
   constructor() { }
 
   ngOnInit() {
+    console.log(this.scores);
   }
 
+  public getModString(mods: number) {
+    return getAppliedMods(mods).join(', ');
+  }
 }

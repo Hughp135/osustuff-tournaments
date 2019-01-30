@@ -16,6 +16,7 @@ import { LobbiesListComponent } from './components/lobbies-list/lobbies-list.com
 import { JoinGameComponent } from './components/game-lobby/join-game/join-game.component';
 import { SettingsService } from './services/settings.service';
 import { BeatmapListComponent } from './components/game-lobby/beatmap-list/beatmap-list.component';
+import { GameStatusComponent } from './components/game-lobby/game-status/game-status.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { BeatmapListComponent } from './components/game-lobby/beatmap-list/beatm
     LobbiesListComponent,
     JoinGameComponent,
     BeatmapListComponent,
+    GameStatusComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule],
   providers: [ApiService, SettingsService],

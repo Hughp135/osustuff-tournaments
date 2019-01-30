@@ -10,7 +10,7 @@
 }
 
 .ui.inverted.segment.list-container {
-  padding: 1em 1.5em !important;
+  padding: 1em 1em 2em !important;
   border-radius: 5px !important;
   display: flex;
   flex: 1;
@@ -24,9 +24,12 @@ p {
 }
 
 .title {
+  font-weight: 700;
+  text-align: center;
+  margin: 10px;
+  margin-left: 0;
   float: left;
   width: 60px;
-  margin-right: 20px;
 }
 
 p {

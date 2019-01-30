@@ -44,16 +44,10 @@ export async function checkRoundScores(
 
   const players = game.players.filter(p => p.alive);
 
-  await Promise.all(
-    players.map(async p => checkPlayerScores(p, round, getUserRecent)),
-  );
+  await Promise.all(players.map(async p => checkPlayerScores(p, round, getUserRecent)));
 }
 
-async function checkPlayerScores(
-  player: IPlayer,
-  round: IRound,
-  getUserRecent: any,
-) {
+async function checkPlayerScores(player: IPlayer, round: IRound, getUserRecent: any) {
   const scores = await getUserRecent(player.username);
   const existingScores = await Score.find({
     roundId: round._id,
@@ -64,6 +58,14 @@ async function checkPlayerScores(
   const promises = scores
     .filter((s: any) => scoreValidAndUnique(s, round, existingScores))
     .map(async (score: any) => {
+      const count50 = parseInt(score.count50, 10);
+      const count100 = parseInt(score.count100, 10);
+      const count300 = parseInt(score.count300, 10);
+      const misses = parseInt(score.countmiss, 10);
+      const accuracy =
+        parseFloat((100 * (50 * count50 + 100 * count100 + 300 * count300) /
+        (300 * (misses + count50 + count100 + count300))).toFixed(2));
+
       await Score.create({
         roundId: round._id,
         userId: player.userId,
@@ -71,7 +73,9 @@ async function checkPlayerScores(
         mods: parseInt(score.enabled_mods, 10),
         rank: score.rank,
         maxCombo: parseInt(score.maxcombo, 10),
-        misses: parseInt(score.countmiss, 10),
+        count100,
+        accuracy,
+        misses,
         date: new Date(score.date),
       });
     });
@@ -79,11 +83,7 @@ async function checkPlayerScores(
   await Promise.all(promises);
 }
 
-function scoreValidAndUnique(
-  score: any,
-  round: IRound,
-  existingScores: IScore[],
-) {
+function scoreValidAndUnique(score: any, round: IRound, existingScores: IScore[]) {
   const correctBeatmap = score.beatmap_id === round.beatmap.beatmap_id;
   const correctDate = new Date(score.date) > (<any> round).createdAt;
 

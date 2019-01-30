@@ -18,6 +18,7 @@
     padding: 0;
   }
 
+  overflow-y: auto;
 }
 
 .left {
@@ -36,15 +37,17 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .right {
   flex: 0 0 250px;
-  border-left: 1px solid #2b2b2b;
+  border-left: 1px solid #444444;
   background: #2c2a2a;
 }
 
 .chat-section {
+  background: #2c2a2a;
   flex: 0 1 250px;
-  border-top: 1px solid #2b2b2b;
+  border-top: 1px solid #444444;
 }

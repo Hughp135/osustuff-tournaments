@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { getTimeComponents } from '../game-info/game-info.component';
+import { getTimeComponents } from '../game-lobby.component';
 
 @Component({
   selector: 'app-beatmap-info',

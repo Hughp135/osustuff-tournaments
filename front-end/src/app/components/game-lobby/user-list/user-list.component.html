@@ -6,11 +6,11 @@
 </div>
 <div class="ui relaxed inverted list" *ngIf="players.length">
   <a class="item" *ngFor="let player of players" [href]="'https://osu.ppy.sh/u/' + player.osuUserId" target="_blank"
-    [ngClass]="player.alive ? 'alive' : 'dead'">
+    [ngClass]="player.alive ? 'alive' : 'dead'" [class.winner]="winningUser === player.username">
     <img class="ui mini image" [src]="'//a.ppy.sh/' + player.osuUserId" alt="">
     <div class="content">
       <div class="header">
-        {{ player.username }} {{ player.alive ? '' : '(Lost)' }}
+        {{ player.username }} {{ player.alive ? '' : '(Lost)' }} {{ winningUser === player.username ? '(Winner)' : ''}}
       </div>
       <div class="description">
         <i class="fitted teal globe icon"></i>
