@@ -1,21 +1,31 @@
+import { CurrentGame } from './../../../services/settings.service';
 import { ApiService } from './../../../services/api.service';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
   selector: 'app-join-game',
   templateUrl: './join-game.component.html',
   styleUrls: ['./join-game.component.scss'],
 })
-export class JoinGameComponent implements OnInit {
+export class JoinGameComponent implements OnInit, OnDestroy {
   @Input() game: any;
+  @Input() inAnotherGame: boolean;
+
   public osuUsername = '';
   public requestingJoin = false;
   public joinRequestId: string;
   public requestedAt: Date;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private settingsService: SettingsService) {}
 
   ngOnInit() {}
+
+  ngOnDestroy() {
+    this.joinRequestId = undefined;
+    this.requestingJoin = false;
+    this.requestedAt = undefined;
+  }
 
   get canJoin() {
     return this.game.status === 'new';
@@ -63,10 +73,13 @@ export class JoinGameComponent implements OnInit {
         })
         .toPromise();
 
-      console.log('verified', verified);
-      setTimeout(() => {
-        this.checkVerified();
-      }, 1000);
+      if (verified) {
+        this.settingsService.setCurrentGame(this.game._id, this.joinRequestId);
+      } else {
+        setTimeout(() => {
+          this.checkVerified();
+        }, 1000);
+      }
     } catch (e) {
       console.error(e);
       this.joinRequestId = undefined;

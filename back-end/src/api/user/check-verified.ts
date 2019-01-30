@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { JoinGameRequest } from '../../models/JoinGameRequest.model';
+import { Game } from '../../models/Game.model';
 
 export async function checkVerified(req: Request, res: Response) {
   const { requestId } = req.body;
@@ -7,6 +8,12 @@ export async function checkVerified(req: Request, res: Response) {
   const verifyRequest = await JoinGameRequest.findById(requestId);
 
   if (!verifyRequest) {
+    return res.status(404).end();
+  }
+
+  const game = await Game.findById(verifyRequest.gameId);
+
+  if (!game) {
     return res.status(404).end();
   }
 

@@ -9,6 +9,7 @@ import { startServer } from './api';
 import winston from 'winston';
 import { getRecentBeatmaps } from './services/osu-api';
 import { Round } from './models/Round.model';
+import { JoinGameRequest } from './models/JoinGameRequest.model';
 
 winston.add(new winston.transports.File({ filename: 'winston.log' }));
 winston.add(new winston.transports.Console());
@@ -24,6 +25,7 @@ mongoose.set('useCreateIndex', true);
   await Game.deleteMany({});
   await User.deleteMany({});
   await Round.deleteMany({});
+  await JoinGameRequest.deleteMany({});
 
   await startServer();
 

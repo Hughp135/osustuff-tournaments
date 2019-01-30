@@ -1,27 +1,34 @@
-<div *ngIf="canJoin">
-  <h3>Join Game</h3>
-  <div *ngIf="!joinRequestId">
-    <p>Enter your osu! username to join this game!</p>
-    <div class="ui small action input">
-      <input type="text" placeholder="osu! username" [(ngModel)]="osuUsername">
-      <button class="ui primary button" [disabled]="osuUsername.length < 3 || requestingJoin"
-        [class.loading]="requestingJoin" (click)="joinGame()">Join</button>
+<div class="ui inverted segment">
+  <div *ngIf="canJoin">
+    <h3>Join Game</h3>
+    <div *ngIf="inAnotherGame">
+      <p>You are currently in another game. Please leave that game first before joining this one.</p>
+    </div>
+    <div *ngIf="!inAnotherGame">
+      <div *ngIf="!joinRequestId">
+        <p>Enter your osu! username to join this game!</p>
+        <div class="ui small action input">
+          <input type="text" placeholder="osu! username" [(ngModel)]="osuUsername">
+          <button class="ui primary button" [disabled]="osuUsername.length < 3 || requestingJoin"
+            [class.loading]="requestingJoin" (click)="joinGame()">Join</button>
+        </div>
+      </div>
+      <div *ngIf="joinRequestId">
+        <p>
+          To join the game, send a message with the command "<b>!join</b>" in game to the
+          user <b>Mongoose-</b>
+          to verify your account.
+          You have 60 seconds to do this.
+        </p>
+        <h5 class="ui inverted header">
+          <i class="loading spinner icon"></i>
+          Awaiting verification...
+        </h5>
+      </div>
     </div>
   </div>
-  <div *ngIf="joinRequestId">
-    <p>
-      To join the game, send a message with the command "<b>!join</b>" in game to the
-      user <b>Mongoose-</b>
-      to verify your account.
-      You have 60 seconds to do this.
-    </p>
-    <h5 class="ui inverted header">
-      <i class="loading spinner icon"></i>
-      Awaiting verification...
-    </h5>
+  <div *ngIf="!canJoin">
+    <p>This game is already in progress, so you can't join it.
+      Wait for the next one to start!</p>
   </div>
-</div>
-<div *ngIf="!canJoin">
-  <p>This game is already in progress, so you can't join it.
-    Wait for the next one to start!</p>
 </div>

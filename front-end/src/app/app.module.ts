@@ -14,6 +14,7 @@ import { UserListComponent } from './components/game-lobby/user-list/user-list.c
 import { ChatComponent } from './components/game-lobby/chat/chat.component';
 import { LobbiesListComponent } from './components/lobbies-list/lobbies-list.component';
 import { JoinGameComponent } from './components/game-lobby/join-game/join-game.component';
+import { SettingsService } from './services/settings.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,7 @@ import { JoinGameComponent } from './components/game-lobby/join-game/join-game.c
     JoinGameComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule],
-  providers: [ApiService],
+  providers: [ApiService, SettingsService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

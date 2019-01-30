@@ -1,13 +1,15 @@
 import { Request, Response } from 'express';
 import config from 'config';
 import { JoinGameRequest } from '../../models/JoinGameRequest.model';
+import { User } from '../../models/User.model';
+import { addPlayer } from '../../game/add-player';
+import { Game } from '../../models/Game.model';
 
 const VERIFY_USER_TOKEN = config.get('VERIFY_USER_TOKEN');
 
 export async function verifyUser(req: Request, res: Response) {
   const { username, token } = req.body;
 
-  console.log('token', token, 'username', username);
   if (token !== VERIFY_USER_TOKEN) {
     return res.status(401).end();
   }
@@ -19,12 +21,30 @@ export async function verifyUser(req: Request, res: Response) {
   }
 
   if (verifyRequest.expiresAt < new Date()) {
-    res.status(408).end();
+    return res.status(408).end();
   }
+
+  const user = await getOrCreateUser(username);
+  const game = await Game.findById(verifyRequest.gameId);
+
+  if (!game) {
+    return res.status(404).end();
+  }
+
+  await addPlayer(game, user);
 
   verifyRequest.verified = true;
   await verifyRequest.save();
 
-  console.log('verifying user', username);
   res.status(200).end();
+}
+
+async function getOrCreateUser(username: string) {
+  const found = await User.findOne({ username });
+
+  if (found) {
+    return found;
+  }
+
+  return await User.create({ username });
 }
