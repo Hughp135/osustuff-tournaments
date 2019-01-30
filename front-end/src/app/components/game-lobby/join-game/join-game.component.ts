@@ -16,6 +16,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
   public requestingJoin = false;
   public joinRequestId: string;
   public requestedAt: Date;
+  public error: string;
 
   constructor(
     private apiService: ApiService,
@@ -37,6 +38,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
   async joinGame() {
     this.requestingJoin = true;
     this.joinRequestId = undefined;
+    this.error = undefined;
 
     try {
       const { requestId }: any = await this.apiService
@@ -48,7 +50,14 @@ export class JoinGameComponent implements OnInit, OnDestroy {
       this.joinRequestId = requestId;
       await this.checkVerified();
     } catch (e) {
-      console.error(e);
+      if (e.status === 404) {
+        this.error =
+          'A user was not found with the username you entered. Please ensure it is spelled correctly.';
+      } else if (e.status === 400) {
+        this.error = 'This game cannot be joined anymore.';
+      } else {
+        throw e;
+      }
     }
 
     setTimeout(() => {
@@ -85,6 +94,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
       }
     } catch (e) {
       console.error(e);
+
       this.joinRequestId = undefined;
     }
   }

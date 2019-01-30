@@ -10,20 +10,26 @@
     <div class="ui basic inverted segment">
       <div class="ui inverted relaxed list">
         <div class="item">
-          <a [href]="beatmapHref" target="_blank" class="beatmap-link">
-            <h3>
-              {{ beatmap.artist }} - {{ beatmap.title }}
-            </h3>
-          </a>
-          <p>
-            <i class="bullseye icon"></i> {{ beatmap.version }}
-          </p>
-          <p>
-            <i class="yellow star outline icon"></i> {{ starRating }}
-          </p>
-          <p>
-            <i class=" stopwatch icon"></i> {{ duration }}
-          </p>
+          <div class="ui stackable grid">
+            <div class="eight wide column">
+              <a [href]="beatmapHref" target="_blank" class="beatmap-link">
+                <h3>
+                  {{ beatmap.artist }} - {{ beatmap.title }}
+                </h3>
+                <p>
+                  <i class="bullseye icon"></i> {{ beatmap.version }}
+                </p>
+              </a>
+            </div>
+            <div class="eight wide right aligned column">
+              <p>
+                Star Difficulty: <i class="yellow star outline icon"></i> {{ starRating }}
+              </p>
+              <p>
+                Map Length: <i class=" stopwatch icon"></i> {{ duration }}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

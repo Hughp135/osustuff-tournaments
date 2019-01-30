@@ -1,5 +1,5 @@
-<div class="ui inverted segment">
-  <div class="ui three column inverted divided grid">
+<div class="ui inverted segment no-bg">
+  <div class="ui four column inverted divided grid">
     <div class="column">
       <h3>Lobby Name</h3>
       osu! Battle Royale
@@ -9,9 +9,12 @@
       {{ status }}
     </div>
     <div class="column">
+      <h3>Round</h3>
+      {{ this.game.roundNumber || '-' }}
+    </div>
+    <div class="column">
       <h3>Time left</h3>
       {{ timeLeft }}
     </div>
   </div>
 </div>
-<div class="ui divider"></div>

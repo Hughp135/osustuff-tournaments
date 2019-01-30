@@ -8,6 +8,7 @@ export interface IPlayer {
   roundLostOn?: number;
   osuUserId: number;
   ppRank: number;
+  countryRank: number;
   country: string;
 }
 
@@ -35,11 +36,12 @@ const GameSchema = new mongoose.Schema(
       type: [
         {
           userId: { type: mongoose.Types.ObjectId, required: true },
+          osuUserId: { type: Number, required: true },
           username: { type: String, required: true },
           alive: { type: Boolean, required: true, default: true },
           roundLostOn: { type: Number },
           ppRank: { type: Number, required: true },
-          osuUserId: { type: Number, required: true },
+          countryRank: { type: Number, required: true },
           country: { type: String, required: true },
         },
       ],

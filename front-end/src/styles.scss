@@ -2,6 +2,18 @@
 body {
   margin: 0;
   padding: 0;
-  background: #1b1c1d !important;
-  color: rgba(255,255,255,.9);
+  background: #313030 !important;
+  color: rgba(255, 255, 255, .9);
+
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-thumb {
+    border-radius: 0 !important;
+  }
+
+  scrollbar-width: thin;
+}
+
+.ui.inverted.segment.no-bg {
+  border-radius: 0 !important;
+  background: none !important;
 }

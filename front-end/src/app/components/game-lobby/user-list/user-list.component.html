@@ -1,3 +1,24 @@
-<div class="ui inverted segment">
-  <h3>Users</h3>
+<div class="ui inverted segment no-bg">
+  <h3>Players</h3>
+  <p *ngIf="!players.length">
+    No players have joined yet.
+  </p>
+</div>
+<div class="ui relaxed inverted list" *ngIf="players.length">
+  <a class="item" *ngFor="let player of players" [href]="'https://osu.ppy.sh/u/' + player.osuUserId" target="_blank"
+    [ngClass]="player.alive ? 'alive' : 'dead'">
+    <img class="ui mini image" [src]="'//a.ppy.sh/' + player.osuUserId" alt="">
+    <div class="content">
+      <div class="header">
+        {{ player.username }} {{ player.alive ? '' : '(Lost)' }}
+      </div>
+      <div class="description">
+        <i class="fitted teal globe icon"></i>
+        #{{ player.ppRank }}
+        &nbsp;
+        <i class="fitted flag" [ngClass]="player.country.toLowerCase()"></i>
+        #{{ player.countryRank }}
+      </div>
+    </div>
+  </a>
 </div>

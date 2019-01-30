@@ -14,21 +14,23 @@
   - Chat box
 -->
 <div class="wrapper" *ngIf="game">
-  <div class="main">
-    <div class="game-info">
-      <app-game-info [game]="game"></app-game-info>
-      <app-join-game [game]="game" [inAnotherGame]="inAnotherGame" *ngIf="showJoinGame"></app-join-game>
-      <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
-      <app-beatmap-info [game]="game" *ngIf="showBeatmap"></app-beatmap-info>
-      <app-scores-list *ngIf="showScores"></app-scores-list>
-    </div>
-    <div class="user-list">
-      <app-user-list></app-user-list>
-    </div>
+  <div class="header">
+    <app-game-info [game]="game"></app-game-info>
   </div>
-  <div class="lower">
-    <div class="chat-section">
-      <app-chat></app-chat>
+  <div class="main">
+    <div class="left">
+      <div class="lobby-details">
+        <app-join-game [game]="game" [inAnotherGame]="inAnotherGame" *ngIf="showJoinGame"></app-join-game>
+        <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
+        <app-beatmap-info [game]="game" *ngIf="showBeatmap"></app-beatmap-info>
+        <app-scores-list *ngIf="showScores"></app-scores-list>
+      </div>
+      <div class="chat-section">
+        <app-chat></app-chat>
+      </div>
+    </div>
+    <div class="right">
+      <app-user-list [players]="game.players"></app-user-list>
     </div>
   </div>
 

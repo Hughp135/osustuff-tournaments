@@ -51,12 +51,12 @@ export class GameInfoComponent implements OnInit, OnDestroy {
     switch (this.game.status) {
       case 'new':
         return this.game.nextStageStarts
-          ? 'Starting game...'
+          ? 'Counting down to start...'
           : 'Waiting for more players';
       case 'in-progress':
-        return `Round ${this.game.roundNumber} in progress`;
+        return `In Progress`;
       case 'complete':
-        return 'Game Complete';
+        return 'Finished';
     }
   }
 }

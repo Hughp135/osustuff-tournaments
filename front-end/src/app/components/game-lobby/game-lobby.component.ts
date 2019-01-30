@@ -41,7 +41,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         await this.fetch();
       }
     );
-    const pollGameSub = interval(5000).subscribe(async () => {
+    const pollGameSub = interval(15000).subscribe(async () => {
       await this.fetch();
     });
 

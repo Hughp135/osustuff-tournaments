@@ -1,4 +1,4 @@
-<div class="ui inverted segment">
+<div class="ui inverted segment no-bg">
   <div *ngIf="canJoin">
     <h3>Join Game</h3>
     <div *ngIf="inAnotherGame">
@@ -7,6 +7,7 @@
     <div *ngIf="!inAnotherGame">
       <div *ngIf="!joinRequestId">
         <p>Enter your osu! username to join this game!</p>
+        <p *ngIf="error" class="error">{{ error }}</p>
         <div class="ui small action input">
           <input type="text" placeholder="osu! username" [(ngModel)]="osuUsername" (keydown)="onKeyDown($event)">
           <button class="ui primary button" [disabled]="osuUsername.length < 3 || requestingJoin" [class.loading]="requestingJoin"
