@@ -1,0 +1,35 @@
+h5 {
+  margin: 0;
+}
+
+.ui.inverted.segment {
+  display: flex;
+  flex-direction: column;
+}
+
+.ui.inverted.list {
+  flex: 1 1 185px;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+
+  .item {
+    flex: 1;
+    display: block;
+    .image-container {
+      float: left;
+      width: 38px;
+    }
+    .content {
+      float: right;
+      width: calc(100% - 38px);
+    }
+  }
+}
+
+.ui.input {
+  input {
+    background: #1d1d1d;
+    color: rgba(255, 255, 255, 0.9);
+  }
+}

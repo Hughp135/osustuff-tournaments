@@ -21,13 +21,15 @@ export class GameLobbyResolver implements Resolve<any> {
       const lobby = await this.gameService.getLobby(id);
       const beatmaps = await this.gameService.getLobbyBeatmaps(id);
       const players = await this.gameService.getLobbyUsers(id);
+      const messages = await this.gameService.getLobbyMessages(id);
 
       await this.settingsService.checkCurrentGame();
 
       return {
         lobby,
         beatmaps,
-        players
+        players,
+        messages,
       };
     } catch (e) {
       setTimeout(() => this.router.navigate(['']), 0);

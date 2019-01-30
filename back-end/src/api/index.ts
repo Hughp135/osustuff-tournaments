@@ -9,6 +9,8 @@ import { verifyUser } from './user/verify';
 import { checkVerified } from './user/check-verified';
 import { getLobbyBeatmaps } from './lobbies/beatmaps';
 import { getUsers } from './lobbies/get-users';
+import { sendMessage } from './lobbies/messages/post';
+import { getMessages } from './lobbies/messages/get';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -20,6 +22,8 @@ app.get('/lobbies', async (req, res) => res.json(await getLobbies()));
 app.post('/lobbies/:id/join', joinGame);
 app.get('/lobbies/:id/beatmaps', getLobbyBeatmaps);
 app.get('/lobbies/:id/users', getUsers);
+app.get('/lobbies/:id/messages', getMessages);
+app.post('/lobbies/:id/messages', sendMessage);
 app.get('/lobbies/:id', getLobby);
 app.post('/verify-user', verifyUser);
 app.post('/check-verified', checkVerified);
