@@ -6,6 +6,9 @@ export interface IPlayer {
   userId: mongoose.Schema.Types.ObjectId;
   alive: boolean;
   roundLostOn?: number;
+  osuUserId: number;
+  ppRank: number;
+  country: string;
 }
 
 export interface IGame extends mongoose.Document {
@@ -35,6 +38,9 @@ const GameSchema = new mongoose.Schema(
           username: { type: String, required: true },
           alive: { type: Boolean, required: true, default: true },
           roundLostOn: { type: Number },
+          ppRank: { type: Number, required: true },
+          osuUserId: { type: Number, required: true },
+          country: { type: String, required: true },
         },
       ],
       default: [],

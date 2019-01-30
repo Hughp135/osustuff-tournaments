@@ -1,0 +1,52 @@
+:host {
+  overflow: hidden;
+}
+
+
+.list-container {
+  background-color: #55275a !important;
+  display: flex;
+  flex-direction: column;
+}
+
+h4,
+h5,
+p {
+  margin: 0;
+}
+
+.title {
+  float: left;
+  width: 60px;
+  margin-right: 20px;
+}
+
+p {
+  font-weight: normal !important;
+}
+
+.ui.inverted.list {
+  overflow-y: scroll;
+  flex: 1 1 250px;
+
+  .beatmap-image-container {
+    width: 54px;
+    float: left;
+    margin-right: 20px;
+    height: 42px;
+    background: #332f2f;
+
+    img {
+      height: 100%;
+      width: auto;
+    }
+  }
+
+  a:visited {
+    color: #deabeb !important;
+  }
+
+  .item a:not(.ui):hover {
+    color: #fff !important;
+  }
+}

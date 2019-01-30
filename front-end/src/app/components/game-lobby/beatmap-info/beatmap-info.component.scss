@@ -4,4 +4,23 @@
   .ui.inverted.segment {
     background: none;
   }
+
+  h3,
+  h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+
+  .ui.inverted.list .item a:not(.ui).beatmap-link:hover {
+    color: white !important;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+
+.ui.grid {
+  margin-bottom: 10px;
 }

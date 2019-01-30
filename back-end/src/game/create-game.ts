@@ -2,7 +2,9 @@ import { Game, IGame } from '../models/Game.model';
 
 let beatmaps: any[];
 
-export async function createGame(getRecentBeatmaps: () => Promise<any>): Promise<IGame> {
+export async function createGame(
+  getRecentBeatmaps: () => Promise<any>,
+): Promise<IGame> {
   beatmaps = await getRecentBeatmaps();
   console.log('all beatmaps', beatmaps.length);
 
@@ -19,15 +21,10 @@ export async function createGame(getRecentBeatmaps: () => Promise<any>): Promise
     getBeatmapBetweenStars(6),
   ];
 
-  // console.log(
-  //   'ROund beatmaps',
-  //   roundBeatmaps.map(b => `${b.title} [${b.version}] ${b.difficultyrating}`),
-  // );
-
   const game = await Game.create({
     title: 'osu! Battle Royale',
     beatmaps: roundBeatmaps,
-   });
+  });
   return game;
 }
 

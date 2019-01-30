@@ -31,8 +31,8 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     status: ['new', 'in-progress', 'round-over'],
   });
 
-  if (games.length === 0) {
-    console.log('creating a new game as none are running');
+  if (games.filter(g => g.status === 'new').length === 0) {
+    console.log('creating a new game as no "new" status ones are running');
     // If no games are active, create a new one
     await createGame(getRecentMaps);
   }
@@ -64,7 +64,6 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
 
 async function startGame(game: IGame) {
   if (!game.players.length) {
-    console.log('No players to start');
     if (game.nextStageStarts) {
       console.log('canceling countdown');
       // Cancel countdown
@@ -77,7 +76,7 @@ async function startGame(game: IGame) {
   if (!game.nextStageStarts) {
     console.log('Beginning countdown....');
     // Set the countdown to start
-    await setNextStageStartsAt(game, 5);
+    await setNextStageStartsAt(game, 15);
   } else if (game.nextStageStarts < new Date()) {
     // Start the first round
     await nextRound(game);

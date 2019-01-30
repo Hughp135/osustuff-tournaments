@@ -6,7 +6,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 @Component({
   selector: 'app-join-game',
   templateUrl: './join-game.component.html',
-  styleUrls: ['./join-game.component.scss'],
+  styleUrls: ['./join-game.component.scss']
 })
 export class JoinGameComponent implements OnInit, OnDestroy {
   @Input() game: any;
@@ -17,7 +17,10 @@ export class JoinGameComponent implements OnInit, OnDestroy {
   public joinRequestId: string;
   public requestedAt: Date;
 
-  constructor(private apiService: ApiService, private settingsService: SettingsService) {}
+  constructor(
+    private apiService: ApiService,
+    private settingsService: SettingsService
+  ) {}
 
   ngOnInit() {}
 
@@ -38,7 +41,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     try {
       const { requestId }: any = await this.apiService
         .post(`lobbies/${this.game._id}/join`, {
-          username: this.osuUsername,
+          username: this.osuUsername
         })
         .toPromise();
       this.requestedAt = new Date();
@@ -69,7 +72,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     try {
       const { verified }: any = await this.apiService
         .post(`check-verified`, {
-          requestId: this.joinRequestId,
+          requestId: this.joinRequestId
         })
         .toPromise();
 
@@ -83,6 +86,12 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     } catch (e) {
       console.error(e);
       this.joinRequestId = undefined;
+    }
+  }
+
+  public onKeyDown(e) {
+    if (e.keyCode === 13 && this.osuUsername.length >= 3) {
+      this.joinGame();
     }
   }
 }

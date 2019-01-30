@@ -1,0 +1,26 @@
+<div class="ui inverted segment main-segment">
+  <h3>Beatmap list</h3>
+  <p>
+    Be sure to download the beatmaps before the game starts to avoid running out of time!
+  </p>
+  <div class="ui inverted segment list-container">
+    <div class="ui inverted relaxed divided list">
+      <div class="item" *ngFor="let beatmap of beatmaps; let index = index;">
+        <p class="title">Round {{index + 1}}</p>
+        <div class="content">
+          <a class="header" [href]="beatmapHref(beatmap)" target="_blank">
+            <div class="beatmap-image-container">
+              <img [src]="'//b.ppy.sh/thumb/' + beatmap.beatmapset_id + '.jpg'" alt="">
+            </div>
+            {{ beatmap.artist }} - {{ beatmap.title }}
+            <p>
+              {{ beatmap.version }}
+              &nbsp; <i class="fitted star outline icon"></i> {{ starRating(beatmap) }}
+              &nbsp; <i class="fitted stopwatch icon"></i> {{ getDuration(beatmap) }}
+            </p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

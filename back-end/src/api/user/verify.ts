@@ -24,7 +24,7 @@ export async function verifyUser(req: Request, res: Response) {
     return res.status(408).end();
   }
 
-  const user = await getOrCreateUser(username);
+  const user = await getUser(username);
   const game = await Game.findById(verifyRequest.gameId);
 
   if (!game) {
@@ -39,12 +39,12 @@ export async function verifyUser(req: Request, res: Response) {
   res.status(200).end();
 }
 
-async function getOrCreateUser(username: string) {
+async function getUser(username: string) {
   const found = await User.findOne({ username });
 
-  if (found) {
-    return found;
+  if (!found) {
+    throw new Error('User not found ' + username);
   }
 
-  return await User.create({ username });
+  return found;
 }

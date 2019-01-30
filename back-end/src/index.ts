@@ -22,10 +22,10 @@ mongoose.set('useCreateIndex', true);
     { useNewUrlParser: true },
   );
 
-  await Game.deleteMany({});
-  await User.deleteMany({});
-  await Round.deleteMany({});
-  await JoinGameRequest.deleteMany({});
+  // await Game.deleteMany({});
+  // await User.deleteMany({});
+  // await Round.deleteMany({});
+  // await JoinGameRequest.deleteMany({});
 
   await startServer();
 

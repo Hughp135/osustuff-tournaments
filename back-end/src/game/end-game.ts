@@ -24,6 +24,7 @@ export async function endGame(game: IGame) {
   }
 
   game.status = 'complete';
+  game.nextStageStarts = undefined;
 
   await game.save();
 }

@@ -1,12 +1,29 @@
 <div class="ui basic inverted segment">
-  <h3 class="ui header">Now playing</h3>
+  <div class="ui grid">
+    <div class="two column row">
+      <div class="left aligned column">
+        <h3 class="ui inverted header">Now playing</h3>
+      </div>
+    </div>
+  </div>
   <div [ngStyle]="getBgStyles()" class="beatmap-bg">
     <div class="ui basic inverted segment">
       <div class="ui inverted relaxed list">
         <div class="item">
-          <h5>
-            Title here
-          </h5>
+          <a [href]="beatmapHref" target="_blank" class="beatmap-link">
+            <h3>
+              {{ beatmap.artist }} - {{ beatmap.title }}
+            </h3>
+          </a>
+          <p>
+            <i class="bullseye icon"></i> {{ beatmap.version }}
+          </p>
+          <p>
+            <i class="yellow star outline icon"></i> {{ starRating }}
+          </p>
+          <p>
+            <i class=" stopwatch icon"></i> {{ duration }}
+          </p>
         </div>
       </div>
     </div>

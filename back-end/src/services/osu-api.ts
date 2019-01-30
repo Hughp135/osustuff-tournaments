@@ -29,6 +29,8 @@ async function request(
 export async function getUser(username: string) {
   return (await (<any> request('get_user', {
     u: username,
+    type: 'string',
+    m: '0', // osu game mode
   })))[0];
 }
 

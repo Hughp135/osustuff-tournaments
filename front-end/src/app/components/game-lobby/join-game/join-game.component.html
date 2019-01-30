@@ -8,9 +8,9 @@
       <div *ngIf="!joinRequestId">
         <p>Enter your osu! username to join this game!</p>
         <div class="ui small action input">
-          <input type="text" placeholder="osu! username" [(ngModel)]="osuUsername">
-          <button class="ui primary button" [disabled]="osuUsername.length < 3 || requestingJoin"
-            [class.loading]="requestingJoin" (click)="joinGame()">Join</button>
+          <input type="text" placeholder="osu! username" [(ngModel)]="osuUsername" (keydown)="onKeyDown($event)">
+          <button class="ui primary button" [disabled]="osuUsername.length < 3 || requestingJoin" [class.loading]="requestingJoin"
+            (click)="joinGame()">Join</button>
         </div>
       </div>
       <div *ngIf="joinRequestId">
@@ -28,7 +28,9 @@
     </div>
   </div>
   <div *ngIf="!canJoin">
-    <p>This game is already in progress, so you can't join it.
-      Wait for the next one to start!</p>
+    <p>
+      This game is already in progress, so you can't join it.
+      Wait for the next one to start!
+    </p>
   </div>
 </div>

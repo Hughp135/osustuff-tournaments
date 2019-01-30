@@ -14,4 +14,12 @@ export class GameService {
   public async getLobby(id: string) {
     return await this.apiService.get(`lobbies/${id}`).toPromise();
   }
+
+  public async getLobbyBeatmaps(id: string) {
+    return await this.apiService.get(`lobbies/${id}/beatmaps`).toPromise();
+  }
+
+  public async getLobbyUsers(id: string) {
+    return await this.apiService.get(`lobbies/${id}/users`).toPromise();
+  }
 }

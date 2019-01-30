@@ -8,23 +8,25 @@ export interface CurrentGame {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class SettingsService {
-  public currentGame: BehaviorSubject<CurrentGame> = new BehaviorSubject(undefined);
+  public currentGame: BehaviorSubject<CurrentGame> = new BehaviorSubject(
+    undefined
+  );
 
   constructor(private apiService: ApiService) {
     this.checkCurrentGame();
   }
 
-  private async checkCurrentGame() {
+  public async checkCurrentGame() {
     const currentGame = this.getCurrentGame();
 
     if (currentGame) {
       try {
         const { verified }: any = await this.apiService
           .post(`check-verified`, {
-            requestId: currentGame.requestId,
+            requestId: currentGame.requestId
           })
           .toPromise();
         if (verified) {
@@ -43,7 +45,7 @@ export class SettingsService {
   public setCurrentGame(gameId: string, requestId: string) {
     const currentGame = {
       gameId,
-      requestId,
+      requestId
     };
     localStorage.setItem('currentGame', JSON.stringify(currentGame));
 

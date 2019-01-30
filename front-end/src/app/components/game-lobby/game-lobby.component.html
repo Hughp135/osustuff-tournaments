@@ -13,12 +13,13 @@
     - Username, stats summary
   - Chat box
 -->
-<div class="wrapper">
+<div class="wrapper" *ngIf="game">
   <div class="main">
     <div class="game-info">
       <app-game-info [game]="game"></app-game-info>
-      <app-join-game [game]="game" [inAnotherGame]="inAnotherGame" *ngIf="!inGame"></app-join-game>
-      <app-beatmap-info *ngIf="showBeatmap"></app-beatmap-info>
+      <app-join-game [game]="game" [inAnotherGame]="inAnotherGame" *ngIf="showJoinGame"></app-join-game>
+      <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
+      <app-beatmap-info [game]="game" *ngIf="showBeatmap"></app-beatmap-info>
       <app-scores-list *ngIf="showScores"></app-scores-list>
     </div>
     <div class="user-list">
