@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { getAppliedMods } from '../../../helpers/get-applied-mods';
+import { IGame } from '../game-lobby.component';
 
 @Component({
   selector: 'app-scores-list',
@@ -8,14 +9,18 @@ import { getAppliedMods } from '../../../helpers/get-applied-mods';
 })
 export class ScoresListComponent implements OnInit {
   @Input() scores;
+  @Input() players;
+  @Input() currentUser: string;
+  @Input() game: IGame;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     console.log(this.scores);
+    console.log('status', this.game.status);
   }
 
-  public getModString(mods: number) {
-    return getAppliedMods(mods).join(', ');
+  get myScore() {
+    return this.scores.find(s => s.username === this.currentUser);
   }
 }

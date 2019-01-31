@@ -19,6 +19,11 @@ import { BeatmapListComponent } from './components/game-lobby/beatmap-list/beatm
 import { GameStatusComponent } from './components/game-lobby/game-status/game-status.component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojifyModule } from 'angular-emojify';
+import {
+  LazyLoadImageModule,
+  intersectionObserverPreset
+} from 'ng-lazyload-image';
+import { ScoresTableComponent } from './components/game-lobby/scores-list/scores-table/scores-table.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +37,8 @@ import { EmojifyModule } from 'angular-emojify';
     LobbiesListComponent,
     JoinGameComponent,
     BeatmapListComponent,
-    GameStatusComponent
+    GameStatusComponent,
+    ScoresTableComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +46,10 @@ import { EmojifyModule } from 'angular-emojify';
     HttpClientModule,
     FormsModule,
     PickerModule,
-    EmojifyModule
+    EmojifyModule,
+    LazyLoadImageModule.forRoot({
+      preset: intersectionObserverPreset
+    })
   ],
   providers: [ApiService, SettingsService],
   bootstrap: [AppComponent]

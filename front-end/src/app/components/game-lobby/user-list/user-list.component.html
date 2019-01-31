@@ -1,22 +1,24 @@
 <div class="ui inverted compact segment no-bg">
-  <h4>Players ({{ players.length }})</h4>
+  <h4>Players ({{ alivePlayers.length }}/{{ players.length }})</h4>
   <p *ngIf="!players.length">
     No players have joined yet.
   </p>
 </div>
 <div class="ui relaxed inverted list" *ngIf="players.length">
-  <a class="item" *ngFor="let player of players" [href]="'https://osu.ppy.sh/u/' + player.osuUserId" target="_blank"
+  <a class="item" *ngFor="let player of sortedPlayers" [href]="'https://osu.ppy.sh/u/' + player.osuUserId" target="_blank"
     [ngClass]="player.alive ? 'alive' : 'dead'" [class.winner]="winningUser === player.username">
-    <img class="ui mini image" [src]="'//a.ppy.sh/' + player.osuUserId" alt="">
+    <div class="image-container">
+      <img class="ui mini image" [useSrcset]="true" [lazyLoad]="'//a.ppy.sh/' + player.osuUserId" alt="">
+    </div>
     <div class="content">
       <div class="header">
         <i class="fitted flag" [ngClass]="player.country.toLowerCase()"></i>
-        {{ player.username }}
+        <span [class.my-name]="currentUser === player.username">{{ player.username }}</span>
         <span *ngIf="!player.alive" class="text-muted">(Lost)</span>
         <span *ngIf="winningUser === player.username" class="text-muted">(Winner)</span>
       </div>
       <div class="description">
-        # {{ player.ppRank | number }}
+        Rank: #{{ player.ppRank | number }}
       </div>
     </div>
   </a>

@@ -8,10 +8,14 @@ import { nextRound } from './next-round';
 import { endGame } from './end-game';
 import { createGame } from './create-game';
 import { getUserRecent, getRecentBeatmaps } from '../services/osu-api';
+import { TEST_MODE } from '..';
+import { addSampleScores } from '../test-helpers/add-sample-scores';
+import { addSampleChatMessage } from '../test-helpers/add-chat-message';
 
-let isMonitoring = false;
+export let isMonitoring = false;
 
 export async function startMonitoring() {
+  console.log('starting monitoring');
   if (isMonitoring) {
     throw new Error('Already monitoring');
   }
@@ -22,6 +26,7 @@ export async function startMonitoring() {
 }
 
 export function stopMonitoring() {
+  console.log('stopping monitoring');
   isMonitoring = false;
 }
 
@@ -31,10 +36,17 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     status: ['new', 'in-progress', 'round-over'],
   });
 
-  if (games.filter(g => g.status === 'new').length === 0) {
+  const testSkipCreate =
+    TEST_MODE && games.filter(g => g.status !== 'new').length;
+
+  if (games.filter(g => g.status === 'new').length === 0 && !testSkipCreate) {
     console.log('creating a new game as no "new" status ones are running');
     // If no games are active, create a new one
     await createGame(getRecentMaps);
+  }
+
+  if (TEST_MODE) {
+    await Promise.all(games.map(async g => await addSampleChatMessage(g)));
   }
 
   await Promise.all(
@@ -89,6 +101,9 @@ async function checkRoundEnded(game: IGame) {
   // Check if next round should start
   if (<Date> game.nextStageStarts < new Date()) {
     console.log('round ended');
+    if (TEST_MODE) {
+      await addSampleScores(game);
+    }
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
   }
@@ -102,7 +117,6 @@ async function completeRound(game: IGame) {
       console.log('players still alive, starting next round');
       // Start the next round
       await nextRound(game);
-      await setNextStageStartsAt(game, 10);
     } else {
       // End the game
       await endGame(game);

@@ -4,7 +4,7 @@ import { Component, OnInit, Input } from '@angular/core';
 @Component({
   selector: 'app-game-status',
   templateUrl: './game-status.component.html',
-  styleUrls: ['./game-status.component.scss'],
+  styleUrls: ['./game-status.component.scss']
 })
 export class GameStatusComponent implements OnInit {
   @Input() game: IGame;
@@ -18,12 +18,12 @@ export class GameStatusComponent implements OnInit {
       if (this.game.nextStageStarts) {
         return {
           title: 'Game is starting',
-          message: 'The game is about to start! Get ready to play.',
+          message: 'The game is about to start! Get ready to play.'
         };
       }
       return {
         title: 'Waiting for players',
-        message: 'More players are needed before the game automatically starts.',
+        message: 'More players are needed before the game automatically starts.'
       };
     }
     if (this.game.status === 'in-progress') {
@@ -35,19 +35,22 @@ export class GameStatusComponent implements OnInit {
     if (this.game.status === 'checking-scores') {
       return {
         title: `Checking scores for round ${this.game.roundNumber}`,
-        message: 'All players scores are now being checked and the top players will progress to the next round shortly.'
+        message:
+          'All players scores are now being checked and the top players will progress to the next round shortly.'
       };
     }
     if (this.game.status === 'round-over') {
       return {
         title: `Round ${this.game.roundNumber} has finished`,
-        message: 'The next round will start shortly. Some players have lost the round. Get ready to play soon!'
+        message:
+          'The next round will start shortly. Not all players have passed the round. Get ready to play again soon!'
       };
     }
-    if (this.game.status = 'complete') {
+    if ((this.game.status = 'complete')) {
       return {
         title: 'The game has finished!',
-        message: this.game.winningUser ? `${this.game.winningUser.username } has won the game`
+        message: this.game.winningUser
+          ? `${this.game.winningUser.username} has won the game`
           : 'No one won this time. All players have either quit or failed to set a score in time.'
       };
     }

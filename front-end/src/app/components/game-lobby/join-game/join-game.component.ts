@@ -22,7 +22,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private settingsService: SettingsService
   ) {
-    this.osuUsername = settingsService.username;
+    this.osuUsername = settingsService.username.getValue();
   }
 
   ngOnInit() {}

@@ -2,7 +2,7 @@
   <div class="ui inverted relaxed list">
     <div class="item" *ngFor="let message of messages">
       <div class="image-container">
-        <img class="ui avatar image" [src]="'//a.ppy.sh/' + message.osuUserId">
+        <img class="ui avatar image" [useSrcset]="true" [lazyLoad]="'//a.ppy.sh/' + message.osuUserId">
       </div>
       <div class="content">
         <div class="header">{{ message.username }}
@@ -14,7 +14,7 @@
       </div>
     </div>
   </div>
-  <form (submit)="sendMessage()" *ngIf="canChat">
+  <form (submit)="sendMessage()" *ngIf="true || canChat">
     <div class="ui fluid action inverted input">
       <input #chatInput autocomplete="off" [disabled]="sendingMessage || !canChat" [ngModel]="messageInput | emojify"
         (ngModelChange)="messageInput=$event" name="messageInput" type="text" [placeholder]="canChat ? 'Chat...' : 'Only joined players can chat'">

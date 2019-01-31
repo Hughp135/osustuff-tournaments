@@ -11,7 +11,7 @@ interface RequestOptions {
   providedIn: 'root'
 })
 export class ApiService {
-  private BASE_URL = '/api/';
+  private BASE_URL = 'http://localhost:4008/';
   private baseHeaders: { [name: string]: string | string[] };
 
   constructor(private http: HttpClient) {

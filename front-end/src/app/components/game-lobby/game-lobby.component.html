@@ -23,15 +23,15 @@
         <app-join-game [game]="game" [inAnotherGame]="inAnotherGame" *ngIf="showJoinGame"></app-join-game>
         <app-game-status [game]="game"></app-game-status>
         <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
-        <app-beatmap-info [game]="game" [inGame]="inGame" *ngIf="showBeatmap"></app-beatmap-info>
-        <app-scores-list [scores]="game.scores" *ngIf="showScores"></app-scores-list>
+        <app-beatmap-info [game]="game" [beatmaps]="beatmaps" [inGame]="inGame" *ngIf="showBeatmap"></app-beatmap-info>
+        <app-scores-list [currentUser]="currentUsername" [game]="game" [scores]="game.scores" [players]="players" *ngIf="showScores"></app-scores-list>
       </div>
       <div class="chat-section">
         <app-chat [messages]="messages" (messageSent)="getMoreMessages()" [canChat]="inGame"></app-chat>
       </div>
     </div>
     <div class="right">
-      <app-user-list [players]="game.players" [winningUser]="game.winningUser && game.winningUser.username"></app-user-list>
+      <app-user-list [currentUser]="currentUsername" [players]="players" [winningUser]="game.winningUser && game.winningUser.username"></app-user-list>
     </div>
   </div>
 

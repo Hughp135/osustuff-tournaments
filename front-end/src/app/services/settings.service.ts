@@ -14,11 +14,11 @@ export class SettingsService {
   public currentGame: BehaviorSubject<CurrentGame> = new BehaviorSubject(
     undefined
   );
-  public username: string;
+  public username: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
   constructor(private apiService: ApiService) {
     this.checkCurrentGame();
-    this.username = localStorage.getItem('username') || undefined;
+    this.username.next(localStorage.getItem('username') || undefined);
   }
 
   public async checkCurrentGame() {
@@ -67,6 +67,6 @@ export class SettingsService {
 
   public setUsername(username: string) {
     localStorage.setItem('username', username);
-    this.username = username;
+    this.username.next(username);
   }
 }

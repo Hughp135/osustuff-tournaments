@@ -80,7 +80,7 @@ export class ChatComponent implements OnInit {
   public windowClick(e) {
     if (e.target.classList.contains('show-emoji-picker')) {
       this.showEmojiPicker = !this.showEmojiPicker;
-    } else if (!e.path.some(el => el.tagName === 'EMOJI-MART')) {
+    } else if (!e.path || !e.path.some(el => el.tagName === 'EMOJI-MART')) {
       this.showEmojiPicker = false;
     }
   }

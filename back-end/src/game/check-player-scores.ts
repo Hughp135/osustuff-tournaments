@@ -2,6 +2,7 @@ import { IRound } from './../models/Round.model';
 import { IGame, IPlayer } from './../models/Game.model';
 import { Score, IScore } from '../models/Score.model';
 import { User } from '../models/User.model';
+import { TEST_MODE } from '..';
 
 // let gameIdsBeingChecked: mongoose.Types.ObjectId[] = [];
 
@@ -40,11 +41,15 @@ export async function checkRoundScores(
   game.status = 'checking-scores';
   await game.save();
 
-  const players = game.players.filter(p => p.alive);
+  if (TEST_MODE) {
+    await new Promise(res => setTimeout(res, 5000));
+  } else {
+    const players = game.players.filter(p => p.alive);
 
-  await Promise.all(
-    players.map(async p => checkPlayerScores(p, round, getUserRecent)),
-  );
+    await Promise.all(
+      players.map(async p => checkPlayerScores(p, round, getUserRecent)),
+    );
+  }
 }
 
 async function checkPlayerScores(

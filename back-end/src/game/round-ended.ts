@@ -20,7 +20,7 @@ export async function roundEnded(game: IGame, round: IRound) {
   );
 
   // Half the number of alive players each round.
-  const numberOfWinners = Math.max(1, Math.floor(scores.length / 2));
+  const numberOfWinners = Math.min(25, Math.floor(scores.length / 2));
   const winningScores = scores.slice(0, numberOfWinners);
 
   game.players.forEach(player => {
@@ -32,7 +32,7 @@ export async function roundEnded(game: IGame, round: IRound) {
   game.status = 'round-over';
 
   const date = new Date();
-  date.setSeconds(date.getSeconds() + 30);
+  date.setSeconds(date.getSeconds() + 60);
   game.nextStageStarts = date;
 
   await game.save();

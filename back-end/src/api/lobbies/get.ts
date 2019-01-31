@@ -39,20 +39,28 @@ export async function getLobby(req: Request, res: Response) {
 
   const scores = await Score.find({
     roundId: game.currentRound,
-  }).select({
-    _id: 0,
-    __v: 0,
-    roundId: 0,
-    updatedAt: 0,
-  }).lean();
+  })
+    .select({
+      _id: 0,
+      __v: 0,
+      roundId: 0,
+      updatedAt: 0,
+    })
+    .sort({ score: -1 })
+    .lean();
 
-  const scoresTransformed = scores.map((score: any) => {
-    const player = game.players.find((p: any) => p.userId.toString() === score.userId.toString());
+  const scoresTransformed = scores.map((score: any, index: number) => {
+    const player = game.players.find(
+      (p: any) => p.userId.toString() === score.userId.toString(),
+    );
     score.username = player.username;
     score.userId = undefined;
+    score.rank = index + 1;
 
     return score;
   });
+
+  game.players = undefined;
 
   const data = {
     ...game,

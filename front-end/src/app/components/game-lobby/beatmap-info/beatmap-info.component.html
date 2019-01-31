@@ -2,7 +2,9 @@
   <div class="ui grid">
     <div class="two column row">
       <div class="left aligned column">
-        <h3 class="ui inverted header">Now playing</h3>
+        <h3 class="ui inverted header">
+          {{ game.status === 'in-progress' ? 'Now Playing' : 'Next beatmap' }}
+        </h3>
       </div>
     </div>
   </div>
@@ -37,7 +39,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="inGame">
+  <!-- <div *ngIf="inGame">
     <div class="ui hidden divider"></div>
     <p>
       Set a score on this map. You can use any rankable mods you like (or no mods), including No Fail.
@@ -48,5 +50,5 @@
       calculated automatically after each round. You may attempt the map as many times as you want
       withing the time limit of the round. Your best score submission will count.
     </p>
-  </div>
+  </div> -->
 </div>

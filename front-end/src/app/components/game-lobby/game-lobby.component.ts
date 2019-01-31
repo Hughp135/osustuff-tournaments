@@ -6,6 +6,7 @@ import {
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
+import * as Visibility from 'visibilityjs';
 
 export interface IPlayer {
   username: string;
@@ -42,12 +43,14 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   public players: any;
   public messages: any;
   public subscriptions: Subscription[] = [];
+  public visibilityTimers: number[] = [];
   public currentGame: CurrentGame;
   public beatmaps: any;
   public showBeatmapList: boolean;
   private fetching = false;
   public timeLeft: string;
   private fetchingMessages = false;
+  public currentUsername: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -63,6 +66,10 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.players = data.players;
     this.messages = data.messages;
 
+    console.log('game', this.game);
+
+    console.log('beatmaps', data.beatmaps);
+
     this.getTimeLeft();
 
     const currentGameSub = this.settingsService.currentGame.subscribe(
@@ -71,32 +78,47 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         await this.fetch();
       }
     );
-    const pollGameSub = interval(5000).subscribe(async () => {
-      // await this.fetch();
-    });
-    const timeLeftSub = interval(1000).subscribe(async () => {
-      if (!this.game.secondsToNextRound) {
-        return;
-      }
 
-      // Take 1 second off time left every second
-      this.game.secondsToNextRound = Math.max(
-        0,
-        this.game.secondsToNextRound - 1
-      );
-      await this.getTimeLeft();
-    });
-    const messagesSub = interval(3000).subscribe(async () => {
-      await this.getMoreMessages();
-    });
+    const currentUsernameSub = this.settingsService.username.subscribe(
+      val => (this.currentUsername = val)
+    );
+    this.visibilityTimers.push(
+      Visibility.every(5000, 10000, async () => {
+        console.log('fetching', Visibility.hidden());
+        await this.fetch();
+      }),
+      Visibility.every(1000, 30000, async () => {
+        if (!this.game.secondsToNextRound) {
+          return;
+        }
 
-    this.subscriptions = [
-      currentGameSub,
-      pollGameSub,
-      timeLeftSub,
-      messagesSub
-    ];
+        // Take 1 second off time left every second
+        this.game.secondsToNextRound = Math.max(
+          0,
+          this.game.secondsToNextRound - 1
+        );
+        await this.getTimeLeft();
+      }),
+      Visibility.every(3000, 30000, async () => {
+        await this.getMoreMessages();
+      })
+    );
+
+    this.subscriptions = [currentGameSub, currentUsernameSub];
   }
+
+  ngOnDestroy() {
+    this.visibilityTimers.forEach(v => Visibility.stop(v));
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+    if (
+      this.currentGame &&
+      this.currentGame.gameId === this.game._id &&
+      this.game.status === 'complete'
+    ) {
+      this.settingsService.clearCurrentGame();
+    }
+  }
+
   private async getTimeLeft() {
     if (!this.game || !this.game.secondsToNextRound) {
       this.timeLeft = `--:--`;
@@ -135,17 +157,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.fetchingMessages = false;
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
-    if (
-      this.currentGame &&
-      this.currentGame.gameId === this.game._id &&
-      this.game.status === 'complete'
-    ) {
-      this.settingsService.clearCurrentGame();
-    }
-  }
-
   private async fetch() {
     if (this.fetching) {
       return;
@@ -153,7 +164,11 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
     this.fetching = true;
     try {
-      this.game = <any>await this.gameService.getLobby(this.game._id);
+      const game = <any>await this.gameService.getLobby(this.game._id);
+      if (game.status !== this.game.status) {
+        this.players = await this.gameService.getLobbyUsers(this.game._id);
+      }
+      this.game = game;
     } catch (e) {
       console.error(e);
     }

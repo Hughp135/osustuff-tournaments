@@ -31,10 +31,12 @@ export async function getUsers(req: Request, res: Response) {
     })
     .lean();
 
-  const players = game.players.map((p: any) => ({
-    ...p,
-    ...users.find((u: any) => u._id.toString() === p.userId.toString()),
-  }));
+  const players = game.players
+    .sort((a: any, b: any) => b.alive - a.alive)
+    .map((p: any) => ({
+      ...p,
+      ...users.find((u: any) => u._id.toString() === p.userId.toString()),
+    }));
 
   res.json(players);
 }

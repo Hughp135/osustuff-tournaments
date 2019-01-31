@@ -9,8 +9,17 @@ import { Component, OnInit, Input } from '@angular/core';
 export class UserListComponent implements OnInit {
   @Input() players: IPlayer[];
   @Input() winningUser: string;
+  @Input() currentUser: string;
 
   constructor() {}
 
   ngOnInit() {}
+
+  get alivePlayers() {
+    return this.players.filter(p => p.alive);
+  }
+
+  get sortedPlayers() {
+    return this.players.sort(p => (p.username === this.currentUser ? -1 : 1));
+  }
 }

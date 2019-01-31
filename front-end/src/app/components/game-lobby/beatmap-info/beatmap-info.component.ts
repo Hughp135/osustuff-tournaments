@@ -8,6 +8,7 @@ import { getTimeComponents } from '../game-lobby.component';
 })
 export class BeatmapInfoComponent implements OnInit {
   @Input() game;
+  @Input() beatmaps;
   @Input() inGame: boolean;
 
   constructor() {}
@@ -28,7 +29,9 @@ export class BeatmapInfoComponent implements OnInit {
   }
 
   get beatmap() {
-    return this.game.round.beatmap;
+    return this.game.status === 'in-progress'
+      ? this.game.round.beatmap
+      : this.beatmaps[this.game.roundNumber];
   }
 
   get starRating() {

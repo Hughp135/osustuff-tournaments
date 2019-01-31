@@ -29,7 +29,7 @@ export class GameLobbyResolver implements Resolve<any> {
         lobby,
         beatmaps,
         players,
-        messages,
+        messages
       };
     } catch (e) {
       setTimeout(() => this.router.navigate(['']), 0);

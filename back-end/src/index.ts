@@ -11,6 +11,7 @@ import { getRecentBeatmaps } from './services/osu-api';
 import { Round } from './models/Round.model';
 import { JoinGameRequest } from './models/JoinGameRequest.model';
 
+export const TEST_MODE = config.get('TEST_MODE');
 winston.add(new winston.transports.File({ filename: 'winston.log' }));
 winston.add(new winston.transports.Console());
 

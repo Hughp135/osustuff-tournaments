@@ -1,27 +1,10 @@
 <div class="ui inverted basic segment no-bg">
+  <h3 *ngIf="myScore">Your best score</h3>
+  <div *ngIf="myScore">
+    <app-scores-table [scores]="[myScore]" [players]="players" [currentUser]="currentUser" [game]="game"></app-scores-table>
+  </div>
   <h3>Round scores</h3>
   <div class="scores-container">
-    <table class="ui inverted table unstackable">
-      <thead>
-        <th>Position</th>
-        <th>Username</th>
-        <th>Score</th>
-        <th>Rank</th>
-        <th>Accuracy</th>
-        <th>Combo / 100 / Miss</th>
-        <th>Mods</th>
-      </thead>
-      <tbody>
-        <tr  *ngFor="let score of scores; let index = index">
-          <td>{{ index +1 }}</td>
-          <td>{{ score.username }}</td>
-          <td>{{ score.score  | number }}</td>
-          <td>{{ score.rank }}</td>
-          <td>{{ score.accuracy }}%</td>
-          <td>{{ score.maxCombo }} / {{ score.count100 }} / {{ score.misses }}</td>
-          <td>{{ getModString(score.mods) }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <app-scores-table [scores]="scores" [players]="players" [currentUser]="currentUser" [game]="game"></app-scores-table>
   </div>
 </div>

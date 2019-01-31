@@ -1,35 +1,74 @@
+:host {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .ui.inverted.segment {
   padding-bottom: 0;
 }
 
 .ui.inverted.list {
   margin: 0;
+  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 
   .item {
     padding: 0.5em 1em;
+    display: flex;
+    flex: 1 0 50px;
 
     &.dead {
-      background: rgba(200, 50, 50, 0.2) !important;
+      background: rgba(200, 50, 50, 0.2);
+
+      &:hover {
+        background: rgba(200, 50, 50, 0.3);
+      }
     }
 
     &.winner {
-      background: rgb(37, 126, 37) !important;
+      background: rgb(37, 126, 37);
+
+      &:hover {
+        background: rgb(45, 150, 45);
+      }
     }
 
     &:hover {
-      &:not(.dead) {
+      &:not(.dead, .winner) {
         background: rgb(46, 46, 46);
       }
     }
 
-    .ui.avatar.image {
-      width: 40px;
-      height: auto;
+    .content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .image-container {
+      flex: 0 0 45px;
+    }
+
+    .ui.image {
+      width: 37px;
+      height: 37px;
+      background: #545454;
+    }
+
+    .header {
+      white-space: nowrap;
     }
 
     .flag {
-      margin-right: 0;
+      margin-right: 5px;
     }
+
   }
 
+}
+
+.my-name {
+  color: rgb(48, 231, 231);
 }

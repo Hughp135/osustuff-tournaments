@@ -1,4 +1,6 @@
 import { Game, IGame } from '../models/Game.model';
+import { addSamplePlayers } from '../test-helpers/add-sample-players';
+import { TEST_MODE } from '..';
 
 let beatmaps: any[];
 
@@ -25,6 +27,11 @@ export async function createGame(
     title: 'osu! Battle Royale',
     beatmaps: roundBeatmaps,
   });
+
+  if (TEST_MODE) {
+    await addSamplePlayers(game);
+  }
+
   return game;
 }
 
@@ -50,6 +57,6 @@ function getBeatmapBetweenStars(min: number, max?: number): any {
   return random;
 }
 
-function arrayRandVal(myArray: any[]) {
+export function arrayRandVal(myArray: any[]) {
   return myArray[Math.floor(Math.random() * myArray.length)];
 }
