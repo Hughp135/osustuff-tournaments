@@ -26,14 +26,17 @@ h5 {
   overflow-y: auto;
   background: #252424;
   padding: 10px;
+  margin-bottom: 0;
 
   .item {
     flex: 1;
     display: block;
+
     .image-container {
       float: left;
       width: 38px;
     }
+
     .content {
       float: right;
       width: calc(100% - 38px);
@@ -45,5 +48,26 @@ h5 {
   input {
     background: #1d1d1d;
     color: rgba(255, 255, 255, 0.9);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}
+
+form {
+  .icon.button {
+    box-shadow: none !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+
+    &:focus {
+      color: inherit;
+    }
+
+    &:hover {
+      background: #627eb9 !important;
+    }
+
+    &:not(:hover) {
+      background: #484848 !important;
+    }
   }
 }

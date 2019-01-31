@@ -14,9 +14,11 @@ export class SettingsService {
   public currentGame: BehaviorSubject<CurrentGame> = new BehaviorSubject(
     undefined
   );
+  public username: string;
 
   constructor(private apiService: ApiService) {
     this.checkCurrentGame();
+    this.username = localStorage.getItem('username') || undefined;
   }
 
   public async checkCurrentGame() {
@@ -61,5 +63,10 @@ export class SettingsService {
 
   private getCurrentGame(): CurrentGame | null {
     return JSON.parse(localStorage.getItem('currentGame') || 'null');
+  }
+
+  public setUsername(username: string) {
+    localStorage.setItem('username', username);
+    this.username = username;
   }
 }

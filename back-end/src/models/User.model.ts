@@ -12,7 +12,7 @@ export interface IUser extends mongoose.Document {
 const UserSchema = new mongoose.Schema(
   {
     username: { type: String, required: true, index: true },
-    osuUserId: { type: Number, required: true },
+    osuUserId: { type: Number, required: true, index: true },
     currentGame: { type: mongoose.Schema.Types.ObjectId },
     ppRank: { type: Number, required: true },
     countryRank: { type: Number, required: true },

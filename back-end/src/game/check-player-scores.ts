@@ -7,7 +7,6 @@ import { User } from '../models/User.model';
 
 // export async function checkPlayerScores(game: IGame, round: IRound) {
 //   throw new Error('unused');
-//   // console.log('checking scores');
 //   // await game.save();
 
 //   // gameIdsBeingChecked.push(game._id);
@@ -22,7 +21,6 @@ import { User } from '../models/User.model';
 
 // export function stopCheckingScores(game: IGame) {
 //   if (shouldCheckScore(game)) {
-//     console.log('stopped checking scores', game._id);
 //     gameIdsBeingChecked = gameIdsBeingChecked.filter(
 //       g => g.toString() !== game._id.toString(),
 //     );
@@ -44,10 +42,16 @@ export async function checkRoundScores(
 
   const players = game.players.filter(p => p.alive);
 
-  await Promise.all(players.map(async p => checkPlayerScores(p, round, getUserRecent)));
+  await Promise.all(
+    players.map(async p => checkPlayerScores(p, round, getUserRecent)),
+  );
 }
 
-async function checkPlayerScores(player: IPlayer, round: IRound, getUserRecent: any) {
+async function checkPlayerScores(
+  player: IPlayer,
+  round: IRound,
+  getUserRecent: any,
+) {
   const scores = await getUserRecent(player.username);
   const existingScores = await Score.find({
     roundId: round._id,
@@ -62,9 +66,12 @@ async function checkPlayerScores(player: IPlayer, round: IRound, getUserRecent: 
       const count100 = parseInt(score.count100, 10);
       const count300 = parseInt(score.count300, 10);
       const misses = parseInt(score.countmiss, 10);
-      const accuracy =
-        parseFloat((100 * (50 * count50 + 100 * count100 + 300 * count300) /
-        (300 * (misses + count50 + count100 + count300))).toFixed(2));
+      const accuracy = parseFloat(
+        (
+          (100 * (50 * count50 + 100 * count100 + 300 * count300)) /
+          (300 * (misses + count50 + count100 + count300))
+        ).toFixed(2),
+      );
 
       await Score.create({
         roundId: round._id,
@@ -83,7 +90,11 @@ async function checkPlayerScores(player: IPlayer, round: IRound, getUserRecent: 
   await Promise.all(promises);
 }
 
-function scoreValidAndUnique(score: any, round: IRound, existingScores: IScore[]) {
+function scoreValidAndUnique(
+  score: any,
+  round: IRound,
+  existingScores: IScore[],
+) {
   const correctBeatmap = score.beatmap_id === round.beatmap.beatmap_id;
   const correctDate = new Date(score.date) > (<any> round).createdAt;
 

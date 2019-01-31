@@ -1,5 +1,8 @@
 import { GameService } from './../../game.service';
-import { SettingsService, CurrentGame } from './../../services/settings.service';
+import {
+  SettingsService,
+  CurrentGame
+} from './../../services/settings.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
@@ -32,7 +35,7 @@ export interface IGame {
 @Component({
   selector: 'app-game-lobby',
   templateUrl: './game-lobby.component.html',
-  styleUrls: ['./game-lobby.component.scss'],
+  styleUrls: ['./game-lobby.component.scss']
 })
 export class GameLobbyComponent implements OnInit, OnDestroy {
   public game: IGame;
@@ -49,7 +52,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private settingsService: SettingsService,
-    private gameService: GameService,
+    private gameService: GameService
   ) {}
 
   ngOnInit() {
@@ -62,32 +65,46 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
     this.getTimeLeft();
 
-    const currentGameSub = this.settingsService.currentGame.subscribe(async val => {
-      this.currentGame = val;
-      await this.fetch();
-    });
+    const currentGameSub = this.settingsService.currentGame.subscribe(
+      async val => {
+        this.currentGame = val;
+        await this.fetch();
+      }
+    );
     const pollGameSub = interval(5000).subscribe(async () => {
-      await this.fetch();
+      // await this.fetch();
     });
-    const timeLeftSub = interval(1000).subscribe(() => {
+    const timeLeftSub = interval(1000).subscribe(async () => {
       if (!this.game.secondsToNextRound) {
         return;
       }
 
       // Take 1 second off time left every second
-      this.game.secondsToNextRound = Math.max(0, this.game.secondsToNextRound - 1);
-      this.getTimeLeft();
+      this.game.secondsToNextRound = Math.max(
+        0,
+        this.game.secondsToNextRound - 1
+      );
+      await this.getTimeLeft();
     });
     const messagesSub = interval(3000).subscribe(async () => {
       await this.getMoreMessages();
     });
 
-    this.subscriptions = [currentGameSub, pollGameSub, timeLeftSub, messagesSub];
+    this.subscriptions = [
+      currentGameSub,
+      pollGameSub,
+      timeLeftSub,
+      messagesSub
+    ];
   }
-  private getTimeLeft() {
-    if (!this.game.secondsToNextRound) {
+  private async getTimeLeft() {
+    if (!this.game || !this.game.secondsToNextRound) {
       this.timeLeft = `--:--`;
       return;
+    }
+
+    if (this.game.secondsToNextRound <= 0) {
+      await this.fetch();
     }
 
     const date = new Date();
@@ -107,7 +124,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     try {
       const newMessages = await this.gameService.getLobbyMessages(
         this.game._id,
-        lastMessage && lastMessage._id,
+        lastMessage && lastMessage._id
       );
 
       this.messages = newMessages.concat(this.messages);
@@ -120,6 +137,13 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+    if (
+      this.currentGame &&
+      this.currentGame.gameId === this.game._id &&
+      this.game.status === 'complete'
+    ) {
+      this.settingsService.clearCurrentGame();
+    }
   }
 
   private async fetch() {
@@ -172,6 +196,6 @@ export function getTimeComponents(t: number) {
     days: days.toString(),
     hours: hours.toString().padStart(2, '0'),
     minutes: minutes.toString().padStart(2, '0'),
-    seconds: seconds.toString().padStart(2, '0'),
+    seconds: seconds.toString().padStart(2, '0')
   };
 }

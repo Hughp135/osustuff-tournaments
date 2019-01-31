@@ -21,7 +21,9 @@ export class JoinGameComponent implements OnInit, OnDestroy {
   constructor(
     private apiService: ApiService,
     private settingsService: SettingsService
-  ) {}
+  ) {
+    this.osuUsername = settingsService.username;
+  }
 
   ngOnInit() {}
 
@@ -41,13 +43,14 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     this.error = undefined;
 
     try {
-      const { requestId }: any = await this.apiService
+      const { requestId, username }: any = await this.apiService
         .post(`lobbies/${this.game._id}/join`, {
           username: this.osuUsername
         })
         .toPromise();
       this.requestedAt = new Date();
       this.joinRequestId = requestId;
+      this.settingsService.setUsername(username);
       await this.checkVerified();
     } catch (e) {
       if (e.status === 404) {
@@ -65,15 +68,35 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
+  public async leaveGame() {
+    const currentGame = this.settingsService.currentGame.getValue();
+    if (!currentGame) {
+      this.joinRequestId = undefined;
+      return;
+    }
+
+    try {
+      await this.apiService
+        .post(`lobbies/${this.game._id}/leave`, {
+          requestId: currentGame.requestId
+        })
+        .toPromise();
+      this.joinRequestId = undefined;
+      this.settingsService.clearCurrentGame();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   private async checkVerified() {
-    const sixtySeconds = new Date();
-    sixtySeconds.setSeconds(sixtySeconds.getSeconds() - 60);
+    const timeOutDate = new Date();
+    timeOutDate.setSeconds(timeOutDate.getSeconds() - 65);
 
     if (!this.joinRequestId) {
       return;
     }
 
-    if (this.requestedAt < sixtySeconds) {
+    if (this.requestedAt < timeOutDate) {
       this.joinRequestId = undefined;
       return;
     }
@@ -90,7 +113,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
       } else {
         setTimeout(() => {
           this.checkVerified();
-        }, 1000);
+        }, 5000);
       }
     } catch (e) {
       console.error(e);

@@ -91,7 +91,6 @@ async function checkRoundEnded(game: IGame) {
     console.log('round ended');
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
-    await setNextStageStartsAt(game, 30);
   }
 }
 
@@ -114,7 +113,6 @@ async function completeRound(game: IGame) {
 async function setNextStageStartsAt(game: IGame, seconds: number) {
   const date = new Date();
   date.setSeconds(date.getSeconds() + seconds);
-  console.log('next round starts at', date);
   // Update game status and set time to next stage
   game.nextStageStarts = date;
   await game.save();

@@ -1,4 +1,5 @@
-/* You can add global styles to this file, and also import other style files */
+@import "~@ctrl/ngx-emoji-mart/picker";
+
 body {
   margin: 0;
   padding: 0;
@@ -16,4 +17,16 @@ body {
 .ui.inverted.segment.no-bg {
   border-radius: 0 !important;
   background: none !important;
+}
+
+.text-muted {
+  margin-left: 5px;
+  color: grey !important;
+  font-size: 0.9em;
+}
+
+.emoji-mart {
+  position: absolute;
+  bottom: 25px;
+  right: 0px;
 }

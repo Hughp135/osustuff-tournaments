@@ -1,7 +1,10 @@
 <div class="ui inverted segment">
   <div *ngIf="canJoin">
     <div *ngIf="inAnotherGame">
-      <p>You are still in another game, so you cannot join this one yet.</p>
+      <p>You are in another game, so you must leave before you can join.</p>
+      <div class="ui tiny orange button" (click)="leaveGame()">
+        Leave other game
+      </div>
     </div>
     <div *ngIf="!inAnotherGame">
       <div *ngIf="!joinRequestId">
@@ -10,14 +13,13 @@
           Enter your osu! username to join this game!
         </h5>
 
-        <p *ngIf="error" class="error">{{ error }}</p>
-
         <div class="ui right floated small action input">
           <input type="text" placeholder="osu! username" [(ngModel)]="osuUsername" (keydown)="onKeyDown($event)">
-          <button class="ui primary button" [disabled]="osuUsername.length < 3 || requestingJoin" [class.loading]="requestingJoin"
-            (click)="joinGame()">Join</button>
+          <button class="ui primary button" [disabled]="(osuUsername && osuUsername.length < 3) || requestingJoin"
+            [class.loading]="requestingJoin" (click)="joinGame()">Join</button>
         </div>
 
+        <p *ngIf="error" class="error">{{ error }}</p>
       </div>
       <div *ngIf="joinRequestId">
         <p>

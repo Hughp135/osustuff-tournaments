@@ -27,30 +27,28 @@ export async function joinGame(req: Request, res: Response) {
   expiryDate.setSeconds(expiryDate.getSeconds() + 60);
 
   await JoinGameRequest.deleteMany({
-    username: req.body.username,
+    username: osuUser.username,
   });
 
   const joinRequest = await JoinGameRequest.create({
-    username: req.body.username,
+    username: osuUser.username,
     gameId: game._id,
     expiresAt: expiryDate,
   });
 
   res.json({
     requestId: joinRequest._id,
+    username: osuUser.username,
   });
 
-  await updateOrCreateUser(req.body.username, osuUser);
+  await updateOrCreateUser(osuUser);
 }
 
-async function updateOrCreateUser(
-  username: string,
-  osuUser: any,
-): Promise<IUser> {
-  const found = await User.findOne({ username });
+async function updateOrCreateUser(osuUser: any): Promise<IUser> {
+  const osuUserId = parseInt(osuUser.user_id, 10);
   const ppRank = parseInt(osuUser.pp_rank, 10);
   const countryRank = parseInt(osuUser.pp_country_rank, 10);
-  const osuUserId = parseInt(osuUser.user_id, 10);
+  const found = await User.findOne({ osuUserId });
 
   if (found) {
     found.ppRank = ppRank;
@@ -62,7 +60,7 @@ async function updateOrCreateUser(
   }
 
   return await User.create({
-    username,
+    username: osuUser.username,
     osuUserId,
     ppRank,
     countryRank,

@@ -17,6 +17,8 @@ import { JoinGameComponent } from './components/game-lobby/join-game/join-game.c
 import { SettingsService } from './services/settings.service';
 import { BeatmapListComponent } from './components/game-lobby/beatmap-list/beatmap-list.component';
 import { GameStatusComponent } from './components/game-lobby/game-status/game-status.component';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojifyModule } from 'angular-emojify';
 
 @NgModule({
   declarations: [
@@ -30,10 +32,17 @@ import { GameStatusComponent } from './components/game-lobby/game-status/game-st
     LobbiesListComponent,
     JoinGameComponent,
     BeatmapListComponent,
-    GameStatusComponent,
+    GameStatusComponent
   ],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    PickerModule,
+    EmojifyModule
+  ],
   providers: [ApiService, SettingsService],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -23,7 +23,7 @@
         <app-join-game [game]="game" [inAnotherGame]="inAnotherGame" *ngIf="showJoinGame"></app-join-game>
         <app-game-status [game]="game"></app-game-status>
         <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
-        <app-beatmap-info [game]="game" *ngIf="showBeatmap"></app-beatmap-info>
+        <app-beatmap-info [game]="game" [inGame]="inGame" *ngIf="showBeatmap"></app-beatmap-info>
         <app-scores-list [scores]="game.scores" *ngIf="showScores"></app-scores-list>
       </div>
       <div class="chat-section">

@@ -17,10 +17,6 @@ export async function checkVerified(req: Request, res: Response) {
     return res.status(404).end();
   }
 
-  if (game.status === 'complete') {
-    return res.json({ verified: false });
-  }
-
   if (verifyRequest.verified) {
     return res.json({ verified: true });
   }

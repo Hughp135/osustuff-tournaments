@@ -15,9 +15,12 @@ export async function nextRound(game: IGame) {
   game.currentRound = round._id;
   game.roundNumber = nextRoundNumber;
 
-  console.log('starting round', game.roundNumber, 'length', beatmap.total_length);
-
-  console.log(parseFloat(beatmap.total_length));
+  console.log(
+    'starting round',
+    game.roundNumber,
+    'length',
+    beatmap.total_length,
+  );
 
   // Set time that round should last
   const date = new Date();

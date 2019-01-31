@@ -10,14 +10,13 @@
     <img class="ui mini image" [src]="'//a.ppy.sh/' + player.osuUserId" alt="">
     <div class="content">
       <div class="header">
-        {{ player.username }} {{ player.alive ? '' : '(Lost)' }} {{ winningUser === player.username ? '(Winner)' : ''}}
+        <i class="fitted flag" [ngClass]="player.country.toLowerCase()"></i>
+        {{ player.username }}
+        <span *ngIf="!player.alive" class="text-muted">(Lost)</span>
+        <span *ngIf="winningUser === player.username" class="text-muted">(Winner)</span>
       </div>
       <div class="description">
-        <i class="fitted teal globe icon"></i>
-        #{{ player.ppRank }}
-        &nbsp;
-        <i class="fitted flag" [ngClass]="player.country.toLowerCase()"></i>
-        #{{ player.countryRank }}
+        # {{ player.ppRank | number }}
       </div>
     </div>
   </a>

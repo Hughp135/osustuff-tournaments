@@ -37,14 +37,16 @@
       </div>
     </div>
   </div>
-  <div>
+  <div *ngIf="inGame">
     <div class="ui hidden divider"></div>
     <p>
-      Set a score on this map with any rankable mod (even NF is acceptable).
+      Set a score on this map. You can use any rankable mods you like (or no mods), including No Fail.
+      Your total score relative to other players will decide if you progress to the next round.
     </p>
     <p>
       Once you have set a score, you can sit back and wait for the round to end. Scores will be
-      calculated automatically after each round.
+      calculated automatically after each round. You may attempt the map as many times as you want
+      withing the time limit of the round. Your best score submission will count.
     </p>
   </div>
 </div>

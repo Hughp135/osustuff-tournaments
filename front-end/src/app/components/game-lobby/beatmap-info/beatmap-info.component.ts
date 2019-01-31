@@ -8,6 +8,7 @@ import { getTimeComponents } from '../game-lobby.component';
 })
 export class BeatmapInfoComponent implements OnInit {
   @Input() game;
+  @Input() inGame: boolean;
 
   constructor() {}
 

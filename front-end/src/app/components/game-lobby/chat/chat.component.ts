@@ -1,5 +1,12 @@
 import { GameService } from './../../../game.service';
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild
+} from '@angular/core';
 import { SettingsService } from 'src/app/services/settings.service';
 
 export interface Message {
@@ -24,14 +31,14 @@ export class ChatComponent implements OnInit {
 
   public messageInput: string;
   public sendingMessage = false;
+  public showEmojiPicker = false;
 
   constructor(
     private gameService: GameService,
-    private settingsService: SettingsService,
-  ) { }
+    private settingsService: SettingsService
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   public async sendMessage() {
     if (!this.messageInput) {
@@ -42,7 +49,11 @@ export class ChatComponent implements OnInit {
 
     try {
       const currentGame = this.settingsService.currentGame.getValue();
-      await this.gameService.sendMessage(currentGame.gameId, currentGame.requestId, this.messageInput);
+      await this.gameService.sendMessage(
+        currentGame.gameId,
+        currentGame.requestId,
+        this.messageInput
+      );
       this.messageInput = undefined;
       this.messageSent.next();
     } catch (e) {
@@ -50,8 +61,27 @@ export class ChatComponent implements OnInit {
     }
 
     this.sendingMessage = false;
+    this.focusChatInput();
+  }
+
+  private focusChatInput() {
     setTimeout(() => {
       this.chatInputEl.nativeElement.focus();
     }, 100);
+  }
+
+  public addEmoji(e) {
+    console.log(this.messageInput);
+    this.messageInput = (this.messageInput || '') + e.emoji.native;
+    this.showEmojiPicker = false;
+    this.focusChatInput();
+  }
+
+  public windowClick(e) {
+    if (e.target.classList.contains('show-emoji-picker')) {
+      this.showEmojiPicker = !this.showEmojiPicker;
+    } else if (!e.path.some(el => el.tagName === 'EMOJI-MART')) {
+      this.showEmojiPicker = false;
+    }
   }
 }

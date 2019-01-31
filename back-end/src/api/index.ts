@@ -11,6 +11,7 @@ import { getLobbyBeatmaps } from './lobbies/beatmaps';
 import { getUsers } from './lobbies/get-users';
 import { sendMessage } from './lobbies/messages/post';
 import { getMessages } from './lobbies/messages/get';
+import { leaveGame } from './lobbies/leave-game';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -20,6 +21,7 @@ app.use(bodyParser.json());
 app.get('', async (req, res) => res.send('Hello world!'));
 app.get('/lobbies', async (req, res) => res.json(await getLobbies()));
 app.post('/lobbies/:id/join', joinGame);
+app.post('/lobbies/:id/leave', leaveGame);
 app.get('/lobbies/:id/beatmaps', getLobbyBeatmaps);
 app.get('/lobbies/:id/users', getUsers);
 app.get('/lobbies/:id/messages', getMessages);

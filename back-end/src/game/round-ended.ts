@@ -31,5 +31,9 @@ export async function roundEnded(game: IGame, round: IRound) {
   });
   game.status = 'round-over';
 
+  const date = new Date();
+  date.setSeconds(date.getSeconds() + 30);
+  game.nextStageStarts = date;
+
   await game.save();
 }
