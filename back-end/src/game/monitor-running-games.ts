@@ -8,10 +8,11 @@ import { nextRound } from './next-round';
 import { endGame } from './end-game';
 import { createGame } from './create-game';
 import { getUserRecent, getRecentBeatmaps } from '../services/osu-api';
-import { TEST_MODE } from '..';
+import config from 'config';
 import { addSampleScores } from '../test-helpers/add-sample-scores';
 import { addSampleChatMessage } from '../test-helpers/add-chat-message';
 
+const TEST_MODE = config.get('TEST_MODE');
 export let isMonitoring = false;
 
 export async function startMonitoring() {

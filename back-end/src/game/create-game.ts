@@ -1,6 +1,8 @@
 import { Game, IGame } from '../models/Game.model';
 import { addSamplePlayers } from '../test-helpers/add-sample-players';
-import { TEST_MODE } from '..';
+import config from 'config';
+
+const TEST_MODE = config.get('TEST_MODE');
 
 let beatmaps: any[];
 

@@ -10,6 +10,7 @@ export class BeatmapInfoComponent implements OnInit {
   @Input() game;
   @Input() beatmaps;
   @Input() inGame: boolean;
+  @Input() isAlive: boolean;
 
   constructor() {}
 

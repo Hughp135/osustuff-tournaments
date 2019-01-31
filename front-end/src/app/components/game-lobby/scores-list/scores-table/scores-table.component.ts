@@ -20,10 +20,9 @@ export class ScoresTableComponent implements OnInit {
   public scorePassed(score: any) {
     const player = this.players.find(p => p.username === score.username);
     if (this.game.status !== 'round-over') {
-      console.log('status not round-over', this.game.status);
       return;
     }
-    console.log('player', player, 'alive', player.alive);
+
     if (player && player.alive) {
       return 'alive';
     } else {

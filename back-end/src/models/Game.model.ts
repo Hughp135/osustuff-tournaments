@@ -10,6 +10,7 @@ export interface IPlayer {
   ppRank: number;
   countryRank: number;
   country: string;
+  gameRank?: number;
 }
 
 export interface IGame extends mongoose.Document {
@@ -40,6 +41,7 @@ const GameSchema = new mongoose.Schema(
           username: { type: String, required: true },
           alive: { type: Boolean, required: true, default: true },
           roundLostOn: { type: Number },
+          gameRank: { type: Number },
           ppRank: { type: Number, required: true },
           countryRank: { type: Number, required: true },
           country: { type: String, required: true },

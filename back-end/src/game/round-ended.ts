@@ -1,4 +1,4 @@
-import { IGame } from './../models/Game.model';
+import { IGame, IPlayer } from './../models/Game.model';
 import { IRound } from './../models/Round.model';
 import { Score, IScore } from '../models/Score.model';
 
@@ -29,11 +29,43 @@ export async function roundEnded(game: IGame, round: IRound) {
     );
     player.roundLostOn = player.alive ? undefined : <number> game.roundNumber;
   });
-  game.status = 'round-over';
 
+  const deadPlayersNoScore = game.players.filter(
+    p =>
+      !p.alive &&
+      !p.gameRank &&
+      !scores.some(s => s.userId.toString() === p.userId.toString()),
+  );
+
+  deadPlayersNoScore.forEach(player => {
+    const lowestRank = getLowestRank(game);
+    player.gameRank = lowestRank - 1;
+    console.log('player new rank', player.username, player.gameRank, 'previousLowest', lowestRank);
+  });
+
+  const losingScores = scores.slice(numberOfWinners);
+  console.log('losingScores', losingScores.length);
+  losingScores.reverse().forEach(score => {
+    const player = <IPlayer> (
+      game.players.find(p => p.userId.toString() === score.userId.toString())
+    );
+    const lowestRank = getLowestRank(game);
+    player.gameRank = lowestRank - 1;
+    console.log('player new rank', player.username, player.gameRank, 'previousLowest', lowestRank);
+  });
+
+  game.status = 'round-over';
   const date = new Date();
   date.setSeconds(date.getSeconds() + 60);
   game.nextStageStarts = date;
 
   await game.save();
+}
+
+function getLowestRank(game: IGame): number {
+  const [lowestRank] = game.players
+    .filter(p => !!p.gameRank)
+    .sort((a, b) => <number> a.gameRank - <number> b.gameRank);
+
+  return lowestRank ? <number> lowestRank.gameRank : game.players.length + 1;
 }

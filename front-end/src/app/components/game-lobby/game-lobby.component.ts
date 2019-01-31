@@ -84,7 +84,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     );
     this.visibilityTimers.push(
       Visibility.every(5000, 10000, async () => {
-        console.log('fetching', Visibility.hidden());
         await this.fetch();
       }),
       Visibility.every(1000, 30000, async () => {
@@ -197,6 +196,14 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
   get showBeatmaps() {
     return this.game.status === 'new' || this.showBeatmapList;
+  }
+
+  get isAlive() {
+    const me = this.players.find(p => p.username === this.currentUsername);
+
+    if (me) {
+      return me.alive;
+    }
   }
 }
 

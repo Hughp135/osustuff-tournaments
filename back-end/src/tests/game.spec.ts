@@ -43,7 +43,7 @@ describe('game', () => {
       .to.have.property('status')
       .equal('new');
   });
-  it.only('goes to next round', async () => {
+  it('goes to next round', async () => {
     const game = await createGame(getRecentBeatmaps);
 
     await nextRound(game);

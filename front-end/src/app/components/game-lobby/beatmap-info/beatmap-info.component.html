@@ -3,7 +3,8 @@
     <div class="two column row">
       <div class="left aligned column">
         <h3 class="ui inverted header">
-          {{ game.status === 'in-progress' ? 'Now Playing' : 'Next beatmap' }}
+          {{ game.status === 'in-progress' ? 'Now Playing' :
+          'Next beatmap' }}
         </h3>
       </div>
     </div>
@@ -39,16 +40,29 @@
       </div>
     </div>
   </div>
-  <!-- <div *ngIf="inGame">
-    <div class="ui hidden divider"></div>
-    <p>
-      Set a score on this map. You can use any rankable mods you like (or no mods), including No Fail.
-      Your total score relative to other players will decide if you progress to the next round.
-    </p>
-    <p>
-      Once you have set a score, you can sit back and wait for the round to end. Scores will be
-      calculated automatically after each round. You may attempt the map as many times as you want
-      withing the time limit of the round. Your best score submission will count.
-    </p>
-  </div> -->
+  <div class="ui placeholder inverted segment" *ngIf="game.status === 'in-progress' && isAlive">
+    <div class="ui icon header">
+      <i class="bullhorn icon"></i>
+      Round has started! Play the above map now.
+    </div>
+    <div class="center aligned">
+      <p align="center">
+        You can play with any rankable mods (including No Fail).
+        <br>
+        Try the map as many times as you want within the time limit, only your highest score will count.
+        <br>
+        Make sure you play the correct difficulty!
+      </p>
+      <div class="ui primary button">
+        Check score
+      </div>
+    </div>
+  </div>
+  <div class="ui inverted center aligned padded orange segment" *ngIf="inGame && game.status === 'in-progress' && !isAlive">
+      <div class="ui icon header">
+        <i class="crosshairs icon"></i>
+        You have been eliminated. Better luck next time!
+      </div>
+      <p>You may continue watching this game or join another one.</p>
+    </div>
 </div>

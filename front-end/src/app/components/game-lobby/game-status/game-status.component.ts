@@ -34,7 +34,7 @@ export class GameStatusComponent implements OnInit {
     }
     if (this.game.status === 'checking-scores') {
       return {
-        title: `Checking scores for round ${this.game.roundNumber}`,
+        title: `Checking scores...`,
         message:
           'All players scores are now being checked and the top players will progress to the next round shortly.'
       };

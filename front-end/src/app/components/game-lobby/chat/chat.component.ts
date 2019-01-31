@@ -15,6 +15,7 @@ export interface Message {
   _id: string;
   message: string;
   timeAgo: string;
+  createdAt: Date;
 }
 
 @Component({
