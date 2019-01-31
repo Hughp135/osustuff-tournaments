@@ -33,8 +33,6 @@ export async function getLobby(req: Request, res: Response) {
     ? (game.nextStageStarts.getTime() - Date.now()) / 1000
     : undefined;
 
-  console.log(secondsToNextRound);
-
   const round = await Round.findById(game.currentRound)
     .select({ beatmap: 1 })
     .lean();

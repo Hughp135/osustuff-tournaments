@@ -85,7 +85,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.subscriptions = [currentGameSub, pollGameSub, timeLeftSub, messagesSub];
   }
   private getTimeLeft() {
-    console.log(this.game);
     if (!this.game.secondsToNextRound) {
       this.timeLeft = `--:--`;
       return;
@@ -135,7 +134,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       console.error(e);
     }
     this.fetching = false;
-    console.log(this.game);
   }
 
   get showBeatmap() {

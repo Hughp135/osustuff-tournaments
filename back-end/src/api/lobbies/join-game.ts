@@ -16,7 +16,7 @@ export async function joinGame(req: Request, res: Response) {
   }
 
   const osuUser = await getUser(req.body.username);
-  console.log('osuUser', osuUser);
+
   if (!osuUser) {
     return res
       .status(404)

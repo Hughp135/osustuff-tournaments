@@ -18,6 +18,7 @@ export interface Message {
 export class ChatComponent implements OnInit {
   @Input() messages: Message[];
   @Output() messageSent: EventEmitter<undefined> = new EventEmitter();
+  @Input() canChat: boolean;
 
   @ViewChild('chatInput') chatInputEl;
 
@@ -48,7 +49,6 @@ export class ChatComponent implements OnInit {
       console.error(e);
     }
 
-    console.log(this.chatInputEl);
     this.sendingMessage = false;
     setTimeout(() => {
       this.chatInputEl.nativeElement.focus();

@@ -12,10 +12,10 @@
       </div>
     </div>
   </div>
-  <form (submit)="sendMessage()">
+  <form (submit)="sendMessage()" *ngIf="canChat">
     <div class="ui fluid icon inverted input">
-      <input #chatInput autocomplete="off" [disabled]="sendingMessage" [(ngModel)]="messageInput" name="messageInput" type="text"
-        placeholder="Chat...">
+      <input #chatInput autocomplete="off" [disabled]="sendingMessage || !canChat" [(ngModel)]="messageInput" name="messageInput" type="text"
+        [placeholder]="canChat ? 'Chat...' : 'Only joined players can chat'">
       <i class="grey comment outline icon"></i>
     </div>
   </form>

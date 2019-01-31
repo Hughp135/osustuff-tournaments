@@ -29,9 +29,7 @@ export class GameStatusComponent implements OnInit {
     if (this.game.status === 'in-progress') {
       return {
         title: `Round ${this.game.roundNumber} has started`,
-        message: `All players must now set a score on the map. Make sure you play the correct difficulty!
-
-You can pick any mods to play (as long as they are rankable mods - e.g. no ScoreV2 or Auto)`
+        message: `All players must now set a score on the map. Make sure you play the correct difficulty!`
       };
     }
     if (this.game.status === 'checking-scores') {
@@ -50,7 +48,7 @@ You can pick any mods to play (as long as they are rankable mods - e.g. no Score
       return {
         title: 'The game has finished!',
         message: this.game.winningUser ? `${this.game.winningUser.username } has won the game`
-          : 'No one one the game this time. This is because all remaining players quit or failed to set a score.'
+          : 'No one won this time. All players have either quit or failed to set a score in time.'
       };
     }
   }

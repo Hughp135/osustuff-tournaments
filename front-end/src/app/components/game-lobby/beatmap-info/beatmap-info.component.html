@@ -17,21 +17,34 @@
                   {{ beatmap.artist }} - {{ beatmap.title }}
                 </h3>
                 <p>
-                  <i class="bullseye icon"></i> {{ beatmap.version }}
+                  <i class="bullseye icon"></i> {{
+                  beatmap.version }}
                 </p>
               </a>
             </div>
             <div class="eight wide right aligned column">
               <p>
-                Star Difficulty: <i class="yellow star outline icon"></i> {{ starRating }}
+                Star Difficulty: <i class="yellow star outline icon"></i>
+                {{ starRating }}
               </p>
               <p>
-                Map Length: <i class=" stopwatch icon"></i> {{ duration }}
+                Map Length: <i class=" stopwatch icon"></i> {{
+                duration }}
               </p>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+  <div>
+    <div class="ui hidden divider"></div>
+    <p>
+      Set a score on this map with any rankable mod (even NF is acceptable).
+    </p>
+    <p>
+      Once you have set a score, you can sit back and wait for the round to end. Scores will be
+      calculated automatically after each round.
+    </p>
   </div>
 </div>

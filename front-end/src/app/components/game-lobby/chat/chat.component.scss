@@ -1,17 +1,31 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
 h5 {
   margin: 0;
 }
 
+
+:host {
+  flex: 1;
+}
+
 .ui.inverted.segment {
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 .ui.inverted.list {
-  flex: 1 1 185px;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column-reverse;
+  justify-content: flex-start;
   overflow-y: auto;
+  background: #252424;
+  padding: 10px;
 
   .item {
     flex: 1;

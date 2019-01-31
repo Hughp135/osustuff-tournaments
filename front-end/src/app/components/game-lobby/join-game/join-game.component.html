@@ -1,7 +1,7 @@
 <div class="ui inverted segment">
   <div *ngIf="canJoin">
     <div *ngIf="inAnotherGame">
-      <p>You are currently in another game. Please leave that game first before joining this one.</p>
+      <p>You are still in another game, so you cannot join this one yet.</p>
     </div>
     <div *ngIf="!inAnotherGame">
       <div *ngIf="!joinRequestId">

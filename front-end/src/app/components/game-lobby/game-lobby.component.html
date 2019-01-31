@@ -27,7 +27,7 @@
         <app-scores-list [scores]="game.scores" *ngIf="showScores"></app-scores-list>
       </div>
       <div class="chat-section">
-        <app-chat [messages]="messages" (messageSent)="getMoreMessages()"></app-chat>
+        <app-chat [messages]="messages" (messageSent)="getMoreMessages()" [canChat]="inGame"></app-chat>
       </div>
     </div>
     <div class="right">
