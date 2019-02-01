@@ -16,33 +16,21 @@ export async function calculatePlayersElo(game: { players: IPlayer[] }) {
 
   await Promise.all(
     rankedPlayers.map(async player1 => {
+      let eloChange = 0;
       const otherPlayers = rankedPlayers.filter(p => p.osuUserId !== player1.osuUserId);
 
       await Promise.all(
         otherPlayers.map(async player2 => {
           const playerWin = <number> player1.gameRank < <number> player2.gameRank;
-          console.log(
-            player1.username,
-            player1.gameRank,
-            player2.username,
-            player2.gameRank,
-            'win',
-            playerWin,
-          );
-
-          const { playerRating, opponentRating } = eloRating.calculate(
+          const { playerRating } = eloRating.calculate(
             player1.user.elo,
             player2.user.elo,
             playerWin,
-            5,
           );
-
-          player1.user.elo = playerRating;
-          player2.user.elo = opponentRating;
-
-          // console.log('1', player1.user.elo, '2', player2.user.elo);
+          eloChange += playerRating - player1.user.elo;
         }),
       );
+      player1.user.elo += eloChange;
     }),
   );
 

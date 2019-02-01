@@ -17,6 +17,7 @@ export async function endGame(game: IGame) {
       userId: winner.userId,
       username: winner.username,
     };
+    winner.gameRank = 1;
   } else {
     console.log('game ended, no one won');
     // No one won.

@@ -13,9 +13,12 @@ chai.use(sinonChai);
 
 describe.only('check-player-scores', () => {
   before(async () => {
-    await mongoose.connect('mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test', {
-      useNewUrlParser: true,
-    });
+    await mongoose.connect(
+      'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
+      {
+        useNewUrlParser: true,
+      },
+    );
   });
   after(async () => {
     await mongoose.disconnect();
@@ -25,22 +28,23 @@ describe.only('check-player-scores', () => {
     await User.deleteMany({});
   });
   it('ranks elo', async () => {
-    for (let i = 0; i < 2; i++) {
-      const players = await createPlayers(5);
-      await calculatePlayersElo({ players });
-      const users = await User.find().lean();
-      console.log(users.map((u: any) => u.elo));
+    const players = await createPlayers(10);
+    for (let i = 0; i < 5; i++) {
+      await calculatePlayersElo({
+        players,
+      });
     }
   });
 });
 
 async function createPlayers(count: number) {
   const players = new Array(count).fill(null).map(async (_, index) => {
+    const id = index;
     const user = await User.create({
-      username: `user${index}`,
-      osuUserId: `${index}`,
-      ppRank: index,
-      countryRank: index,
+      username: `user${id}`,
+      osuUserId: `${id}`,
+      ppRank: id,
+      countryRank: id,
       country: 'GB',
     });
 

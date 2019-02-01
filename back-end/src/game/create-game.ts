@@ -31,7 +31,7 @@ export async function createGame(
 
   if (TEST_MODE) {
     console.log('Creating game with sample players');
-    await addSamplePlayers(game, 100);
+    await addSamplePlayers(game, 10);
   }
 
   return game;
