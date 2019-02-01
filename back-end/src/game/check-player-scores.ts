@@ -46,17 +46,11 @@ export async function checkRoundScores(
   } else {
     const players = game.players.filter(p => p.alive);
 
-    await Promise.all(
-      players.map(async p => checkPlayerScores(p, round, getUserRecent)),
-    );
+    await Promise.all(players.map(async p => checkPlayerScores(p, round, getUserRecent)));
   }
 }
 
-async function checkPlayerScores(
-  player: IPlayer,
-  round: IRound,
-  getUserRecent: any,
-) {
+async function checkPlayerScores(player: IPlayer, round: IRound, getUserRecent: any) {
   const scores = await getUserRecent(player.username);
   const existingScores = await Score.find({
     roundId: round._id,
@@ -81,6 +75,7 @@ async function checkPlayerScores(
       await Score.create({
         roundId: round._id,
         userId: player.userId,
+        username: player.username,
         score: parseInt(score.score, 10),
         mods: parseInt(score.enabled_mods, 10),
         rank: score.rank,
@@ -95,11 +90,7 @@ async function checkPlayerScores(
   await Promise.all(promises);
 }
 
-function scoreValidAndUnique(
-  score: any,
-  round: IRound,
-  existingScores: IScore[],
-) {
+function scoreValidAndUnique(score: any, round: IRound, existingScores: IScore[]) {
   const correctBeatmap = score.beatmap_id === round.beatmap.beatmap_id;
   const correctDate = new Date(score.date) > (<any> round).createdAt;
 

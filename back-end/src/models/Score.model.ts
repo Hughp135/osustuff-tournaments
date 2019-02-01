@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 export interface IScore extends mongoose.Document {
   roundId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
+  username: string;
   score: number;
   rank: string;
   mods: number;
@@ -19,6 +20,7 @@ const ScoreSchema = new mongoose.Schema(
   {
     roundId: { type: mongoose.Schema.Types.ObjectId, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    username: { type: String, required: true },
     score: { type: Number, required: true },
     rank: { type: String, required: true },
     mods: { type: Number, required: true },
@@ -35,9 +37,6 @@ const ScoreSchema = new mongoose.Schema(
   },
 );
 
-const Score: mongoose.Model<IScore> = mongoose.model<IScore>(
-  'Score',
-  ScoreSchema,
-);
+const Score: mongoose.Model<IScore> = mongoose.model<IScore>('Score', ScoreSchema);
 
 export { Score };

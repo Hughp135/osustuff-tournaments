@@ -5,12 +5,11 @@ import { IGame } from '../../game-lobby.component';
 @Component({
   selector: 'app-scores-table',
   templateUrl: './scores-table.component.html',
-  styleUrls: ['./scores-table.component.scss']
+  styleUrls: ['./scores-table.component.scss'],
 })
 export class ScoresTableComponent implements OnInit {
   @Input() scores;
-  @Input() currentUser;
-  @Input() players;
+  @Input() currentUser?;
   @Input() game: IGame;
 
   constructor() {}

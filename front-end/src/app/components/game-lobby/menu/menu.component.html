@@ -1,8 +1,12 @@
 <div class="ui inverted segment no-bg">
   <h3>Match Results</h3>
   <div class="ui inverted secondary menu">
-    <a class="item" [class.active]="game.roundNumber === round" *ngFor="let round of rounds">
-      Round {{round}} {{ finalRound === round ? '- Final' : '' }}
+    <a class="item" [class.active]="round && round.roundNumber === roundNum" (click)="showRound(roundNum)" *ngFor="let roundNum of rounds">
+      Round {{roundNum}} {{ finalRound === roundNum ? '- Final' : '' }}
     </a>
+  </div>
+  <div *ngIf="round">
+    <h3>Round {{round.roundNumber}} scores</h3>
+    <app-scores-table *ngIf="round" [scores]="round.scores" [game]="game"></app-scores-table>
   </div>
 </div>

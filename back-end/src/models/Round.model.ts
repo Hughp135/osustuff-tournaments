@@ -12,12 +12,14 @@ export interface IBeatmap {
 export interface IRound extends mongoose.Document {
   beatmap: IBeatmap;
   gameId: mongoose.Types.ObjectId;
+  roundNumber: number;
 }
 
 const RoundSchema = new mongoose.Schema(
   {
-    gameId: { type: mongoose.Types.ObjectId, required: true },
+    gameId: { type: mongoose.Types.ObjectId, required: true, index: true },
     beatmap: { type: {}, required: true },
+    roundNumber: { type: Number, required: true },
   },
   {
     timestamps: true,

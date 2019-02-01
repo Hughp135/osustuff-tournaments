@@ -1,8 +1,5 @@
 import { GameService } from './../../game.service';
-import {
-  SettingsService,
-  CurrentGame
-} from './../../services/settings.service';
+import { SettingsService, CurrentGame } from './../../services/settings.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
@@ -37,7 +34,7 @@ export interface IGame {
 @Component({
   selector: 'app-game-lobby',
   templateUrl: './game-lobby.component.html',
-  styleUrls: ['./game-lobby.component.scss']
+  styleUrls: ['./game-lobby.component.scss'],
 })
 export class GameLobbyComponent implements OnInit, OnDestroy {
   public game: IGame;
@@ -71,12 +68,10 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
     this.getTimeLeft();
 
-    const currentGameSub = this.settingsService.currentGame.subscribe(
-      async val => {
-        this.currentGame = val;
-        await this.fetch(true);
-      }
-    );
+    const currentGameSub = this.settingsService.currentGame.subscribe(async val => {
+      this.currentGame = val;
+      await this.fetch(true);
+    });
 
     const currentUsernameSub = this.settingsService.username.subscribe(
       val => (this.currentUsername = val)
@@ -91,10 +86,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         }
 
         // Take 1 second off time left every second
-        this.game.secondsToNextRound = Math.max(
-          0,
-          this.game.secondsToNextRound - 1
-        );
+        this.game.secondsToNextRound = Math.max(0, this.game.secondsToNextRound - 1);
         await this.getTimeLeft();
       }),
       Visibility.every(3000, 30000, async () => {
@@ -178,7 +170,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get showScores() {
-    return ['round-over', 'checking-scores', 'complete'].includes(this.game.status);
+    return ['round-over', 'checking-scores'].includes(this.game.status);
   }
 
   get inAnotherGame() {
@@ -219,6 +211,6 @@ export function getTimeComponents(t: number) {
     days: days.toString(),
     hours: hours.toString().padStart(2, '0'),
     minutes: minutes.toString().padStart(2, '0'),
-    seconds: seconds.toString().padStart(2, '0')
+    seconds: seconds.toString().padStart(2, '0'),
   };
 }

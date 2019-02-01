@@ -9,7 +9,6 @@ import { IGame } from '../game-lobby.component';
 })
 export class ScoresListComponent implements OnInit {
   @Input() scores;
-  @Input() players;
   @Input() currentUser: string;
   @Input() game: IGame;
 

@@ -15,7 +15,7 @@ import { leaveGame } from './lobbies/leave-game';
 import cors from 'cors';
 import { skipRound } from './lobbies/skip-round';
 import { toggleMonitoring } from './lobbies/stop-monitoring';
-import { getRoundScores } from './rounds/scores/get';
+import { getRoundScores } from './rounds/get';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -25,7 +25,7 @@ app.use(cors());
 
 app.get('', async (req, res) => res.send('Hello world!'));
 app.get('/lobbies', async (req, res) => res.json(await getLobbies()));
-app.get('/rounds/:roundId/scores', getRoundScores);
+app.get('/lobbies/:id/rounds/:roundNum', getRoundScores);
 app.post('/lobbies/:id/join', joinGame);
 app.post('/lobbies/:id/leave', leaveGame);
 app.post('/lobbies/:id/skip-round', skipRound);

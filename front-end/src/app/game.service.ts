@@ -24,6 +24,10 @@ export class GameService {
     return await this.apiService.get(`lobbies/${id}/users`).toPromise();
   }
 
+  public async getLobbyRound(id: string, roundNum: number) {
+    return await this.apiService.get(`lobbies/${id}/rounds/${roundNum}`).toPromise();
+  }
+
   public async getLobbyMessages(id: string, afterId?: string): Promise<Message[]> {
     return <Message[]>await this.apiService
       .get(`lobbies/${id}/messages`, {

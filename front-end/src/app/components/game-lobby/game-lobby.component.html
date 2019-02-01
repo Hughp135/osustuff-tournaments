@@ -26,7 +26,7 @@
         <app-menu *ngIf="game.status === 'complete'" [game]="game"></app-menu>
         <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
         <app-beatmap-info [game]="game" [beatmaps]="beatmaps" [inGame]="inGame" *ngIf="showBeatmap" [isAlive]="isAlive"></app-beatmap-info>
-        <app-scores-list [currentUser]="currentUsername" [game]="game" [scores]="game.scores" [players]="players" *ngIf="showScores"></app-scores-list>
+        <app-scores-list [currentUser]="currentUsername" [game]="game" [scores]="game.scores" *ngIf="showScores"></app-scores-list>
       </div>
       <div class="chat-section">
         <app-chat [messages]="messages" (messageSent)="getMoreMessages()" [canChat]="inGame"></app-chat>

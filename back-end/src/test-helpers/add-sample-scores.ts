@@ -5,13 +5,12 @@ import { arrayRandVal } from '../game/create-game';
 export async function addSampleScores(game: IGame) {
   await Promise.all(
     game.players
-      .filter(
-        (p, index) => p.alive && (index > 5 ? Math.random() < 0.95 : true),
-      )
+      .filter((p, index) => p.alive && (index > 5 ? Math.random() < 0.95 : true))
       .map(async player => {
         await Score.create({
           roundId: game.currentRound,
           userId: player.userId,
+          username: player.username,
           score: Math.floor(Math.random() * 20000000),
           mods: arrayRandVal([0, 8, 16, 32, 64]),
           rank: arrayRandVal(['A', 'F', 'B', 'S']),
