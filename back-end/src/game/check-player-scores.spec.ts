@@ -1,3 +1,4 @@
+import { IPlayer } from './../../../front-end/src/app/components/game-lobby/game-lobby.component';
 import mongoose from 'mongoose';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
@@ -7,8 +8,8 @@ import { Score } from '../models/Score.model';
 import { User } from '../models/User.model';
 import sinon from 'sinon';
 import { Round } from '../models/Round.model';
-import { ObjectID } from 'bson';
 import { checkRoundScores } from './check-player-scores';
+import { addPlayer } from './add-player';
 
 mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
@@ -31,17 +32,20 @@ describe('check-player-scores', () => {
   });
 
   it('requests the API for each alive player in a game', async () => {
-    const u1 = await User.create({ username: '1' });
-    const u2 = await User.create({ username: '2' });
-    const u3 = await User.create({ username: '3' });
+    const u1 = await getUser(1);
+    const u2 = await getUser(2);
+    const u3 = await getUser(3);
 
     const game = await Game.create({
-      players: [
-        { userId: u1._id, username: '1', alive: true },
-        { userId: u2._id, username: '2', alive: true },
-        { userId: u3._id, username: '3', alive: false },
-      ],
+      title: 'test',
+      beatmaps: [],
     });
+    await addPlayer(game, u1);
+    await addPlayer(game, u2);
+    await addPlayer(game, u3);
+    (<IPlayer> (
+      game.players.find(p => p.userId.toString() === u3._id.toString())
+    )).alive = false;
     const round = await Round.create({
       beatmap: {
         beatmapId: 'asd123',
@@ -50,15 +54,7 @@ describe('check-player-scores', () => {
       gameId: game._id,
     });
     const getUserRecent = sinon.stub().callsFake(async (u: string) => [
-      {
-        beatmap_id: '932223',
-        score: '100000',
-        countmiss: '3',
-        enabled_mods: '576',
-        maxcombo: '256',
-        date: '2030-06-22 9:11:16',
-        rank: 'C',
-      },
+      getScore('932223', '1000000'),
     ]);
 
     await checkRoundScores(game, round, getUserRecent);
@@ -69,84 +65,66 @@ describe('check-player-scores', () => {
   });
 
   it('saves 2 scores for each user', async () => {
-    const u1 = await User.create({ username: '1' });
-    const u2 = await User.create({ username: '2' });
-    const u3 = await User.create({ username: '3' });
+    const u1 = await getUser(1);
+    const u2 = await getUser(2);
+    const u3 = await getUser(3);
 
     const game = await Game.create({
-      players: [
-        { userId: u1._id, username: '1', alive: true },
-        { userId: u2._id, username: '2', alive: true },
-        { userId: u3._id, username: '3', alive: false },
-      ],
+      title: 'test',
+      beatmaps: [],
     });
+    await addPlayer(game, u1);
+    await addPlayer(game, u2);
+    await addPlayer(game, u3);
+    (<IPlayer> (
+      game.players.find(p => p.userId.toString() === u3._id.toString())
+    )).alive = false;
+
     const round = await Round.create({
       beatmap: {
-        beatmapId: '932223',
+        beatmap_id: '932223',
         title: 'b1',
       },
       gameId: game._id,
     });
 
     const getUserRecent = sinon.stub().callsFake(async (u: string) => [
-      {
-        beatmap_id: '932223',
-        score: '100000',
-        countmiss: '3',
-        enabled_mods: '576',
-        maxcombo: '256',
-        date: '2030-06-22 9:11:16',
-        rank: 'C',
-      },
-      {
-        beatmap_id: '932223',
-        score: '200000',
-        countmiss: '0',
-        enabled_mods: '0',
-        maxcombo: '721',
-        date: '2030-06-22 9:11:16',
-        rank: 'A',
-      },
+      getScore('932223', '1000000'),
+      getScore('932223', '2000000'),
     ]);
 
     await checkRoundScores(game, round, getUserRecent);
     expect(getUserRecent).calledTwice; // tslint:disable-line:no-unused-expression
 
     const scores = await Score.find({});
-    expect(
-      scores.filter(s => s.userId.toString() === u1._id.toString()).length,
-    ).to.equal(2);
-    expect(
-      scores.filter(s => s.userId.toString() === u2._id.toString()).length,
-    ).to.equal(2);
-    expect(
-      scores.filter(s => s.userId.toString() === u3._id.toString()).length,
-    ).to.equal(0);
+    expect(scores.filter(s => s.userId.toString() === u1._id.toString()).length).to.equal(
+      2,
+    );
+    expect(scores.filter(s => s.userId.toString() === u2._id.toString()).length).to.equal(
+      2,
+    );
+    expect(scores.filter(s => s.userId.toString() === u3._id.toString()).length).to.equal(
+      0,
+    );
   });
   it('Saves identical score only once if checked twice', async () => {
-    const u1 = await User.create({ username: '1' });
+    const u1 = await getUser(1);
 
     const game = await Game.create({
-      players: [{ userId: u1._id, username: '1', alive: true }],
+      title: 'test',
+      beatmaps: [],
     });
+    await addPlayer(game, u1);
     const round = await Round.create({
       beatmap: {
-        beatmapId: '932223',
+        beatmap_id: '932223',
         title: 'b1',
       },
       gameId: game._id,
     });
 
     const getUserRecent = sinon.stub().callsFake(async (u: string) => [
-      {
-        beatmap_id: '932223',
-        score: '100000',
-        countmiss: '3',
-        enabled_mods: '576',
-        maxcombo: '256',
-        date: '2030-06-22 9:11:16',
-        rank: 'C',
-      },
+      getScore('932223', '1000000'),
     ]);
 
     await checkRoundScores(game, round, getUserRecent);
@@ -160,38 +138,24 @@ describe('check-player-scores', () => {
     expect(scores.length).to.equal(1);
   });
   it('Saves all unique valid scores for the beatmap returned by getUserRecent', async () => {
-    const u1 = await User.create({ username: '1' });
+    const u1 = await getUser(1);
 
     const game = await Game.create({
-      players: [{ userId: u1._id, username: '1', alive: true }],
+      title: 'test',
+      beatmaps: [],
     });
+    await addPlayer(game, u1);
     const round = await Round.create({
       beatmap: {
-        beatmapId: '932223',
+        beatmap_id: '932223',
         title: 'b1',
       },
       gameId: game._id,
     });
 
     const getUserRecent = sinon.stub().callsFake(async (u: string) => [
-      {
-        beatmap_id: '932223',
-        score: '100000',
-        countmiss: '3',
-        enabled_mods: '576',
-        maxcombo: '256',
-        date: '2030-06-22 9:11:16',
-        rank: 'C',
-      },
-      {
-        beatmap_id: '932223',
-        score: '200000',
-        countmiss: '3',
-        enabled_mods: '576',
-        maxcombo: '256',
-        date: '2030-06-22 9:11:20',
-        rank: 'A',
-      },
+      getScore('932223', '1000000'),
+      getScore('932223', '2000000'),
     ]);
 
     await checkRoundScores(game, round, getUserRecent);
@@ -204,39 +168,25 @@ describe('check-player-scores', () => {
     expect(scores.length).to.equal(2);
   });
   it('Saves different scores twice if checked twice', async () => {
-    const u1 = await User.create({ username: '1' });
+    const u1 = await getUser(1);
 
     const game = await Game.create({
-      players: [{ userId: u1._id, username: '1', alive: true }],
+      title: 'test',
+      beatmaps: [],
     });
+    await addPlayer(game, u1);
     const round = await Round.create({
       beatmap: {
-        beatmapId: '932223',
+        beatmap_id: '932223',
         title: 'b1',
       },
       gameId: game._id,
     });
     await checkRoundScores(game, round, async (u: string) => [
-      {
-        beatmap_id: '932223',
-        score: '100000',
-        countmiss: '3',
-        enabled_mods: '576',
-        maxcombo: '256',
-        date: '2030-06-22 9:11:16',
-        rank: 'C',
-      },
+      getScore('932223', '1000000', '2030-06-22 9:11:16'),
     ]);
     await checkRoundScores(game, round, async () => [
-      {
-        beatmap_id: '932223',
-        score: '300000',
-        countmiss: '3',
-        enabled_mods: '576',
-        maxcombo: '256',
-        date: '2030-06-22 9:11:17',
-        rank: 'C',
-      },
+      getScore('932223', '3000000', '2030-06-22 9:12:16'),
     ]);
 
     const scores = await Score.find({
@@ -247,3 +197,28 @@ describe('check-player-scores', () => {
     expect(scores.length).to.equal(2);
   });
 });
+
+async function getUser(id: number) {
+  return await User.create({
+    username: `user${id}`,
+    ppRank: id,
+    countryRank: id,
+    osuUserId: id,
+    country: 'US',
+  });
+}
+
+function getScore(beatmapId: string, score: string, date?: string) {
+  return {
+    beatmap_id: beatmapId,
+    score,
+    countmiss: '3',
+    count100: '1',
+    count50: '1',
+    count300: '2',
+    enabled_mods: '576',
+    maxcombo: '256',
+    date: date ? date : '2030-06-22 9:11:16',
+    rank: 'C',
+  };
+}

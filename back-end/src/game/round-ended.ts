@@ -4,6 +4,7 @@ import { Score, IScore } from '../models/Score.model';
 
 // Kills players with lowest score each round
 export async function roundEnded(game: IGame, round: IRound) {
+  console.log('round ended');
   // Get scores sorted by score
   const scores = (await Score.find({ roundId: round._id }).sort({
     score: -1,
@@ -20,7 +21,8 @@ export async function roundEnded(game: IGame, round: IRound) {
   );
 
   // Half the number of alive players each round.
-  const numberOfWinners = Math.min(25, Math.floor(scores.length / 2));
+  const winRate = game.roundNumber === 10 ? 1 : scores.length > 200 ? 0.4 : scores.length < 10 ? 0.5 : 0.6;
+  const numberOfWinners = Math.max(Math.floor(scores.length * winRate));
   const winningScores = scores.slice(0, numberOfWinners);
 
   game.players.forEach(player => {
@@ -40,23 +42,22 @@ export async function roundEnded(game: IGame, round: IRound) {
   deadPlayersNoScore.forEach(player => {
     const lowestRank = getLowestRank(game);
     player.gameRank = lowestRank - 1;
-    console.log('player new rank', player.username, player.gameRank, 'previousLowest', lowestRank);
   });
 
   const losingScores = scores.slice(numberOfWinners);
-  console.log('losingScores', losingScores.length);
   losingScores.reverse().forEach(score => {
     const player = <IPlayer> (
       game.players.find(p => p.userId.toString() === score.userId.toString())
     );
     const lowestRank = getLowestRank(game);
     player.gameRank = lowestRank - 1;
-    console.log('player new rank', player.username, player.gameRank, 'previousLowest', lowestRank);
   });
 
   game.status = 'round-over';
   const date = new Date();
-  date.setSeconds(date.getSeconds() + 60);
+  if (game.players.filter(p => p.alive).length > 1) {
+    date.setSeconds(date.getSeconds() + 60);
+  }
   game.nextStageStarts = date;
 
   await game.save();

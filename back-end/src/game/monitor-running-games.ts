@@ -89,7 +89,7 @@ async function startGame(game: IGame) {
   if (!game.nextStageStarts) {
     console.log('Beginning countdown....');
     // Set the countdown to start
-    await setNextStageStartsAt(game, 15);
+    await setNextStageStartsAt(game, 300);
   } else if (game.nextStageStarts < new Date()) {
     // Start the first round
     await nextRound(game);
@@ -101,7 +101,6 @@ async function checkRoundEnded(game: IGame) {
 
   // Check if next round should start
   if (<Date> game.nextStageStarts < new Date()) {
-    console.log('round ended');
     if (TEST_MODE) {
       await addSampleScores(game);
     }

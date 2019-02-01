@@ -24,9 +24,11 @@ import {
   intersectionObserverPreset
 } from 'ng-lazyload-image';
 import { ScoresTableComponent } from './components/game-lobby/scores-list/scores-table/scores-table.component';
+import { OrdinalPipe } from './pipes/ordinal.pipe';
 
 @NgModule({
   declarations: [
+    OrdinalPipe,
     AppComponent,
     GameLobbyComponent,
     GameInfoComponent,

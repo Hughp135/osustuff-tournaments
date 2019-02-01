@@ -9,7 +9,7 @@
       </div>
     </div>
   </div>
-  <div [ngStyle]="getBgStyles()" class="beatmap-bg">
+  <div [ngStyle]="getBgStyles()" class="beatmap-bg" *ngIf="beatmap">
     <div class="ui basic inverted segment">
       <div class="ui inverted relaxed list">
         <div class="item">
@@ -49,20 +49,14 @@
       <p align="center">
         You can play with any rankable mods (including No Fail).
         <br>
-        Try the map as many times as you want within the time limit, only your highest score will count.
+        Try the map as many times as you want within the time
+        limit, only your highest score will count.
         <br>
         Make sure you play the correct difficulty!
       </p>
-      <div class="ui primary button">
+      <!-- <div class="ui primary button">
         Check score
-      </div>
+      </div> -->
     </div>
   </div>
-  <div class="ui inverted center aligned padded orange segment" *ngIf="inGame && game.status === 'in-progress' && !isAlive">
-      <div class="ui icon header">
-        <i class="crosshairs icon"></i>
-        You have been eliminated. Better luck next time!
-      </div>
-      <p>You may continue watching this game or join another one.</p>
-    </div>
 </div>

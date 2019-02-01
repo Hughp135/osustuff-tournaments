@@ -130,7 +130,7 @@ describe('round-ended', () => {
     expect(p1.alive).to.equal(false);
     expect(p2.alive).to.equal(true);
   });
-  it.only('ranks losing scores accordingly', async () => {
+  it('ranks losing scores accordingly', async () => {
     const u1 = await getUser(1);
     const u2 = await getUser(2);
     const u3 = await getUser(3);
@@ -183,7 +183,6 @@ describe('round-ended', () => {
     });
 
     await roundEnded(game, round);
-    console.log('game players', game.players.length);
     const p1 = <IPlayer> game.players.find(p => p.userId.toString() === u1._id.toString());
     const p2 = <IPlayer> game.players.find(p => p.userId.toString() === u2._id.toString());
     const p3 = <IPlayer> game.players.find(p => p.userId.toString() === u3._id.toString());

@@ -10,7 +10,6 @@ export async function createGame(
   getRecentBeatmaps: () => Promise<any>,
 ): Promise<IGame> {
   beatmaps = await getRecentBeatmaps();
-  console.log('all beatmaps', beatmaps.length);
 
   const roundBeatmaps = [
     getBeatmapBetweenStars(3, 4),
@@ -26,12 +25,12 @@ export async function createGame(
   ];
 
   const game = await Game.create({
-    title: 'osu! Battle Royale',
+    title: 'osu! Royale Match',
     beatmaps: roundBeatmaps,
   });
 
   if (TEST_MODE) {
-    await addSamplePlayers(game);
+    await addSamplePlayers(game, 100);
   }
 
   return game;

@@ -1,3 +1,4 @@
 node_modules
 config/local.yml
+config/development.yml
 winston.log

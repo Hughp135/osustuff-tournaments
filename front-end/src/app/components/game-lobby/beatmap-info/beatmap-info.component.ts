@@ -4,7 +4,7 @@ import { getTimeComponents } from '../game-lobby.component';
 @Component({
   selector: 'app-beatmap-info',
   templateUrl: './beatmap-info.component.html',
-  styleUrls: ['./beatmap-info.component.scss']
+  styleUrls: ['./beatmap-info.component.scss'],
 })
 export class BeatmapInfoComponent implements OnInit {
   @Input() game;
@@ -17,16 +17,18 @@ export class BeatmapInfoComponent implements OnInit {
   ngOnInit() {}
 
   public getBgStyles() {
-    return {
-      background: `linear-gradient( rgba(0, 0, 0, 0.6),
+    return (
+      this.beatmap && {
+        background: `linear-gradient( rgba(0, 0, 0, 0.6),
             rgba(0, 0, 0, 0.7) ),
             url(https://assets.ppy.sh/beatmaps/${
               this.beatmap.beatmapset_id
             }/covers/card@2x.jpg)`,
-      'background-position': 'center',
-      'background-size': 'cover',
-      'background-repeat': 'no-repeat'
-    };
+        'background-position': 'center',
+        'background-size': 'cover',
+        'background-repeat': 'no-repeat',
+      }
+    );
   }
 
   get beatmap() {
@@ -40,9 +42,12 @@ export class BeatmapInfoComponent implements OnInit {
   }
 
   get beatmapHref() {
-    return `https://osu.ppy.sh/beatmapsets/${this.beatmap.beatmapset_id}#osu/${
-      this.beatmap.beatmap_id
-    }`;
+    return (
+      this.beatmap &&
+      `https://osu.ppy.sh/beatmapsets/${this.beatmap.beatmapset_id}#osu/${
+        this.beatmap.beatmap_id
+      }`
+    );
   }
 
   get duration() {

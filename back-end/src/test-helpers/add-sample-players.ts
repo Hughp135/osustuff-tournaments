@@ -1,12 +1,12 @@
 import { IGame, IPlayer } from '../models/Game.model';
 import { getUser } from '../services/osu-api';
 import { updateOrCreateUser } from '../models/User.model';
-import { addPlayer, userToPlayer } from '../game/add-player';
+import { userToPlayer } from '../game/add-player';
 import faker from 'faker';
 
-export async function addSamplePlayers(game: IGame) {
+export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
   const players = await Promise.all(
-    new Array(100)
+    new Array(numberOfPlayers)
       .fill(null)
       .map(async (_, index) => {
         try {
@@ -27,7 +27,7 @@ export async function addSamplePlayers(game: IGame) {
 
 function getPlayer(index: number) {
   return {
-    user_id: userIds[index],
+    user_id: userIds[index] || Math.floor(Math.random() * 100000) + 1,
     username: faker.name.findName(),
     pp_rank: faker.random.number(1000000),
     country: faker.address.countryCode(),

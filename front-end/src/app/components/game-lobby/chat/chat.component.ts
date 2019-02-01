@@ -72,7 +72,6 @@ export class ChatComponent implements OnInit {
   }
 
   public addEmoji(e) {
-    console.log(this.messageInput);
     this.messageInput = (this.messageInput || '') + e.emoji.native;
     this.showEmojiPicker = false;
     this.focusChatInput();

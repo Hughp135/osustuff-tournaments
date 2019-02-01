@@ -6,7 +6,6 @@ import {
 } from '../../game/monitor-running-games';
 
 export async function toggleMonitoring(req: Request, res: Response) {
-  console.log('ismotniroing', isMonitoring);
   if (isMonitoring) {
     stopMonitoring();
   } else {

@@ -1,7 +1,6 @@
 import { IRound } from './../models/Round.model';
 import { IGame, IPlayer } from './../models/Game.model';
 import { Score, IScore } from '../models/Score.model';
-import { User } from '../models/User.model';
 import config from 'config';
 
 const TEST_MODE = config.get('TEST_MODE');
@@ -39,7 +38,6 @@ export async function checkRoundScores(
   round: IRound,
   getUserRecent: (u: string) => Promise<any>,
 ) {
-  console.log('checking scores');
   game.status = 'checking-scores';
   await game.save();
 

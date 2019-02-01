@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/index.ts",
-    "test": "mocha --exit  -t 10000 -r ts-node/register \"src/**/*.spec.ts\""
+    "test": "cross-env NODE_CONFIG_ENV=test mocha --exit  -t 10000 -r ts-node/register \"src/**/*.spec.ts\""
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +22,7 @@
     "@types/sinon-chai": "^3.2.2",
     "@types/winston": "^2.4.4",
     "chai": "^4.2.0",
+    "cross-env": "^5.2.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.9",
     "sinon": "^7.2.3",

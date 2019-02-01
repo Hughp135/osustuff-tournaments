@@ -3,7 +3,7 @@
   <div *ngIf="myScore">
     <app-scores-table [scores]="[myScore]" [players]="players" [currentUser]="currentUser" [game]="game"></app-scores-table>
   </div>
-  <h3>Round scores</h3>
+  <h3>Round {{ game.roundNumber }} scores</h3>
   <div class="scores-container">
     <app-scores-table [scores]="scores" [players]="players" [currentUser]="currentUser" [game]="game"></app-scores-table>
   </div>

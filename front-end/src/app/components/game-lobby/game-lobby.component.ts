@@ -16,6 +16,7 @@ export interface IPlayer {
   ppRank: number;
   countryRank: number;
   country: string;
+  gameRank?: number;
 }
 
 export interface IGame {
@@ -68,14 +69,12 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
     console.log('game', this.game);
 
-    console.log('beatmaps', data.beatmaps);
-
     this.getTimeLeft();
 
     const currentGameSub = this.settingsService.currentGame.subscribe(
       async val => {
         this.currentGame = val;
-        await this.fetch();
+        await this.fetch(true);
       }
     );
 
@@ -84,7 +83,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     );
     this.visibilityTimers.push(
       Visibility.every(5000, 10000, async () => {
-        await this.fetch();
+        await this.fetch(this.game.status === 'new');
       }),
       Visibility.every(1000, 30000, async () => {
         if (!this.game.secondsToNextRound) {
@@ -156,7 +155,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.fetchingMessages = false;
   }
 
-  private async fetch() {
+  private async fetch(forcePlayersUpdate?: boolean) {
     if (this.fetching) {
       return;
     }
@@ -164,7 +163,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.fetching = true;
     try {
       const game = <any>await this.gameService.getLobby(this.game._id);
-      if (game.status !== this.game.status) {
+      if (game.status !== this.game.status || forcePlayersUpdate) {
         this.players = await this.gameService.getLobbyUsers(this.game._id);
       }
       this.game = game;
@@ -179,7 +178,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get showScores() {
-    return ['round-over', 'checking-scores'].includes(this.game.status);
+    return ['round-over', 'checking-scores', 'complete'].includes(this.game.status);
   }
 
   get inAnotherGame() {
@@ -199,11 +198,13 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get isAlive() {
-    const me = this.players.find(p => p.username === this.currentUsername);
-
-    if (me) {
-      return me.alive;
+    if (this.mePlayer) {
+      return this.mePlayer.alive;
     }
+  }
+
+  get mePlayer() {
+    return this.players.find(p => p.username === this.currentUsername);
   }
 }
 

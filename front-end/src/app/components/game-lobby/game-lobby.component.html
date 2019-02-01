@@ -22,7 +22,7 @@
       <div class="lobby-details">
         <app-join-game [game]="game" [inAnotherGame]="inAnotherGame"
           *ngIf="showJoinGame"></app-join-game>
-        <app-game-status [game]="game"></app-game-status>
+        <app-game-status [timeLeft]="timeLeft" [game]="game" [isAlive]="isAlive" [inGame]="inGame" [mePlayer]="mePlayer" [totalPlayers]="players.length"></app-game-status>
         <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
         <app-beatmap-info [game]="game" [beatmaps]="beatmaps"
           [inGame]="inGame" *ngIf="showBeatmap" [isAlive]="isAlive"></app-beatmap-info>

@@ -5,7 +5,7 @@ import { IGame } from '../game-lobby.component';
 @Component({
   selector: 'app-scores-list',
   templateUrl: './scores-list.component.html',
-  styleUrls: ['./scores-list.component.scss']
+  styleUrls: ['./scores-list.component.scss'],
 })
 export class ScoresListComponent implements OnInit {
   @Input() scores;
@@ -15,10 +15,7 @@ export class ScoresListComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
-    console.log(this.scores);
-    console.log('status', this.game.status);
-  }
+  ngOnInit() {}
 
   get myScore() {
     return this.scores.find(s => s.username === this.currentUser);
