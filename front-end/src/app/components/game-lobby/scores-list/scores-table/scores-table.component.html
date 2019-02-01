@@ -1,19 +1,23 @@
 <table class="ui inverted table unstackable">
   <thead>
-    <th>Rank</th>
+    <th>Place</th>
     <th>Username</th>
     <th>Score</th>
+    <th>Rank</th>
     <th>Accuracy</th>
-    <th>Combo / 100 / X</th>
+    <th>Max Combo</th>
+    <th>Misses</th>
     <th>Mods</th>
   </thead>
   <tbody>
-    <tr [ngClass]="scorePassed(score)" *ngFor="let score of scores; let index = index">
-      <td>{{ score.rank }}</td>
+    <tr [ngClass]="scoreClass(score)" *ngFor="let score of scores; let index = index">
+      <td>{{ index + 1 }}</td>
       <td [class.my-name]="currentUser === score.username">{{ score.username }}</td>
       <td>{{ score.score | number }}</td>
+      <td>{{ score.rank }}</td>
       <td>{{ score.accuracy }}%</td>
-      <td>{{ score.maxCombo }} / {{ score.count100 }} / {{ score.misses }}</td>
+      <td>{{ score.maxCombo }}</td>
+      <td>{{ score.misses }}</td>
       <td>{{ getModString(score.mods) || '-' }}</td>
     </tr>
   </tbody>

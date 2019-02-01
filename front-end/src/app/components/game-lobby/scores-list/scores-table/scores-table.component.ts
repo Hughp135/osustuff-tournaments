@@ -17,17 +17,8 @@ export class ScoresTableComponent implements OnInit {
 
   ngOnInit() {}
 
-  public scorePassed(score: any) {
-    const player = this.players.find(p => p.username === score.username);
-    if (this.game.status !== 'round-over') {
-      return;
-    }
-
-    if (player && player.alive) {
-      return 'alive';
-    } else {
-      return 'dead';
-    }
+  public scoreClass(score: any) {
+    return score.passedRound ? 'alive' : 'dead';
   }
 
   public getModString(mods: number) {

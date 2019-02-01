@@ -21,25 +21,16 @@ export async function roundEnded(game: IGame, round: IRound) {
     <IScore[]> [],
   );
 
-  // Half the number of alive players each round.
-  const alivePlayers = game.players.filter(p => p.alive);
-  const roundsLeft = 10 - (game.roundNumber || 0);
-  // const winRate = Math.pow(1.9 / alivePlayers.length, 1 / roundsLeft);
-  // const winRate = game.roundNumber === 10 ? 1 : scores.length > 200 ? 0.4 : scores.length < 10 ? 0.5 : 0.6;
+  // Calculate which players lost the round.
   const winRate = Math.max(0.4, 0.8 - 0.1 * (<number> game.roundNumber - 1));
   const numberOfWinners = Math.max(1, Math.floor(scores.length * winRate));
   const winningScores = scores.slice(0, numberOfWinners);
-  console.log(
-    'playersLeft',
-    alivePlayers.length,
-    'roundsLeft',
-    roundsLeft,
-    'winRate',
-    winRate,
-    'winners',
-    numberOfWinners,
-    'deadCount',
-    alivePlayers.length - numberOfWinners,
+
+  await Promise.all(
+    winningScores.map(async score => {
+      score.passedRound = true;
+      await score.save();
+    }),
   );
 
   game.players.forEach(player => {
@@ -49,30 +40,11 @@ export async function roundEnded(game: IGame, round: IRound) {
     player.roundLostOn = player.alive ? undefined : <number> game.roundNumber;
   });
 
-  const deadPlayersNoScore = game.players.filter(
-    p =>
-      !p.alive &&
-      !p.gameRank &&
-      !scores.some(s => s.userId.toString() === p.userId.toString()),
-  );
-
-  console.log('players no score', deadPlayersNoScore.length);
-
-  deadPlayersNoScore.forEach(player => {
-    const lowestRank = getLowestRank(game);
-    player.gameRank = lowestRank - 1;
-  });
-
-  const losingScores = scores.slice(numberOfWinners);
-  losingScores.reverse().forEach(score => {
-    const player = <IPlayer> (
-      game.players.find(p => p.userId.toString() === score.userId.toString())
-    );
-    const lowestRank = getLowestRank(game);
-    player.gameRank = lowestRank - 1;
-  });
+  await setPlayerRanks(game, scores, numberOfWinners);
 
   game.status = 'round-over';
+
+  // Update next round start date
   const date = new Date();
   if (game.players.filter(p => p.alive).length > 1) {
     date.setSeconds(date.getSeconds() + DURATION_ROUND_ENDED);
@@ -80,6 +52,38 @@ export async function roundEnded(game: IGame, round: IRound) {
   game.nextStageStarts = date;
 
   await game.save();
+}
+
+async function setPlayerRanks(
+  game: IGame,
+  scores: IScore[],
+  numberOfWinners: number,
+) {
+  const deadPlayersNoScore = game.players.filter(
+    p =>
+      !p.alive &&
+      !p.gameRank &&
+      !scores.some(s => s.userId.toString() === p.userId.toString()),
+  );
+
+  deadPlayersNoScore.forEach(player => {
+    const lowestRank = getLowestRank(game);
+    player.gameRank = lowestRank - 1;
+  });
+
+  const losingScores = scores.slice(numberOfWinners);
+  await Promise.all(
+    losingScores.reverse().map(async score => {
+      score.passedRound = false;
+      await score.save();
+
+      const player = <IPlayer> (
+        game.players.find(p => p.userId.toString() === score.userId.toString())
+      );
+      const lowestRank = getLowestRank(game);
+      player.gameRank = lowestRank - 1;
+    }),
+  );
 }
 
 function getLowestRank(game: IGame): number {

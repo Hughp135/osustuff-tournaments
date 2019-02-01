@@ -55,7 +55,6 @@ export async function getLobby(req: Request, res: Response) {
     );
     score.username = player.username;
     score.userId = undefined;
-    score.rank = index + 1;
 
     return score;
   });

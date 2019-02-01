@@ -25,6 +25,7 @@ import {
 } from 'ng-lazyload-image';
 import { ScoresTableComponent } from './components/game-lobby/scores-list/scores-table/scores-table.component';
 import { OrdinalPipe } from './pipes/ordinal.pipe';
+import { MenuComponent } from './components/game-lobby/menu/menu.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { OrdinalPipe } from './pipes/ordinal.pipe';
     JoinGameComponent,
     BeatmapListComponent,
     GameStatusComponent,
-    ScoresTableComponent
+    ScoresTableComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,

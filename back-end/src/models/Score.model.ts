@@ -11,6 +11,8 @@ export interface IScore extends mongoose.Document {
   accuracy: number;
   date: Date;
   count100: number;
+  passedRound?: boolean;
+  place?: number;
 }
 
 const ScoreSchema = new mongoose.Schema(
@@ -25,6 +27,8 @@ const ScoreSchema = new mongoose.Schema(
     count100: { type: Number, required: true },
     misses: { type: Number, required: true },
     date: { type: Date, required: true },
+    passedRound: { type: Boolean },
+    place: { type: Number },
   },
   {
     timestamps: true,

@@ -1,0 +1,8 @@
+<div class="ui inverted segment no-bg">
+  <h3>Match Results</h3>
+  <div class="ui inverted secondary menu">
+    <a class="item" [class.active]="game.roundNumber === round" *ngFor="let round of rounds">
+      Round {{round}} {{ finalRound === round ? '- Final' : '' }}
+    </a>
+  </div>
+</div>
