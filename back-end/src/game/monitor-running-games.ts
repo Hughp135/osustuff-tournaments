@@ -38,7 +38,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   });
 
   const testSkipCreate =
-    TEST_MODE && games.filter(g => g.status !== 'new').length;
+    false && TEST_MODE && games.filter(g => g.status !== 'new').length;
 
   if (games.filter(g => g.status === 'new').length === 0 && !testSkipCreate) {
     console.log('creating a new game as no "new" status ones are running');

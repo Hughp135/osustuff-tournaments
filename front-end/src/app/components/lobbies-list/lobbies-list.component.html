@@ -1,15 +1,33 @@
 <div class="ui inverted container">
-  <div class="ui inverted basic segment">
-    <h1>Lobbies List</h1>
+  <h1 class="ui inverted header">Matches</h1>
 
-    <div class="ui link inverted relaxed divided list">
+  <div class="ui inverted basic segment">
+    <div class="ui huge link inverted very relaxed divided list">
       <a class="item" *ngFor="let lobby of lobbies" [routerLink]="['lobbies', lobby._id]">
-        <div class="content">
-          <div class="header">
-            {{ lobby.title }}
+        <div class="ui equal width stackable grid">
+          <div class="column">
+            <i class="left floated big trophy icon" [ngClass]="getLobbyColor(lobby)"></i>
+            <div class="content">
+              <div class="header">
+                {{ lobby.title }}
+              </div>
+              {{ getStatus(lobby) }}
+            </div>
           </div>
-          {{ lobby.status }}
+          <div class="column">
+            <div class="ui equal width grid">
+              <div class="column">
+                <h5 *ngIf="lobby.startsAt">
+                  Starts in: {{ getTimeLeft(lobby.startsAt) }}
+                </h5>
+              </div>
+              <div class="column">
+                <h5>Players: {{ lobby.playerCount }}</h5>
+              </div>
+            </div>
+          </div>
         </div>
+
       </a>
     </div>
   </div>

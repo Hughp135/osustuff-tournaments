@@ -16,9 +16,7 @@ export class GameStatusComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {
-    console.log(this.inGame, this.isAlive);
-  }
+  ngOnInit() {}
 
   private getTitleAndMessage(): { title: string; message: string } {
     if (this.game.status === 'new') {
@@ -49,8 +47,7 @@ export class GameStatusComponent implements OnInit {
     if (this.game.status === 'round-over') {
       return {
         title: `Round ${this.game.roundNumber} has finished`,
-        message:
-          `The round is finished and scores have been calculated.
+        message: `The round is finished and scores have been calculated.
 The next round starts in ${this.timeLeft}`,
       };
     }
