@@ -42,7 +42,7 @@ export async function checkRoundScores(
   await game.save();
 
   if (TEST_MODE) {
-    await new Promise(res => setTimeout(res, 5000));
+    await new Promise(res => setTimeout(res, 2000));
   } else {
     const players = game.players.filter(p => p.alive);
 

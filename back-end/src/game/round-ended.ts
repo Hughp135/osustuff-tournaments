@@ -1,6 +1,7 @@
 import { IGame, IPlayer } from './../models/Game.model';
 import { IRound } from './../models/Round.model';
 import { Score, IScore } from '../models/Score.model';
+import { DURATION_ROUND_ENDED } from './durations';
 
 // Kills players with lowest score each round
 export async function roundEnded(game: IGame, round: IRound) {
@@ -21,9 +22,25 @@ export async function roundEnded(game: IGame, round: IRound) {
   );
 
   // Half the number of alive players each round.
-  const winRate = game.roundNumber === 10 ? 1 : scores.length > 200 ? 0.4 : scores.length < 10 ? 0.5 : 0.6;
-  const numberOfWinners = Math.max(Math.floor(scores.length * winRate));
+  const alivePlayers = game.players.filter(p => p.alive);
+  const roundsLeft = 10 - (game.roundNumber || 0);
+  // const winRate = Math.pow(1.9 / alivePlayers.length, 1 / roundsLeft);
+  // const winRate = game.roundNumber === 10 ? 1 : scores.length > 200 ? 0.4 : scores.length < 10 ? 0.5 : 0.6;
+  const winRate = Math.max(0.4, 0.8 - 0.1 * (<number> game.roundNumber - 1));
+  const numberOfWinners = Math.max(1, Math.floor(scores.length * winRate));
   const winningScores = scores.slice(0, numberOfWinners);
+  console.log(
+    'playersLeft',
+    alivePlayers.length,
+    'roundsLeft',
+    roundsLeft,
+    'winRate',
+    winRate,
+    'winners',
+    numberOfWinners,
+    'deadCount',
+    alivePlayers.length - numberOfWinners,
+  );
 
   game.players.forEach(player => {
     player.alive = winningScores.some(
@@ -38,6 +55,8 @@ export async function roundEnded(game: IGame, round: IRound) {
       !p.gameRank &&
       !scores.some(s => s.userId.toString() === p.userId.toString()),
   );
+
+  console.log('players no score', deadPlayersNoScore.length);
 
   deadPlayersNoScore.forEach(player => {
     const lowestRank = getLowestRank(game);
@@ -56,7 +75,7 @@ export async function roundEnded(game: IGame, round: IRound) {
   game.status = 'round-over';
   const date = new Date();
   if (game.players.filter(p => p.alive).length > 1) {
-    date.setSeconds(date.getSeconds() + 60);
+    date.setSeconds(date.getSeconds() + DURATION_ROUND_ENDED);
   }
   game.nextStageStarts = date;
 

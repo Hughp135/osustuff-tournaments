@@ -20,6 +20,10 @@ export async function verifyUser(req: Request, res: Response) {
     return res.status(404).end();
   }
 
+  if (verifyRequest.verified) {
+    return res.status(400).end();
+  }
+
   if (verifyRequest.expiresAt < new Date()) {
     return res.status(408).end();
   }
@@ -29,6 +33,10 @@ export async function verifyUser(req: Request, res: Response) {
 
   if (!game) {
     return res.status(404).end();
+  }
+
+  if (game.players.some(p => p.userId.toString() === user._id.toString())) {
+    return res.status(400).end();
   }
 
   await addPlayer(game, user);

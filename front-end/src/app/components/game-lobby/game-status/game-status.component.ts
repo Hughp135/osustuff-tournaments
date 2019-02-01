@@ -4,7 +4,7 @@ import { Component, OnInit, Input } from '@angular/core';
 @Component({
   selector: 'app-game-status',
   templateUrl: './game-status.component.html',
-  styleUrls: ['./game-status.component.scss'],
+  styleUrls: ['./game-status.component.scss']
 })
 export class GameStatusComponent implements OnInit {
   @Input() game: IGame;
@@ -22,33 +22,32 @@ export class GameStatusComponent implements OnInit {
     if (this.game.status === 'new') {
       if (this.game.nextStageStarts) {
         return {
-          title: 'Game is starting',
-          message: 'The game is about to start! Get ready to play.',
+          title: 'Game is starting soon',
+          message: `The game is starting in ${this.timeLeft}`
         };
       }
       return {
         title: 'Waiting for players',
-        message: 'More players are needed before the game automatically starts.',
+        message: 'More players are needed before the game automatically starts.'
       };
     }
     if (this.game.status === 'in-progress') {
       return {
-        title: `Round ${this.game.roundNumber} has started`,
-        message: `All players must now set a score on the map. Make sure you play the correct difficulty!`,
+        title: `Round ${this.game.roundNumber} is now in progress!`,
+        message: `All players must now set a score on the map. Make sure you play the correct difficulty!`
       };
     }
     if (this.game.status === 'checking-scores') {
       return {
         title: `Checking scores...`,
         message:
-          'All players scores are now being checked and the top players will progress to the next round shortly.',
+          'All players scores are now being checked and the top players will progress to the next round shortly.'
       };
     }
     if (this.game.status === 'round-over') {
       return {
         title: `Round ${this.game.roundNumber} has finished`,
-        message: `The round is finished and scores have been calculated.
-The next round starts in ${this.timeLeft}`,
+        message: `The next round starts in ${this.timeLeft}`
       };
     }
     if ((this.game.status = 'complete')) {
@@ -56,7 +55,7 @@ The next round starts in ${this.timeLeft}`,
         title: 'The game has finished!',
         message: this.game.winningUser
           ? `${this.game.winningUser.username} has won the match!`
-          : 'No one won this time. All players have either quit or failed to set a score in time.',
+          : 'No one won this time. All players have either quit or failed to set a score in time.'
       };
     }
   }

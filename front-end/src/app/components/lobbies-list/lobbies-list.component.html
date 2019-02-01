@@ -16,13 +16,18 @@
           </div>
           <div class="column">
             <div class="ui equal width grid">
-              <div class="column">
+              <div class="column" *ngIf="lobby.roundNumber">
+                <h5>
+                  Round {{ lobby.roundNumber }}
+                </h5>
+              </div>
+              <div class="column" *ngIf="lobby.startsAt">
                 <h5 *ngIf="lobby.startsAt">
-                  Starts in: {{ getTimeLeft(lobby.startsAt) }}
+                  Starts in: {{ getTimeLeft(lobby.startsAt) }}s
                 </h5>
               </div>
               <div class="column">
-                <h5>Players: {{ lobby.playerCount }}</h5>
+                <i class="grey user icon"></i> {{ lobby.playerCount }}
               </div>
             </div>
           </div>

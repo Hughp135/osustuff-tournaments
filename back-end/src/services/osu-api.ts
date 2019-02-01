@@ -1,7 +1,16 @@
 import config from 'config';
 import got from 'got';
 import { IBeatmap } from '../models/Round.model';
+import Bottleneck from 'bottleneck';
 
+const limiter = new Bottleneck({
+  maxConcurrent: 100,
+  minTime: 43, // time delay between each request
+  highWater: 5000, // max queued requests
+  reservoir: 1200, // limit per minute
+  reservoirRefreshAmount: 1200, // limit per minute
+  reservoirRefreshInterval: 60 * 1000, // limit per minute
+});
 const OSU_API_KEY = config.get('OSU_API_KEY');
 const BASE_URL = 'https://osu.ppy.sh/api/';
 
@@ -12,13 +21,20 @@ async function request(
   const requestUrl = `${BASE_URL}${endpoint}`;
 
   try {
-    const response = await got.get(requestUrl, {
-      query: {
-        k: OSU_API_KEY,
-        ...query,
+    const response = await limiter.schedule(
+      {
+        priority: endpoint === 'get_user_recent' ? 6 : 5, // score checking is lowest priority
       },
-      json: true,
-    });
+      async () =>
+        await got.get(requestUrl, {
+          query: {
+            k: OSU_API_KEY,
+            ...query,
+          },
+          json: true,
+        }),
+    );
+    console.log('got Response from', requestUrl);
 
     return response.body;
   } catch (e) {

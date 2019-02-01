@@ -25,6 +25,7 @@ export interface IGame extends mongoose.Document {
   roundNumber?: number;
   nextStageStarts?: Date;
   beatmaps: IBeatmap[];
+  estimatedEnd: Date;
 }
 
 const GameSchema = new mongoose.Schema(
@@ -59,6 +60,7 @@ const GameSchema = new mongoose.Schema(
       },
     },
     nextStageStarts: { type: Date },
+    estimatedEnd: { type: Date },
     beatmaps: { type: [], required: true },
   },
   { timestamps: true },

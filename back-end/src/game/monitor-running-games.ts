@@ -11,6 +11,7 @@ import { getUserRecent, getRecentBeatmaps } from '../services/osu-api';
 import config from 'config';
 import { addSampleScores } from '../test-helpers/add-sample-scores';
 import { addSampleChatMessage } from '../test-helpers/add-chat-message';
+import { DURATION_START } from './durations';
 
 const TEST_MODE = config.get('TEST_MODE');
 export let isMonitoring = false;
@@ -38,7 +39,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   });
 
   const testSkipCreate =
-    false && TEST_MODE && games.filter(g => g.status !== 'new').length;
+    TEST_MODE && games.filter(g => g.status !== 'new').length;
 
   if (games.filter(g => g.status === 'new').length === 0 && !testSkipCreate) {
     console.log('creating a new game as no "new" status ones are running');
@@ -89,7 +90,7 @@ async function startGame(game: IGame) {
   if (!game.nextStageStarts) {
     console.log('Beginning countdown....');
     // Set the countdown to start
-    await setNextStageStartsAt(game, 300);
+    await setNextStageStartsAt(game, DURATION_START);
   } else if (game.nextStageStarts < new Date()) {
     // Start the first round
     await nextRound(game);

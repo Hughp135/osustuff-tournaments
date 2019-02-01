@@ -1,5 +1,6 @@
 import { IGame } from '../models/Game.model';
 import { Round } from '../models/Round.model';
+import { DURATION_ROUND_ADDITIONAL } from './durations';
 
 export async function nextRound(game: IGame) {
   const nextRoundNumber = (game.roundNumber || 0) + 1;
@@ -24,9 +25,18 @@ export async function nextRound(game: IGame) {
 
   // Set time that round should last
   const date = new Date();
-  date.setSeconds(date.getSeconds() + parseFloat(beatmap.total_length) + 60);
+  date.setSeconds(
+    date.getSeconds() +
+      parseFloat(beatmap.total_length) +
+      DURATION_ROUND_ADDITIONAL,
+  );
   // date.setSeconds(date.getSeconds() + 20); // test
   game.nextStageStarts = date;
+
+  const totalBeatmapDuration = game.beatmaps.reduce(
+    (acc, curr) => acc + parseInt(curr.total_length, 10),
+    0,
+  );
 
   await game.save();
 }
