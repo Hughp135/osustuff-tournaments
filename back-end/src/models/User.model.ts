@@ -7,6 +7,7 @@ export interface IUser extends mongoose.Document {
   ppRank: number;
   countryRank: number;
   country: string;
+  elo: number;
 }
 
 const UserSchema = new mongoose.Schema(
@@ -17,6 +18,7 @@ const UserSchema = new mongoose.Schema(
     ppRank: { type: Number, required: true },
     countryRank: { type: Number, required: true },
     country: { type: String, required: true },
+    elo: { type: Number, required: true, default: 1500 },
   },
   {
     timestamps: true,

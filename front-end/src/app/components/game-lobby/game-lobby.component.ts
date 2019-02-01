@@ -2,7 +2,7 @@ import { GameService } from './../../game.service';
 import { SettingsService, CurrentGame } from './../../services/settings.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription, interval } from 'rxjs';
+import { Subscription } from 'rxjs';
 import * as Visibility from 'visibilityjs';
 
 export interface IPlayer {
@@ -76,12 +76,16 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     const currentUsernameSub = this.settingsService.username.subscribe(
       val => (this.currentUsername = val)
     );
+
+    const gameFetchInterval = this.game.status === 'complete' ? 60000 : 5000;
+    const messagesInterval = this.game.status === 'complete' ? 6000 : 3000;
+
     this.visibilityTimers.push(
-      Visibility.every(5000, 10000, async () => {
+      Visibility.every(gameFetchInterval, gameFetchInterval * 3, async () => {
         await this.fetch(this.game.status === 'new');
       }),
       Visibility.every(1000, 30000, async () => {
-        if (!this.game.secondsToNextRound) {
+        if (!this.game.secondsToNextRound || this.game.status === 'complete') {
           return;
         }
 
@@ -89,7 +93,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         this.game.secondsToNextRound = Math.max(0, this.game.secondsToNextRound - 1);
         await this.getTimeLeft();
       }),
-      Visibility.every(3000, 30000, async () => {
+      Visibility.every(messagesInterval, messagesInterval * 10, async () => {
         await this.getMoreMessages();
       })
     );

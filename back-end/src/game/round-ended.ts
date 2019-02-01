@@ -23,7 +23,7 @@ export async function roundEnded(game: IGame, round: IRound) {
 
   // Calculate which players lost the round.
   const winRate = Math.max(0.4, 0.8 - 0.1 * (<number> game.roundNumber - 1));
-  const numberOfWinners = Math.max(1, Math.floor(scores.length * winRate));
+  const numberOfWinners = Math.max(1, Math.round(scores.length * winRate));
   const winningScores = scores.slice(0, numberOfWinners);
 
   await Promise.all(
@@ -34,9 +34,7 @@ export async function roundEnded(game: IGame, round: IRound) {
   );
 
   game.players.forEach(player => {
-    player.alive = winningScores.some(
-      s => s.userId.toString() === player.userId.toString(),
-    );
+    player.alive = winningScores.some(s => s.userId.toString() === player.userId.toString());
     player.roundLostOn = player.alive ? undefined : <number> game.roundNumber;
   });
 
@@ -54,16 +52,9 @@ export async function roundEnded(game: IGame, round: IRound) {
   await game.save();
 }
 
-async function setPlayerRanks(
-  game: IGame,
-  scores: IScore[],
-  numberOfWinners: number,
-) {
+async function setPlayerRanks(game: IGame, scores: IScore[], numberOfWinners: number) {
   const deadPlayersNoScore = game.players.filter(
-    p =>
-      !p.alive &&
-      !p.gameRank &&
-      !scores.some(s => s.userId.toString() === p.userId.toString()),
+    p => !p.alive && !p.gameRank && !scores.some(s => s.userId.toString() === p.userId.toString()),
   );
 
   deadPlayersNoScore.forEach(player => {
