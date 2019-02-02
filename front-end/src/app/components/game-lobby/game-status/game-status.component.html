@@ -13,3 +13,13 @@
   </div>
   <p>You may continue watching this game or join another one.</p>
 </div>
+
+<div class="ui inverted center aligned padded green segment"
+  *ngIf="game.winningUser && game.winningUser && game.winningUser.username === mePlayer.username">
+  <div class="ui icon header">
+    <i class="yellow trophy icon"></i>
+    Congratulations!
+    <br>
+    You won the match!
+  </div>
+</div>

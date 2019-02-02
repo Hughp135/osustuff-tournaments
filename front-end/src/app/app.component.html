@@ -3,8 +3,15 @@
   <a class="item" [class.active]="url === '/'" [routerLink]="['/']">
     Games
   </a>
-  <a class="item" [class.active]="url === '/leaderboard'" [routerLink]="['/leaderboard']">
+  <a class="item" [class.active]="url === '/leaderboard'"
+    [routerLink]="['/leaderboard']">
     Leaderboard
   </a>
 </div>
 <router-outlet></router-outlet>
+
+<div *ngIf="isAdmin && url === '/'">
+  <div style="position: absolute; top: 0; right: 100px; z-index:999;"
+    class="ui mini button" (click)="clearDb()">Clear DB
+  </div>
+</div>

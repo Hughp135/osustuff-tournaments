@@ -1,3 +1,4 @@
+import { AdminService } from './../../services/admin.service';
 import { GameService } from './../../game.service';
 import { SettingsService, CurrentGame } from './../../services/settings.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -52,12 +53,16 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   private fetchingMessages = false;
   public currentUsername: string;
   private announcedStart = false;
+  public isAdmin: boolean;
 
   constructor(
     private route: ActivatedRoute,
     private settingsService: SettingsService,
     private gameService: GameService,
-  ) {}
+    private adminService: AdminService
+  ) {
+    this.isAdmin = !!settingsService.adminPw;
+  }
 
   ngOnInit() {
     const { data } = this.route.snapshot.data;
@@ -210,6 +215,14 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
   get mePlayer() {
     return this.players.find(p => p.username === this.currentUsername);
+  }
+
+  public async skipRound() {
+    await this.adminService.skipRound(this.game);
+  }
+
+  public async toggleFreeze() {
+    await this.adminService.toggleFreeze();
   }
 }
 

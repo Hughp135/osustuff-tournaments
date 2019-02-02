@@ -17,6 +17,7 @@ import { skipRound } from './lobbies/skip-round';
 import { toggleMonitoring } from './lobbies/stop-monitoring';
 import { getRoundScores } from './rounds/get';
 import { getUsers } from './users';
+import { clearDb } from './admin/clear-db';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -38,6 +39,7 @@ app.get('/lobbies/:id', getLobby);
 app.post('/verify-user', verifyUser);
 app.post('/check-verified', checkVerified);
 app.post('/toggle-monitoring', toggleMonitoring);
+app.post('/admin/clear-db', clearDb);
 app.get('/users', getUsers);
 
 export async function startServer() {

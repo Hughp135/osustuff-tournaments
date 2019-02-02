@@ -19,6 +19,9 @@ export class SettingsService {
   constructor(private apiService: ApiService) {
     this.checkCurrentGame();
     this.username.next(localStorage.getItem('username') || undefined);
+    (<any>window).adminLogon = (password) => {
+      this.setAdmin(password);
+    };
   }
 
   public async checkCurrentGame() {
@@ -68,5 +71,13 @@ export class SettingsService {
   public setUsername(username: string) {
     localStorage.setItem('username', username);
     this.username.next(username);
+  }
+
+  public setAdmin(password: string) {
+    localStorage.setItem('adminPw', password);
+  }
+
+  get adminPw(): string | undefined {
+    return localStorage.getItem('adminPw');
   }
 }

@@ -23,15 +23,14 @@
                   <i class="yellow fitted trophy icon"></i> {{ lobby.winningUser.username }}
                 </h5>
               </div>
-              <div class="column" *ngIf="lobby.roundNumber">
-                <h5 *ngIf="lobby.status !== 'complete'">
-                  Round {{ lobby.roundNumber }}
-                </h5>
-                <h5 *ngIf="lobby.status === 'complete'">
-                  Complete
-                </h5>
+              <div class="column">
+                <div *ngIf="lobby.roundNumber">
+                  <h5 *ngIf="lobby.status !== 'complete'">
+                    Round {{ lobby.roundNumber }}
+                  </h5>
+                </div>
               </div>
-              <div class="column" *ngIf="lobby.startsAt">
+              <div class="column">
                 <h5 *ngIf="lobby.startsAt">
                   Starts in: {{ lobby.startsAtString }}
                 </h5>
