@@ -1,6 +1,6 @@
 import { AdminService } from './services/admin.service';
 import { SettingsService } from 'src/app/services/settings.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Component } from '@angular/core';
 import { filter } from 'rxjs/operators';
 
@@ -15,7 +15,11 @@ export class AppComponent {
   public url;
   public isAdmin: boolean;
 
-  constructor(router: Router, settingsService: SettingsService, private adminService: AdminService) {
+  constructor(
+    router: Router,
+    settingsService: SettingsService,
+    private adminService: AdminService,
+  ) {
     router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
@@ -24,7 +28,6 @@ export class AppComponent {
       });
     this.isAdmin = !!settingsService.adminPw;
   }
-
 
   public async clearDb() {
     await this.adminService.clearDb();
