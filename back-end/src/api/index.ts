@@ -47,6 +47,7 @@ router.get('/users', getUsers);
 app.use('/api', router);
 
 export async function startServer() {
+  winston.log('info', 'Environment ' + process.env.NODE_ENV);
   await app.listen(PORT);
   winston.log('info', 'API started on port ' + PORT);
 }
