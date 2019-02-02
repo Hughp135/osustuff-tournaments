@@ -1,4 +1,4 @@
-import { IPlayer } from './../../../front-end/src/app/components/game-lobby/game-lobby.component';
+import { IPlayer } from './../models/Game.model';
 import mongoose from 'mongoose';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';

@@ -4,12 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc -p ./tsconfig.json",
     "start": "nodemon src/index.ts",
     "test": "cross-env NODE_CONFIG_ENV=test mocha --exit  -t 10000 -r ts-node/register \"src/**/*.spec.ts\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^5.2.0",
+    "nodemon": "^1.18.9",
+    "tslint": "^5.12.1"
+  },
+  "dependencies": {
     "@types/chai": "^4.1.7",
     "@types/config": "0.0.34",
     "@types/cors": "^2.8.4",
@@ -22,16 +28,11 @@
     "@types/sinon-chai": "^3.2.2",
     "@types/winston": "^2.4.4",
     "chai": "^4.2.0",
-    "cross-env": "^5.2.0",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.9",
     "sinon": "^7.2.3",
     "sinon-chai": "^3.3.0",
     "ts-node": "^8.0.2",
-    "tslint": "^5.12.1",
-    "typescript": "^3.2.4"
-  },
-  "dependencies": {
+    "typescript": "^3.2.4",
     "body-parser": "^1.18.3",
     "bottleneck": "^2.15.3",
     "config": "^3.0.1",
