@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser';
-import express from 'express';
+import express, { Router } from 'express';
 import config from 'config';
 import winston from 'winston';
 import cors from 'cors';
@@ -25,22 +25,26 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-app.get('', async (req, res) => res.send('Hello world!'));
-app.get('/lobbies', async (req, res) => res.json(await getLobbies()));
-app.get('/lobbies/:id/rounds/:roundNum', getRoundScores);
-app.post('/lobbies/:id/join', joinGame);
-app.post('/lobbies/:id/leave', leaveGame);
-app.post('/lobbies/:id/skip-round', skipRound);
-app.get('/lobbies/:id/beatmaps', getLobbyBeatmaps);
-app.get('/lobbies/:id/users', getLobbyUsers);
-app.get('/lobbies/:id/messages', getMessages);
-app.post('/lobbies/:id/messages', sendMessage);
-app.get('/lobbies/:id', getLobby);
-app.post('/verify-user', verifyUser);
-app.post('/check-verified', checkVerified);
-app.post('/toggle-monitoring', toggleMonitoring);
-app.post('/admin/clear-db', clearDb);
-app.get('/users', getUsers);
+const router = Router();
+
+router.get('', async (req, res) => res.send('Hello world!'));
+router.get('/lobbies', async (req, res) => res.json(await getLobbies()));
+router.get('/lobbies/:id/rounds/:roundNum', getRoundScores);
+router.post('/lobbies/:id/join', joinGame);
+router.post('/lobbies/:id/leave', leaveGame);
+router.post('/lobbies/:id/skip-round', skipRound);
+router.get('/lobbies/:id/beatmaps', getLobbyBeatmaps);
+router.get('/lobbies/:id/users', getLobbyUsers);
+router.get('/lobbies/:id/messages', getMessages);
+router.post('/lobbies/:id/messages', sendMessage);
+router.get('/lobbies/:id', getLobby);
+router.post('/verify-user', verifyUser);
+router.post('/check-verified', checkVerified);
+router.post('/toggle-monitoring', toggleMonitoring);
+router.post('/admin/clear-db', clearDb);
+router.get('/users', getUsers);
+
+app.use('/api', router);
 
 export async function startServer() {
   await app.listen(PORT);

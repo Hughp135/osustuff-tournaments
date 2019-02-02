@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 interface RequestOptions {
   headers?: { [key: string]: string };
@@ -11,7 +12,7 @@ interface RequestOptions {
   providedIn: 'root'
 })
 export class ApiService {
-  private BASE_URL = 'http://localhost:4008/';
+  private BASE_URL = environment.base_api_url;
   private baseHeaders: { [name: string]: string | string[] };
 
   constructor(private http: HttpClient) {
