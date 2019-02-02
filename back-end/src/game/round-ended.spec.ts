@@ -34,6 +34,7 @@ describe('round-ended', () => {
     const game = await Game.create({ title: 'test', beatmaps: [] });
     await addPlayer(game, u1);
     const round = await Round.create({
+      roundNumber: 1,
       beatmap: {
         beatmapId: 'asd123',
         title: 'b1',
@@ -56,6 +57,7 @@ describe('round-ended', () => {
     await addPlayer(game, u1);
 
     const round = await Round.create({
+      roundNumber: 1,
       beatmap: {
         beatmapId: 'asd123',
         title: 'b1',
@@ -97,6 +99,7 @@ describe('round-ended', () => {
     await addPlayer(game, u1);
 
     const round = await Round.create({
+      roundNumber: 1,
       beatmap: {
         beatmapId: 'asd123',
         title: 'b1',
@@ -149,6 +152,7 @@ describe('round-ended', () => {
     await addPlayer(game, u7);
 
     const round = await Round.create({
+      roundNumber: 1,
       beatmap: {
         beatmapId: 'asd123',
         title: 'b1',

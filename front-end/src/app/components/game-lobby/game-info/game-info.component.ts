@@ -42,4 +42,15 @@ export class GameInfoComponent implements OnInit {
   public async toggleFreeze() {
     await this.apiService.post(`toggle-monitoring`, {}).toPromise();
   }
+
+  get nextStageStartsMsg() {
+    switch (this.game.status) {
+      case 'new':
+        return 'Game will start in';
+      case 'in-progress':
+        return `Round ${this.game.roundNumber} ends in`;
+      case 'round-over':
+        return `Round ${this.game.roundNumber + 1} starts in`;
+    }
+  }
 }

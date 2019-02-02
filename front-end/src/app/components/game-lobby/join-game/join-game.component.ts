@@ -110,7 +110,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
         .toPromise();
 
       if (verified) {
-        responsiveVoice.speak('You have been verified and have joined the osu match.');
+        responsiveVoice.speak('You have joined the game.');
         this.settingsService.setCurrentGame(this.game._id, this.joinRequestId);
       } else {
         setTimeout(() => {

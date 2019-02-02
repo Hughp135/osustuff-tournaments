@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 import { User } from '../../models/User.model';
 import { Game } from '../../models/Game.model';
 
-export async function getUsers(req: Request, res: Response) {
+export async function getLobbyUsers(req: Request, res: Response) {
   const { id } = req.params;
 
   if (!Types.ObjectId.isValid(id)) {

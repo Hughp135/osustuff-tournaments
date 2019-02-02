@@ -75,17 +75,17 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       this.currentGame = val;
       await this.fetch(true);
     });
-
     const currentUsernameSub = this.settingsService.username.subscribe(
       val => (this.currentUsername = val),
     );
+
+    this.subscriptions = [currentGameSub, currentUsernameSub];
 
     const gameFetchInterval = this.game.status === 'complete' ? 60000 : 5000;
     const messagesInterval = this.game.status === 'complete' ? 6000 : 3000;
 
     this.visibilityTimers.push(
       Visibility.every(gameFetchInterval, gameFetchInterval * 3, async () => {
-        console.log(12);
         await this.fetch(this.game.status === 'new');
       }),
       Visibility.every(1000, 30000, async () => {
@@ -101,8 +101,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         await this.getMoreMessages();
       }),
     );
-
-    this.subscriptions = [currentGameSub, currentUsernameSub];
   }
 
   ngOnDestroy() {
@@ -166,10 +164,10 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       if (game.status !== this.game.status || forcePlayersUpdate) {
         this.players = await this.gameService.getLobbyUsers(this.game._id);
       }
-      if (game.roundNumber !== this.game.roundNumber) {
+      if (game.roundNumber !== this.game.roundNumber && this.inGame && this.isAlive) {
         responsiveVoice.speak(`Round ${game.roundNumber} has started. `);
       }
-      if (game.status === 'new' && game.secondsToNextRound < 30 && !this.announcedStart) {
+      if (game.status === 'new' && game.secondsToNextRound < 30 && !this.announcedStart && this.inGame) {
         responsiveVoice.speak(`The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`);
         this.announcedStart = true;
       }

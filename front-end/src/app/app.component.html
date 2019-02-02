@@ -1,2 +1,10 @@
 <link rel="stylesheet" href="/assets/semantic.min.css">
+<div class="ui inverted menu" *ngIf="showMenu">
+  <a class="item" [class.active]="url === '/'" [routerLink]="['/']">
+    Games
+  </a>
+  <a class="item" [class.active]="url === '/leaderboard'" [routerLink]="['/leaderboard']">
+    Leaderboard
+  </a>
+</div>
 <router-outlet></router-outlet>

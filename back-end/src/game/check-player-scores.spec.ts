@@ -47,6 +47,7 @@ describe('check-player-scores', () => {
       game.players.find(p => p.userId.toString() === u3._id.toString())
     )).alive = false;
     const round = await Round.create({
+      roundNumber: 1,
       beatmap: {
         beatmapId: 'asd123',
         title: 'b1',
@@ -81,6 +82,7 @@ describe('check-player-scores', () => {
     )).alive = false;
 
     const round = await Round.create({
+      roundNumber: 1,
       beatmap: {
         beatmap_id: '932223',
         title: 'b1',
@@ -116,6 +118,7 @@ describe('check-player-scores', () => {
     });
     await addPlayer(game, u1);
     const round = await Round.create({
+      roundNumber: 1,
       beatmap: {
         beatmap_id: '932223',
         title: 'b1',
@@ -146,6 +149,7 @@ describe('check-player-scores', () => {
     });
     await addPlayer(game, u1);
     const round = await Round.create({
+      roundNumber: 1,
       beatmap: {
         beatmap_id: '932223',
         title: 'b1',
@@ -176,6 +180,7 @@ describe('check-player-scores', () => {
     });
     await addPlayer(game, u1);
     const round = await Round.create({
+      roundNumber: 1,
       beatmap: {
         beatmap_id: '932223',
         title: 'b1',

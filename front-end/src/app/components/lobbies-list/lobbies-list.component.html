@@ -1,33 +1,45 @@
-<div class="ui inverted container">
+<div class="ui inverted container section">
   <h1 class="ui inverted header">Matches</h1>
 
-  <div class="ui inverted basic segment">
-    <div class="ui huge link inverted very relaxed divided list">
+  <div class="ui inverted basic segment lobbies-container">
+    <div class="ui large link inverted divided list">
       <a class="item" *ngFor="let lobby of lobbies" [routerLink]="['lobbies', lobby._id]">
-        <div class="ui equal width stackable grid">
-          <div class="column">
-            <i class="left floated big trophy icon" [ngClass]="getLobbyColor(lobby)"></i>
+        <div class="ui stackable grid">
+          <div class="seven wide desktop column">
+            <i class="left floated large icon" [ngClass]="getLobbyIconClass(lobby)"></i>
             <div class="content">
               <div class="header">
                 {{ lobby.title }}
               </div>
-              {{ getStatus(lobby) }}
+              <div class="description">
+                {{ getStatus(lobby) }}
+              </div>
             </div>
           </div>
-          <div class="column">
+          <div class="nine wide desktop column lobby-details">
             <div class="ui equal width grid">
+              <div class="column">
+                <h5 *ngIf="lobby.winningUser">
+                  <i class="yellow fitted trophy icon"></i> {{ lobby.winningUser.username }}
+                </h5>
+              </div>
               <div class="column" *ngIf="lobby.roundNumber">
-                <h5>
+                <h5 *ngIf="lobby.status !== 'complete'">
                   Round {{ lobby.roundNumber }}
+                </h5>
+                <h5 *ngIf="lobby.status === 'complete'">
+                  Complete
                 </h5>
               </div>
               <div class="column" *ngIf="lobby.startsAt">
                 <h5 *ngIf="lobby.startsAt">
-                  Starts in: {{ getTimeLeft(lobby.startsAt) }}s
+                  Starts in: {{ lobby.startsAtString }}
                 </h5>
               </div>
               <div class="column">
-                <i class="grey user icon"></i> {{ lobby.playerCount }}
+                <h5>
+                  <i class="grey user icon"></i> {{ lobby.playerCount }}
+                </h5>
               </div>
             </div>
           </div>

@@ -26,6 +26,7 @@ import {
 import { ScoresTableComponent } from './components/game-lobby/scores-list/scores-table/scores-table.component';
 import { OrdinalPipe } from './pipes/ordinal.pipe';
 import { MenuComponent } from './components/game-lobby/menu/menu.component';
+import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { MenuComponent } from './components/game-lobby/menu/menu.component';
     BeatmapListComponent,
     GameStatusComponent,
     ScoresTableComponent,
-    MenuComponent
+    MenuComponent,
+    LeaderboardComponent
   ],
   imports: [
     BrowserModule,

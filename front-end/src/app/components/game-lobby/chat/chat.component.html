@@ -17,7 +17,7 @@
   <form (submit)="sendMessage()" *ngIf="true || canChat">
     <div class="ui fluid action inverted input">
       <input #chatInput autocomplete="off" [disabled]="sendingMessage || !canChat" [ngModel]="messageInput | emojify"
-        (ngModelChange)="messageInput=$event" name="messageInput" type="text" [placeholder]="canChat ? 'Chat...' : 'Only joined players can chat'">
+        (ngModelChange)="messageInput=$event" name="messageInput" type="text" [placeholder]="canChat ? 'Chat...' : 'You cannot chat'">
       <emoji-mart *ngIf="showEmojiPicker" (emojiClick)="addEmoji($event)"></emoji-mart>
 
       <button class="ui inverted icon button show-emoji-picker" (document:click)="windowClick($event)" [disabled]="sendingMessage || !canChat"

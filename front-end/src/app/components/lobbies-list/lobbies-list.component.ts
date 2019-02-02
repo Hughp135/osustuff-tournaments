@@ -1,14 +1,16 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { getTimeComponents } from '../game-lobby/game-lobby.component';
+import { Subscription, interval } from 'rxjs';
 
 @Component({
   selector: 'app-lobbies-list',
   templateUrl: './lobbies-list.component.html',
   styleUrls: ['./lobbies-list.component.scss'],
 })
-export class LobbiesListComponent implements OnInit {
+export class LobbiesListComponent implements OnInit, OnDestroy {
   public lobbies: any[];
+  public subscriptions: Subscription[] = [];
 
   constructor(private route: ActivatedRoute) {}
 
@@ -16,6 +18,22 @@ export class LobbiesListComponent implements OnInit {
     const { data } = this.route.snapshot.data;
 
     this.lobbies = data.lobbies;
+    this.setLobbiesStartString();
+
+    this.subscriptions.push(
+      interval(1000).subscribe(() => {
+        this.lobbies
+          .filter(l => l.status === 'new')
+          .forEach(l => {
+            l.startsAt--;
+          });
+        this.setLobbiesStartString();
+      }),
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   get joinableGames() {
@@ -41,24 +59,30 @@ export class LobbiesListComponent implements OnInit {
     }
   }
 
-  public getTimeLeft(timeLeftSeconds: number) {
-    const date = new Date();
-    date.setSeconds(date.getSeconds() + timeLeftSeconds);
-    const { seconds, minutes } = getTimeComponents(date.getTime() - Date.now());
+  public setLobbiesStartString() {
+    this.lobbies
+      .filter(l => l.status === 'new')
+      .forEach(lobby => {
+        const date = new Date();
+        date.setSeconds(date.getSeconds() + lobby.startsAt);
+        const { seconds, minutes } = getTimeComponents(date.getTime() - Date.now());
 
-    if (parseInt(seconds, 10) < 0) {
-      return 'now';
-    }
+        if (parseInt(seconds, 10) < 0) {
+          return (lobby.startsAtString = `now`);
+        }
 
-    return `${minutes}:${seconds}`;
+        lobby.startsAtString = `${minutes}:${seconds}s`;
+      });
   }
 
-  public getLobbyColor(lobby) {
+  public getLobbyIconClass(lobby) {
     switch (lobby.status) {
       case 'new':
-        return 'green';
+        return 'green play';
+      case 'complete':
+        return 'grey flag checkered';
       default:
-        return 'grey';
+        return 'orange eye';
     }
   }
 }

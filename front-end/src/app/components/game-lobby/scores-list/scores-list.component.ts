@@ -11,6 +11,7 @@ export class ScoresListComponent implements OnInit {
   @Input() scores;
   @Input() currentUser: string;
   @Input() game: IGame;
+  @Input() inGame: boolean;
 
   constructor() {}
 

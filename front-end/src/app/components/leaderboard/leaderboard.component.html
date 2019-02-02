@@ -1,0 +1,53 @@
+<div class="ui inverted container section">
+  <h1 class="ui inverted header">Leaderboard</h1>
+
+  <table class="ui inverted unstackable table">
+    <thead>
+      <th>Rank</th>
+      <th>Match Rating</th>
+      <th>Username</th>
+      <th class="center aligned">Wins</th>
+      <th class="center aligned">Games Played</th>
+      <th class="center aligned">Win Rate</th>
+      <th>Global PP Rank</th>
+      <th>Country (Rank)</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users; let index = index">
+        <td>
+          {{ index + 1 }}
+        </td>
+        <td>
+          <i class="teal crosshairs icon"></i>
+          {{ user.gamesPlayed > 0 ? user.elo : '--' }}
+        </td>
+        <td>
+          {{ user.username }}
+        </td>
+        <td class="center aligned">
+          <i class="trophy icon" [class.yellow]="user.wins > 0"></i>
+          {{ user.wins }}
+        </td>
+        <td class="center aligned">
+          {{ user.gamesPlayed }}
+        </td>
+        <td class="center aligned">
+          <span *ngIf="user.gamesPlayed">
+            {{ getWinRate(user) }}%
+          </span>
+          <span *ngIf="!user.gamesPlayed">
+            --
+          </span>
+        </td>
+        <td>
+          <i class="blue globe icon"></i>
+          #{{ user.ppRank | number }}
+        </td>
+        <td>
+          <i class="fitted flag" [ngClass]="user.country.toLowerCase()"></i>
+          #{{ user.countryRank | number }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

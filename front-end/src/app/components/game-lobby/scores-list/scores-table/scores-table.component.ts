@@ -9,6 +9,7 @@ import { IGame } from '../../game-lobby.component';
 })
 export class ScoresTableComponent implements OnInit {
   @Input() scores;
+  @Input() hidePlace?;
   @Input() currentUser?;
   @Input() game: IGame;
 

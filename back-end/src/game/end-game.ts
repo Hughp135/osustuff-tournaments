@@ -1,5 +1,5 @@
 import { IGame } from '../models/Game.model';
-import { calculatePlayersElo } from './calculate-players-elo';
+import { updatePlayerGameStats } from './update-player-game-stats';
 
 export async function endGame(game: IGame) {
   const alivePlayers = game.players.filter(p => p.alive);
@@ -11,7 +11,6 @@ export async function endGame(game: IGame) {
   const [winner] = alivePlayers;
 
   if (winner) {
-    console.log('game ended, winner won', winner);
     // Winner has been decided
     game.winningUser = {
       userId: winner.userId,
@@ -28,5 +27,5 @@ export async function endGame(game: IGame) {
 
   await game.save();
 
-  await calculatePlayersElo(game);
+  await updatePlayerGameStats(game);
 }

@@ -1,5 +1,10 @@
 <div class="ui inverted segment no-bg">
   <div class="ui equal width inverted divided grid">
+    <div class="one wide column">
+      <a [routerLink]="['/']">
+        <i class="large angle left icon"></i>
+      </a>
+    </div>
     <div class="column">
       <h5>Lobby Name</h5>
       {{ game.title }}
@@ -17,7 +22,7 @@
       {{ game.roundNumber || '-' }}
     </div>
     <div class="column">
-      <h5>Next stage starts in</h5>
+      <h5>{{ nextStageStartsMsg }}</h5>
       {{ timeLeft }}
     </div>
     <div style="position: absolute; top: 0; right: 0;" class="ui mini button" (click)="skipRound()">Skip</div>

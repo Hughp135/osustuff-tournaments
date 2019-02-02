@@ -8,6 +8,8 @@ export interface IUser extends mongoose.Document {
   countryRank: number;
   country: string;
   elo: number;
+  gamesPlayed: number;
+  wins: number;
 }
 
 const UserSchema = new mongoose.Schema(
@@ -17,8 +19,10 @@ const UserSchema = new mongoose.Schema(
     currentGame: { type: mongoose.Schema.Types.ObjectId },
     ppRank: { type: Number, required: true },
     countryRank: { type: Number, required: true },
+    gamesPlayed: { type: Number, required: true, default: 0 },
+    wins: { type: Number, required: true, default: 0 },
     country: { type: String, required: true },
-    elo: { type: Number, required: true, default: 1500 },
+    elo: { type: Number, required: true, default: 1500, index: true },
   },
   {
     timestamps: true,

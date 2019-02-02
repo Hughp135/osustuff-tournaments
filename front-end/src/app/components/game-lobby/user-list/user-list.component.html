@@ -19,7 +19,7 @@
       <div class="description">
         #{{ player.ppRank | number }}
         <span *ngIf="winningUser === player.username" class="text-muted">Winner</span>
-        <span *ngIf="player.gameRank" class="text-muted">
+        <span *ngIf="player.gameRank && winningUser !== player.username" class="text-muted">
           Finished {{ player.gameRank | ordinal }}
         </span>
       </div>

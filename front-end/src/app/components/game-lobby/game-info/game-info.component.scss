@@ -7,3 +7,14 @@
 h3 {
   margin-bottom: 5px !important;
 }
+
+.angle.left.icon {
+  margin-top: 9px;
+  margin-left: 2px;
+  margin-right: 0;
+  color: rgba(255,255,255,0.7);
+
+  &:hover {
+    color: rgba(255,255,255,1);
+  }
+}

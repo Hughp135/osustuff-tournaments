@@ -1,3 +1,29 @@
-.container {
-  margin-top: 40px;
+.large.icon {
+  margin-left: 8px !important;
+  margin-top: 8px !important;
+}
+
+.ui.segment.lobbies-container {
+  padding: 0;
+}
+
+.ui.list {
+  padding: 0 !important;
+}
+
+.ui.list .item {
+  padding: 30px 20px !important;
+  &:hover {
+    background: #2f3b44;
+  }
+}
+
+.description {
+  font-size: 0.9em;
+}
+
+.lobby-details {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
 }

@@ -4,7 +4,7 @@ import sinonChai from 'sinon-chai';
 import config from 'config';
 import { Game, IPlayer } from '../models/Game.model';
 import { User } from '../models/User.model';
-import { calculatePlayersElo } from './calculate-players-elo';
+import { updatePlayerGameStats } from './update-player-game-stats';
 
 mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
@@ -27,13 +27,24 @@ describe('check-player-scores', () => {
     await User.deleteMany({});
   });
   it('ranks elo', async () => {
-    const players = await createPlayers(10);
-    for (let i = 0; i < 5; i++) {
-      await calculatePlayersElo({
-        players,
+    const players = await createPlayers(1000);
+    for (let i = 0; i < 10; i++) {
+      await updatePlayerGameStats({
+        players: shuffle(players),
       });
+      const users = await User.find()
+        .select({ username: 1, elo: 1 })
+        .lean();
+      // console.log('users highest/lowest elo', users[0].elo, users[users.length - 1].elo);
     }
-  });
+    const usersFinal = await User.find()
+    .select({ username: 1, elo: 1 })
+    .lean();
+
+    usersFinal.forEach((u: any) => {
+      expect(u.elo).not.to.equal(1500);
+    });
+  }).timeout(30000);
 });
 
 async function createPlayers(count: number) {
@@ -60,4 +71,12 @@ async function createPlayers(count: number) {
   });
 
   return await Promise.all(players);
+}
+
+function shuffle(a: any[]) {
+  for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
