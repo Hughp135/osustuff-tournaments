@@ -1,7 +1,8 @@
-import { CurrentGame } from './../../../services/settings.service';
 import { ApiService } from './../../../services/api.service';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { SettingsService } from 'src/app/services/settings.service';
+
+declare var responsiveVoice: any;
 
 @Component({
   selector: 'app-join-game',
@@ -109,6 +110,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
         .toPromise();
 
       if (verified) {
+        responsiveVoice.speak('You have been verified and have joined the osu match.');
         this.settingsService.setCurrentGame(this.game._id, this.joinRequestId);
       } else {
         setTimeout(() => {

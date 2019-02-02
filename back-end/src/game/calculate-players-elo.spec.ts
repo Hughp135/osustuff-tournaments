@@ -4,14 +4,13 @@ import sinonChai from 'sinon-chai';
 import config from 'config';
 import { Game, IPlayer } from '../models/Game.model';
 import { User } from '../models/User.model';
-import sinon from 'sinon';
 import { calculatePlayersElo } from './calculate-players-elo';
 
 mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
 chai.use(sinonChai);
 
-describe.only('check-player-scores', () => {
+describe('check-player-scores', () => {
   before(async () => {
     await mongoose.connect(
       'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',

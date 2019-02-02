@@ -48,7 +48,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": ["src/scripts/responsivevoice.js"]
           },
           "configurations": {
             "production": {
@@ -104,7 +104,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [],
+            "scripts": ["src/scripts/responsivevoice.js"],
             "assets": [
               "src/favicon.ico",
               "src/assets"

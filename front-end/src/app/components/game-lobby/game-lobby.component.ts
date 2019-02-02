@@ -5,6 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import * as Visibility from 'visibilityjs';
 
+declare var responsiveVoice: any;
+
 export interface IPlayer {
   username: string;
   alive: boolean;
@@ -49,11 +51,12 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   public timeLeft: string;
   private fetchingMessages = false;
   public currentUsername: string;
+  private announcedStart = false;
 
   constructor(
     private route: ActivatedRoute,
     private settingsService: SettingsService,
-    private gameService: GameService
+    private gameService: GameService,
   ) {}
 
   ngOnInit() {
@@ -74,7 +77,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     });
 
     const currentUsernameSub = this.settingsService.username.subscribe(
-      val => (this.currentUsername = val)
+      val => (this.currentUsername = val),
     );
 
     const gameFetchInterval = this.game.status === 'complete' ? 60000 : 5000;
@@ -82,6 +85,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
     this.visibilityTimers.push(
       Visibility.every(gameFetchInterval, gameFetchInterval * 3, async () => {
+        console.log(12);
         await this.fetch(this.game.status === 'new');
       }),
       Visibility.every(1000, 30000, async () => {
@@ -95,7 +99,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       }),
       Visibility.every(messagesInterval, messagesInterval * 10, async () => {
         await this.getMoreMessages();
-      })
+      }),
     );
 
     this.subscriptions = [currentGameSub, currentUsernameSub];
@@ -140,7 +144,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     try {
       const newMessages = await this.gameService.getLobbyMessages(
         this.game._id,
-        lastMessage && lastMessage._id
+        lastMessage && lastMessage._id,
       );
 
       this.messages = newMessages.concat(this.messages);
@@ -161,6 +165,13 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       const game = <any>await this.gameService.getLobby(this.game._id);
       if (game.status !== this.game.status || forcePlayersUpdate) {
         this.players = await this.gameService.getLobbyUsers(this.game._id);
+      }
+      if (game.roundNumber !== this.game.roundNumber) {
+        responsiveVoice.speak(`Round ${game.roundNumber} has started. `);
+      }
+      if (game.status === 'new' && game.secondsToNextRound < 30 && !this.announcedStart) {
+        responsiveVoice.speak(`The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`);
+        this.announcedStart = true;
       }
       this.game = game;
     } catch (e) {
