@@ -4,6 +4,7 @@ import { JoinGameRequest } from '../../models/JoinGameRequest.model';
 import { User } from '../../models/User.model';
 import { addPlayer } from '../../game/add-player';
 import { Game } from '../../models/Game.model';
+import winston from 'winston';
 
 const VERIFY_USER_TOKEN = config.get('VERIFY_USER_TOKEN');
 
@@ -19,6 +20,15 @@ export async function verifyUser(req: Request, res: Response) {
   if (!verifyRequest) {
     return res.status(404).end();
   }
+
+  winston.log(
+    'info',
+    'verifyRequest',
+    [verifyRequest.username,
+    verifyRequest.verified,
+    verifyRequest.expiresAt,
+    verifyRequest.gameId],
+  );
 
   if (verifyRequest.verified) {
     return res.status(400).end();
