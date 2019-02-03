@@ -18,8 +18,8 @@ export interface IScore extends mongoose.Document {
 
 const ScoreSchema = new mongoose.Schema(
   {
-    roundId: { type: mongoose.Schema.Types.ObjectId, required: true },
-    userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    roundId: { type: mongoose.Schema.Types.ObjectId, required: true, index: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, required: true, index: true },
     username: { type: String, required: true },
     score: { type: Number, required: true },
     rank: { type: String, required: true },

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Message } from '../../../models/Message.model';
 import { ObjectID } from 'bson';
+import { getDataOrCache } from '../../../services/cache';
 
 export async function getMessages(req: Request, res: Response) {
   const { id } = req.params;
@@ -10,6 +11,13 @@ export async function getMessages(req: Request, res: Response) {
     return res.status(404).end();
   }
 
+  const cacheKey = `get-messages-${id}-${afterId}`;
+  const data = await getDataOrCache(cacheKey, 3000, async () => getData(id, afterId));
+
+  res.json(data);
+}
+
+async function getData(id: string, afterId: string) {
   const filter: any = {
     gameId: id,
   };
@@ -18,7 +26,7 @@ export async function getMessages(req: Request, res: Response) {
     filter._id = { $gt: new ObjectID(afterId) };
   }
 
-  const messages = await Message.find(filter)
+  return await Message.find(filter)
     .select({
       userId: 0,
       updatedAt: 0,
@@ -27,6 +35,4 @@ export async function getMessages(req: Request, res: Response) {
     .sort({ _id: -1 })
     .limit(100)
     .lean();
-
-  res.json(messages);
 }

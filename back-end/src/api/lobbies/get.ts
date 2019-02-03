@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { Round } from '../../models/Round.model';
 import mongoose from 'mongoose';
 import { Score } from '../../models/Score.model';
+import { getDataOrCache } from '../../services/cache';
 
 export async function getLobby(req: Request, res: Response) {
   const { id } = req.params;
@@ -11,6 +12,17 @@ export async function getLobby(req: Request, res: Response) {
     return res.status(404).end();
   }
 
+  const cacheKey = `get-lobby-${id}`;
+  const data = await getDataOrCache(cacheKey, 5000, async () => await getData(id));
+
+  if (!data) {
+    return res.status(404).end();
+  }
+
+  res.json(data);
+}
+
+async function getData(id: string) {
   const game = await Game.findById(id)
     .select({
       title: 1,
@@ -26,7 +38,7 @@ export async function getLobby(req: Request, res: Response) {
     .lean();
 
   if (!game) {
-    return res.status(404).end();
+    return null;
   }
 
   const secondsToNextRound = game.nextStageStarts
@@ -61,12 +73,10 @@ export async function getLobby(req: Request, res: Response) {
 
   game.players = undefined;
 
-  const data = {
+  return {
     ...game,
     round,
     secondsToNextRound,
     scores: scoresTransformed,
   };
-
-  res.json(data);
 }

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Types } from 'mongoose';
 import { User } from '../../models/User.model';
 import { Game } from '../../models/Game.model';
+import { getDataOrCache } from '../../services/cache';
 
 export async function getLobbyUsers(req: Request, res: Response) {
   const { id } = req.params;
@@ -10,6 +11,16 @@ export async function getLobbyUsers(req: Request, res: Response) {
     return res.status(404).end();
   }
 
+  const players = await getDataOrCache(`get-lobby-users-${id}`, 5000, async () => await getData(id));
+
+  if (!players) {
+    return res.status(404).end();
+  }
+
+  res.json(players);
+}
+
+async function getData(id: string) {
   const game = await Game.findById(id)
     .select({
       players: 1,
@@ -17,7 +28,7 @@ export async function getLobbyUsers(req: Request, res: Response) {
     .lean();
 
   if (!game) {
-    return res.status(404).end();
+    return null;
   }
 
   const users = await User.find({
@@ -31,12 +42,10 @@ export async function getLobbyUsers(req: Request, res: Response) {
     })
     .lean();
 
-  const players = game.players
+  return game.players
     .sort((a: any, b: any) => b.alive - a.alive)
     .map((p: any) => ({
       ...p,
       ...users.find((u: any) => u._id.toString() === p.userId.toString()),
     }));
-
-  res.json(players);
 }

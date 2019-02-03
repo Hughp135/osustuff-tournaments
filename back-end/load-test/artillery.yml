@@ -1,0 +1,15 @@
+config:
+  target: 'http://localhost:4008/api'
+  phases:
+    - duration: 30
+      arrivalRate: 10
+      rampTo: 500
+      name: "Warm up the application"
+scenarios:
+  - flow:
+    - get:
+        url: "/lobbies/5c563650e46bbc45ccf4a3ea"
+    - get:
+        url: "/lobbies/5c563fccdcf43e043c3eb74a/messages?afterId=5c564115a932ce3c70474ff4"
+    - get:
+        url: "/lobbies/5c563650e46bbc45ccf4a3ea/users"

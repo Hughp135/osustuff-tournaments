@@ -172,6 +172,11 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       if (game.roundNumber !== this.game.roundNumber && this.inGame && this.isAlive) {
         responsiveVoice.speak(`Round ${game.roundNumber} has started. `);
       }
+      if (game.status === 'complete' && this.game.status !== 'complete') {
+        const winnerString = game.winningUser ? `${game.winningUser.username} won the match!`
+          : 'No one won the match';
+        responsiveVoice.speak(`The match has finished. ${winnerString}`);
+      }
       if (game.status === 'new' && game.secondsToNextRound < 30 && !this.announcedStart && this.inGame) {
         responsiveVoice.speak(`The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`);
         this.announcedStart = true;

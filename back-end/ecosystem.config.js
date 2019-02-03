@@ -5,6 +5,7 @@ module.exports = {
     instances: 1,
     autorestart: true,
     watch: "dist",
+    instance_var: "INSTANCE_ID",
     watch_options: {
       followSymlinks: false,
     },

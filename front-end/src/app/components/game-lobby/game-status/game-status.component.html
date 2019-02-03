@@ -15,7 +15,7 @@
 </div>
 
 <div class="ui inverted center aligned padded green segment"
-  *ngIf="game.winningUser && game.winningUser && game.winningUser.username === mePlayer.username">
+  *ngIf="isWinner">
   <div class="ui icon header">
     <i class="yellow trophy icon"></i>
     Congratulations!

@@ -71,4 +71,8 @@ export class GameStatusComponent implements OnInit {
   get rank() {
     return this.mePlayer && this.mePlayer.gameRank;
   }
+
+  get isWinner() {
+    return this.game.winningUser && this.mePlayer &&  this.game.winningUser.username === this.mePlayer.username;
+  }
 }
