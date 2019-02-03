@@ -23,10 +23,6 @@ export class UserListComponent implements OnInit {
 
   get sortedPlayers() {
     const filtered = this.players.sort((a, b) => {
-      if (a.username === this.currentUser) {
-        return -1;
-      }
-
       if (a.gameRank && b.gameRank) {
         return a.gameRank - b.gameRank;
       }
@@ -39,6 +35,14 @@ export class UserListComponent implements OnInit {
       }
 
       return a.ppRank - b.ppRank;
+    }).sort((a, b) => {
+      if (a.username === this.currentUser) {
+        return -1;
+      } else if (b.username === this.currentUser) {
+        return 1;
+      } else {
+        return 1;
+      }
     }).slice(0, 200);
 
     if (filtered.length < this.players.length) {

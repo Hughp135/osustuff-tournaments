@@ -13,7 +13,7 @@ export async function roundEnded(game: IGame, round: IRound) {
   })).reduce(
     // reduce to only 1 score per user
     (acc, curr) => {
-      if (!acc.some(s => s.userId === curr.userId)) {
+      if (!acc.some(s => s.userId.toString() === curr.userId.toString())) {
         acc.push(curr);
       }
       return acc;

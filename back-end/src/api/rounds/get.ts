@@ -15,7 +15,6 @@ export async function getRoundScores(req: Request, res: Response) {
   round.scores = (await Score.find({ roundId: round._id })
     .sort({ score: -1 })
     .select({
-      userId: 0,
       _id: 0,
       updatedAt: 0,
       __v: 0,
@@ -24,7 +23,7 @@ export async function getRoundScores(req: Request, res: Response) {
     .lean()).reduce(
       // reduce to only 1 score per user
       (acc: IScore[], curr: IScore) => {
-        if (!acc.some(s => s.userId === curr.userId)) {
+        if (!acc.some(s => s.userId.toString() === curr.userId.toString())) {
           acc.push(curr);
         }
         return acc;
