@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 export class GameInfoComponent implements OnInit {
   @Input() game: any;
   @Input() timeLeft: string;
+  @Input() inGame: boolean;
+
   constructor(private settingsService: SettingsService, private router: Router) {
   }
 

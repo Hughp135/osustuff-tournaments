@@ -25,7 +25,7 @@
       <h5>{{ nextStageStartsMsg }}</h5>
       {{ timeLeft }}
     </div>
-    <div class="column" *ngIf="game.status === 'new'">
+    <div class="column" *ngIf="game.status === 'new' && inGame">
       <div class="ui red button" (click)="leaveGame()">Leave Game</div>
     </div>
   </div>
