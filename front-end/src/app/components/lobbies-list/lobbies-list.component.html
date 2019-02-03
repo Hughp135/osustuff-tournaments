@@ -3,7 +3,7 @@
 
   <div class="ui inverted basic segment lobbies-container">
     <div class="ui large link inverted divided list">
-      <a class="item" *ngFor="let lobby of lobbies" [routerLink]="['lobbies', lobby._id]">
+      <a class="item" *ngFor="let lobby of lobbies" [routerLink]="['/lobbies', lobby._id]">
         <div class="ui stackable grid">
           <div class="seven wide desktop column">
             <i class="left floated large icon" [ngClass]="getLobbyIconClass(lobby)"></i>
@@ -17,21 +17,21 @@
             </div>
           </div>
           <div class="nine wide desktop column lobby-details">
-            <div class="ui equal width grid">
+            <div class="ui equal width right aligned grid">
               <div class="column">
                 <h5 *ngIf="lobby.winningUser">
                   <i class="yellow fitted trophy icon"></i> {{ lobby.winningUser.username }}
                 </h5>
               </div>
-              <div class="column">
-                <div *ngIf="lobby.roundNumber">
-                  <h5 *ngIf="lobby.status !== 'complete'">
+              <div class="column" *ngIf="lobby.status !== 'complete' && lobby.roundNumber">
+                <div>
+                  <h5>
                     Round {{ lobby.roundNumber }}
                   </h5>
                 </div>
               </div>
-              <div class="column">
-                <h5 *ngIf="lobby.startsAt">
+              <div class="column" *ngIf="lobby.startsAt">
+                <h5>
                   Starts in: {{ lobby.startsAtString }}
                 </h5>
               </div>

@@ -1,3 +1,4 @@
+import { HomeComponent } from './components/home/home.component';
 import { LeaderboardResolver } from './resolvers/leaderboard.resolver';
 import { LobbiesListResolver } from './resolvers/lobbies-list.resolver';
 import { NgModule } from '@angular/core';
@@ -10,6 +11,10 @@ import { LeaderboardComponent } from './components/leaderboard/leaderboard.compo
 const routes: Routes = [
   {
     path: '',
+    component: HomeComponent,
+  },
+  {
+    path: 'lobbies',
     component: LobbiesListComponent,
     resolve: { data: LobbiesListResolver },
   },

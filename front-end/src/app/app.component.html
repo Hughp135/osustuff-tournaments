@@ -1,10 +1,15 @@
-<link rel="stylesheet" href="/assets/semantic.min.css">
 <div class="ui inverted menu" *ngIf="showMenu">
-  <a class="item" [class.active]="url === '/'" [routerLink]="['/']">
-    Games
+  <a [routerLink]="'/'" class="item">
+    <img src="/assets/osustuff-colors.png" alt="">
+    <b>osuStuff</b>
+  </a>
+  <a class="item" [class.active]="url === '/lobbies'" [routerLink]="'/lobbies'">
+    <i class="play icon"></i>
+    Play
   </a>
   <a class="item" [class.active]="url === '/leaderboard'"
-    [routerLink]="['/leaderboard']">
+    [routerLink]="'/leaderboard'">
+    <i class="trophy icon"></i>
     Leaderboard
   </a>
 </div>

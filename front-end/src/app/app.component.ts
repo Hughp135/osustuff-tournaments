@@ -23,7 +23,7 @@ export class AppComponent {
     router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        this.showMenu = !event.url.startsWith('/lobbies');
+        this.showMenu = !event.url.startsWith('/lobbies/');
         this.url = event.url;
       });
     this.isAdmin = !!settingsService.adminPw;
