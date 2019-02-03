@@ -41,7 +41,7 @@ export class UserListComponent implements OnInit {
       } else if (b.username === this.currentUser) {
         return 1;
       } else {
-        return 1;
+        return 0;
       }
     }).slice(0, 200);
 
