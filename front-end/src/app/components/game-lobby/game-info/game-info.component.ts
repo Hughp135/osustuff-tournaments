@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { SettingsService } from 'src/app/services/settings.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game-info',
@@ -8,7 +10,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export class GameInfoComponent implements OnInit {
   @Input() game: any;
   @Input() timeLeft: string;
-  constructor() {
+  constructor(private settingsService: SettingsService, private router: Router) {
   }
 
   ngOnInit() {}
@@ -41,5 +43,10 @@ export class GameInfoComponent implements OnInit {
       case 'round-over':
         return `Round ${this.game.roundNumber + 1} starts in`;
     }
+  }
+
+  public async leaveGame() {
+    await this.settingsService.leaveGame(this.game._id);
+    this.router.navigate(['/lobbies']);
   }
 }

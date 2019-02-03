@@ -21,6 +21,19 @@ export async function leaveGame(req: Request, res: Response) {
     return res.status(404).end();
   }
 
+  if (game.status === 'new') {
+    game.players = game.players.filter(p => p.username !== verifyRequest.username);
+    await game.save();
+  } else {
+    const player = game.players.find(p => p.username === verifyRequest.username);
+
+    if (player) {
+      player.alive = false;
+
+      await game.save();
+    }
+  }
+
   if (verifyRequest.verified) {
     await JoinGameRequest.deleteOne({ _id: verifyRequest.id });
   }

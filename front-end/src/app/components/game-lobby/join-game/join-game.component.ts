@@ -76,13 +76,8 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     }
 
     try {
-      await this.apiService
-        .post(`lobbies/${this.game._id}/leave`, {
-          requestId: currentGame.requestId,
-        })
-        .toPromise();
+      await this.settingsService.leaveGame(this.game._id);
       this.joinRequestId = undefined;
-      this.settingsService.clearCurrentGame();
     } catch (e) {
       console.error(e);
     }

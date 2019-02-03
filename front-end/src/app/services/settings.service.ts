@@ -8,18 +8,16 @@ export interface CurrentGame {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SettingsService {
-  public currentGame: BehaviorSubject<CurrentGame> = new BehaviorSubject(
-    undefined
-  );
+  public currentGame: BehaviorSubject<CurrentGame> = new BehaviorSubject(undefined);
   public username: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
   constructor(private apiService: ApiService) {
     this.checkCurrentGame();
     this.username.next(localStorage.getItem('username') || undefined);
-    (<any>window).adminLogon = (password) => {
+    (<any>window).adminLogon = password => {
       this.setAdmin(password);
     };
   }
@@ -43,7 +41,7 @@ export class SettingsService {
       try {
         const { verified }: any = await this.apiService
           .post(`check-verified`, {
-            requestId: currentGame.requestId
+            requestId: currentGame.requestId,
           })
           .toPromise();
         if (verified) {
@@ -64,7 +62,7 @@ export class SettingsService {
   public setCurrentGame(gameId: string, requestId: string) {
     const currentGame = {
       gameId,
-      requestId
+      requestId,
     };
     localStorage.setItem('currentGame', JSON.stringify(currentGame));
 
@@ -93,5 +91,21 @@ export class SettingsService {
 
   get adminPw(): string | undefined {
     return localStorage.getItem('adminPw');
+  }
+
+  public async leaveGame(gameId: string) {
+    const currentGame = this.currentGame.getValue();
+    console.log('currentGame', currentGame);
+    if (!currentGame) {
+      return;
+    }
+
+    await this.apiService
+      .post(`lobbies/${gameId}/leave`, {
+        requestId: currentGame.requestId,
+      })
+      .toPromise();
+
+    this.clearCurrentGame();
   }
 }
