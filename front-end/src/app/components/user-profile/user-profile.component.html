@@ -1,0 +1,58 @@
+<div class="ui container section">
+  <h1>{{ user.username }}'s Profile</h1>
+
+  <h2>Stats</h2>
+
+  <div class="ui inverted segment">
+
+    <div class="ui equal width center aligned grid">
+      <div class="column">
+        <h5 class="ui inverted header">osu! Profile</h5>
+        <a class="ui primary button" target="_blank" [href]="'https://osu.ppy.sh/users/' + user.osuUserId">
+          View Profile
+        </a>
+      </div>
+
+      <div class="column">
+        <h5 class="ui inverted header">Games Played</h5>
+        <h3>
+          <i class="large green play icon"></i>
+          {{ user.gamesPlayed }}
+        </h3>
+      </div>
+
+      <div class="column">
+        <h5 class="ui inverted header">Games Won</h5>
+        <h3>
+          <i class="large yellow trophy icon"></i>
+          {{ user.wins }}
+        </h3>
+      </div>
+
+      <div class="column">
+        <h5 class="ui inverted header">Rating</h5>
+        <h3>
+          <i class="large teal crosshairs icon"></i>
+          {{ user.elo }}
+        </h3>
+      </div>
+
+    </div>
+  </div>
+
+  <h2>Achievements</h2>
+
+  <div class="ui six column doubling grid">
+    <div class="column" *ngFor="let achievement of user.achievements">
+      <div class="ui center aligned inverted segment achievement">
+        <div>
+          <i class="big icon" [ngClass]="achievement.icon"></i>
+        </div>
+        <h3>
+          {{ achievement.title}}
+        </h3>
+        {{ achievement.description }}
+      </div>
+    </div>
+  </div>
+</div>

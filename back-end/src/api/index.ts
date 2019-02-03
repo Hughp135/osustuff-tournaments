@@ -18,6 +18,7 @@ import { toggleMonitoring } from './lobbies/stop-monitoring';
 import { getRoundScores } from './rounds/get';
 import { getUsers } from './users';
 import { clearDb } from './admin/clear-db';
+import { getUser } from './user/get-user';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -43,6 +44,7 @@ router.post('/check-verified', checkVerified);
 router.post('/toggle-monitoring', toggleMonitoring);
 router.post('/admin/clear-db', clearDb);
 router.get('/users', getUsers);
+router.get('/user/:username', getUser);
 
 app.use('/api', router);
 

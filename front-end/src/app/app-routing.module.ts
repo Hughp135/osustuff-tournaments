@@ -1,3 +1,5 @@
+import { UserProfileResolver } from './resolvers/user-profile.resolver';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { HomeComponent } from './components/home/home.component';
 import { LeaderboardResolver } from './resolvers/leaderboard.resolver';
 import { LobbiesListResolver } from './resolvers/lobbies-list.resolver';
@@ -28,11 +30,16 @@ const routes: Routes = [
     component: LeaderboardComponent,
     resolve: { data: LeaderboardResolver },
   },
+  {
+    path: 'user/:username',
+    component: UserProfileComponent,
+    resolve: { data: UserProfileResolver },
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [GameLobbyResolver, LobbiesListResolver, LeaderboardResolver],
+  providers: [GameLobbyResolver, LobbiesListResolver, LeaderboardResolver, UserProfileResolver],
 })
 export class AppRoutingModule {}

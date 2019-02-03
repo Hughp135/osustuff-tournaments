@@ -24,6 +24,18 @@ export class SettingsService {
     };
   }
 
+  public async getUser() {
+    if (!this.username.getValue()) {
+      return;
+    }
+
+    try {
+      return await this.apiService.get(`user/${this.username}`).toPromise();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   public async checkCurrentGame() {
     const currentGame = this.getCurrentGame();
 

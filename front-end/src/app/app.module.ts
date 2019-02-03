@@ -29,6 +29,7 @@ import { MenuComponent } from './components/game-lobby/menu/menu.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 import { HomeComponent } from './components/home/home.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { FooterComponent } from './components/footer/footer.component';
     MenuComponent,
     LeaderboardComponent,
     HomeComponent,
-    FooterComponent
+    FooterComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,

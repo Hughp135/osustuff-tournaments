@@ -19,7 +19,7 @@
       <i class="large orange play circle outline icon"></i>
       Rejoin Game
     </a>
-    <a *ngIf="currentUsername" class="item" [routerLink]="['/user/']">
+    <a *ngIf="currentUsername" class="item" [routerLink]="['/user/', currentUsername]">
       <i class="user icon"></i>
       {{ currentUsername }}
     </a>

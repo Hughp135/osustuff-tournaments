@@ -87,6 +87,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.subscriptions = [currentGameSub, currentUsernameSub];
 
     const gameFetchInterval = this.game.status === 'complete' ? 60000 : 5000;
+    // const getUserInterval = this.game.status === 'complete' ? 120000 : 30000;
     const messagesInterval = this.game.status === 'complete' ? 6000 : 3000;
 
     this.visibilityTimers.push(
@@ -105,6 +106,9 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       Visibility.every(messagesInterval, messagesInterval * 10, async () => {
         await this.getMoreMessages();
       }),
+      // Visibility.every(getUserInterval, getUserInterval * 2, async () => {
+      //   await this.getUser();
+      // }),
     );
   }
 
@@ -173,8 +177,8 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         responsiveVoice.speak(`Round ${game.roundNumber} has started. `);
       }
       if (game.status === 'complete' && this.game.status !== 'complete') {
-        const winnerString = game.winningUser ? `${game.winningUser.username} won the match!`
-          : 'No one won the match';
+        const winnerString = game.winningUser ? `The winner is ${game.winningUser.username}`
+          : 'There was no winner.';
         responsiveVoice.speak(`The match has finished. ${winnerString}`);
       }
       if (game.status === 'new' && game.secondsToNextRound < 30 && !this.announcedStart && this.inGame) {
