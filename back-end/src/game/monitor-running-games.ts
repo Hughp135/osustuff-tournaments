@@ -77,13 +77,15 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
 }
 
 async function startGame(game: IGame) {
-  if (!game.players.length) {
+  const enoughPlayers = game.players.length > 1;
+  if (!enoughPlayers) {
     if (game.nextStageStarts) {
       console.log('canceling countdown');
       // Cancel countdown
       game.nextStageStarts = undefined;
       await game.save();
     }
+
     return;
   }
 

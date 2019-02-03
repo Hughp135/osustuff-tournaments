@@ -5,7 +5,6 @@ import { DURATION_ROUND_ENDED } from './durations';
 
 // Kills players with lowest score each round
 export async function roundEnded(game: IGame, round: IRound) {
-  console.log('round ended');
   // Get scores sorted by score
   const scores = (await Score.find({ roundId: round._id }).sort({
     score: -1,
