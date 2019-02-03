@@ -31,7 +31,7 @@ export async function verifyUser(req: Request, res: Response) {
   );
 
   if (verifyRequest.verified) {
-    return res.status(400).end();
+    return res.status(401).end();
   }
 
   if (verifyRequest.expiresAt < new Date()) {
