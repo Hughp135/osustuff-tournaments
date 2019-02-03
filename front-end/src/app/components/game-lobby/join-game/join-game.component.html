@@ -19,7 +19,9 @@
             [class.loading]="requestingJoin" (click)="joinGame()">Join</button>
         </div>
 
-        <p *ngIf="error" class="error">{{ error }}</p>
+        <div>
+          <p *ngIf="error" class="error">{{ error }}</p>
+        </div>
       </div>
       <div *ngIf="joinRequestId">
         <p>
