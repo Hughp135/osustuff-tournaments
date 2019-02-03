@@ -2,7 +2,113 @@
   margin-top: 40px;
 }
 
-.inverted.segment {
-  padding: 50px 0;
-  background: none;
+.ui.inverted.segment.hero {
+  background: linear-gradient(334deg, #021021, #5a3369);
+  background-size: 400% 400%;
+
+  -webkit-animation: AnimationName 8s ease infinite;
+  -moz-animation: AnimationName 8s ease infinite;
+  animation: AnimationName 8s ease infinite;
+
+  @-webkit-keyframes AnimationName {
+    0% {
+      background-position: 27% 0%
+    }
+
+    50% {
+      background-position: 74% 100%
+    }
+
+    100% {
+      background-position: 27% 0%
+    }
+  }
+
+  @-moz-keyframes AnimationName {
+    0% {
+      background-position: 27% 0%
+    }
+
+    50% {
+      background-position: 74% 100%
+    }
+
+    100% {
+      background-position: 27% 0%
+    }
+  }
+
+  @keyframes AnimationName {
+    0% {
+      background-position: 27% 0%
+    }
+
+    50% {
+      background-position: 74% 100%
+    }
+
+    100% {
+      background-position: 27% 0%
+    }
+  }
+}
+
+.middle-section {
+  margin-top: 5em;
+  margin-bottom: 0;
+}
+
+.center.aligned {
+  text-align: center;
+}
+
+.ui.primary.button {
+  background: linear-gradient(324deg, #080a67, #2f5492, #129c5f);
+  background-size: 600% 600%;
+
+  -webkit-animation: AnimationName 9s ease infinite;
+  -moz-animation: AnimationName 9s ease infinite;
+  animation: AnimationName 9s ease infinite;
+
+  @-webkit-keyframes AnimationName {
+    0% {
+      background-position: 0% 44%
+    }
+
+    50% {
+      background-position: 100% 57%
+    }
+
+    100% {
+      background-position: 0% 44%
+    }
+  }
+
+  @-moz-keyframes AnimationName {
+    0% {
+      background-position: 0% 44%
+    }
+
+    50% {
+      background-position: 100% 57%
+    }
+
+    100% {
+      background-position: 0% 44%
+    }
+  }
+
+  @keyframes AnimationName {
+    0% {
+      background-position: 0% 44%
+    }
+
+    50% {
+      background-position: 100% 57%
+    }
+
+    100% {
+      background-position: 0% 44%
+    }
+  }
 }

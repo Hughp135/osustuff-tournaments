@@ -28,6 +28,7 @@ import { OrdinalPipe } from './pipes/ordinal.pipe';
 import { MenuComponent } from './components/game-lobby/menu/menu.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 import { HomeComponent } from './components/home/home.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { HomeComponent } from './components/home/home.component';
     ScoresTableComponent,
     MenuComponent,
     LeaderboardComponent,
-    HomeComponent
+    HomeComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

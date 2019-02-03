@@ -1,0 +1,16 @@
+
+.ui.segment.footer {
+  margin-top: 5em;
+  padding: 3em 0;
+  border-radius: 0;
+
+  .grid {
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+.white {
+  color: white;
+}

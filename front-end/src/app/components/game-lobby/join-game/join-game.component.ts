@@ -7,7 +7,7 @@ declare var responsiveVoice: any;
 @Component({
   selector: 'app-join-game',
   templateUrl: './join-game.component.html',
-  styleUrls: ['./join-game.component.scss']
+  styleUrls: ['./join-game.component.scss'],
 })
 export class JoinGameComponent implements OnInit, OnDestroy {
   @Input() game: any;
@@ -19,10 +19,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
   public requestedAt: Date;
   public error: string;
 
-  constructor(
-    private apiService: ApiService,
-    private settingsService: SettingsService
-  ) {
+  constructor(private apiService: ApiService, private settingsService: SettingsService) {
     this.osuUsername = settingsService.username.getValue();
   }
 
@@ -46,7 +43,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     try {
       const { requestId, username }: any = await this.apiService
         .post(`lobbies/${this.game._id}/join`, {
-          username: this.osuUsername
+          username: this.osuUsername,
         })
         .toPromise();
       this.requestedAt = new Date();
@@ -59,6 +56,8 @@ export class JoinGameComponent implements OnInit, OnDestroy {
           'A user was not found with the username you entered. Please ensure it is spelled correctly.';
       } else if (e.status === 400) {
         this.error = 'This game cannot be joined anymore.';
+      } else if (e.status === 423) {
+        this.error = 'The game is now full and cannot be joined.';
       } else {
         throw e;
       }
@@ -79,7 +78,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     try {
       await this.apiService
         .post(`lobbies/${this.game._id}/leave`, {
-          requestId: currentGame.requestId
+          requestId: currentGame.requestId,
         })
         .toPromise();
       this.joinRequestId = undefined;
@@ -105,7 +104,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     try {
       const { verified }: any = await this.apiService
         .post(`check-verified`, {
-          requestId: this.joinRequestId
+          requestId: this.joinRequestId,
         })
         .toPromise();
 

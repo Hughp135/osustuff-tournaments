@@ -1,23 +1,37 @@
-<div class="ui container section">
-  <h1 class="ui inverted header">
-    <img src="/assets/favicon.png" class="ui image">
-    osuStuff Play
-  </h1>
+<div class="ui inverted very padded segment hero">
+  <div class="ui container">
+    <h1 class="ui inverted header">
+      <img src="/assets/favicon.png" class="ui image">
+      osuStuff Play
+    </h1>
 
-  <h4>
-    A new fun way to play casual osu matches and tournaments.
-  </h4>
-  <p>
-    If you're bored of grinding single player or want a new challenge, this is the place
-    for you!
-    Play through automatically generated matches here 24/7 and
-    measure your skill up against others.
-  </p>
+    <h4>
+      A new fun way to play casual osu matches and tournaments.
+    </h4>
+    <p>
+      If you're bored of grinding single player or want a new
+      challenge, this is the place
+      for you!
+      Play through automatically generated matches here 24/7 and
+      measure your skill up against others.
+    </p>
 
+
+    <div class="center aligned">
+      <a class="ui large primary button" [routerLink]="['/lobbies']">
+        <i class="play icon"></i>
+        Play now
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<div class="ui container middle-section">
   <div class="ui center aligned three column grid">
 
     <div class="column">
-      <h2 class="ui inverted icon header">
+      <h2 class="ui medium inverted icon header">
         <i class="green users icon"></i>
         <div class="content">
           Play together
@@ -29,7 +43,7 @@
     </div>
 
     <div class="column">
-      <h2 class="ui inverted icon header">
+      <h2 class="ui medium inverted icon header">
         <i class="orange stopwatch icon"></i>
         <div class="content">
           Real-Time Tournaments
@@ -41,7 +55,7 @@
     </div>
 
     <div class="column">
-      <h2 class="ui inverted icon header">
+      <h2 class="ui medium inverted icon header">
         <i class="teal crosshairs icon"></i>
         <div class="content">
           Gain Rating Points
@@ -53,7 +67,7 @@
     </div>
 
     <div class="column">
-      <h2 class="ui inverted icon header">
+      <h2 class="ui medium inverted icon header">
         <i class="yellow trophy icon"></i>
         <div class="content">
           Unlock Achievements
@@ -65,19 +79,19 @@
     </div>
 
     <div class="column">
-      <h2 class="ui inverted icon header">
+      <h2 class="ui medium inverted icon header">
         <i class="purple user icon"></i>
         <div class="content">
           No Signup Required
           <div class="sub header">
-            Just verify your osu account and play!
+            Just type one command and play!
           </div>
         </div>
       </h2>
     </div>
 
     <div class="column">
-      <h2 class="ui inverted icon header">
+      <h2 class="ui medium inverted icon header">
         <i class="blue fast hourglass icon"></i>
         <div class="content">
           Short Tournaments
@@ -88,10 +102,6 @@
       </h2>
     </div>
 
-  </div>
-
-  <div class="ui inverted center aligned segment">
-    <a class="ui primary button" [routerLink]="['/lobbies']">View open lobbies now</a>
   </div>
 
 </div>

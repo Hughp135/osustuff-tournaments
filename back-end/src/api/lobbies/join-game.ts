@@ -15,12 +15,14 @@ export async function joinGame(req: Request, res: Response) {
     return res.status(400).end();
   }
 
+  if (game.players.length >= 1000) {
+    return res.status(423).end();
+  }
+
   const osuUser = await getUser(req.body.username);
 
   if (!osuUser) {
-    return res
-      .status(404)
-      .json({ error: 'No osu user with that username was found.' });
+    return res.status(404).json({ error: 'No osu user with that username was found.' });
   }
 
   const expiryDate = new Date();

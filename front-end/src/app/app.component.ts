@@ -1,5 +1,5 @@
 import { AdminService } from './services/admin.service';
-import { SettingsService } from 'src/app/services/settings.service';
+import { SettingsService, CurrentGame } from 'src/app/services/settings.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { Component } from '@angular/core';
 import { filter } from 'rxjs/operators';
@@ -14,6 +14,8 @@ export class AppComponent {
   public showMenu;
   public url;
   public isAdmin: boolean;
+  public currentGame: CurrentGame;
+  public currentUsername: string;
 
   constructor(
     router: Router,
@@ -27,6 +29,8 @@ export class AppComponent {
         this.url = event.url;
       });
     this.isAdmin = !!settingsService.adminPw;
+    settingsService.currentGame.subscribe(val => this.currentGame = val );
+    settingsService.username.subscribe(val => this.currentUsername = val);
   }
 
   public async clearDb() {
