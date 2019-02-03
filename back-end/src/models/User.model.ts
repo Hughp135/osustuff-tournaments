@@ -1,3 +1,4 @@
+import { IAchievement } from './Achievement.model';
 import mongoose from 'mongoose';
 
 export interface IUser extends mongoose.Document {
@@ -10,6 +11,7 @@ export interface IUser extends mongoose.Document {
   elo: number;
   gamesPlayed: number;
   wins: number;
+  achievements: mongoose.Types.ObjectId[];
 }
 
 const UserSchema = new mongoose.Schema(
@@ -23,6 +25,11 @@ const UserSchema = new mongoose.Schema(
     wins: { type: Number, required: true, default: 0 },
     country: { type: String, required: true },
     elo: { type: Number, required: true, default: 1500, index: true },
+    achievements: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, required: true }],
+      required: true,
+      default: [],
+    },
   },
   {
     timestamps: true,

@@ -3,6 +3,7 @@ import { Game } from '../../models/Game.model';
 import { JoinGameRequest } from '../../models/JoinGameRequest.model';
 import { getUser } from '../../services/osu-api';
 import { updateOrCreateUser } from '../../models/User.model';
+import { achievementPlayAsTester } from '../../achievements/play-as-tester';
 
 export async function joinGame(req: Request, res: Response) {
   const game = await Game.findById(req.params.id);
@@ -43,5 +44,6 @@ export async function joinGame(req: Request, res: Response) {
     username: osuUser.username,
   });
 
-  await updateOrCreateUser(osuUser);
+  const user = await updateOrCreateUser(osuUser);
+  await achievementPlayAsTester(user);
 }

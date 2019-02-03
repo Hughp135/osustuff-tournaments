@@ -6,6 +6,7 @@ export async function getUsers(req: Request, res: Response) {
     updatedAt: 0,
     __v: 0,
     _id: 0,
+    achievements: 0,
   }).lean();
 
   res.json(users);

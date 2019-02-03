@@ -17,7 +17,7 @@ export class GameInfoComponent implements OnInit {
     switch (this.game.status) {
       case 'new':
         return this.game.nextStageStarts
-          ? 'Counting down to start...'
+          ? 'About to start...'
           : 'Waiting for more players';
       case 'in-progress':
         return `In Progress`;

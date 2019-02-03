@@ -42,6 +42,8 @@ export class SettingsService {
       } catch (e) {
         if ([404, 408].includes(e.status)) {
           this.clearCurrentGame();
+        } else {
+          console.error(e);
         }
       }
     }
