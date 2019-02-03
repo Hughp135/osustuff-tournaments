@@ -28,7 +28,7 @@ export async function verifyUser(req: Request, res: Response) {
     return res.status(408).end();
   }
 
-  const user = await getUser(username);
+  const user = await getUser(verifyRequest.username);
   const game = await Game.findById(verifyRequest.gameId);
 
   if (!game) {
@@ -36,7 +36,7 @@ export async function verifyUser(req: Request, res: Response) {
   }
 
   if (game.players.some(p => p.userId.toString() === user._id.toString())) {
-    return res.status(400).end();
+    return res.status(409).end();
   }
 
   await addPlayer(game, user);
