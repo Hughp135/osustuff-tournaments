@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Message } from '../../../models/Message.model';
 import { ObjectID } from 'bson';
-import { getDataOrCache } from '../../../services/cache';
+import { getDataOrCache, cache } from '../../../services/cache';
 
 export async function getMessages(req: Request, res: Response) {
   const { id } = req.params;
@@ -11,8 +11,15 @@ export async function getMessages(req: Request, res: Response) {
     return res.status(404).end();
   }
 
+  const lastMsg = cache.get('last-message-id');
+
+  if (afterId === lastMsg) {
+    // No new messages to retrieve
+    return res.json([]);
+  }
+
   const cacheKey = `get-messages-${id}-${afterId}`;
-  const data = await getDataOrCache(cacheKey, 3000, async () => getData(id, afterId));
+  const data = await getDataOrCache(cacheKey, 2000, async () => getData(id, afterId));
 
   res.json(data);
 }

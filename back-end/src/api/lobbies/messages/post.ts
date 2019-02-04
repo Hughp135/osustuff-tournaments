@@ -5,6 +5,7 @@ import { JoinGameRequest } from '../../../models/JoinGameRequest.model';
 import { User } from '../../../models/User.model';
 import { Message } from '../../../models/Message.model';
 import { ObjectID } from 'bson';
+import { cache } from '../../../services/cache';
 
 export async function sendMessage(req: Request, res: Response) {
   const { id } = req.params;
@@ -14,11 +15,7 @@ export async function sendMessage(req: Request, res: Response) {
     return res.status(404).end();
   }
 
-  if (
-    typeof message !== 'string' ||
-    message.length < 1 ||
-    message.length > 500
-  ) {
+  if (typeof message !== 'string' || message.length < 1 || message.length > 500) {
     return res.status(400).end();
   }
 
@@ -38,13 +35,15 @@ export async function sendMessage(req: Request, res: Response) {
     return res.status(401).end();
   }
 
-  await Message.create({
+  const { _id } = await Message.create({
     username: user.username,
     userId: user._id,
     osuUserId: user.osuUserId,
     gameId: new ObjectID(id),
     message,
   });
+
+  cache.put('last-message-id', _id.toString());
 
   res.status(200).end();
 }

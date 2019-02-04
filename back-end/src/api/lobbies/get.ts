@@ -1,4 +1,4 @@
-import { getRoundScores } from '../../game/get-round-scores';
+import { getAllUserBestScores } from '../../game/get-round-scores';
 import { Game } from '../../models/Game.model';
 import { Request, Response } from 'express';
 import { Round } from '../../models/Round.model';
@@ -48,11 +48,9 @@ async function getData(id: string) {
   const round = await Round.findById(game.currentRound)
     .select({ beatmap: 1 })
     .lean();
-  const scores = await getRoundScores(game.currentRound);
+  const scores = await getAllUserBestScores(game.currentRound);
   const scoresTransformed = scores.map((score: any, idx: number) => {
-    const player = game.players.find(
-      (p: any) => p.userId.toString() === score.userId.toString(),
-    );
+    const player = game.players.find((p: any) => p.userId.toString() === score.userId.toString());
     score.username = player.username;
     score.userId = undefined;
 

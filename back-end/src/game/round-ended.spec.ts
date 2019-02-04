@@ -15,10 +15,9 @@ chai.use(sinonChai);
 
 describe('round-ended', () => {
   before(async () => {
-    await mongoose.connect(
-      'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
-      { useNewUrlParser: true },
-    );
+    await mongoose.connect('mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test', {
+      useNewUrlParser: true,
+    });
   });
   after(async () => {
     await mongoose.disconnect();
@@ -46,7 +45,7 @@ describe('round-ended', () => {
     expect(game.status).to.equal('round-over');
     expect(game.players[0].alive).to.equal(false);
   });
-  it('Out of 3 players, 1 progresses', async () => {
+  it('Out of 3 players, 2 progress', async () => {
     const u1 = await getUser(1);
     const u2 = await getUser(2);
     const u3 = await getUser(3);
@@ -69,16 +68,19 @@ describe('round-ended', () => {
       ...baseScoreData,
       score: 3,
       userId: u1._id,
+      username: u1.username,
     });
     await Score.create({
       ...baseScoreData,
       score: 1,
       userId: u2._id,
+      username: u2.username,
     });
     await Score.create({
       ...baseScoreData,
       score: 2,
       userId: u3._id,
+      username: u3.username,
     });
 
     await roundEnded(game, round);
@@ -86,9 +88,10 @@ describe('round-ended', () => {
     const p1 = <IPlayer> game.players.find(p => p.userId.toString() === u1._id.toString());
     const p2 = <IPlayer> game.players.find(p => p.userId.toString() === u2._id.toString());
     const p3 = <IPlayer> game.players.find(p => p.userId.toString() === u3._id.toString());
+
     expect(p1.alive).to.equal(true);
     expect(p2.alive).to.equal(false);
-    expect(p3.alive).to.equal(false);
+    expect(p3.alive).to.equal(true);
   });
   it('for 2 players with same score, earliest score date wins', async () => {
     const u1 = await getUser(1);
@@ -111,11 +114,13 @@ describe('round-ended', () => {
       ...baseScoreData,
       score: 1,
       userId: u1._id,
+      username: u1.username,
     });
     await Score.create({
       ...baseScoreData,
       score: 2,
       userId: u1._id,
+      username: u1.username,
     });
     const date = new Date();
     date.setMinutes(date.getMinutes() - 1);
@@ -125,6 +130,7 @@ describe('round-ended', () => {
       score: 2,
       userId: u2._id,
       date,
+      username: u2.username,
     });
 
     await roundEnded(game, round);
@@ -164,26 +170,31 @@ describe('round-ended', () => {
       ...baseScoreData,
       score: 2,
       userId: u1._id,
+      username: u1.username,
     });
     await Score.create({
       ...baseScoreData,
       score: 5,
       userId: u5._id,
+      username: u5.username,
     });
     await Score.create({
       ...baseScoreData,
       score: 1,
       userId: u2._id,
+      username: u2.username,
     });
     await Score.create({
       ...baseScoreData,
       score: 4,
       userId: u3._id,
+      username: u3.username,
     });
     await Score.create({
       ...baseScoreData,
       score: 3,
       userId: u4._id,
+      username: u4.username,
     });
 
     await roundEnded(game, round);
@@ -195,13 +206,13 @@ describe('round-ended', () => {
     const p6 = <IPlayer> game.players.find(p => p.userId.toString() === u6._id.toString());
     const p7 = <IPlayer> game.players.find(p => p.userId.toString() === u7._id.toString());
 
-    expect(p1.gameRank).to.equal(4);
-    expect(p2.gameRank).to.equal(5);
-    expect(p3.gameRank).to.equal(undefined);
-    expect(p4.gameRank).to.equal(3);
-    expect(p5.gameRank).to.equal(undefined);
-    expect(p6.gameRank).to.equal(7);
-    expect(p7.gameRank).to.equal(6);
+    expect(p1.gameRank).to.equal(undefined, 'p1');
+    expect(p2.gameRank).to.equal(5, 'p2');
+    expect(p3.gameRank).to.equal(undefined, 'p3');
+    expect(p4.gameRank).to.equal(undefined, 'p4');
+    expect(p5.gameRank).to.equal(undefined, 'p5');
+    expect(p6.gameRank).to.equal(7, 'p6');
+    expect(p7.gameRank).to.equal(6, 'p7');
   });
 });
 

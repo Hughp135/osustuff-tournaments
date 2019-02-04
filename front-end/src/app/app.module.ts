@@ -19,13 +19,10 @@ import { BeatmapListComponent } from './components/game-lobby/beatmap-list/beatm
 import { GameStatusComponent } from './components/game-lobby/game-status/game-status.component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { EmojifyModule } from 'angular-emojify';
-import {
-  LazyLoadImageModule,
-  intersectionObserverPreset
-} from 'ng-lazyload-image';
+import { LazyLoadImageModule, intersectionObserverPreset } from 'ng-lazyload-image';
 import { ScoresTableComponent } from './components/game-lobby/scores-list/scores-table/scores-table.component';
 import { OrdinalPipe } from './pipes/ordinal.pipe';
-import { MenuComponent } from './components/game-lobby/menu/menu.component';
+import { MatchResultsComponent } from './components/game-lobby/match-results/match-results.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 import { HomeComponent } from './components/home/home.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -46,11 +43,11 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
     BeatmapListComponent,
     GameStatusComponent,
     ScoresTableComponent,
-    MenuComponent,
+    MatchResultsComponent,
     LeaderboardComponent,
     HomeComponent,
     FooterComponent,
-    UserProfileComponent
+    UserProfileComponent,
   ],
   imports: [
     BrowserModule,
@@ -60,10 +57,10 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
     PickerModule,
     EmojifyModule,
     LazyLoadImageModule.forRoot({
-      preset: intersectionObserverPreset
-    })
+      preset: intersectionObserverPreset,
+    }),
   ],
   providers: [ApiService, SettingsService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

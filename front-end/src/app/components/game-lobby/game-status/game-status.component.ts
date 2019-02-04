@@ -4,7 +4,7 @@ import { Component, OnInit, Input } from '@angular/core';
 @Component({
   selector: 'app-game-status',
   templateUrl: './game-status.component.html',
-  styleUrls: ['./game-status.component.scss']
+  styleUrls: ['./game-status.component.scss'],
 })
 export class GameStatusComponent implements OnInit {
   @Input() game: IGame;
@@ -23,31 +23,32 @@ export class GameStatusComponent implements OnInit {
       if (this.game.nextStageStarts) {
         return {
           title: 'Game is starting soon',
-          message: `The game is starting in ${this.timeLeft}`
+          message: `The game is starting in ${this.timeLeft}`,
         };
       }
       return {
         title: 'Waiting for players',
-        message: 'More players are needed before the game automatically starts.'
+        message: 'More players are needed before the game automatically starts.',
       };
     }
     if (this.game.status === 'in-progress') {
       return {
         title: `Round ${this.game.roundNumber} is now in progress!`,
-        message: `All players must now set a score on the map. Make sure you play the correct difficulty!`
+        message: `All players must now set a score on the map. After the round, all scores will be detected
+and the lowest scoring players will be eliminated from the game.`,
       };
     }
     if (this.game.status === 'checking-scores') {
       return {
         title: `Checking scores...`,
         message:
-          'All players scores are now being checked and the top players will progress to the next round shortly.'
+          'All players scores are now being checked and the top players will progress to the next round shortly.',
       };
     }
     if (this.game.status === 'round-over') {
       return {
         title: `Round ${this.game.roundNumber} has finished`,
-        message: `The next round starts in ${this.timeLeft}`
+        message: `The next round starts in ${this.timeLeft}`,
       };
     }
     if ((this.game.status = 'complete')) {
@@ -55,7 +56,7 @@ export class GameStatusComponent implements OnInit {
         title: 'The game has finished!',
         message: this.game.winningUser
           ? `${this.game.winningUser.username} has won the match!`
-          : 'No one won this time. All players have either quit or failed to set a score in time.'
+          : 'No one won this time. All players have either quit or failed to set a score in time.',
       };
     }
   }
@@ -73,6 +74,10 @@ export class GameStatusComponent implements OnInit {
   }
 
   get isWinner() {
-    return this.game.winningUser && this.mePlayer &&  this.game.winningUser.username === this.mePlayer.username;
+    return (
+      this.game.winningUser &&
+      this.mePlayer &&
+      this.game.winningUser.username === this.mePlayer.username
+    );
   }
 }

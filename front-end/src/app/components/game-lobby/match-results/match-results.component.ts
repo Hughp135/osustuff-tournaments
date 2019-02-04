@@ -3,11 +3,11 @@ import { IGame } from '../game-lobby.component';
 import { GameService } from 'src/app/game.service';
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss'],
+  selector: 'app-match-results',
+  templateUrl: './match-results.component.html',
+  styleUrls: ['./match-results.component.scss'],
 })
-export class MenuComponent implements OnInit {
+export class MatchResultsComponent implements OnInit {
   @Input() game: IGame;
   public rounds: number[] = [];
   public round: any;

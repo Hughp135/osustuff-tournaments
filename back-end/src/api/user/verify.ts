@@ -21,14 +21,12 @@ export async function verifyUser(req: Request, res: Response) {
     return res.status(404).end();
   }
 
-  winston.log(
-    'info',
-    'verifyRequest',
-    [verifyRequest.username,
+  winston.log('info', 'verifyRequest', [
+    verifyRequest.username,
     verifyRequest.verified,
     verifyRequest.expiresAt,
-    verifyRequest.gameId],
-  );
+    verifyRequest.gameId,
+  ]);
 
   if (verifyRequest.verified) {
     return res.status(401).end();
@@ -45,11 +43,10 @@ export async function verifyUser(req: Request, res: Response) {
     return res.status(404).end();
   }
 
-  if (game.players.some(p => p.userId.toString() === user._id.toString())) {
-    return res.status(409).end();
+  // return res.status(409).end(); // conflict (if user already added)
+  if (!game.players.some(p => p.userId.toString() === user._id.toString())) {
+    await addPlayer(game, user);
   }
-
-  await addPlayer(game, user);
 
   verifyRequest.verified = true;
   await verifyRequest.save();

@@ -2,8 +2,8 @@ import { IScore } from '../models/Score.model';
 import { Types } from 'mongoose';
 import { Score } from '../models/Score.model';
 
-export async function getRoundScores(roundId: Types.ObjectId) {
-  return  (await Score.find({ roundId }).sort({
+export async function getAllUserBestScores(roundId: Types.ObjectId) {
+  return (await Score.find({ roundId }).sort({
     score: -1,
     date: 1,
   })).reduce(

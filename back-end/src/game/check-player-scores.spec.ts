@@ -11,16 +11,14 @@ import { Round } from '../models/Round.model';
 import { checkRoundScores } from './check-player-scores';
 import { addPlayer } from './add-player';
 
-mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
 chai.use(sinonChai);
 
 describe('check-player-scores', () => {
   before(async () => {
-    await mongoose.connect(
-      'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
-      { useNewUrlParser: true },
-    );
+    await mongoose.connect('mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test', {
+      useNewUrlParser: true,
+    });
   });
   after(async () => {
     await mongoose.disconnect();
@@ -43,9 +41,7 @@ describe('check-player-scores', () => {
     await addPlayer(game, u1);
     await addPlayer(game, u2);
     await addPlayer(game, u3);
-    (<IPlayer> (
-      game.players.find(p => p.userId.toString() === u3._id.toString())
-    )).alive = false;
+    (<IPlayer> game.players.find(p => p.userId.toString() === u3._id.toString())).alive = false;
     const round = await Round.create({
       roundNumber: 1,
       beatmap: {
@@ -54,9 +50,9 @@ describe('check-player-scores', () => {
       },
       gameId: game._id,
     });
-    const getUserRecent = sinon.stub().callsFake(async (u: string) => [
-      getScore('932223', '1000000'),
-    ]);
+    const getUserRecent = sinon
+      .stub()
+      .callsFake(async (u: string) => [getScore('932223', '1000000')]);
 
     await checkRoundScores(game, round, getUserRecent);
     expect(getUserRecent).calledTwice; // tslint:disable-line:no-unused-expression
@@ -77,9 +73,7 @@ describe('check-player-scores', () => {
     await addPlayer(game, u1);
     await addPlayer(game, u2);
     await addPlayer(game, u3);
-    (<IPlayer> (
-      game.players.find(p => p.userId.toString() === u3._id.toString())
-    )).alive = false;
+    (<IPlayer> game.players.find(p => p.userId.toString() === u3._id.toString())).alive = false;
 
     const round = await Round.create({
       roundNumber: 1,
@@ -90,24 +84,20 @@ describe('check-player-scores', () => {
       gameId: game._id,
     });
 
-    const getUserRecent = sinon.stub().callsFake(async (u: string) => [
-      getScore('932223', '1000000'),
-      getScore('932223', '2000000'),
-    ]);
+    const getUserRecent = sinon
+      .stub()
+      .callsFake(async (u: string) => [
+        getScore('932223', '1000000'),
+        getScore('932223', '2000000'),
+      ]);
 
     await checkRoundScores(game, round, getUserRecent);
     expect(getUserRecent).calledTwice; // tslint:disable-line:no-unused-expression
 
     const scores = await Score.find({});
-    expect(scores.filter(s => s.userId.toString() === u1._id.toString()).length).to.equal(
-      2,
-    );
-    expect(scores.filter(s => s.userId.toString() === u2._id.toString()).length).to.equal(
-      2,
-    );
-    expect(scores.filter(s => s.userId.toString() === u3._id.toString()).length).to.equal(
-      0,
-    );
+    expect(scores.filter(s => s.userId.toString() === u1._id.toString()).length).to.equal(2);
+    expect(scores.filter(s => s.userId.toString() === u2._id.toString()).length).to.equal(2);
+    expect(scores.filter(s => s.userId.toString() === u3._id.toString()).length).to.equal(0);
   });
   it('Saves identical score only once if checked twice', async () => {
     const u1 = await getUser(1);
@@ -126,9 +116,9 @@ describe('check-player-scores', () => {
       gameId: game._id,
     });
 
-    const getUserRecent = sinon.stub().callsFake(async (u: string) => [
-      getScore('932223', '1000000'),
-    ]);
+    const getUserRecent = sinon
+      .stub()
+      .callsFake(async (u: string) => [getScore('932223', '1000000')]);
 
     await checkRoundScores(game, round, getUserRecent);
     await checkRoundScores(game, round, getUserRecent);
@@ -157,10 +147,12 @@ describe('check-player-scores', () => {
       gameId: game._id,
     });
 
-    const getUserRecent = sinon.stub().callsFake(async (u: string) => [
-      getScore('932223', '1000000'),
-      getScore('932223', '2000000'),
-    ]);
+    const getUserRecent = sinon
+      .stub()
+      .callsFake(async (u: string) => [
+        getScore('932223', '1000000'),
+        getScore('932223', '2000000'),
+      ]);
 
     await checkRoundScores(game, round, getUserRecent);
 

@@ -1,5 +1,5 @@
 <div class="ui basic inverted segment no-bg">
-  <div class="ui grid">
+  <div class="ui grid" *ngIf="!singleBeatmap">
     <div class="two column row">
       <div class="left aligned column">
         <h3 class="ui inverted header">
@@ -14,18 +14,17 @@
       <div class="ui inverted relaxed list">
         <div class="item">
           <div class="ui stackable grid">
-            <div class="eight wide column">
+            <div class="ten wide column">
               <a [href]="beatmapHref" target="_blank" class="beatmap-link">
                 <h3>
-                  {{ beatmap.artist }} - {{ beatmap.title }}
+                  <i class="download icon"></i> {{ beatmap.artist }} - {{ beatmap.title }}
                 </h3>
                 <h2 class="beatmap-version">
-                  <i class="bullseye icon"></i>
-                  [{{ beatmap.version }}]
+                  <i class="small bullseye icon"></i> [{{ beatmap.version }}]
                 </h2>
               </a>
             </div>
-            <div class="eight wide right aligned column">
+            <div class="six wide right aligned column">
               <p>
                 Star Difficulty: <i class="yellow star outline icon"></i>
                 {{ starRating }}
@@ -35,30 +34,23 @@
                 duration }}
               </p>
             </div>
+            <div class="sixteen wide center aligned column" *ngIf="game.status === 'in-progress' && isAlive">
+              <h3 class="ui icon header">
+                <i class="bullhorn icon"></i>
+                The round has started. Play this map now!
+              </h3>
+              <h1 class="ui header">
+                {{ timeLeft }}
+              </h1>
+              <br>
+              <p><i class="yellow crosshairs icon"></i> Play in single player mode</p>
+              <p><i class="yellow crosshairs icon"></i> You can pick any rankable mods</p>
+              <p><i class="yellow crosshairs icon"></i> Play the correct difficulty: [{{ beatmap.version }}]</p>
+              <p><i class="yellow crosshairs icon"></i> Only your highest score will counts</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="ui placeholder inverted segment" *ngIf="game.status === 'in-progress' && isAlive">
-    <div class="ui icon header">
-      <i class="bullhorn icon"></i>
-      Round has started! Play the above map in single player now.
-    </div>
-    <div class="center aligned">
-      <p align="center">
-        You can play with any rankable mods (including No Fail).
-        <br>
-        Only your highest score will count.
-        <br>
-        Make sure you play the correct difficulty!
-      </p>
-      <h3 align="center">
-        Difficulty: [{{ beatmap.version }}]
-      </h3>
-      <!-- <div class="ui primary button">
-        Check score
-      </div> -->
     </div>
   </div>
 </div>

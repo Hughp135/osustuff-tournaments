@@ -79,14 +79,13 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       await this.fetch(true);
     });
     const currentUsernameSub = this.settingsService.username.subscribe(
-      val => (this.currentUsername = val),
+      val => (this.currentUsername = val)
     );
 
     this.subscriptions = [currentGameSub, currentUsernameSub];
 
     const gameFetchInterval = this.game.status === 'complete' ? 60000 : 5000;
-    // const getUserInterval = this.game.status === 'complete' ? 120000 : 30000;
-    const messagesInterval = this.game.status === 'complete' ? 6000 : 3000;
+    const messagesInterval = this.game.status === 'complete' ? 6000 : 2000;
 
     this.visibilityTimers.push(
       Visibility.every(gameFetchInterval, gameFetchInterval * 3, async () => {
@@ -103,10 +102,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       }),
       Visibility.every(messagesInterval, messagesInterval * 10, async () => {
         await this.getMoreMessages();
-      }),
-      // Visibility.every(getUserInterval, getUserInterval * 2, async () => {
-      //   await this.getUser();
-      // }),
+      })
     );
   }
 
@@ -138,7 +134,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.timeLeft = `${minutes}:${seconds}`;
   }
 
-  private async getMoreMessages() {
+  public getMoreMessages = async () => {
     if (this.fetchingMessages) {
       return;
     }
@@ -149,7 +145,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     try {
       const newMessages = await this.gameService.getLobbyMessages(
         this.game._id,
-        lastMessage && lastMessage._id,
+        lastMessage && lastMessage._id
       );
 
       this.messages = newMessages.concat(this.messages);
@@ -178,12 +174,20 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         responsiveVoice.speak(`Round ${game.roundNumber} has ended. `);
       }
       if (game.status === 'complete' && this.game.status !== 'complete') {
-        const winnerString = game.winningUser ? `The winner is ${game.winningUser.username}`
+        const winnerString = game.winningUser
+          ? `The winner is ${game.winningUser.username}`
           : 'There was no winner.';
         responsiveVoice.speak(`The match has finished. ${winnerString}`);
       }
-      if (game.status === 'new' && game.secondsToNextRound <= 30 && !this.announcedStart && this.inGame) {
-        responsiveVoice.speak(`The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`);
+      if (
+        game.status === 'new' &&
+        game.secondsToNextRound <= 30 &&
+        !this.announcedStart &&
+        this.inGame
+      ) {
+        responsiveVoice.speak(
+          `The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`
+        );
         this.announcedStart = true;
       }
       this.game = game;

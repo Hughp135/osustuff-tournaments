@@ -20,35 +20,26 @@
   <div class="main">
     <div class="left">
       <div class="lobby-details">
-        <app-join-game [game]="game" [inAnotherGame]="inAnotherGame"
-          *ngIf="showJoinGame"></app-join-game>
-        <app-game-status [timeLeft]="timeLeft" [game]="game"
-          [isAlive]="isAlive" [inGame]="inGame" [mePlayer]="mePlayer"
+        <app-join-game [game]="game" [inAnotherGame]="inAnotherGame" *ngIf="showJoinGame"></app-join-game>
+        <app-game-status [timeLeft]="timeLeft" [game]="game" [isAlive]="isAlive" [inGame]="inGame" [mePlayer]="mePlayer"
           [totalPlayers]="players.length"></app-game-status>
-        <app-menu *ngIf="game.status === 'complete'" [game]="game"></app-menu>
+        <app-match-results *ngIf="game.status === 'complete'" [game]="game"></app-match-results>
         <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
-        <app-beatmap-info [game]="game" [beatmaps]="beatmaps"
-          [inGame]="inGame" *ngIf="showBeatmap" [isAlive]="isAlive"></app-beatmap-info>
-        <app-scores-list [inGame]="inGame" [currentUser]="currentUsername"
-          [game]="game" [scores]="game.scores" *ngIf="showScores"></app-scores-list>
+        <app-beatmap-info [timeLeft]="timeLeft" [game]="game" [beatmaps]="beatmaps" *ngIf="showBeatmap" [isAlive]="isAlive"></app-beatmap-info>
+        <app-scores-list [inGame]="inGame" [currentUser]="currentUsername" [game]="game" [scores]="game.scores" *ngIf="showScores"></app-scores-list>
       </div>
-      <div class="chat-section">
-        <app-chat [messages]="messages" (messageSent)="getMoreMessages()"
-          [canChat]="inGame"></app-chat>
-      </div>
+      <app-chat [messages]="messages" [getMoreMessages]="getMoreMessages" [canChat]="inGame">
+      </app-chat>
     </div>
     <div class="right">
-      <app-user-list [currentUser]="currentUsername" [players]="players"
-        [winningUser]="game.winningUser && game.winningUser.username"></app-user-list>
+      <app-user-list [currentUser]="currentUsername" [players]="players" [winningUser]="game.winningUser && game.winningUser.username"></app-user-list>
     </div>
   </div>
 
 </div>
 
 <div *ngIf="isAdmin">
-  <div style="position: absolute; top: 0; right: 0; z-index:999;" class="ui mini button"
-    (click)="skipRound()">Skip
+  <div style="position: absolute; top: 0; right: 0; z-index:999;" class="ui mini button" (click)="skipRound()">Skip
   </div>
-  <div style="position: absolute; top: 0; right: 50px; z-index: 999;" class="ui mini button"
-  (click)="toggleFreeze()">Freeze</div>
+  <div style="position: absolute; top: 0; right: 50px; z-index: 999;" class="ui mini button" (click)="toggleFreeze()">Freeze</div>
 </div>

@@ -4,12 +4,12 @@ config:
     - duration: 30
       arrivalRate: 10
       rampTo: 500
-      name: "Warm up the application"
+      name: 'Warm up the application'
 scenarios:
   - flow:
-    - get:
-        url: "/lobbies/5c563650e46bbc45ccf4a3ea"
-    - get:
-        url: "/lobbies/5c563fccdcf43e043c3eb74a/messages?afterId=5c564115a932ce3c70474ff4"
-    - get:
-        url: "/lobbies/5c563650e46bbc45ccf4a3ea/users"
+      # - get:
+      #     url: "/lobbies/5c563650e46bbc45ccf4a3ea"
+      # - get:
+      #     url: '/lobbies/5c58601d6ddbc00fd909b136/messages?afterId=5c58664ebb5ba712c516a9e2'
+    # - get:
+    #     url: "/lobbies/5c563650e46bbc45ccf4a3ea/users"

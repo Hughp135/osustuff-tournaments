@@ -1,12 +1,5 @@
 import { GameService } from './../../../game.service';
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild
-} from '@angular/core';
+import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/core';
 import { SettingsService } from 'src/app/services/settings.service';
 
 export interface Message {
@@ -21,25 +14,69 @@ export interface Message {
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.scss']
+  styleUrls: ['./chat.component.scss'],
 })
-export class ChatComponent implements OnInit {
-  @Input() messages: Message[];
-  @Output() messageSent: EventEmitter<undefined> = new EventEmitter();
+export class ChatComponent implements OnInit, AfterViewInit {
+  public sortedMessages: Message[] = [];
+  @Input() set messages(msgs: Message[]) {
+    this.onMessagesUpdated(msgs);
+  }
   @Input() canChat: boolean;
+  @Input() getMoreMessages: () => Promise<void>;
 
   @ViewChild('chatInput') chatInputEl;
+  @ViewChild('chatMessages') chatMessages;
 
   public messageInput: string;
   public sendingMessage = false;
   public showEmojiPicker = false;
+  private stopAutoScroll = false;
+  private detectScroll = false;
 
-  constructor(
-    private gameService: GameService,
-    private settingsService: SettingsService
-  ) {}
+  constructor(private gameService: GameService, private settingsService: SettingsService) {}
 
   ngOnInit() {}
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.detectScroll = true;
+    }, 1000);
+  }
+
+  private onMessagesUpdated(msgs: Message[]) {
+    const lengthChanged = msgs.length !== this.sortedMessages.length;
+    if (!this.sortedMessages || lengthChanged) {
+      this.sortedMessages = msgs.slice().reverse();
+      this.scrollToBottom();
+    }
+  }
+
+  private scrollToBottom() {
+    if (this.stopAutoScroll) {
+      return;
+    }
+    setTimeout(() => {
+      this.chatMessages.nativeElement.scrollTop = this.chatMessages.nativeElement.scrollHeight;
+    }, 100);
+  }
+
+  public onChatScrolled() {
+    if (!this.detectScroll) {
+      return;
+    }
+    this.stopAutoScroll = true;
+    setTimeout(() => {
+      this.stopAutoScroll = false;
+    }, 500);
+  }
+
+  public onMouseDown() {
+    this.stopAutoScroll = true;
+  }
+
+  public onMouseUp() {
+    this.stopAutoScroll = false;
+  }
 
   public async sendMessage() {
     if (!this.messageInput) {
@@ -56,7 +93,9 @@ export class ChatComponent implements OnInit {
         this.messageInput
       );
       this.messageInput = undefined;
-      this.messageSent.next();
+      setTimeout(async () => {
+        await this.getMoreMessages();
+      }, 250);
     } catch (e) {
       console.error(e);
     }
