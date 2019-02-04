@@ -3,6 +3,7 @@ import express, { Router } from 'express';
 import config from 'config';
 import winston from 'winston';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import { getLobbies } from './lobbies';
 import { getLobby } from './lobbies/get';
 import { joinGame } from './lobbies/join-game';
@@ -21,7 +22,16 @@ import { clearDb } from './admin/clear-db';
 import { getUser } from './user/get-user';
 
 const PORT = config.get('API_PORT');
+const TEST_MODE = config.get('TEST_MODE');
 const app = express();
+const limiter = new rateLimit({
+  windowMs: 60 * 1000, // time for requests
+  max: 500, // limit each IP to x requests per windowMs
+});
+
+if (!TEST_MODE) {
+  app.use(limiter);
+}
 
 app.use(bodyParser.json());
 app.use(cors());

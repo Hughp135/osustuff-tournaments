@@ -1,5 +1,15 @@
 <div class="ui inverted segment no-bg">
-  <h3>Match Results</h3>
+  <div class="ui stackable grid">
+    <div class="ten wide column">
+      <h3>Match Results</h3>
+    </div>
+    <div class="six wide right aligned column">
+      <div class="ui primary button" (click)="hideResults()" *ngIf="game.status !== 'complete'">
+        <i class="left angle icon"></i>
+        Back to live game
+      </div>
+    </div>
+  </div>
   <div class="ui inverted secondary menu">
     <a class="item" [class.active]="round && round.roundNumber === roundNum" (click)="showRound(roundNum)" *ngFor="let roundNum of rounds">
       Round {{roundNum}} {{ finalRound === roundNum ? '- Final' : '' }}
@@ -7,9 +17,16 @@
   </div>
   <div *ngIf="round">
     <h3>
-      <app-beatmap-info [game]="game" [singleBeatmap]="round.beatmap"></app-beatmap-info>
+      <app-beatmap-info [game]="game" [hideTitle]="true" [beatmap]="round.beatmap"></app-beatmap-info>
     </h3>
-    <h3>Round {{round.roundNumber}} scores</h3>
-    <app-scores-table *ngIf="round" [scores]="round.scores" [game]="game"></app-scores-table>
+    <div *ngIf="!round.scores || !round.scores.length">
+      <p>
+        This round has no scores submitted
+      </p>
+    </div>
+    <div *ngIf="round.scores && round.scores.length">
+      <h3>Round {{round.roundNumber}} scores</h3>
+      <app-scores-table *ngIf="round" [scores]="round.scores" [game]="game"></app-scores-table>
+    </div>
   </div>
 </div>

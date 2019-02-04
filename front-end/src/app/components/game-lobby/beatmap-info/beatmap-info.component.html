@@ -1,26 +1,24 @@
 <div class="ui basic inverted segment no-bg">
-  <div class="ui grid" *ngIf="!singleBeatmap">
-    <div class="two column row">
-      <div class="left aligned column">
-        <h3 class="ui inverted header">
-          {{ game.status === 'in-progress' ? 'Now Playing' :
-          'Next beatmap' }}
-        </h3>
-      </div>
-    </div>
-  </div>
+  <h3 class="ui inverted header" *ngIf="!hideTitle">
+    {{ game.status === 'in-progress' ? 'Now Playing' :
+    'Next beatmap' }}
+  </h3>
+
+
   <div [ngStyle]="getBgStyles()" class="beatmap-bg" *ngIf="beatmap">
-    <div class="ui basic inverted segment">
+    <div class="ui padded inverted segment">
       <div class="ui inverted relaxed list">
         <div class="item">
           <div class="ui stackable grid">
             <div class="ten wide column">
               <a [href]="beatmapHref" target="_blank" class="beatmap-link">
                 <h3>
-                  <i class="download icon"></i> {{ beatmap.artist }} - {{ beatmap.title }}
+                  <i class="download icon"></i> {{
+                  beatmap.artist }} - {{ beatmap.title }}
                 </h3>
                 <h2 class="beatmap-version">
-                  <i class="small bullseye icon"></i> [{{ beatmap.version }}]
+                  <i class="small bullseye icon"></i> [{{
+                  beatmap.version }}]
                 </h2>
               </a>
             </div>
@@ -34,7 +32,8 @@
                 duration }}
               </p>
             </div>
-            <div class="sixteen wide center aligned column" *ngIf="game.status === 'in-progress' && isAlive">
+            <div class="sixteen wide center aligned column"
+              *ngIf="game.status === 'in-progress' && isAlive">
               <h3 class="ui icon header">
                 <i class="bullhorn icon"></i>
                 The round has started. Play this map now!
@@ -43,14 +42,19 @@
                 {{ timeLeft }}
               </h1>
               <br>
-              <p><i class="yellow crosshairs icon"></i> Play in single player mode</p>
-              <p><i class="yellow crosshairs icon"></i> You can pick any rankable mods</p>
-              <p><i class="yellow crosshairs icon"></i> Play the correct difficulty: [{{ beatmap.version }}]</p>
-              <p><i class="yellow crosshairs icon"></i> Only your highest score will counts</p>
+              <p><i class="yellow crosshairs icon"></i> Play in
+                single player mode</p>
+              <p><i class="yellow crosshairs icon"></i> You can
+                pick any rankable mods</p>
+              <p><i class="yellow crosshairs icon"></i> Play
+                this difficulty: [{{ beatmap.version }}]</p>
+              <p><i class="yellow crosshairs icon"></i> Only
+                your highest score will count</p>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
 </div>

@@ -1,11 +1,17 @@
 import { Game } from '../../models/Game.model';
+import { getDataOrCache } from '../../services/cache';
 
 export async function getLobbies() {
+  const cacheKey = `get-lobbies`;
+  return await getDataOrCache(cacheKey, 5000, async () => await getGames());
+}
+
+async function getGames() {
   const games = await Game.find({})
     .sort({ _id: -1 })
     .lean();
 
-  const transformed = games.map((game: any) => {
+  return games.map((game: any) => {
     game.playerCount = game.players.length;
     game.players = undefined;
     const secondsToStart =
@@ -17,6 +23,4 @@ export async function getLobbies() {
 
     return game;
   });
-
-  return transformed;
 }

@@ -11,7 +11,7 @@
 }
 
 .ui.inverted.segment.list-container {
-  padding: 1em 1em 2em !important;
+  padding: 1em 5px 2em 1em !important;
   border-radius: 5px !important;
   display: flex;
   flex: 1;
@@ -55,7 +55,7 @@ p {
   }
 
   a:visited {
-    color: #deabeb !important;
+    color: #c7ceff !important;
   }
 
   .item a:not(.ui):hover {

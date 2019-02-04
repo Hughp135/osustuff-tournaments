@@ -27,6 +27,7 @@ import { LeaderboardComponent } from './components/leaderboard/leaderboard.compo
 import { HomeComponent } from './components/home/home.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { SuiModule } from 'ng2-semantic-ui';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
     LazyLoadImageModule.forRoot({
       preset: intersectionObserverPreset,
     }),
+    SuiModule,
   ],
   providers: [ApiService, SettingsService],
   bootstrap: [AppComponent],

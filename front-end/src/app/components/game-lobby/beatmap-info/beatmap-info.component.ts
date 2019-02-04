@@ -8,10 +8,10 @@ import { getTimeComponents } from '../game-lobby.component';
 })
 export class BeatmapInfoComponent implements OnInit {
   @Input() game;
-  @Input() beatmaps?;
-  @Input() singleBeatmap;
+  @Input() beatmap;
   @Input() isAlive: boolean;
   @Input() timeLeft: string;
+  @Input() hideTitle?: boolean;
 
   constructor() {}
 
@@ -22,23 +22,11 @@ export class BeatmapInfoComponent implements OnInit {
       this.beatmap && {
         background: `linear-gradient( rgba(0, 0, 0, 0.6),
             rgba(0, 0, 0, 0.7) ),
-            url(https://assets.ppy.sh/beatmaps/${this.beatmap.beatmapset_id}/covers/card@2x.jpg)`,
-        'background-position': 'center',
-        'background-size': 'cover',
-        'background-repeat': 'no-repeat',
+            url(https://assets.ppy.sh/beatmaps/${
+              this.beatmap.beatmapset_id
+            }/covers/card@2x.jpg)`,
       }
     );
-  }
-
-  get beatmap() {
-    if (this.singleBeatmap) {
-      return this.singleBeatmap;
-    }
-    if (this.game.status === 'in-progress') {
-      return this.game.round.beatmap;
-    }
-
-    return this.beatmaps[this.game.roundNumber];
   }
 
   get starRating() {
@@ -48,7 +36,9 @@ export class BeatmapInfoComponent implements OnInit {
   get beatmapHref() {
     return (
       this.beatmap &&
-      `https://osu.ppy.sh/beatmapsets/${this.beatmap.beatmapset_id}#osu/${this.beatmap.beatmap_id}`
+      `https://osu.ppy.sh/beatmapsets/${this.beatmap.beatmapset_id}#osu/${
+        this.beatmap.beatmap_id
+      }`
     );
   }
 

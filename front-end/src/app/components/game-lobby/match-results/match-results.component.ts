@@ -9,6 +9,7 @@ import { GameService } from 'src/app/game.service';
 })
 export class MatchResultsComponent implements OnInit {
   @Input() game: IGame;
+  @Input() toggleViewResults: () => void;
   public rounds: number[] = [];
   public round: any;
 
@@ -28,5 +29,9 @@ export class MatchResultsComponent implements OnInit {
 
   public async showRound(round: number) {
     this.round = await this.gameService.getLobbyRound(this.game._id, round);
+  }
+
+  public hideResults() {
+    this.toggleViewResults();
   }
 }

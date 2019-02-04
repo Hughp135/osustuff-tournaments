@@ -17,7 +17,7 @@ export class ScoresTableComponent implements OnInit {
   ngOnInit() {}
 
   public scoreClass(score: any) {
-    return score.passedRound ? 'alive' : 'dead';
+    return score.passedRound === undefined ? '' : score.passedRound === true ? 'alive' : 'dead';
   }
 
   public getModString(mods: number) {

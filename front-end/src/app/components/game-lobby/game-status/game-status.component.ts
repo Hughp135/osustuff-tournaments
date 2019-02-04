@@ -13,10 +13,14 @@ export class GameStatusComponent implements OnInit {
   @Input() mePlayer: IPlayer;
   @Input() totalPlayers: number;
   @Input() timeLeft: string;
+  @Input() toggleViewResults: () => void;
+  @Input() viewingRoundResults: boolean;
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.viewingRoundResults);
+  }
 
   private getTitleAndMessage(): { title: string; message: string } {
     if (this.game.status === 'new') {
@@ -59,6 +63,10 @@ and the lowest scoring players will be eliminated from the game.`,
           : 'No one won this time. All players have either quit or failed to set a score in time.',
       };
     }
+  }
+
+  public toggleShowResults() {
+    this.toggleViewResults();
   }
 
   get title() {

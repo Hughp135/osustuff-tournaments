@@ -2,6 +2,7 @@ import { IRound } from './../models/Round.model';
 import { IGame, IPlayer } from './../models/Game.model';
 import { Score, IScore } from '../models/Score.model';
 import config from 'config';
+import winston = require('winston');
 
 const TEST_MODE = config.get('TEST_MODE');
 
@@ -42,11 +43,17 @@ export async function checkRoundScores(
   await game.save();
 
   if (TEST_MODE) {
-    await new Promise(res => setTimeout(res, 2000));
+    await new Promise(res => setTimeout(res, 5000));
   } else {
     const players = game.players.filter(p => p.alive);
 
-    await Promise.all(players.map(async p => checkPlayerScores(p, round, getUserRecent)));
+    await Promise.all(
+      players.map(async p =>
+        checkPlayerScores(p, round, getUserRecent).catch(e =>
+          winston.error('Failed to check player scores: ' + p, e),
+        ),
+      ),
+    );
   }
 }
 

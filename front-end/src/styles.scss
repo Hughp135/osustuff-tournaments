@@ -10,8 +10,6 @@ body {
   &::-webkit-scrollbar-thumb {
     border-radius: 0 !important;
   }
-
-  scrollbar-width: thin;
 }
 
 .ui.inverted.segment.no-bg {
@@ -22,7 +20,7 @@ body {
 .text-muted {
   margin-left: 5px;
   color: grey !important;
-  font-size: 0.9em;
+  font-size: 0.8em;
 }
 
 .emoji-mart {

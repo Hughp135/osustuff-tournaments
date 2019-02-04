@@ -10,6 +10,10 @@ h2 {
 }
 
 .beatmap-bg {
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+
   .ui.inverted.segment {
     background: none;
   }

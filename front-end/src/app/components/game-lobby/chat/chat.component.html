@@ -1,11 +1,12 @@
-<div class="ui inverted relaxed list" #chatMessages (scroll)="onChatScrolled($event)" (mousedown)="onMouseDown($event)"
-  (body:mouseup)="onMouseUp($event)">
+<div class="ui inverted relaxed list" #chatMessages (scroll)="onChatScrolled()" (mousedown)="onMouseDown()"
+  (body:mouseup)="onMouseUp()">
   <div class="item" *ngFor="let message of sortedMessages">
     <div class="image-container">
       <img class="ui avatar image" [useSrcset]="true" [lazyLoad]="'//a.ppy.sh/' + message.osuUserId">
     </div>
     <div class="content">
-      <div class="header">{{ message.username }}
+      <div class="header">
+        {{ message.username }}
         <span class="text-muted"> {{ message.createdAt | date:'short' }}</span>
       </div>
       <div class="description">
