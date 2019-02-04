@@ -15,7 +15,7 @@ import { getMessages } from './lobbies/messages/get';
 import { leaveGame } from './lobbies/leave-game';
 import { skipRound } from './lobbies/skip-round';
 import { toggleMonitoring } from './lobbies/stop-monitoring';
-import { getRoundScores } from './rounds/get';
+import { getRound } from './rounds/get';
 import { getUsers } from './users';
 import { clearDb } from './admin/clear-db';
 import { getUser } from './user/get-user';
@@ -30,7 +30,7 @@ const router = Router();
 
 router.get('', async (req, res) => res.send('Hello world!'));
 router.get('/lobbies', async (req, res) => res.json(await getLobbies()));
-router.get('/lobbies/:id/rounds/:roundNum', getRoundScores);
+router.get('/lobbies/:id/rounds/:roundNum', getRound);
 router.post('/lobbies/:id/join', joinGame);
 router.post('/lobbies/:id/leave', leaveGame);
 router.post('/lobbies/:id/skip-round', skipRound);

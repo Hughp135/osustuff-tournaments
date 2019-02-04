@@ -32,10 +32,6 @@ describe('check-player-scores', () => {
       await updatePlayerGameStats({
         players: shuffle(players),
       });
-      const users = await User.find()
-        .select({ username: 1, elo: 1 })
-        .lean();
-      // console.log('users highest/lowest elo', users[0].elo, users[users.length - 1].elo);
     }
     const usersFinal = await User.find()
     .select({ username: 1, elo: 1 })

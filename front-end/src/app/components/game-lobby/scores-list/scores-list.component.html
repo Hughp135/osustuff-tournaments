@@ -6,7 +6,7 @@
   </h3>
   <h3 *ngIf="myScore">Your best score</h3>
   <div *ngIf="myScore">
-    <app-scores-table [hidePlace]="true" [scores]="[myScore]" [currentUser]="currentUser" [game]="game"></app-scores-table>
+    <app-scores-table [scores]="[myScore]" [currentUser]="currentUser" [game]="game"></app-scores-table>
   </div>
   <h3>Round {{ game.roundNumber }} scores</h3>
   <div class="scores-container">

@@ -72,8 +72,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.players = data.players;
     this.messages = data.messages;
 
-    console.log('game', this.game);
-
     this.getTimeLeft();
 
     const currentGameSub = this.settingsService.currentGame.subscribe(async val => {
@@ -184,7 +182,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
           : 'There was no winner.';
         responsiveVoice.speak(`The match has finished. ${winnerString}`);
       }
-      if (game.status === 'new' && game.secondsToNextRound < 30 && !this.announcedStart && this.inGame) {
+      if (game.status === 'new' && game.secondsToNextRound <= 30 && !this.announcedStart && this.inGame) {
         responsiveVoice.speak(`The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`);
         this.announcedStart = true;
       }

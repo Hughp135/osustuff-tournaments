@@ -9,7 +9,6 @@ import { IGame } from '../../game-lobby.component';
 })
 export class ScoresTableComponent implements OnInit {
   @Input() scores;
-  @Input() hidePlace?;
   @Input() currentUser?;
   @Input() game: IGame;
 
@@ -23,5 +22,16 @@ export class ScoresTableComponent implements OnInit {
 
   public getModString(mods: number) {
     return getAppliedMods(mods).join(', ');
+  }
+
+  public getRank(rank: string) {
+    switch (rank) {
+      case 'XH':
+        return 'SS';
+      case 'SH':
+        return 'S';
+      default:
+        return rank;
+    }
   }
 }

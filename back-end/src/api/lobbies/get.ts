@@ -1,8 +1,8 @@
+import { getRoundScores } from '../../game/get-round-scores';
 import { Game } from '../../models/Game.model';
 import { Request, Response } from 'express';
 import { Round } from '../../models/Round.model';
 import mongoose from 'mongoose';
-import { Score } from '../../models/Score.model';
 import { getDataOrCache } from '../../services/cache';
 
 export async function getLobby(req: Request, res: Response) {
@@ -48,20 +48,8 @@ async function getData(id: string) {
   const round = await Round.findById(game.currentRound)
     .select({ beatmap: 1 })
     .lean();
-
-  const scores = await Score.find({
-    roundId: game.currentRound,
-  })
-    .select({
-      _id: 0,
-      __v: 0,
-      roundId: 0,
-      updatedAt: 0,
-    })
-    .sort({ score: -1 })
-    .lean();
-
-  const scoresTransformed = scores.map((score: any, index: number) => {
+  const scores = await getRoundScores(game.currentRound);
+  const scoresTransformed = scores.map((score: any, idx: number) => {
     const player = game.players.find(
       (p: any) => p.userId.toString() === score.userId.toString(),
     );

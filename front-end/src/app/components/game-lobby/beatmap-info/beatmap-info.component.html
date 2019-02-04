@@ -19,10 +19,10 @@
                 <h3>
                   {{ beatmap.artist }} - {{ beatmap.title }}
                 </h3>
-                <p>
-                  <i class="bullseye icon"></i> {{
-                  beatmap.version }}
-                </p>
+                <h2 class="beatmap-version">
+                  <i class="bullseye icon"></i>
+                  [{{ beatmap.version }}]
+                </h2>
               </a>
             </div>
             <div class="eight wide right aligned column">
@@ -43,17 +43,19 @@
   <div class="ui placeholder inverted segment" *ngIf="game.status === 'in-progress' && isAlive">
     <div class="ui icon header">
       <i class="bullhorn icon"></i>
-      Round has started! Play the above map now.
+      Round has started! Play the above map in single player now.
     </div>
     <div class="center aligned">
       <p align="center">
         You can play with any rankable mods (including No Fail).
         <br>
-        Try the map as many times as you want within the time
-        limit, only your highest score will count.
+        Only your highest score will count.
         <br>
         Make sure you play the correct difficulty!
       </p>
+      <h3 align="center">
+        Difficulty: [{{ beatmap.version }}]
+      </h3>
       <!-- <div class="ui primary button">
         Check score
       </div> -->

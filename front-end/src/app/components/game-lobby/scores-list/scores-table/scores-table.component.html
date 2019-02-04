@@ -1,6 +1,6 @@
 <table class="ui inverted table unstackable">
   <thead>
-    <th *ngIf="!hidePlace">Place</th>
+    <th>Place</th>
     <th>Username</th>
     <th>Score</th>
     <th>Rank</th>
@@ -11,10 +11,10 @@
   </thead>
   <tbody>
     <tr [ngClass]="scoreClass(score)" *ngFor="let score of scores; let index = index">
-      <td *ngIf="!hidePlace">{{ index + 1 }}</td>
+      <td>{{ score.place }}</td>
       <td [class.my-name]="currentUser === score.username">{{ score.username }}</td>
       <td>{{ score.score | number }}</td>
-      <td>{{ score.rank }}</td>
+      <td>{{ getRank(score.rank) }}</td>
       <td>{{ score.accuracy }}%</td>
       <td>{{ score.maxCombo }}</td>
       <td>{{ score.misses }}</td>

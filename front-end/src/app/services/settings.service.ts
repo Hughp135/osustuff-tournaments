@@ -95,7 +95,7 @@ export class SettingsService {
 
   public async leaveGame(gameId: string) {
     const currentGame = this.currentGame.getValue();
-    console.log('currentGame', currentGame);
+
     if (!currentGame) {
       return;
     }

@@ -1,13 +1,19 @@
+h3,
+h4,
+h2 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.beatmap-version {
+  font-weight: 400;
+}
+
 .beatmap-bg {
   .ui.inverted.segment {
     background: none;
   }
 
-  h3,
-  h4 {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
 
   .ui.inverted.list .item a:not(.ui).beatmap-link:hover {
     color: white !important;
