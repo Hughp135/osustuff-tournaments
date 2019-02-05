@@ -1,4 +1,4 @@
-import { IPlayer } from './components/game-lobby/game-lobby.component';
+import { IPlayer, IGame } from './components/game-lobby/game-lobby.component';
 import { Injectable } from '@angular/core';
 import { ApiService } from './services/api.service';
 import { Message } from './components/game-lobby/chat/chat.component';
@@ -15,7 +15,7 @@ export class GameService {
   }
 
   public async getLobby(id: string) {
-    return await this.apiService.get(`lobbies/${id}`).toPromise();
+    return <IGame>await this.apiService.get(`lobbies/${id}`).toPromise();
   }
 
   public async getLobbyBeatmaps(id: string) {

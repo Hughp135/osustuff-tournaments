@@ -6,9 +6,7 @@ const TEST_MODE = config.get('TEST_MODE');
 
 let beatmaps: any[];
 
-export async function createGame(
-  getRecentBeatmaps: () => Promise<any>,
-): Promise<IGame> {
+export async function createGame(getRecentBeatmaps: () => Promise<any>): Promise<IGame> {
   beatmaps = await getRecentBeatmaps();
 
   const roundBeatmaps = [
@@ -31,7 +29,7 @@ export async function createGame(
 
   if (TEST_MODE) {
     console.log('Creating game with sample players');
-    await addSamplePlayers(game, 999);
+    await addSamplePlayers(game, 100);
   }
 
   return game;

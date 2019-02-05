@@ -22,9 +22,7 @@ export class BeatmapInfoComponent implements OnInit {
       this.beatmap && {
         background: `linear-gradient( rgba(0, 0, 0, 0.6),
             rgba(0, 0, 0, 0.7) ),
-            url(https://assets.ppy.sh/beatmaps/${
-              this.beatmap.beatmapset_id
-            }/covers/card@2x.jpg)`,
+            url(https://assets.ppy.sh/beatmaps/${this.beatmap.beatmapset_id}/covers/card@2x.jpg)`,
       }
     );
   }
@@ -36,9 +34,7 @@ export class BeatmapInfoComponent implements OnInit {
   get beatmapHref() {
     return (
       this.beatmap &&
-      `https://osu.ppy.sh/beatmapsets/${this.beatmap.beatmapset_id}#osu/${
-        this.beatmap.beatmap_id
-      }`
+      `https://osu.ppy.sh/beatmapsets/${this.beatmap.beatmapset_id}#osu/${this.beatmap.beatmap_id}`
     );
   }
 

@@ -5,7 +5,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import * as Visibility from 'visibilityjs';
-import {TransitionController, Transition, TransitionDirection} from 'ng2-semantic-ui';
+import { TransitionController, Transition, TransitionDirection } from 'ng2-semantic-ui';
+import { GameLobbyData } from 'src/app/resolvers/game-lobby.resolver';
 
 declare var responsiveVoice: any;
 
@@ -34,6 +35,7 @@ export interface IGame {
   secondsToNextRound?: number;
   scores?: any[];
   round: any;
+  timeLeft: string;
 }
 
 @Component({
@@ -43,9 +45,9 @@ export interface IGame {
 })
 export class GameLobbyComponent implements OnInit, OnDestroy {
   public game: IGame;
-  public players: any;
+  public players: IPlayer[] = [];
   public messages: any;
-  public subscriptions: Subscription[] = [];
+  public subscriptions: Subscription = new Subscription();
   public visibilityTimers: number[] = [];
   public currentGame: CurrentGame;
   public beatmaps: any;
@@ -63,56 +65,69 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private settingsService: SettingsService,
     private gameService: GameService,
-    private adminService: AdminService,
+    private adminService: AdminService
   ) {
     this.isAdmin = !!settingsService.adminPw;
   }
 
   ngOnInit() {
-    const { data } = this.route.snapshot.data;
+    const { data } = <{ data: GameLobbyData }>this.route.snapshot.data;
 
-    this.game = data.lobby;
+    this.subscriptions.add(
+      data.lobby.subscribe(async game => {
+        await this.announceRoundChanges(game);
+        this.game = game;
+      })
+    );
     this.beatmaps = data.beatmaps;
-    this.players = data.players;
+    this.subscriptions.add(
+      data.players.subscribe(players => {
+        this.players = players;
+      })
+    );
     this.messages = data.messages;
-
-    this.getTimeLeft();
-
-    const currentGameSub = this.settingsService.currentGame.subscribe(async val => {
-      this.currentGame = val;
-      await this.fetch();
-    });
-    const currentUsernameSub = this.settingsService.username.subscribe(
-      val => (this.currentUsername = val),
+    this.subscriptions.add(
+      data.timeLeft.subscribe(timeLeft => {
+        this.timeLeft = timeLeft;
+      })
     );
 
-    this.subscriptions = [currentGameSub, currentUsernameSub];
-
-    const gameFetchInterval = this.game.status === 'complete' ? 60000 : 5000;
-    const messagesInterval = this.game.status === 'complete' ? 6000 : 2000;
-
-    this.visibilityTimers.push(
-      Visibility.every(gameFetchInterval, gameFetchInterval * 3, async () => {
-        await this.fetch();
-      }),
-      Visibility.every(1000, 30000, async () => {
-        if (!this.game.secondsToNextRound || this.game.status === 'complete') {
-          return;
-        }
-
-        // Take 1 second off time left every second
-        this.game.secondsToNextRound = Math.max(0, this.game.secondsToNextRound - 1);
-        await this.getTimeLeft();
-      }),
-      Visibility.every(messagesInterval, messagesInterval * 10, async () => {
-        await this.getMoreMessages();
-      }),
+    this.subscriptions.add(
+      this.settingsService.currentGame.subscribe(async val => {
+        this.currentGame = val;
+        // await this.fetch();
+      })
     );
+    this.subscriptions.add(
+      this.settingsService.username.subscribe(val => (this.currentUsername = val))
+    );
+
+    // const gameFetchInterval = this.game.status === 'complete' ? 60000 : 5000;
+    // const messagesInterval = this.game.status === 'complete' ? 6000 : 2000;
+
+    this.visibilityTimers
+      .push
+      // Visibility.every(gameFetchInterval, gameFetchInterval * 3, async () => {
+      //   await this.fetch();
+      // }),
+      // Visibility.every(1000, 30000, async () => {
+      //   if (!this.game.secondsToNextRound || this.game.status === 'complete') {
+      //     return;
+      //   }
+
+      //   // Take 1 second off time left every second
+      //   this.game.secondsToNextRound = Math.max(0, this.game.secondsToNextRound - 1);
+      //   await this.getTimeLeft();
+      // }),
+      // Visibility.every(messagesInterval, messagesInterval * 10, async () => {
+      //   await this.getMoreMessages();
+      // })
+      ();
   }
 
   ngOnDestroy() {
     this.visibilityTimers.forEach(v => Visibility.stop(v));
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subscriptions.unsubscribe();
     if (
       this.currentGame &&
       this.currentGame.gameId === this.game._id &&
@@ -120,22 +135,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     ) {
       this.settingsService.clearCurrentGame();
     }
-  }
-
-  private async getTimeLeft() {
-    if (!this.game || !this.game.secondsToNextRound) {
-      this.timeLeft = `--:--`;
-      return;
-    }
-
-    if (this.game.secondsToNextRound <= 0) {
-      await this.fetch();
-    }
-
-    const date = new Date();
-    date.setSeconds(date.getSeconds() + this.game.secondsToNextRound);
-    const { seconds, minutes } = getTimeComponents(date.getTime() - Date.now());
-    this.timeLeft = `${minutes}:${seconds}`;
   }
 
   public getMoreMessages = async () => {
@@ -149,7 +148,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     try {
       const newMessages = await this.gameService.getLobbyMessages(
         this.game._id,
-        lastMessage && lastMessage._id,
+        lastMessage && lastMessage._id
       );
 
       this.messages = newMessages.concat(this.messages);
@@ -160,37 +159,31 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.fetchingMessages = false;
   }
 
-  private async fetch() {
-    if (this.fetching) {
+  private async announceRoundChanges(game) {
+    if (!this.game) {
       return;
     }
 
-    this.fetching = true;
     try {
-      const game = <any>await this.gameService.getLobby(this.game._id);
       const oldStatus = this.game.status;
       const statusChanged = oldStatus !== game.status;
 
-      if (statusChanged || game.status === 'new') {
-        const players = await this.gameService.getLobbyUsers(this.game._id);
-
-        if (game.status !== 'new' || players.length !== this.players.length) {
-          this.players = players;
-        }
-      }
-      if (game.status === 'in-progress' && game.roundNumber !== this.game.roundNumber && this.inGame) {
+      if (
+        game.status === 'in-progress' &&
+        game.roundNumber !== this.game.roundNumber &&
+        this.inGame
+      ) {
         const beatmap = this.beatmaps[game.roundNumber - 1];
         responsiveVoice.speak(
           `Round ${game.roundNumber} has started. The beatmap is ${beatmap.artist} - ${
             beatmap.title
-          }, ${beatmap.version}`,
+          }, ${beatmap.version}`
         );
       }
       if (
         ((game.status === 'round-over' &&
-        !['round-over', 'checking-scores'].includes(this.game.status) || (
-          game.status === 'checking-scores' && this.game.status !== 'checking-scores'
-        )))  &&
+          !['round-over', 'checking-scores'].includes(this.game.status)) ||
+          (game.status === 'checking-scores' && this.game.status !== 'checking-scores')) &&
         this.inGame
       ) {
         responsiveVoice.speak(`Round ${game.roundNumber} has ended. `);
@@ -208,13 +201,13 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         this.inGame
       ) {
         responsiveVoice.speak(
-          `The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`,
+          `The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`
         );
         this.announcedStart = true;
       }
       this.game = game;
 
-      if (game.status !== oldStatus && game.status !== 'round-over') {
+      if (statusChanged && game.status !== 'round-over') {
         this.viewResults = false;
         await this.animate(TransitionDirection.Out);
         await this.animate(TransitionDirection.In);
@@ -222,7 +215,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     } catch (e) {
       console.error(e);
     }
-    this.fetching = false;
   }
 
   public toggleViewResults = () => {
@@ -283,7 +275,10 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     return new Promise(res => {
       const name = direction === TransitionDirection.Out ? 'fly right' : 'fly left';
       this.transitionController.animate(
-        new Transition(name, 250, direction, () => { res(); }));
+        new Transition(name, 250, direction, () => {
+          res();
+        })
+      );
     });
   }
 }
