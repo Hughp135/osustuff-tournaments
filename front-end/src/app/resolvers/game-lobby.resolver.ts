@@ -1,23 +1,16 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
-import {
-  Observable,
-  interval,
-  Subscriber,
-  Observer,
-  Subscription,
-  Subject,
-  BehaviorSubject,
-  merge,
-} from 'rxjs';
+import { Observable, interval, Observer, Subscription, BehaviorSubject } from 'rxjs';
 import { GameService } from '../game.service';
 import { SettingsService, CurrentGame } from '../services/settings.service';
-import { IGame, IPlayer, getTimeComponents } from '../components/game-lobby/game-lobby.component';
+import {
+  IGame,
+  IPlayer,
+  getTimeComponents,
+} from '../components/game-lobby/game-lobby.component';
 import * as Visibility from 'visibilityjs';
 import { Message } from '../components/game-lobby/chat/chat.component';
-import { distinctUntilChanged, filter, mergeMap } from 'rxjs/operators';
-
-declare var responsiveVoice: any;
+import { distinctUntilChanged, takeWhile } from 'rxjs/operators';
 
 export interface GameLobbyData {
   lobby: Observable<IGame>;
@@ -30,18 +23,20 @@ export interface GameLobbyData {
 @Injectable({
   providedIn: 'root',
 })
-export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>>, OnDestroy {
+export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
   private _game: BehaviorSubject<IGame> = new BehaviorSubject(undefined);
+  private statusChanged: BehaviorSubject<undefined> = new BehaviorSubject(undefined);
   private _players: IPlayer[] = [];
   public currentGame: CurrentGame;
   public visibilityTimers: number[] = [];
-  private gameFetchInterval = 5000;
   private timeLeft: BehaviorSubject<string | undefined> = new BehaviorSubject(undefined);
+  private timeLeftInterval: Subscription;
+  private secondsLeft?: number;
 
   constructor(
     private gameService: GameService,
     private router: Router,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
   ) {}
 
   async resolve(route: ActivatedRouteSnapshot): Promise<GameLobbyData> {
@@ -57,7 +52,6 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>>, OnDes
       // });
       const lobby: Observable<IGame> = this.getLobby(id);
       const players: Observable<IPlayer[]> = this.getPlayers(id);
-      interval(1000).subscribe(() => this.updateTimeLeft());
 
       await this.settingsService.checkCurrentGame();
 
@@ -75,43 +69,47 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>>, OnDes
     }
   }
 
-  ngOnDestroy() {
-    console.log('destroyed');
-  }
-
   private getPlayers(gameId: string) {
     return Observable.create(async (observer: Observer<IPlayer[]>) => {
       let fetching = false;
-      const subscriptions: Subscription = new Subscription();
+      let statusSub: Subscription;
 
-      const updatePlayers = async (game: IGame) => {
+      const updatePlayers = async (forceUpdate?: boolean) => {
         if (observer.closed) {
-          subscriptions.unsubscribe();
+          console.log('unsubbing');
+          statusSub.unsubscribe();
           observer.complete();
         }
         if (fetching) {
           return;
         }
+
         fetching = true;
         const players = await this.gameService.getLobbyUsers(gameId);
-        if (!game || game.status !== 'new' || players.length !== this._players.length) {
+        if (forceUpdate || players.length !== this._players.length) {
+          console.log('setting players');
           this._players = players;
           observer.next(players);
+        } else {
+          console.log('not setting players');
         }
         fetching = false;
       };
 
-      subscriptions.add(
-        this._game
-          .pipe(
-            distinctUntilChanged((a, b) => {
-              return !a || (b.status === a.status && b.status !== 'new');
-            })
-          )
-          .subscribe(async game => {
-            await updatePlayers(game);
-          })
-      );
+      statusSub = this.statusChanged.subscribe(async () => {
+          await updatePlayers(true);
+      });
+
+      this.getTimer(5000, 15000)
+        .pipe(
+          takeWhile(() => {
+            const game = this._game.getValue();
+            return !game || game.status === 'new';
+          }),
+        )
+        .subscribe(async () => {
+          await updatePlayers();
+        });
     });
   }
 
@@ -128,15 +126,34 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>>, OnDes
         }
 
         if (fetching) {
-          console.log('not fetching');
           return;
         }
 
-        console.log('fetching');
         fetching = true;
         const game = await this.gameService.getLobby(id);
+        const statusChanged =
+          !this._game.getValue() || game.status !== this._game.getValue().status;
+
         observer.next(game);
         this._game.next(game);
+
+        if (statusChanged) {
+          this.statusChanged.next(undefined);
+        }
+
+        if (statusChanged || !this.secondsLeft) {
+          this.secondsLeft = game.secondsToNextRound;
+          if (this.timeLeftInterval) {
+            this.timeLeftInterval.unsubscribe();
+          }
+          this.updateTimeLeft();
+          this.timeLeftInterval = interval(1000).subscribe(() => {
+            if (this.secondsLeft >= 1) {
+              this.secondsLeft--;
+              this.updateTimeLeft();
+            }
+          });
+        }
         fetching = false;
       };
 
@@ -144,14 +161,14 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>>, OnDes
       subscriptions.add(
         this.settingsService.currentGame.subscribe(async val => {
           await updateGame();
-        })
+        }),
       );
 
       // Fetch on an interval
       subscriptions.add(
         this.getTimer(5000, 15000).subscribe(async () => {
           await updateGame();
-        })
+        }),
       );
     });
   }
@@ -165,10 +182,8 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>>, OnDes
         const time = hidden ? timeHidden : timeVisible;
 
         if (hidden && !visibleCbSet) {
-          console.log('setting onVisible cb');
           visibleCbSet = true;
           Visibility.onVisible(async () => {
-            console.log('visible callback');
             clearTimeout(timeout);
             observer.next();
             tick();
@@ -176,7 +191,6 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>>, OnDes
           });
         }
         timeout = setTimeout(async () => {
-          console.log('tick');
           observer.next();
 
           tick();
@@ -187,15 +201,12 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>>, OnDes
   }
 
   private updateTimeLeft(): void {
-    const game = this._game.getValue();
-    const subject = new Subject();
-
-    if (!game || !game.secondsToNextRound) {
+    if (this.secondsLeft || this.secondsLeft < 0) {
       this.timeLeft.next(undefined);
     }
 
     const date = new Date();
-    date.setSeconds(date.getSeconds() + game.secondsToNextRound);
+    date.setSeconds(date.getSeconds() + this.secondsLeft);
     const { seconds, minutes } = getTimeComponents(date.getTime() - Date.now());
 
     this.timeLeft.next(`${minutes}:${seconds}`);

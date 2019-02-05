@@ -42,6 +42,8 @@ export class GameInfoComponent implements OnInit {
         return 'Game will start in';
       case 'in-progress':
         return `Round ${this.game.roundNumber} ends in`;
+      case 'checking-scores':
+        return 'Checking scores';
       case 'round-over':
         return `Round ${this.game.roundNumber + 1} starts in`;
     }

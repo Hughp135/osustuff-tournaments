@@ -47,7 +47,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   public game: IGame;
   public players: IPlayer[] = [];
   public messages: any;
-  public subscriptions: Subscription = new Subscription();
+  public subscriptions: Subscription[] = [];
   public visibilityTimers: number[] = [];
   public currentGame: CurrentGame;
   public beatmaps: any;
@@ -65,7 +65,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private settingsService: SettingsService,
     private gameService: GameService,
-    private adminService: AdminService
+    private adminService: AdminService,
   ) {
     this.isAdmin = !!settingsService.adminPw;
   }
@@ -73,61 +73,32 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const { data } = <{ data: GameLobbyData }>this.route.snapshot.data;
 
-    this.subscriptions.add(
+    this.subscriptions = [
       data.lobby.subscribe(async game => {
         await this.announceRoundChanges(game);
         this.game = game;
-      })
-    );
+      }),
+      data.players.subscribe(players => this.players = players),
+      data.timeLeft.subscribe(timeLeft => this.timeLeft = timeLeft),
+      this.settingsService.currentGame.subscribe(async val => this.currentGame = val),
+      this.settingsService.username.subscribe(val => (this.currentUsername = val)),
+    ];
+
     this.beatmaps = data.beatmaps;
-    this.subscriptions.add(
-      data.players.subscribe(players => {
-        this.players = players;
-      })
-    );
     this.messages = data.messages;
-    this.subscriptions.add(
-      data.timeLeft.subscribe(timeLeft => {
-        this.timeLeft = timeLeft;
-      })
+
+    const messagesInterval = !this.game || this.game.status === 'complete' ? 6000 : 2000;
+
+    this.visibilityTimers.push(
+      Visibility.every(messagesInterval, messagesInterval * 10, async () => {
+        await this.getMoreMessages();
+      }),
     );
-
-    this.subscriptions.add(
-      this.settingsService.currentGame.subscribe(async val => {
-        this.currentGame = val;
-        // await this.fetch();
-      })
-    );
-    this.subscriptions.add(
-      this.settingsService.username.subscribe(val => (this.currentUsername = val))
-    );
-
-    // const gameFetchInterval = this.game.status === 'complete' ? 60000 : 5000;
-    // const messagesInterval = this.game.status === 'complete' ? 6000 : 2000;
-
-    this.visibilityTimers
-      .push
-      // Visibility.every(gameFetchInterval, gameFetchInterval * 3, async () => {
-      //   await this.fetch();
-      // }),
-      // Visibility.every(1000, 30000, async () => {
-      //   if (!this.game.secondsToNextRound || this.game.status === 'complete') {
-      //     return;
-      //   }
-
-      //   // Take 1 second off time left every second
-      //   this.game.secondsToNextRound = Math.max(0, this.game.secondsToNextRound - 1);
-      //   await this.getTimeLeft();
-      // }),
-      // Visibility.every(messagesInterval, messagesInterval * 10, async () => {
-      //   await this.getMoreMessages();
-      // })
-      ();
   }
 
   ngOnDestroy() {
     this.visibilityTimers.forEach(v => Visibility.stop(v));
-    this.subscriptions.unsubscribe();
+    this.subscriptions.forEach(s => s.unsubscribe());
     if (
       this.currentGame &&
       this.currentGame.gameId === this.game._id &&
@@ -148,7 +119,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     try {
       const newMessages = await this.gameService.getLobbyMessages(
         this.game._id,
-        lastMessage && lastMessage._id
+        lastMessage && lastMessage._id,
       );
 
       this.messages = newMessages.concat(this.messages);
@@ -177,13 +148,14 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         responsiveVoice.speak(
           `Round ${game.roundNumber} has started. The beatmap is ${beatmap.artist} - ${
             beatmap.title
-          }, ${beatmap.version}`
+          }, ${beatmap.version}`,
         );
       }
       if (
         ((game.status === 'round-over' &&
           !['round-over', 'checking-scores'].includes(this.game.status)) ||
-          (game.status === 'checking-scores' && this.game.status !== 'checking-scores')) &&
+          (game.status === 'checking-scores' &&
+            this.game.status !== 'checking-scores')) &&
         this.inGame
       ) {
         responsiveVoice.speak(`Round ${game.roundNumber} has ended. `);
@@ -201,7 +173,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         this.inGame
       ) {
         responsiveVoice.speak(
-          `The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`
+          `The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`,
         );
         this.announcedStart = true;
       }
@@ -226,7 +198,9 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get showScores() {
-    return ['round-over', 'checking-scores'].includes(this.game.status) && !this.viewResults;
+    return (
+      ['round-over', 'checking-scores'].includes(this.game.status) && !this.viewResults
+    );
   }
 
   get inAnotherGame() {
@@ -277,7 +251,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       this.transitionController.animate(
         new Transition(name, 250, direction, () => {
           res();
-        })
+        }),
       );
     });
   }

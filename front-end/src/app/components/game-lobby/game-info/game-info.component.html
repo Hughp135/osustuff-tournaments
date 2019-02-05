@@ -18,12 +18,12 @@
       {{ game.winningUser ? game.winningUser.username : 'No one won!' }}
     </div>
     <div class="column">
-      <h5>Round</h5>
+      <h5>Round{{ game.status === 'complete' ? 's' : '' }}</h5>
       {{ game.roundNumber || '-' }}
     </div>
-    <div class="column">
+    <div class="column" *ngIf="game.status !== 'complete'">
       <h5>{{ nextStageStartsMsg }}</h5>
-      {{ timeLeft }}
+      {{ game.status !== 'checking-scores' ? timeLeft || 'now' : ''}}
     </div>
     <div class="column" *ngIf="game.status === 'new' && inGame">
       <div class="ui red button" (click)="leaveGame()">Leave Game</div>
