@@ -38,10 +38,9 @@ export class GameService {
       .toPromise();
   }
 
-  public async sendMessage(id: string, requestId: string, message: string) {
+  public async sendMessage(id: string, message: string) {
     return await this.apiService
       .post(`lobbies/${id}/messages`, {
-        requestId,
         message,
       })
       .toPromise();

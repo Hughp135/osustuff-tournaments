@@ -142,10 +142,11 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         this.inGame
       ) {
         const beatmap = this.beatmaps[game.roundNumber - 1];
+        const regexReplace = /[^\w\s-.=%@&+]/gi;
         responsiveVoice.speak(
-          `Round ${game.roundNumber} has started. The beatmap is ${beatmap.artist} - ${
-            beatmap.title
-          }, ${beatmap.version}`,
+          `Round ${game.roundNumber} has started. The beatmap is ${beatmap.artist.replace(regexReplace, ' ').toLowerCase()} - ${
+            beatmap.title.replace(regexReplace, ' ').toLowerCase()
+          }, ${beatmap.version.replace(regexReplace, ' ').toLowerCase()}`,
         );
       }
       if (
@@ -219,6 +220,8 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   get isAlive() {
     if (this.mePlayer) {
       return this.mePlayer.alive;
+    } else {
+      return true;
     }
   }
 

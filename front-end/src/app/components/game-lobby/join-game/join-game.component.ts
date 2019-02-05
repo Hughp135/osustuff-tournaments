@@ -1,3 +1,4 @@
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from './../../../services/api.service';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -13,43 +14,52 @@ export class JoinGameComponent implements OnInit, OnDestroy {
   @Input() game: any;
   @Input() inAnotherGame: boolean;
 
-  public osuUsername = '';
   public requestingJoin = false;
-  public joinRequestId: string;
-  public requestedAt: Date;
+  public success = false;
   public error: string;
+  public loggedIn: boolean;
 
-  constructor(private apiService: ApiService, private settingsService: SettingsService) {
-    this.osuUsername = settingsService.username.getValue();
+  constructor(
+    private apiService: ApiService,
+    private settingsService: SettingsService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+    this.loggedIn = !!settingsService.username.getValue();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.route.snapshot.queryParams.autoJoin) {
+      this.joinGame();
+    }
+  }
 
   ngOnDestroy() {
-    this.joinRequestId = undefined;
     this.requestingJoin = false;
-    this.requestedAt = undefined;
+    this.success = undefined;
   }
 
   get canJoin() {
     return this.game.status === 'new';
   }
 
+  get loginLink() {
+    return (
+      'https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=46&redirect_uri=http://localhost:4200/api/login-verify&state=' +
+      JSON.stringify({ gameId: this.game._id })
+    );
+  }
+
   async joinGame() {
     this.requestingJoin = true;
-    this.joinRequestId = undefined;
+    this.success = false;
     this.error = undefined;
 
     try {
-      const { requestId, username }: any = await this.apiService
-        .post(`lobbies/${this.game._id}/join`, {
-          username: this.osuUsername,
-        })
-        .toPromise();
-      this.requestedAt = new Date();
-      this.joinRequestId = requestId;
-      this.settingsService.setUsername(username);
-      await this.checkVerified();
+      await this.apiService.post(`lobbies/${this.game._id}/join`, {}).toPromise();
+      this.success = true;
+      this.settingsService.setCurrentGame(this.game._id);
+      responsiveVoice.speak('You have joined the game');
     } catch (e) {
       if (e.status === 404) {
         this.error =
@@ -58,6 +68,8 @@ export class JoinGameComponent implements OnInit, OnDestroy {
         this.error = 'This game cannot be joined anymore.';
       } else if (e.status === 423) {
         this.error = 'The game is now full and cannot be joined.';
+      } else if (e.status === 401) {
+        this.router.navigateByUrl('/login');
       } else {
         throw e;
       }
@@ -69,58 +81,10 @@ export class JoinGameComponent implements OnInit, OnDestroy {
   }
 
   public async leaveGame() {
-    const currentGame = this.settingsService.currentGame.getValue();
-    if (!currentGame) {
-      this.joinRequestId = undefined;
-      return;
-    }
-
     try {
       await this.settingsService.leaveGame(this.game._id);
-      this.joinRequestId = undefined;
     } catch (e) {
       console.error(e);
-    }
-  }
-
-  private async checkVerified() {
-    const timeOutDate = new Date();
-    timeOutDate.setSeconds(timeOutDate.getSeconds() - 65);
-
-    if (!this.joinRequestId) {
-      return;
-    }
-
-    if (this.requestedAt < timeOutDate) {
-      this.joinRequestId = undefined;
-      return;
-    }
-
-    try {
-      const { verified }: any = await this.apiService
-        .post(`check-verified`, {
-          requestId: this.joinRequestId,
-        })
-        .toPromise();
-
-      if (verified) {
-        responsiveVoice.speak('You have joined the game.');
-        this.settingsService.setCurrentGame(this.game._id, this.joinRequestId);
-      } else {
-        setTimeout(() => {
-          this.checkVerified();
-        }, 5000);
-      }
-    } catch (e) {
-      console.error(e);
-
-      this.joinRequestId = undefined;
-    }
-  }
-
-  public onKeyDown(e) {
-    if (e.keyCode === 13 && this.osuUsername.length >= 3) {
-      this.joinGame();
     }
   }
 }

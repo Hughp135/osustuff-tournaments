@@ -15,6 +15,10 @@
   </a>
 
   <div class="right menu">
+    <a class="item" [routerLink]="'/login'" *ngIf="!currentUsername">
+      <i class="sign-in icon"></i>
+      Log In
+    </a>
     <a *ngIf="currentGame" class="item" [routerLink]="['/lobbies/', currentGame.gameId]">
       <i class="large orange play circle outline icon"></i>
       Rejoin Game

@@ -1,9 +1,12 @@
 import { Game } from '../../models/Game.model';
 import { getDataOrCache } from '../../services/cache';
+import { Request, Response } from 'express';
 
-export async function getLobbies() {
+export async function getLobbies(req: Request, res: Response) {
   const cacheKey = `get-lobbies`;
-  return await getDataOrCache(cacheKey, 5000, async () => await getGames());
+  const data = await getDataOrCache(cacheKey, 5000, async () => await getGames());
+
+  res.json(data);
 }
 
 async function getGames() {

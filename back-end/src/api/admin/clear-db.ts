@@ -3,7 +3,6 @@ import { Game } from '../../models/Game.model';
 import config from 'config';
 import { User } from '../../models/User.model';
 import { Round } from '../../models/Round.model';
-import { JoinGameRequest } from '../../models/JoinGameRequest.model';
 import { Message } from '../../models/Message.model';
 import { Score } from '../../models/Score.model';
 
@@ -16,7 +15,6 @@ export async function clearDb(req: Request, res: Response) {
   await Round.deleteMany({});
   await User.deleteMany({});
   await Message.deleteMany({});
-  await JoinGameRequest.deleteMany({});
   await Score.deleteMany({});
 
   res.status(200).end();

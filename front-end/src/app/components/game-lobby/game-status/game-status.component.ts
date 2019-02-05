@@ -37,8 +37,7 @@ export class GameStatusComponent implements OnInit {
     if (this.game.status === 'in-progress') {
       return {
         title: `Round ${this.game.roundNumber} is now in progress!`,
-        message: `All players must now set a score on the map. After the round, all scores will be detected
-and the lowest scoring players will be eliminated from the game.`,
+        message: `All players must now set a score on the map.`,
       };
     }
     if (this.game.status === 'checking-scores') {

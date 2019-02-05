@@ -89,7 +89,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
       const currentGame = this.settingsService.currentGame.getValue();
       await this.gameService.sendMessage(
         currentGame.gameId,
-        currentGame.requestId,
         this.messageInput
       );
       this.messageInput = undefined;

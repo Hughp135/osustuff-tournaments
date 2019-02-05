@@ -1,39 +1,28 @@
 <div class="ui inverted segment">
   <div *ngIf="canJoin">
-    <div *ngIf="inAnotherGame">
-      <p>You are in another game, so you must leave before you can join.</p>
-      <div class="ui tiny orange button" (click)="leaveGame()">
-        Leave other game
-      </div>
+    <div *ngIf="!loggedIn">
+        <a class="ui primary button" [href]="loginLink">
+          Join game
+        </a>
     </div>
-    <div *ngIf="!inAnotherGame">
-      <div *ngIf="!joinRequestId">
-
-        <h5 class="ui inverted left floated header">
-          Enter your osu! username to join this game!
-        </h5>
-
-        <div class="ui right floated small action input">
-          <input type="text" placeholder="osu! username" [(ngModel)]="osuUsername" (keydown)="onKeyDown($event)">
-          <button class="ui primary button" [disabled]="(osuUsername && osuUsername.length < 3) || requestingJoin"
-            [class.loading]="requestingJoin" (click)="joinGame()">Join</button>
-        </div>
-
-        <div>
-          <p *ngIf="error" class="error">{{ error }}</p>
+    <div *ngIf="loggedIn">
+      <div *ngIf="inAnotherGame">
+        <p>You are in another game, so you must leave before you can join.</p>
+        <div class="ui tiny orange button" (click)="leaveGame()">
+          Leave other game
         </div>
       </div>
-      <div *ngIf="joinRequestId">
-        <p>
-          To join the game, send a message with the command "<b>!join</b>" in game to the
-          user <b>Mongoose-</b>
-          to verify your account.
-          You have 60 seconds to do this.
-        </p>
-        <h5 class="ui inverted header">
-          <i class="loading spinner icon"></i>
-          Awaiting verification... Go into osu! and type /msg Mongoose- then send the command !join
-        </h5>
+      <div *ngIf="!inAnotherGame">
+        <div *ngIf="!success">
+          <div class="small action input">
+            <button class="ui primary button" [disabled]="requestingJoin"
+              [class.loading]="requestingJoin" (click)="joinGame()">Join Game</button>
+          </div>
+
+          <div>
+            <p *ngIf="error" class="error">{{ error }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>

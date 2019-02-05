@@ -30,6 +30,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { SuiModule } from 'ng2-semantic-ui';
 import { LobbiesComponent } from './components/lobbies/lobbies.component';
 import { TwitchEmotesPipe } from 'src/pipes/twitch-emotes.pipe';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { TwitchEmotesPipe } from 'src/pipes/twitch-emotes.pipe';
     UserProfileComponent,
     LobbiesComponent,
     TwitchEmotesPipe,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,

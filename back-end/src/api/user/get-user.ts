@@ -4,9 +4,19 @@ import { getAchievement } from '../../achievements/get-achievement';
 import mongoose from 'mongoose';
 
 export async function getUser(req: Request, res: Response) {
-  const { username } = req.params;
+  let { username } = req.params;
 
-  const user = await User.findOne({ username }).select({__v: 0}).lean();
+  if (!username) {
+    const claim = req.app.get('claim');
+    if (!claim) {
+      res.status(401).end();
+    }
+    username = req.app.get('claim').username;
+  }
+
+  console.log('getting user', username);
+
+  const user = await User.findOne({ username }).select({ __v: 0 }).lean();
 
   if (!user) {
     return res.status(404).end();

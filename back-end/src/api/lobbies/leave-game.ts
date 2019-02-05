@@ -1,19 +1,9 @@
 import { Request, Response } from 'express';
 import { Game } from '../../models/Game.model';
-import { JoinGameRequest } from '../../models/JoinGameRequest.model';
+import { User } from '../../models/User.model';
 
 export async function leaveGame(req: Request, res: Response) {
-  const { requestId } = req.body;
-
-  const verifyRequest = await JoinGameRequest.findById(requestId);
-
-  if (!verifyRequest) {
-    return res.status(404).end();
-  }
-
-  if (!verifyRequest.verified) {
-    return res.status(200).end();
-  }
+  const { username } = req.app.get('claim');
 
   const game = await Game.findById(req.params.id);
 
@@ -22,10 +12,10 @@ export async function leaveGame(req: Request, res: Response) {
   }
 
   if (game.status === 'new') {
-    game.players = game.players.filter(p => p.username !== verifyRequest.username);
+    game.players = game.players.filter(p => p.username !== username);
     await game.save();
   } else {
-    const player = game.players.find(p => p.username === verifyRequest.username);
+    const player = game.players.find(p => p.username === username);
 
     if (player) {
       player.alive = false;
@@ -34,8 +24,11 @@ export async function leaveGame(req: Request, res: Response) {
     }
   }
 
-  if (verifyRequest.verified) {
-    await JoinGameRequest.deleteOne({ _id: verifyRequest.id });
+  const user = await User.findOne({ username });
+
+  if (user) {
+    user.currentGame = undefined;
+    await user.save();
   }
 
   res.status(200).end();

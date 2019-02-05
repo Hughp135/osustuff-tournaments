@@ -4,7 +4,6 @@ import { BehaviorSubject } from 'rxjs';
 
 export interface CurrentGame {
   gameId: string;
-  requestId: string;
 }
 
 @Injectable({
@@ -16,53 +15,39 @@ export class SettingsService {
 
   constructor(private apiService: ApiService) {
     this.checkCurrentGame();
-    this.username.next(localStorage.getItem('username') || undefined);
     (<any>window).adminLogon = password => {
       this.setAdmin(password);
     };
   }
 
-  public async getUser() {
-    if (!this.username.getValue()) {
-      return;
-    }
-
-    try {
-      return await this.apiService.get(`user/${this.username}`).toPromise();
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   public async checkCurrentGame() {
-    const currentGame = this.getCurrentGame();
-
-    if (currentGame) {
       try {
-        const { verified }: any = await this.apiService
-          .post(`check-verified`, {
-            requestId: currentGame.requestId,
-          })
-          .toPromise();
-        if (verified) {
-          this.currentGame.next(currentGame);
+        const me: any = await this.apiService.get(`user/me`).toPromise();
+
+        if (me) {
+          this.setUsername(me.username);
+          if (me.currentGame) {
+            this.setCurrentGame(me.currentGame);
+          } else {
+            this.clearCurrentGame();
+          }
         } else {
           this.clearCurrentGame();
         }
+
       } catch (e) {
-        if ([404, 408].includes(e.status)) {
+        if ([404, 408, 401].includes(e.status)) {
+          this.clearUsername();
           this.clearCurrentGame();
         } else {
           console.error(e);
         }
       }
-    }
   }
 
-  public setCurrentGame(gameId: string, requestId: string) {
+  public setCurrentGame(gameId: string) {
     const currentGame = {
       gameId,
-      requestId,
     };
     localStorage.setItem('currentGame', JSON.stringify(currentGame));
 
@@ -85,6 +70,11 @@ export class SettingsService {
     this.username.next(username);
   }
 
+  private clearUsername() {
+    localStorage.removeItem('username');
+    this.username.next(undefined);
+  }
+
   public setAdmin(password: string) {
     localStorage.setItem('adminPw', password);
   }
@@ -100,11 +90,7 @@ export class SettingsService {
       return;
     }
 
-    await this.apiService
-      .post(`lobbies/${gameId}/leave`, {
-        requestId: currentGame.requestId,
-      })
-      .toPromise();
+    await this.apiService.post(`lobbies/${gameId}/leave`, {}).toPromise();
 
     this.clearCurrentGame();
   }

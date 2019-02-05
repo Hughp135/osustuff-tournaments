@@ -9,6 +9,7 @@ import { GameLobbyComponent } from './components/game-lobby/game-lobby.component
 import { GameLobbyResolver } from './resolvers/game-lobby.resolver';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 import { LobbiesComponent } from './components/lobbies/lobbies.component';
+import { LoginComponent } from './components/login/login.component';
 
 const routes: Routes = [
   {
@@ -35,6 +36,10 @@ const routes: Routes = [
     component: UserProfileComponent,
     resolve: { data: UserProfileResolver },
   },
+  {
+    path: 'login',
+    component: LoginComponent,
+  }
 ];
 
 @NgModule({

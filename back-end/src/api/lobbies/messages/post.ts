@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import { Types } from 'mongoose';
-import { Game } from '../../../models/Game.model';
-import { JoinGameRequest } from '../../../models/JoinGameRequest.model';
 import { User } from '../../../models/User.model';
 import { Message } from '../../../models/Message.model';
 import { ObjectID } from 'bson';
@@ -9,7 +7,9 @@ import { cache } from '../../../services/cache';
 
 export async function sendMessage(req: Request, res: Response) {
   const { id } = req.params;
-  const { requestId, message } = req.body;
+  const { message } = req.body;
+
+  const { username } = req.app.get('claim');
 
   if (!Types.ObjectId.isValid(id)) {
     return res.status(404).end();
@@ -19,19 +19,9 @@ export async function sendMessage(req: Request, res: Response) {
     return res.status(400).end();
   }
 
-  const verifyRequest = await JoinGameRequest.findById(requestId);
+  const user = await User.findOne({ username });
 
-  if (!verifyRequest) {
-    return res.status(404).end();
-  }
-
-  if (!verifyRequest.verified || verifyRequest.gameId.toString() !== id) {
-    return res.status(401).end();
-  }
-
-  const user = await User.findOne({ username: verifyRequest.username });
-
-  if (!user) {
+  if (!user || !user.currentGame || user.currentGame.toString() !== id) {
     return res.status(401).end();
   }
 
