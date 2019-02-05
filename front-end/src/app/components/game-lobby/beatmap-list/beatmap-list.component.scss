@@ -13,9 +13,6 @@
 .ui.inverted.segment.list-container {
   padding: 1em 5px 2em 1em !important;
   border-radius: 5px !important;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
 }
 
 h4,
@@ -38,9 +35,6 @@ p {
 }
 
 .ui.inverted.list {
-  overflow-y: auto;
-  flex: 1 1 250px;
-
   .beatmap-image-container {
     width: 54px;
     float: left;
