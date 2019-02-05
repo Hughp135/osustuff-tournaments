@@ -86,10 +86,8 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.beatmaps = data.beatmaps;
     this.messages = data.messages;
 
-    const messagesInterval = !this.game || this.game.status === 'complete' ? 6000 : 2000;
-
     this.visibilityTimers.push(
-      Visibility.every(messagesInterval, messagesInterval * 10, async () => {
+      Visibility.every(2000, 2000 * 10, async () => {
         await this.getMoreMessages();
       }),
     );
