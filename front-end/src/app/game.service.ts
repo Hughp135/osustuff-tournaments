@@ -22,7 +22,7 @@ export class GameService {
     return await this.apiService.get(`lobbies/${id}/beatmaps`).toPromise();
   }
 
-  public async getLobbyUsers(id: string): IPlayer[] {
+  public async getLobbyUsers(id: string): Promise<IPlayer[]> {
     return <IPlayer[]>await this.apiService.get(`lobbies/${id}/users`).toPromise();
   }
 
