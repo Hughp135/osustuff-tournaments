@@ -9,7 +9,6 @@ import { endGame } from './end-game';
 import { createGame } from './create-game';
 import { getUserRecent, getRecentBeatmaps } from '../services/osu-api';
 import config from 'config';
-import { addSampleScores } from '../test-helpers/add-sample-scores';
 import { addSampleChatMessage } from '../test-helpers/add-sample-chat-message';
 import { DURATION_START } from './durations';
 
@@ -103,9 +102,6 @@ async function checkRoundEnded(game: IGame) {
 
   // Check if next round should start
   if (<Date> game.nextStageStarts < new Date()) {
-    if (TEST_MODE) {
-      await addSampleScores(game);
-    }
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
   }

@@ -1,6 +1,8 @@
+import { IPlayer } from './components/game-lobby/game-lobby.component';
 import { Injectable } from '@angular/core';
 import { ApiService } from './services/api.service';
 import { Message } from './components/game-lobby/chat/chat.component';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +22,8 @@ export class GameService {
     return await this.apiService.get(`lobbies/${id}/beatmaps`).toPromise();
   }
 
-  public async getLobbyUsers(id: string) {
-    return await this.apiService.get(`lobbies/${id}/users`).toPromise();
+  public async getLobbyUsers(id: string): IPlayer[] {
+    return <IPlayer[]>await this.apiService.get(`lobbies/${id}/users`).toPromise();
   }
 
   public async getLobbyRound(id: string, roundNum: number) {

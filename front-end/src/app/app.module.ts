@@ -28,6 +28,8 @@ import { HomeComponent } from './components/home/home.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { SuiModule } from 'ng2-semantic-ui';
+import { LobbiesComponent } from './components/lobbies/lobbies.component';
+import { TwitchEmotesPipe } from 'src/pipes/twitch-emotes.pipe';
 
 @NgModule({
   declarations: [
@@ -49,6 +51,8 @@ import { SuiModule } from 'ng2-semantic-ui';
     HomeComponent,
     FooterComponent,
     UserProfileComponent,
+    LobbiesComponent,
+    TwitchEmotesPipe,
   ],
   imports: [
     BrowserModule,

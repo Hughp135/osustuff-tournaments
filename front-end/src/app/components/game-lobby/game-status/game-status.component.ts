@@ -19,7 +19,6 @@ export class GameStatusComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    console.log(this.viewingRoundResults);
   }
 
   private getTitleAndMessage(): { title: string; message: string } {

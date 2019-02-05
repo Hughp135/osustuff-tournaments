@@ -3,36 +3,9 @@ import { IGame, IPlayer } from './../models/Game.model';
 import { Score, IScore } from '../models/Score.model';
 import config from 'config';
 import winston = require('winston');
+import { addSampleScores } from '../test-helpers/add-sample-scores';
 
 const TEST_MODE = config.get('TEST_MODE');
-
-// let gameIdsBeingChecked: mongoose.Types.ObjectId[] = [];
-
-// export async function checkPlayerScores(game: IGame, round: IRound) {
-//   throw new Error('unused');
-//   // await game.save();
-
-//   // gameIdsBeingChecked.push(game._id);
-
-//   // await checkUserScores(game, round);
-
-//   // setTimeout(() => {
-//   //   // absolute worst case clear game so it doesn't linger on
-//   //   stopCheckingScores(game);
-//   // }, 120000);
-// }
-
-// export function stopCheckingScores(game: IGame) {
-//   if (shouldCheckScore(game)) {
-//     gameIdsBeingChecked = gameIdsBeingChecked.filter(
-//       g => g.toString() !== game._id.toString(),
-//     );
-//   }
-// }
-
-// function shouldCheckScore(game: IGame) {
-//   return gameIdsBeingChecked.find(g => g.toString() === game._id.toString());
-// }
 
 export async function checkRoundScores(
   game: IGame,
@@ -43,6 +16,7 @@ export async function checkRoundScores(
   await game.save();
 
   if (TEST_MODE) {
+    await addSampleScores(game);
     await new Promise(res => setTimeout(res, 5000));
   } else {
     const players = game.players.filter(p => p.alive);

@@ -80,7 +80,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
     const currentGameSub = this.settingsService.currentGame.subscribe(async val => {
       this.currentGame = val;
-      await this.fetch(true);
+      await this.fetch();
     });
     const currentUsernameSub = this.settingsService.username.subscribe(
       val => (this.currentUsername = val),
@@ -93,7 +93,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
     this.visibilityTimers.push(
       Visibility.every(gameFetchInterval, gameFetchInterval * 3, async () => {
-        await this.fetch(this.game.status === 'new');
+        await this.fetch();
       }),
       Visibility.every(1000, 30000, async () => {
         if (!this.game.secondsToNextRound || this.game.status === 'complete') {
@@ -160,7 +160,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.fetchingMessages = false;
   }
 
-  private async fetch(forcePlayersUpdate?: boolean) {
+  private async fetch() {
     if (this.fetching) {
       return;
     }
@@ -169,8 +169,14 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     try {
       const game = <any>await this.gameService.getLobby(this.game._id);
       const oldStatus = this.game.status;
-      if (game.status !== this.game.status || forcePlayersUpdate) {
-        this.players = await this.gameService.getLobbyUsers(this.game._id);
+      const statusChanged = oldStatus !== game.status;
+
+      if (statusChanged || game.status === 'new') {
+        const players = await this.gameService.getLobbyUsers(this.game._id);
+
+        if (game.status !== 'new' || players.length !== this.players.length) {
+          this.players = players;
+        }
       }
       if (game.status === 'in-progress' && game.roundNumber !== this.game.roundNumber && this.inGame) {
         const beatmap = this.beatmaps[game.roundNumber - 1];
@@ -208,7 +214,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       }
       this.game = game;
 
-      if (game.status !== oldStatus && game.status !== 'checking-scores') {
+      if (game.status !== oldStatus && game.status !== 'round-over') {
         this.viewResults = false;
         await this.animate(TransitionDirection.Out);
         await this.animate(TransitionDirection.In);

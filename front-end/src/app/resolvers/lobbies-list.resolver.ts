@@ -6,7 +6,7 @@ import { GameService } from '../game.service';
 @Injectable({
   providedIn: 'root'
 })
-export class LobbiesListResolver implements Resolve<any> {
+export class LobbiesResolver implements Resolve<any> {
   constructor(private gameService: GameService) {}
 
   async resolve(): Promise<Observable<any> | any> {

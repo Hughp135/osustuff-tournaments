@@ -9,8 +9,7 @@
         {{ message.username }}
         <span class="text-muted"> {{ message.createdAt | date:'short' }}</span>
       </div>
-      <div class="description">
-        {{ message.message | emojify }}
+      <div class="description" [innerHTML]="message.message | twitchEmotes | emojify ">
       </div>
     </div>
   </div>

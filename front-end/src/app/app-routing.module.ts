@@ -2,13 +2,13 @@ import { UserProfileResolver } from './resolvers/user-profile.resolver';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { HomeComponent } from './components/home/home.component';
 import { LeaderboardResolver } from './resolvers/leaderboard.resolver';
-import { LobbiesListResolver } from './resolvers/lobbies-list.resolver';
+import { LobbiesResolver } from './resolvers/lobbies-list.resolver';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { GameLobbyComponent } from './components/game-lobby/game-lobby.component';
 import { GameLobbyResolver } from './resolvers/game-lobby.resolver';
-import { LobbiesListComponent } from './components/lobbies-list/lobbies-list.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
+import { LobbiesComponent } from './components/lobbies/lobbies.component';
 
 const routes: Routes = [
   {
@@ -17,8 +17,8 @@ const routes: Routes = [
   },
   {
     path: 'lobbies',
-    component: LobbiesListComponent,
-    resolve: { data: LobbiesListResolver },
+    component: LobbiesComponent,
+    resolve: { data: LobbiesResolver },
   },
   {
     path: 'lobbies/:id',
@@ -40,6 +40,6 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  providers: [GameLobbyResolver, LobbiesListResolver, LeaderboardResolver, UserProfileResolver],
+  providers: [GameLobbyResolver, LobbiesResolver, LeaderboardResolver, UserProfileResolver],
 })
 export class AppRoutingModule {}
