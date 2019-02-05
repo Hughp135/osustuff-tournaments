@@ -2,19 +2,13 @@
   <h1 class="ui inverted header">Matches</h1>
 
   <h2>Open Matches</h2>
-  <div class="">
-    <p *ngIf="!joinableGames.length">No games are open at the
-      moment</p>
-    <app-lobbies-list [lobbies]="joinableGames"></app-lobbies-list>
-  </div>
+  <p *ngIf="!joinableGames.length">No games are open at the
+    moment</p>
+  <app-lobbies-list [lobbies]="joinableGames"></app-lobbies-list>
 
   <h2 *ngIf="inProgressGames.length">In Progress Matches</h2>
-  <div class="ui inverted segment" *ngIf="inProgressGames.length">
-    <app-lobbies-list [lobbies]="inProgressGames"></app-lobbies-list>
-  </div>
+  <app-lobbies-list [lobbies]="inProgressGames"></app-lobbies-list>
 
   <h3 *ngIf="completedGames.length">Finished Matches</h3>
-  <div class="ui inverted segment" *ngIf="completedGames.length">
-    <app-lobbies-list [lobbies]="completedGames"></app-lobbies-list>
-  </div>
+  <app-lobbies-list [lobbies]="completedGames"></app-lobbies-list>
 </div>
