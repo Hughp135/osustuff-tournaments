@@ -52,7 +52,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   public currentGame: CurrentGame;
   public beatmaps: any;
   public showBeatmapList: boolean;
-  private fetching = false;
   public timeLeft: string;
   private fetchingMessages = false;
   public currentUsername: string;
@@ -255,19 +254,4 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       );
     });
   }
-}
-
-export function getTimeComponents(t: number) {
-  const seconds = Math.floor((t / 1000) % 60);
-  const minutes = Math.max(0, Math.floor((t / 1000 / 60) % 60));
-  const hours = Math.max(0, Math.floor((t / (1000 * 60 * 60)) % 24));
-  const days = Math.max(0, Math.floor(t / (1000 * 60 * 60 * 24)));
-
-  return {
-    total: t,
-    days: days.toString(),
-    hours: hours.toString().padStart(2, '0'),
-    minutes: minutes.toString().padStart(2, '0'),
-    seconds: seconds.toString().padStart(2, '0'),
-  };
 }

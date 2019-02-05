@@ -1,8 +1,8 @@
 
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { getTimeComponents } from '../game-lobby/game-lobby.component';
 import { Subscription, interval } from 'rxjs';
+import { getTimeComponents } from 'src/app/resolvers/game-lobby.resolver';
 
 @Component({
   selector: 'app-lobbies',

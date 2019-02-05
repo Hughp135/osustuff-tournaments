@@ -6,7 +6,6 @@ import { SettingsService, CurrentGame } from '../services/settings.service';
 import {
   IGame,
   IPlayer,
-  getTimeComponents,
 } from '../components/game-lobby/game-lobby.component';
 import * as Visibility from 'visibilityjs';
 import { Message } from '../components/game-lobby/chat/chat.component';
@@ -76,7 +75,6 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
 
       const updatePlayers = async (forceUpdate?: boolean) => {
         if (observer.closed) {
-          console.log('unsubbing');
           statusSub.unsubscribe();
           observer.complete();
         }
@@ -87,11 +85,9 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
         fetching = true;
         const players = await this.gameService.getLobbyUsers(gameId);
         if (forceUpdate || players.length !== this._players.length) {
-          console.log('setting players');
           this._players = players;
           observer.next(players);
         } else {
-          console.log('not setting players');
         }
         fetching = false;
       };
@@ -211,4 +207,19 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
 
     this.timeLeft.next(`${minutes}:${seconds}`);
   }
+}
+
+export function getTimeComponents(t: number) {
+  const seconds = Math.floor((t / 1000) % 60);
+  const minutes = Math.max(0, Math.floor((t / 1000 / 60) % 60));
+  const hours = Math.max(0, Math.floor((t / (1000 * 60 * 60)) % 24));
+  const days = Math.max(0, Math.floor(t / (1000 * 60 * 60 * 24)));
+
+  return {
+    total: t,
+    days: days.toString(),
+    hours: hours.toString().padStart(2, '0'),
+    minutes: minutes.toString().padStart(2, '0'),
+    seconds: seconds.toString().padStart(2, '0'),
+  };
 }
