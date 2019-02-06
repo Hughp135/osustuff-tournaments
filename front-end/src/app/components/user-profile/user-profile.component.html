@@ -42,13 +42,13 @@
 
   <h2>Achievements</h2>
 
-  <div class="ui six column doubling grid">
+  <div class="ui four column doubling grid">
     <div class="column" *ngFor="let achievement of user.achievements">
       <div class="ui center aligned inverted segment achievement">
         <div>
           <i class="big icon" [ngClass]="achievement.icon"></i>
         </div>
-        <h3>
+        <h3 class="ui sub header">
           {{ achievement.title}}
         </h3>
         {{ achievement.description }}

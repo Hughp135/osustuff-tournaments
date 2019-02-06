@@ -7,22 +7,18 @@ export async function getOrCreateAchievement(
   description: string,
   icon: string,
 ): Promise<IAchievement> {
-  const achievement = await getDataOrCache(
-    `achievement-${title}`,
-    60000,
-    async () => {
-      try {
-        const existing = await Achievement.findOne({ title });
-        if (existing) {
-          return existing;
-        }
-        return await Achievement.create({ title, description, icon });
-      } catch (e) {
-        winston.error('Failed to create/get achievement', e);
-        return null;
+  const achievement = await getDataOrCache(`achievement-${title}`, 60000 * 60, async () => {
+    try {
+      const existing = await Achievement.findOne({ title });
+      if (existing) {
+        return existing;
       }
-    },
-  );
+      return await Achievement.create({ title, description, icon });
+    } catch (e) {
+      winston.error('Failed to create/get achievement', e);
+      return null;
+    }
+  });
 
   if (!achievement) {
     throw new Error('Failed to get achievement');

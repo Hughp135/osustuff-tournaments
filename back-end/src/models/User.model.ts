@@ -1,5 +1,10 @@
-import { IAchievement } from './Achievement.model';
 import mongoose from 'mongoose';
+
+export interface IUserAchievement {
+  achievementId: mongoose.Types.ObjectId;
+  progress: number; // A number from 0 to 1 (1 = achieved)
+  read?: boolean;
+}
 
 export interface IUser extends mongoose.Document {
   username: string;
@@ -11,7 +16,7 @@ export interface IUser extends mongoose.Document {
   elo: number;
   gamesPlayed: number;
   wins: number;
-  achievements: Array<{ achievementId: mongoose.Types.ObjectId; read?: boolean}>;
+  achievements: IUserAchievement[];
 }
 
 const UserSchema = new mongoose.Schema(
@@ -30,6 +35,7 @@ const UserSchema = new mongoose.Schema(
         {
           achievementId: { type: mongoose.Schema.Types.ObjectId, required: true },
           read: { type: Boolean },
+          progress: { type: Number, default: 0 },
         },
       ],
       required: true,

@@ -47,20 +47,10 @@ export async function loginVerify(req: Request, res: Response) {
       pp_country_rank: body.statistics.rank.country,
     });
 
-    console.log(
-      'updated',
-      user.osuUserId,
-      user.username,
-      user.country,
-      user.ppRank,
-      user.countryRank,
-    );
     const token = createJWT({
       username: body.username,
       user_id: body.id,
     });
-
-    console.log('state', state);
 
     res.cookie('jwt_token', token, {
       maxAge: 2592000000, // 30 days in ms

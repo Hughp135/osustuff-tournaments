@@ -11,7 +11,7 @@ export async function getUnreadAchievements(req: Request, res: Response) {
     return res.status(404).end();
   }
 
-  const firstUnread = user.achievements.find(a => !a.read);
+  const firstUnread = user.achievements.find(a => a.progress >= 1 && !a.read);
   const achievement = firstUnread ? await getAchievement(firstUnread.achievementId) : null;
 
   if (firstUnread) {

@@ -3,8 +3,9 @@
 }
 
 .ui.inverted.segment.hero {
-  background: linear-gradient(334deg, #021021, #5a3369);
+  background: linear-gradient(334deg, #0f2136, #4c355f);
   background-size: 400% 400%;
+  padding: 60px 42px;
 
   -webkit-animation: AnimationName 8s ease infinite;
   -moz-animation: AnimationName 8s ease infinite;
@@ -60,6 +61,10 @@
 
 .center.aligned {
   text-align: center;
+
+  .primary.button {
+    margin-top: 20px;
+  }
 }
 
 .ui.primary.button {

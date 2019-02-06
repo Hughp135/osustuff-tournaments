@@ -1,7 +1,7 @@
 import { IGame } from '../models/Game.model';
 import { updatePlayerGameStats } from './update-player-game-stats';
-import { achievementNewbie } from '../achievements/newbie';
-import winston from 'winston';
+import { updatePlayerAchievements } from 'src/achievements/update-player-achievements';
+import { User } from 'src/models/User.model';
 
 export async function endGame(game: IGame) {
   const alivePlayers = game.players.filter(p => p.alive);
@@ -19,9 +19,8 @@ export async function endGame(game: IGame) {
       username: winner.username,
     };
     winner.gameRank = 1;
-  } else {
-    console.log('game ended, no one won');
-    // No one won.
+
+    await User.updateOne({ _id: winner.userId }, { currentGame: undefined });
   }
 
   game.status = 'complete';
@@ -29,11 +28,6 @@ export async function endGame(game: IGame) {
 
   await game.save();
 
-  try {
-    await achievementNewbie(game);
-  } catch (e) {
-    winston.error('Failed to updated achievements', e);
-  }
-
   await updatePlayerGameStats(game);
+  await updatePlayerAchievements(game);
 }

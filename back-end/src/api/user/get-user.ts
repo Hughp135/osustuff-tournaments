@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { User } from '../../models/User.model';
+import { User, IUser, IUserAchievement } from '../../models/User.model';
 import { getAchievement } from '../../achievements/get-achievement';
 import mongoose from 'mongoose';
+import winston = require('winston');
 
 export async function getUser(req: Request, res: Response) {
   let { username } = req.params;
@@ -14,15 +15,29 @@ export async function getUser(req: Request, res: Response) {
     username = req.app.get('claim').username;
   }
 
-  const user = await User.findOne({ username }).select({ __v: 0 }).lean();
+  const user = await User.findOne({ username })
+    .select({ __v: 0 })
+    .lean();
 
   if (!user) {
     return res.status(404).end();
   }
 
-  user.achievements = await Promise.all(user.achievements.map(async (id: mongoose.Types.ObjectId) => {
-    return await getAchievement(id);
-  }));
+  user.achievements = (await Promise.all(
+    user.achievements
+      .filter((a: IUserAchievement) => {
+        return a.progress >= 1;
+      })
+      .map(async ({ achievementId }: IUserAchievement) => {
+        const achievement = await getAchievement(achievementId);
+        if (!achievement) {
+          winston.error('Achievement ID no longer exists', [
+            'Achievement ID ' + achievementId.toHexString(),
+            'User ID: ' + user._id.toHexString(),
+          ]);
+        }
+      }),
+  )).filter((a: any) => !!a);
 
   return res.json(user);
 }

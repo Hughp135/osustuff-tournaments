@@ -1,9 +1,9 @@
 <div class="ui inverted segment">
   <div *ngIf="canJoin">
     <div *ngIf="!loggedIn">
-        <a class="ui primary button" [href]="loginLink">
-          Join game
-        </a>
+      <a class="ui primary button" [href]="loginLink">
+        Join game
+      </a>
     </div>
     <div *ngIf="loggedIn">
       <div *ngIf="inAnotherGame">
@@ -15,8 +15,8 @@
       <div *ngIf="!inAnotherGame">
         <div *ngIf="!success">
           <div class="small action input">
-            <button class="ui primary button" [disabled]="requestingJoin"
-              [class.loading]="requestingJoin" (click)="joinGame()">Join Game</button>
+            <button class="ui primary button" [disabled]="requestingJoin" [class.loading]="requestingJoin" (click)="joinGame()">Join
+              Game</button>
           </div>
 
           <div>

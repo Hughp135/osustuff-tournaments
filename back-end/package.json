@@ -7,13 +7,14 @@
     "build": "tsc -p ./tsconfig.json",
     "start:prod": "pm2 start --env production",
     "start": "nodemon src/index.ts",
-    "test": "cross-env NODE_CONFIG_ENV=test mocha --exit  -t 10000 -r ts-node/register \"src/**/*.spec.ts\""
+    "test": "cross-env NODE_CONFIG_ENV=test mocha --exit  -t 10000 -r ts-node/register  -r tsconfig-paths/register \"src/**/*.spec.ts\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "cross-env": "^5.2.0",
     "nodemon": "^1.18.9",
+    "tsconfig-paths": "^3.8.0",
     "tslint": "^5.12.1"
   },
   "dependencies": {

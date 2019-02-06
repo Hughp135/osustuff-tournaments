@@ -3,11 +3,10 @@
   position: fixed;
   bottom: 0;
   right: 0;
-  min-width: 250px;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  background: #4a1b37;
+  width: 250px;
+  border-radius: 0;
   box-shadow: 0 0 15px #1d1d1d;
+  background: #6359a9;
 
   .ui.header {
     margin: 0;
@@ -24,6 +23,57 @@
     margin-top: 30px;
     margin-bottom: 15px;
     padding: 30px 14px;
-    background: rgba(15, 44, 66, 0.35);
+    background: linear-gradient(322deg, #0b2449, #251a61, #19587d, #0c3f61, #0a2e61);
+    background-size: 1000% 1000%;
+
+    -webkit-animation: AnimationName 8s ease infinite;
+    -moz-animation: AnimationName 8s ease infinite;
+    animation: AnimationName 8s ease infinite;
+
+    @-webkit-keyframes AnimationName {
+      0% {
+        background-position: 0% 4%
+      }
+
+      50% {
+        background-position: 100% 97%
+      }
+
+      100% {
+        background-position: 0% 4%
+      }
+    }
+
+    @-moz-keyframes AnimationName {
+      0% {
+        background-position: 0% 4%
+      }
+
+      50% {
+        background-position: 100% 97%
+      }
+
+      100% {
+        background-position: 0% 4%
+      }
+    }
+
+    @keyframes AnimationName {
+      0% {
+        background-position: 0% 4%
+      }
+
+      50% {
+        background-position: 100% 97%
+      }
+
+      100% {
+        background-position: 0% 4%
+      }
+    }
+
+    .ui.header {
+      margin-top: 24px;
+    }
   }
 }

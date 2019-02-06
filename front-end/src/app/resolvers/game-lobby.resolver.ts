@@ -3,13 +3,10 @@ import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Observable, interval, Observer, Subscription, BehaviorSubject } from 'rxjs';
 import { GameService } from '../game.service';
 import { SettingsService, CurrentGame } from '../services/settings.service';
-import {
-  IGame,
-  IPlayer,
-} from '../components/game-lobby/game-lobby.component';
+import { IGame, IPlayer } from '../components/game-lobby/game-lobby.component';
 import * as Visibility from 'visibilityjs';
 import { Message } from '../components/game-lobby/chat/chat.component';
-import { takeWhile } from 'rxjs/operators';
+import { takeWhile, startWith } from 'rxjs/operators';
 
 export interface GameLobbyData {
   lobby: Observable<IGame>;
@@ -35,20 +32,15 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
   constructor(
     private gameService: GameService,
     private router: Router,
-    private settingsService: SettingsService,
+    private settingsService: SettingsService
   ) {}
 
   async resolve(route: ActivatedRouteSnapshot): Promise<GameLobbyData> {
     const { id } = route.params;
 
     try {
-      // this.game = await this.gameService.getLobby(id);
       const beatmaps = await this.gameService.getLobbyBeatmaps(id);
-      // const players = await this.gameService.getLobbyUsers(id);
       const messages = await this.gameService.getLobbyMessages(id);
-      // const gameFetchInterval =   Visibility.every(gameFetchInterval, gameFetchInterval * 3, async () => {
-      //   await this.fetch();
-      // });
       const lobby: Observable<IGame> = this.getLobby(id);
       const players: Observable<IPlayer[]> = this.getPlayers(id);
 
@@ -71,11 +63,11 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
   private getPlayers(gameId: string) {
     return Observable.create(async (observer: Observer<IPlayer[]>) => {
       let fetching = false;
-      let statusSub: Subscription;
+      const subs: Subscription = new Subscription();
 
       const updatePlayers = async (forceUpdate?: boolean) => {
         if (observer.closed) {
-          statusSub.unsubscribe();
+          subs.unsubscribe();
           observer.complete();
         }
         if (fetching) {
@@ -92,20 +84,25 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
         fetching = false;
       };
 
-      statusSub = this.statusChanged.subscribe(async () => {
+      subs.add(
+        this.statusChanged.subscribe(async () => {
           await updatePlayers(true);
-      });
+        })
+      );
 
-      this.getTimer(5000, 15000)
-        .pipe(
-          takeWhile(() => {
-            const game = this._game.getValue();
-            return !game || game.status === 'new';
-          }),
-        )
-        .subscribe(async () => {
-          await updatePlayers();
-        });
+      subs.add(
+        this.getTimer(5000, 15000)
+          .pipe(
+            takeWhile(() => {
+              const game = this._game.getValue();
+
+              return game && game._id === gameId && game.status === 'new';
+            })
+          )
+          .subscribe(async () => {
+            await updatePlayers();
+          })
+      );
     });
   }
 
@@ -118,6 +115,9 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
         if (observer.closed) {
           subscriptions.unsubscribe();
           observer.complete();
+          this._game.next(undefined);
+          this.statusChanged.next(undefined);
+
           return;
         }
 
@@ -157,14 +157,14 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       subscriptions.add(
         this.settingsService.currentGame.subscribe(async val => {
           await updateGame();
-        }),
+        })
       );
 
       // Fetch on an interval
       subscriptions.add(
         this.getTimer(5000, 15000).subscribe(async () => {
           await updateGame();
-        }),
+        })
       );
     });
   }

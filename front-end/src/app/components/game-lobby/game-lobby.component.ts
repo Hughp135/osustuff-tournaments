@@ -24,7 +24,6 @@ export interface IPlayer {
 export interface IGame {
   _id: string;
   title: string;
-  players: IPlayer[];
   status: 'new' | 'in-progress' | 'checking-scores' | 'round-over' | 'complete';
   winningUser: {
     username: string;
@@ -64,7 +63,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private settingsService: SettingsService,
     private gameService: GameService,
-    private adminService: AdminService,
+    private adminService: AdminService
   ) {
     this.isAdmin = !!settingsService.adminPw;
   }
@@ -77,9 +76,11 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         await this.announceRoundChanges(game);
         this.game = game;
       }),
-      data.players.subscribe(players => this.players = players),
-      data.timeLeft.subscribe(timeLeft => this.timeLeft = timeLeft),
-      this.settingsService.currentGame.subscribe(async val => this.currentGame = val),
+      data.players.subscribe(players => (this.players = players)),
+      data.timeLeft.subscribe(timeLeft => (this.timeLeft = timeLeft)),
+      this.settingsService.currentGame.subscribe(async val => {
+        this.currentGame = val;
+      }),
       this.settingsService.username.subscribe(val => (this.currentUsername = val)),
     ];
 
@@ -89,7 +90,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.visibilityTimers.push(
       Visibility.every(2000, 2000 * 10, async () => {
         await this.getMoreMessages();
-      }),
+      })
     );
   }
 
@@ -116,7 +117,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     try {
       const newMessages = await this.gameService.getLobbyMessages(
         this.game._id,
-        lastMessage && lastMessage._id,
+        lastMessage && lastMessage._id
       );
 
       this.messages = newMessages.concat(this.messages);
@@ -144,16 +145,17 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         const beatmap = this.beatmaps[game.roundNumber - 1];
         const regexReplace = /[^\w\s-.=%@&+']/gi;
         responsiveVoice.speak(
-          `Round ${game.roundNumber} has started. The beatmap is ${beatmap.artist.replace(regexReplace, ' ').toLowerCase()} - ${
-            beatmap.title.replace(regexReplace, ' ').toLowerCase()
-          }, ${beatmap.version.replace(regexReplace, ' ').toLowerCase()}`,
+          `Round ${game.roundNumber} has started. The beatmap is ${beatmap.artist
+            .replace(regexReplace, ' ')
+            .toLowerCase()} - ${beatmap.title
+            .replace(regexReplace, ' ')
+            .toLowerCase()}, ${beatmap.version.replace(regexReplace, ' ').toLowerCase()}`
         );
       }
       if (
         ((game.status === 'round-over' &&
           !['round-over', 'checking-scores'].includes(this.game.status)) ||
-          (game.status === 'checking-scores' &&
-            this.game.status !== 'checking-scores')) &&
+          (game.status === 'checking-scores' && this.game.status !== 'checking-scores')) &&
         this.inGame
       ) {
         responsiveVoice.speak(`Round ${game.roundNumber} has ended. `);
@@ -171,7 +173,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         this.inGame
       ) {
         responsiveVoice.speak(
-          `The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`,
+          `The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`
         );
         this.announcedStart = true;
       }
@@ -196,9 +198,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get showScores() {
-    return (
-      ['round-over', 'checking-scores'].includes(this.game.status) && !this.viewResults
-    );
+    return ['round-over', 'checking-scores'].includes(this.game.status) && !this.viewResults;
   }
 
   get inAnotherGame() {
@@ -210,7 +210,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get showJoinGame() {
-    return !this.inGame && this.game.status !== 'complete';
+    return !(this.mePlayer || this.inGame) && this.game.status !== 'complete';
   }
 
   get showBeatmaps() {
@@ -251,7 +251,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       this.transitionController.animate(
         new Transition(name, 250, direction, () => {
           res();
-        }),
+        })
       );
     });
   }

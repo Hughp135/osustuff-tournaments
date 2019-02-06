@@ -34,7 +34,7 @@ export function stopMonitoring() {
 // Update games based on status
 export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   const games = await Game.find({
-    status: ['new', 'in-progress', 'round-over'],
+    status: ['new', 'in-progress', 'round-over', 'checking-scores'],
   });
 
   const testSkipCreate = TEST_MODE && games.filter(g => g.status !== 'new').length;
@@ -57,6 +57,8 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
             return await startGame(game);
           case 'in-progress':
             return await checkRoundEnded(game);
+          case 'checking-scores':
+            return await skipCheckingScore(game);
           case 'round-over':
             return await completeRound(game);
         }
@@ -128,4 +130,19 @@ async function setNextStageStartsAt(game: IGame, seconds: number) {
   // Update game status and set time to next stage
   game.nextStageStarts = date;
   await game.save();
+}
+
+async function skipCheckingScore(game: IGame) {
+  const date = new Date();
+  date.setSeconds(date.getSeconds() - 120);
+  const round = <IRound> await Round.findById(game.currentRound);
+
+  if (game.status === 'checking-scores' && (<any> game).updatedAt < date) {
+    winston.error('Skipping checking scores for game after 2 minutes', {
+      gameId: game._id,
+      round: round._id,
+      playersAliveCount: game.players.filter(p => p.alive).length,
+    });
+    await roundEnded(game, round);
+  }
 }

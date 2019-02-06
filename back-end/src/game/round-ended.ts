@@ -1,8 +1,10 @@
 import { IGame, IPlayer } from './../models/Game.model';
 import { IRound } from './../models/Round.model';
-import {  IScore } from '../models/Score.model';
+import { IScore } from '../models/Score.model';
 import { DURATION_ROUND_ENDED } from './durations';
 import { getAllUserBestScores } from './get-round-scores';
+import { User } from 'src/models/User.model';
+import { updatePlayerAchievements } from 'src/achievements/update-player-achievements';
 
 // Kills players with lowest score each round
 export async function roundEnded(game: IGame, round: IRound) {
@@ -34,6 +36,9 @@ export async function roundEnded(game: IGame, round: IRound) {
     player.roundLostOn = player.alive ? undefined : <number> game.roundNumber;
   });
 
+  const deadPlayerIds = game.players.filter(p => !p.alive).map(p => p.userId);
+
+  await User.updateMany({ _id: deadPlayerIds }, { currentGame: undefined });
   await setPlayerRanks(game, scores, numberOfWinners);
 
   game.status = 'round-over';
@@ -46,6 +51,8 @@ export async function roundEnded(game: IGame, round: IRound) {
   game.nextStageStarts = date;
 
   await game.save();
+
+  await updatePlayerAchievements(game);
 }
 
 async function setPlayerRanks(game: IGame, scores: IScore[], numberOfWinners: number) {

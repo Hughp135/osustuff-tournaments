@@ -4,11 +4,11 @@ import { User } from '../../../models/User.model';
 import { Message } from '../../../models/Message.model';
 import { ObjectID } from 'bson';
 import { cache } from '../../../services/cache';
+import { Game } from 'src/models/Game.model';
 
 export async function sendMessage(req: Request, res: Response) {
   const { id } = req.params;
   const { message } = req.body;
-
   const { username } = req.app.get('claim');
 
   if (!Types.ObjectId.isValid(id)) {
@@ -20,8 +20,9 @@ export async function sendMessage(req: Request, res: Response) {
   }
 
   const user = await User.findOne({ username });
+  const game = await Game.findById(id);
 
-  if (!user || !user.currentGame || user.currentGame.toString() !== id) {
+  if (!user || !game || !game.players.some(p => p.userId.toString() === user._id.toString())) {
     return res.status(401).end();
   }
 

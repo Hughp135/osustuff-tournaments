@@ -33,10 +33,11 @@ export class NotificationsComponent implements OnInit {
               await this.apiService.get('unread-achievements').toPromise()
             );
 
-            this.achievement = achievement;
-
             if (achievement) {
+              this.achievement = achievement;
               this.showNotification();
+            } else {
+              // this.dismissAchievement();
             }
           });
       } else if (!val && this.subscription) {
@@ -60,13 +61,12 @@ export class NotificationsComponent implements OnInit {
   }
 
   private async animate(direction: TransitionDirection) {
-    console.log('animating');
     return new Promise(res => {
       const name = direction === TransitionDirection.Out ? 'fly left' : 'fly left';
       this.transitionController.animate(
         new Transition(name, 250, direction, () => {
           res();
-        }),
+        })
       );
     });
   }

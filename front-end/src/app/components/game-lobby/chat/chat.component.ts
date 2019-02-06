@@ -1,6 +1,7 @@
 import { GameService } from './../../../game.service';
 import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/core';
 import { SettingsService } from 'src/app/services/settings.service';
+import { IGame } from '../game-lobby.component';
 
 export interface Message {
   username: string;
@@ -23,6 +24,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
   @Input() canChat: boolean;
   @Input() getMoreMessages: () => Promise<void>;
+  @Input() game: IGame;
 
   @ViewChild('chatInput') chatInputEl;
   @ViewChild('chatMessages') chatMessages;
@@ -86,11 +88,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     this.sendingMessage = true;
 
     try {
-      const currentGame = this.settingsService.currentGame.getValue();
-      await this.gameService.sendMessage(
-        currentGame.gameId,
-        this.messageInput
-      );
+      await this.gameService.sendMessage(this.game._id, this.messageInput);
       this.messageInput = undefined;
       setTimeout(async () => {
         await this.getMoreMessages();

@@ -58,9 +58,6 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     try {
       await this.apiService.post(`lobbies/${this.game._id}/join`, {}).toPromise();
       this.success = true;
-      if (auto) {
-        this.router.navigate(['/lobbies', this.game._id]);
-      }
       this.settingsService.setCurrentGame(this.game._id);
       responsiveVoice.speak('You have joined the game');
     } catch (e) {

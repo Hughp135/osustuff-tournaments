@@ -1,5 +1,4 @@
 import { IGame, IPlayer } from '../models/Game.model';
-import { getUser } from '../services/osu-api';
 import { updateOrCreateUser } from '../models/User.model';
 import { userToPlayer } from '../game/add-player';
 import faker from 'faker';
