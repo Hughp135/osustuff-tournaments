@@ -2,8 +2,9 @@
   <div *ngIf="canJoin">
     <div *ngIf="!loggedIn">
       <a class="ui primary button" [href]="loginLink">
-        Join game
+        Join Game
       </a>
+      Your osu! account needs to be verified
     </div>
     <div *ngIf="loggedIn">
       <div *ngIf="inAnotherGame">
@@ -16,7 +17,8 @@
         <div *ngIf="!success">
           <div class="small action input">
             <button class="ui primary button" [disabled]="requestingJoin" [class.loading]="requestingJoin" (click)="joinGame()">Join
-              Game</button>
+              Game
+            </button>
           </div>
 
           <div>

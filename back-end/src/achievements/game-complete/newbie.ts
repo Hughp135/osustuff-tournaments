@@ -15,7 +15,8 @@ export async function achievementNewbie(allGameUsers: IUser[]) {
         if (
           !user.achievements.some(a => a.achievementId.toString() === achievement._id.toString())
         ) {
-          user.achievements.push({ achievementId: achievement._id, progress: 1 });
+          const newAchievement = { achievementId: achievement._id, progress: 1 };
+          user.update({ $addToSet: { achievements: newAchievement } });
           await user.save();
         }
       }),

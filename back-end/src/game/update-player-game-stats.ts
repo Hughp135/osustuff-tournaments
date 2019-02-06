@@ -4,6 +4,7 @@ import { IPlayer } from '../models/Game.model';
 const eloRating = require('elo-rating');
 
 export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
+  const playerCount = game.players.length;
   const rankedPlayers: Array<IPlayer & { user: IUser }> = await Promise.all(
     game.players
       .filter(p => !!p.gameRank)
@@ -14,6 +15,25 @@ export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
         if (p.gameRank === 1) {
           p.user.wins++;
         }
+        const gamePercentile = <number> p.gameRank / playerCount;
+
+        console.log('player rank', p.gameRank, 'percentil', gamePercentile);
+
+        if (gamePercentile <= 0.1) {
+          p.user.percentiles.top10++;
+        }
+
+        if (gamePercentile <= 0.2) {
+          p.user.percentiles.top20++;
+        }
+
+        if (gamePercentile <= 0.5) {
+          p.user.percentiles.top50++;
+        }
+
+        p.user.markModified('percentiles');
+
+        console.log('after', p.user.percentiles);
 
         return <IPlayer & { user: IUser }> p;
       }),

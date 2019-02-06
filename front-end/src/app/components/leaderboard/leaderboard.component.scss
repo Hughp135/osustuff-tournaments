@@ -1,3 +1,7 @@
-.container.section {
+.ui.inverted.basic.segment {
   min-height: calc(100vh - 375px);
+  overflow-x: auto;
+  background: none;
+  max-width: 1200px;
+  margin: 20px auto;
 }

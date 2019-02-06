@@ -91,6 +91,12 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       );
 
       subs.add(
+        this.settingsService.currentGame.subscribe(async () => {
+          await updatePlayers(true);
+        })
+      );
+
+      subs.add(
         this.getTimer(5000, 15000)
           .pipe(
             takeWhile(() => {

@@ -5,8 +5,8 @@
   </p>
 </div>
 <div class="ui relaxed inverted list" *ngIf="players.length">
-  <a class="item" *ngFor="let player of sortedPlayers" [href]="'https://osu.ppy.sh/u/' + player.osuUserId" target="_blank"
-    [ngClass]="player.alive ? 'alive' : 'dead'" [class.winner]="winningUser === player.username">
+  <a class="item" *ngFor="let player of sortedPlayers" [routerLink]="['/user/', player.username]" [ngClass]="player.alive ? 'alive' : 'dead'"
+    [class.winner]="winningUser === player.username">
     <div class="image-container">
       <img class="ui mini image" [useSrcset]="true" [lazyLoad]="'//a.ppy.sh/' + player.osuUserId" alt="">
     </div>

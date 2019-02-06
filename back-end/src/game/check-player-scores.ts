@@ -12,7 +12,10 @@ export async function checkRoundScores(
   round: IRound,
   getUserRecent: (u: string) => Promise<any>,
 ) {
+  const date = new Date();
+  date.setSeconds(date.getSeconds() + 120);
   game.status = 'checking-scores';
+  game.nextStageStarts = date;
   await game.save();
 
   if (TEST_MODE) {

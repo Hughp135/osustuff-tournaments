@@ -17,6 +17,11 @@ export interface IUser extends mongoose.Document {
   gamesPlayed: number;
   wins: number;
   achievements: IUserAchievement[];
+  percentiles: {
+    top10: number;
+    top20: number;
+    top50: number;
+  };
 }
 
 const UserSchema = new mongoose.Schema(
@@ -30,6 +35,15 @@ const UserSchema = new mongoose.Schema(
     wins: { type: Number, required: true, default: 0 },
     country: { type: String, required: true },
     elo: { type: Number, required: true, default: 1500, index: true },
+    percentiles: {
+      type: {
+        top10: { type: Number, required: true, default: 0 },
+        top20: { type: Number, required: true, default: 0 },
+        top50: { type: Number, required: true, default: 0 },
+      },
+      required: true,
+      default: { top10: 0, top20: 0, top50: 0 },
+    },
     achievements: {
       type: [
         {
@@ -38,6 +52,7 @@ const UserSchema = new mongoose.Schema(
           progress: { type: Number, default: 0 },
         },
       ],
+      timestamps: true,
       required: true,
       default: [],
     },

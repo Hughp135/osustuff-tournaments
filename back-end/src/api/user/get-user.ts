@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { User, IUser, IUserAchievement } from '../../models/User.model';
 import { getAchievement } from '../../achievements/get-achievement';
-import mongoose from 'mongoose';
 import winston = require('winston');
 
 export async function getUser(req: Request, res: Response) {
@@ -36,6 +35,8 @@ export async function getUser(req: Request, res: Response) {
             'User ID: ' + user._id.toHexString(),
           ]);
         }
+
+        return achievement;
       }),
   )).filter((a: any) => !!a);
 

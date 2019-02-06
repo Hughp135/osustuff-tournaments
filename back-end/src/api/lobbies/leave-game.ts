@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Game } from '../../models/Game.model';
 import { User } from '../../models/User.model';
+import { cache } from 'src/services/cache';
 
 export async function leaveGame(req: Request, res: Response) {
   const { username } = req.app.get('claim');
@@ -14,6 +15,7 @@ export async function leaveGame(req: Request, res: Response) {
   if (game.status === 'new') {
     game.players = game.players.filter(p => p.username !== username);
     await game.save();
+    await cache.del(`get-lobby-users-${game._id}`);
   } else {
     const player = game.players.find(p => p.username === username);
 

@@ -3,6 +3,7 @@ import { Game } from '../../models/Game.model';
 import { getUser } from '../../services/osu-api';
 import { updateOrCreateUser } from '../../models/User.model';
 import { addPlayer } from '../../game/add-player';
+import { cache } from 'src/services/cache';
 
 export async function joinGame(req: Request, res: Response) {
   const game = await Game.findById(req.params.id);
@@ -30,6 +31,8 @@ export async function joinGame(req: Request, res: Response) {
   }
 
   await addPlayer(game, user);
+
+  await cache.del(`get-lobby-users-${game._id}`);
 
   res.status(200).end();
 }

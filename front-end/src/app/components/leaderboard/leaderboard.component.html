@@ -1,30 +1,44 @@
-<div class="ui inverted container section">
+<div class="ui inverted basic segment">
   <h1 class="ui inverted header">Leaderboard</h1>
+  <p>
+    Note: the ELO rating system in an experimental phase and may be reset / changed frequently.
+  </p>
 
   <table class="ui inverted unstackable table">
     <thead>
-      <th>Rank</th>
-      <th>Match Rating</th>
+      <th class="center aligned">Rank</th>
+      <th>ELO</th>
       <th>Username</th>
+      <th>Global PP Rank</th>
+      <th>Country Rank</th>
       <th class="center aligned">Wins</th>
       <th class="center aligned">Games Played</th>
       <th class="center aligned">Win Rate</th>
-      <th>Global PP Rank</th>
-      <th>Country (Rank)</th>
+      <th class="center aligned">Top 10%</th>
+      <th class="center aligned">Top 20%</th>
+      <th class="center aligned">Top 50%</th>
     </thead>
     <tbody>
       <tr *ngFor="let user of users; let index = index">
-        <td>
-          {{ index + 1 }}
+        <td class="collapsing">
+          # {{ index + 1 }}
         </td>
-        <td>
+        <td class="collapsing">
           <i class="teal crosshairs icon"></i>
           {{ user.gamesPlayed > 0 ? user.elo : '--' }}
         </td>
-        <td>
+        <td class="collapsing">
           {{ user.username }}
         </td>
-        <td class="center aligned">
+        <td class="collapsing">
+          <i class="fitted blue globe icon"></i>
+          {{ user.ppRank | number }}
+        </td>
+        <td class="collapsing">
+          <i class="fitted flag" [ngClass]="user.country.toLowerCase()"></i>
+          {{ user.countryRank | number }}
+        </td>
+        <td class="center aligned collapsing">
           <i class="trophy icon" [class.yellow]="user.wins > 0"></i>
           {{ user.wins }}
         </td>
@@ -33,18 +47,20 @@
         </td>
         <td class="center aligned">
           <span *ngIf="user.gamesPlayed">
-            {{ getWinRate(user) }}%
+            {{ getPercent(user.wins, user) }}
           </span>
           <span *ngIf="!user.gamesPlayed">
             --
           </span>
         </td>
-        <td>
-          #{{ user.ppRank | number }}
+        <td class="center aligned">
+          {{ user.gamesPlayed ? getPercent(user.percentiles.top10, user) : '--' }}
         </td>
-        <td>
-          <i class="fitted flag" [ngClass]="user.country.toLowerCase()"></i>
-          #{{ user.countryRank | number }}
+        <td class="center aligned">
+          {{ user.gamesPlayed ? getPercent(user.percentiles.top20, user) : '--' }}
+        </td>
+        <td class="center aligned">
+          {{ user.gamesPlayed ? getPercent(user.percentiles.top50, user) : '--' }}
         </td>
       </tr>
     </tbody>

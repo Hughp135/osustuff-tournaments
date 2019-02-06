@@ -11,6 +11,9 @@ import { getUserRecent, getRecentBeatmaps } from '../services/osu-api';
 import config from 'config';
 import { addSampleChatMessage } from '../test-helpers/add-sample-chat-message';
 import { DURATION_START } from './durations';
+import { cache } from 'src/services/cache';
+import { ObjectId } from 'bson';
+import { Score } from 'src/models/Score.model';
 
 const TEST_MODE = config.get('TEST_MODE');
 export let isMonitoring = false;
@@ -83,6 +86,7 @@ async function startGame(game: IGame) {
       console.log('canceling countdown');
       // Cancel countdown
       game.nextStageStarts = undefined;
+      clearGetLobbyCache(game._id);
       await game.save();
     }
 
@@ -94,6 +98,7 @@ async function startGame(game: IGame) {
     // Set the countdown to start
     await setNextStageStartsAt(game, DURATION_START);
   } else if (game.nextStageStarts < new Date()) {
+    clearGetLobbyCache(game._id);
     // Start the first round
     await nextRound(game);
   }
@@ -106,6 +111,7 @@ async function checkRoundEnded(game: IGame) {
   if (<Date> game.nextStageStarts < new Date()) {
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
+    clearGetLobbyCache(game._id);
   }
 }
 
@@ -117,9 +123,11 @@ async function completeRound(game: IGame) {
       console.log('players still alive, starting next round');
       // Start the next round
       await nextRound(game);
+      clearGetLobbyCache(game._id);
     } else {
       // End the game
       await endGame(game);
+      clearGetLobbyCache(game._id);
     }
   }
 }
@@ -133,16 +141,26 @@ async function setNextStageStartsAt(game: IGame, seconds: number) {
 }
 
 async function skipCheckingScore(game: IGame) {
-  const date = new Date();
-  date.setSeconds(date.getSeconds() - 120);
-  const round = <IRound> await Round.findById(game.currentRound);
-
-  if (game.status === 'checking-scores' && (<any> game).updatedAt < date) {
-    winston.error('Skipping checking scores for game after 2 minutes', {
+  if (game.status === 'checking-scores' && <Date> game.nextStageStarts < new Date()) {
+    const round = <IRound> await Round.findById(game.currentRound);
+    winston.error('Checking scores not complete after 2 minutes', {
       gameId: game._id,
       round: round._id,
       playersAliveCount: game.players.filter(p => p.alive).length,
     });
-    await roundEnded(game, round);
+    const scoresCount = await Score.count({ roundId: game._id });
+    const alivePlayersCount = game.players.filter(p => p.alive).length;
+    if (scoresCount >= alivePlayersCount / 2) {
+      winston.info('Ending round as at least half alive players have set score');
+      await roundEnded(game, round);
+    } else {
+      winston.info('Checking scores again');
+      await checkRoundEnded(game);
+    }
+    clearGetLobbyCache(game._id);
   }
+}
+
+async function clearGetLobbyCache(gameId: string | ObjectId) {
+  cache.del(`get-lobby-${gameId}`);
 }
