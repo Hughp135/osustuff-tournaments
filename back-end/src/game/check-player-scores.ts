@@ -57,6 +57,7 @@ async function checkPlayerScores(player: IPlayer, round: IRound, getUserRecent: 
       );
 
       await Score.create({
+        gameId: round.gameId,
         roundId: round._id,
         userId: player.userId,
         username: player.username,

@@ -17,7 +17,7 @@ export async function achievementHdPlayer(users: IUser[]) {
         .lean()).map((score: IScore) => getAppliedMods(score.mods));
       const scoresCount = scoreMods.length;
       const hdScores = scoreMods.filter(mods => mods.includes('HD')).length;
-      if (!scoresCount) {
+      if (scoresCount < 5) {
         return;
       }
 
@@ -37,7 +37,9 @@ export async function achievementHdPlayer(users: IUser[]) {
           );
         }
       } else if (hasAchievement) {
-        user.achievements = user.achievements.filter(a => a.achievementId.toHexString() !== achievement._id.toString());
+        user.achievements = user.achievements.filter(
+          a => a.achievementId.toHexString() !== achievement._id.toString(),
+        );
         await user.save();
       }
     }),

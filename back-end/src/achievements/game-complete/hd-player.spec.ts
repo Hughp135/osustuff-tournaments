@@ -90,6 +90,7 @@ async function getUser(id: number) {
 
 function getBaseScoreData(userId: ObjectId, mods: number) {
   return {
+    gameId: new ObjectId(),
     score: 123,
     username: userId,
     roundId: new ObjectId(),

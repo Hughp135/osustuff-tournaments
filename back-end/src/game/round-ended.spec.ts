@@ -1,3 +1,4 @@
+import { ObjectId } from 'bson';
 import mongoose from 'mongoose';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
@@ -228,6 +229,7 @@ async function getUser(id: number) {
 
 function getBaseScoreData(round: any) {
   return {
+    gameId: new ObjectId(),
     roundId: round._id,
     rank: 'A',
     mods: 0,

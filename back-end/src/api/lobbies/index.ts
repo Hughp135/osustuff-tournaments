@@ -12,6 +12,7 @@ export async function getLobbies(req: Request, res: Response) {
 async function getGames() {
   const games = await Game.find({})
     .sort({ _id: -1 })
+    .limit(20)
     .lean();
 
   return games.map((game: any) => {

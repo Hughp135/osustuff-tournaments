@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 export interface IScore extends mongoose.Document {
   roundId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
+  gameId: mongoose.Types.ObjectId;
   username: string;
   score: number;
   rank: string;
@@ -19,6 +20,7 @@ export interface IScore extends mongoose.Document {
 const ScoreSchema = new mongoose.Schema(
   {
     roundId: { type: mongoose.Schema.Types.ObjectId, required: true, index: true },
+    gameId: { type: mongoose.Schema.Types.ObjectId, required: true, index: true },
     userId: { type: mongoose.Schema.Types.ObjectId, required: true, index: true },
     username: { type: String, required: true },
     score: { type: Number, required: true },

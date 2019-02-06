@@ -5,10 +5,11 @@ import { achievementVersatile } from './game-complete/versatile';
 import { achievementPlayAsTester } from './join-game/play-as-tester';
 import { User } from 'src/models/User.model';
 import { achievementWinAGame } from './game-complete/win-a-game';
-import { IRound, Round } from 'src/models/Round.model';
-import { IScore, Score } from 'src/models/Score.model';
+import { Round } from 'src/models/Round.model';
+import { Score } from 'src/models/Score.model';
 import { achievementHdPlayer } from './game-complete/hd-player';
 import { achievementGrinder } from './game-complete/grinder';
+import { achievementSpeed } from './game-complete/speedy';
 
 export async function updatePlayerAchievements(game: IGame) {
   const userOsuIds = game.players.map(p => p.osuUserId);
@@ -26,7 +27,7 @@ export async function updatePlayerAchievements(game: IGame) {
       case 'complete':
         const rounds = await Round.find({ gameId: game._id });
         const passedScores = await Score.find({
-          roundId: rounds.map(r => r._id),
+          gameId: game._id,
           passedRound: true,
         }).sort({
           roundId: 1,
@@ -39,6 +40,7 @@ export async function updatePlayerAchievements(game: IGame) {
         await achievementWinAGame(game, allGameUsers);
         await achievementHdPlayer(allGameUsers);
         await achievementGrinder(allGameUsers);
+        await achievementSpeed(allGameUsers, passedScores);
         break;
     }
   } catch (e) {
