@@ -1,24 +1,17 @@
 import { IGame } from 'src/models/Game.model';
-import { Round } from 'src/models/Round.model';
+import { Round, IRound } from 'src/models/Round.model';
 import { Score, IScore } from 'src/models/Score.model';
-import { ObjectId } from 'bson';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { User } from 'src/models/User.model';
 
-export async function achievementVersatile(game: IGame) {
+export async function achievementVersatile(game: IGame, rounds: IRound[], passedScores: IScore[]) {
   const achievement = await getOrCreateAchievement(
     'Versatile',
-    'Pass 4 rounds of a game using different mods',
+    'Pass 4 rounds with different mods',
     'yellow sliders horizontal',
   );
 
-  const rounds = await Round.find({ gameId: game._id }).select({ _id: 1 });
-  const scores = await Score.find({ roundId: rounds.map(r => r._id), passedRound: true }).sort({
-    roundId: 1,
-    score: -1,
-    date: 1,
-  });
-  const scoresPerUser = scores.reduce(
+  const scoresPerUser = passedScores.reduce(
     // reduce to 1 score per person per round
     (acc, curr) => {
       let usr = acc.find(s => s.userId === curr.userId.toHexString());
