@@ -1,3 +1,4 @@
+import { IUserResult } from './../models/User.model';
 import { IGame, IPlayer } from './../models/Game.model';
 import { IRound } from './../models/Round.model';
 import { IScore } from '../models/Score.model';
@@ -39,7 +40,7 @@ export async function roundEnded(game: IGame, round: IRound) {
   const deadPlayerIds = game.players.filter(p => !p.alive).map(p => p.userId);
 
   await User.updateMany({ _id: deadPlayerIds }, { currentGame: undefined });
-  await setPlayerRanks(game, scores, numberOfWinners);
+  await setPlayerRanksAndResults(game, scores, numberOfWinners);
 
   game.status = 'round-over';
 
@@ -55,18 +56,19 @@ export async function roundEnded(game: IGame, round: IRound) {
   await updatePlayerAchievements(game);
 }
 
-async function setPlayerRanks(game: IGame, scores: IScore[], numberOfWinners: number) {
+async function setPlayerRanksAndResults(game: IGame, scores: IScore[], numberOfWinners: number) {
   const deadPlayersNoScore = game.players.filter(
     p => !p.alive && !p.gameRank && !scores.some(s => s.userId.toString() === p.userId.toString()),
   );
 
-  deadPlayersNoScore.forEach(player => {
+  const deadPlayers = deadPlayersNoScore.map(player => {
     const lowestRank = getLowestRank(game);
     player.gameRank = lowestRank - 1;
+    return player;
   });
 
   const losingScores = scores.slice(numberOfWinners);
-  await Promise.all(
+  const losingPlayers = await Promise.all(
     losingScores.reverse().map(async score => {
       score.passedRound = false;
       await score.save();
@@ -77,8 +79,21 @@ async function setPlayerRanks(game: IGame, scores: IScore[], numberOfWinners: nu
 
       const lowestRank = getLowestRank(game);
       player.gameRank = lowestRank - 1;
+
+      return player;
     }),
   );
+
+  const dateEnded = new Date();
+  await Promise.all(deadPlayers.concat(losingPlayers).map(async player => {
+    const result: IUserResult = {
+      gameId: game._id,
+      place: <number> player.gameRank,
+      gameEndedAt: dateEnded,
+    };
+
+    await User.updateOne({_id: player.userId}, { $addToSet: { results: result } });
+  }));
 }
 
 function getLowestRank(game: IGame): number {

@@ -6,6 +6,12 @@ export interface IUserAchievement {
   read?: boolean;
 }
 
+export interface IUserResult {
+  gameId: mongoose.Types.ObjectId;
+  place: number;
+  gameEndedAt: Date;
+}
+
 export interface IUser extends mongoose.Document {
   username: string;
   osuUserId: number;
@@ -22,6 +28,7 @@ export interface IUser extends mongoose.Document {
     top20: number;
     top50: number;
   };
+  results: IUserResult[];
 }
 
 const UserSchema = new mongoose.Schema(
@@ -53,6 +60,17 @@ const UserSchema = new mongoose.Schema(
         },
       ],
       timestamps: true,
+      required: true,
+      default: [],
+    },
+    results: {
+      type: [
+        {
+          gameId: {type: mongoose.Schema.Types.ObjectId, required: true},
+          place: {type: Number, required: true},
+          gameEndedAt: {type: Date, required: true},
+        },
+      ],
       required: true,
       default: [],
     },

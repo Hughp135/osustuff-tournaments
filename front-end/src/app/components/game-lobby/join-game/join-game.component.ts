@@ -73,6 +73,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
       } else {
         throw e;
       }
+      this.requestingJoin = false;
     }
 
     setTimeout(() => {

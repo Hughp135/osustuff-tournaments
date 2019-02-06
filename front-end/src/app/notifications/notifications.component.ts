@@ -29,15 +29,19 @@ export class NotificationsComponent implements OnInit {
         this.subscription = interval(15000)
           .pipe(startWith(0))
           .subscribe(async () => {
-            const achievement: Achievement | undefined = <Achievement | undefined>(
-              await this.apiService.get('unread-achievements').toPromise()
-            );
+            try {
+              const achievement: Achievement | undefined = <Achievement | undefined>(
+                await this.apiService.get('unread-achievements').toPromise()
+              );
 
-            if (achievement) {
-              this.achievement = achievement;
-              this.showNotification();
-            } else {
-              // this.dismissAchievement();
+              if (achievement) {
+                this.achievement = achievement;
+                this.showNotification();
+              } else {
+                // this.dismissAchievement();
+              }
+            } catch (e) {
+              console.error(e);
             }
           });
       } else if (!val && this.subscription) {

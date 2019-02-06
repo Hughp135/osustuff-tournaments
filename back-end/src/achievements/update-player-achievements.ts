@@ -7,6 +7,8 @@ import { User } from 'src/models/User.model';
 import { achievementWinAGame } from './game-complete/win-a-game';
 import { IRound, Round } from 'src/models/Round.model';
 import { IScore, Score } from 'src/models/Score.model';
+import { achievementHdPlayer } from './game-complete/hd-player';
+import { achievementGrinder } from './game-complete/grinder';
 
 export async function updatePlayerAchievements(game: IGame) {
   const userOsuIds = game.players.map(p => p.osuUserId);
@@ -35,6 +37,8 @@ export async function updatePlayerAchievements(game: IGame) {
         await achievementNewbie(allGameUsers);
         await achievementVersatile(game, rounds, passedScores);
         await achievementWinAGame(game, allGameUsers);
+        await achievementHdPlayer(allGameUsers);
+        await achievementGrinder(allGameUsers);
         break;
     }
   } catch (e) {

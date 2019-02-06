@@ -1,3 +1,4 @@
+import { IUserResult } from './../models/User.model';
 import { IGame } from '../models/Game.model';
 import { updatePlayerGameStats } from './update-player-game-stats';
 import { updatePlayerAchievements } from 'src/achievements/update-player-achievements';
@@ -20,7 +21,13 @@ export async function endGame(game: IGame) {
     };
     winner.gameRank = 1;
 
-    await User.updateOne({ _id: winner.userId }, { currentGame: undefined });
+    const result: IUserResult = {
+      gameId: game._id,
+      place: 1,
+      gameEndedAt: new Date(),
+    };
+
+    await User.updateOne({ _id: winner.userId }, { currentGame: undefined, $addToSet: { results: result } });
   }
 
   game.status = 'complete';

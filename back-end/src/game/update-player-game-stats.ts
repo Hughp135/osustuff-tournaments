@@ -17,8 +17,6 @@ export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
         }
         const gamePercentile = <number> p.gameRank / playerCount;
 
-        console.log('player rank', p.gameRank, 'percentil', gamePercentile);
-
         if (gamePercentile <= 0.1) {
           p.user.percentiles.top10++;
         }
@@ -32,8 +30,6 @@ export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
         }
 
         p.user.markModified('percentiles');
-
-        console.log('after', p.user.percentiles);
 
         return <IPlayer & { user: IUser }> p;
       }),

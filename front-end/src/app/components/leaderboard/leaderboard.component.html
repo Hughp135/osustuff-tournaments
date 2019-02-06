@@ -1,7 +1,8 @@
 <div class="ui inverted basic segment">
   <h1 class="ui inverted header">Leaderboard</h1>
   <p>
-    Note: the ELO rating system in an experimental phase and may be reset / changed frequently.
+    Note: the ELO rating system in an experimental phase and may
+    be reset / changed frequently.
   </p>
 
   <table class="ui inverted unstackable table">
@@ -11,12 +12,12 @@
       <th>Username</th>
       <th>Global PP Rank</th>
       <th>Country Rank</th>
-      <thx class="center aligned">Wins</th>
-        <th class="center aligned">Games Played</th>
-        <th class="center aligned">Win Rate</th>
-        <th class="center aligned">Top 10%</th>
-        <th class="center aligned">Top 20%</th>
-        <th class="center aligned">Top 50%</th>
+      <th class="center aligned">Wins</th>
+      <th class="center aligned">Games Played</th>
+      <th class="center aligned">Win Rate</th>
+      <th class="center aligned">Top 10%</th>
+      <th class="center aligned">Top 20%</th>
+      <th class="center aligned">Top 50%</th>
     </thead>
     <tbody>
       <tr *ngFor="let user of users; let index = index">
@@ -54,13 +55,16 @@
           </span>
         </td>
         <td class="center aligned">
-          {{ user.gamesPlayed ? getPercent(user.percentiles.top10, user) : '--' }}
+          {{ user.gamesPlayed ?
+          getPercent(user.percentiles.top10, user) : '--' }}
         </td>
         <td class="center aligned">
-          {{ user.gamesPlayed ? getPercent(user.percentiles.top20, user) : '--' }}
+          {{ user.gamesPlayed ?
+          getPercent(user.percentiles.top20, user) : '--' }}
         </td>
         <td class="center aligned">
-          {{ user.gamesPlayed ? getPercent(user.percentiles.top50, user) : '--' }}
+          {{ user.gamesPlayed ?
+          getPercent(user.percentiles.top50, user) : '--' }}
         </td>
       </tr>
     </tbody>

@@ -75,11 +75,14 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
         }
 
         fetching = true;
-        const players = await this.gameService.getLobbyUsers(gameId);
-        if (forceUpdate || players.length !== this._players.length) {
-          this._players = players;
-          observer.next(players);
-        } else {
+        try {
+          const players = await this.gameService.getLobbyUsers(gameId);
+          if (forceUpdate || players.length !== this._players.length) {
+            this._players = players;
+            observer.next(players);
+          }
+        } catch (e) {
+          console.error(e);
         }
         fetching = false;
       };
@@ -132,29 +135,33 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
         }
 
         fetching = true;
-        const game = await this.gameService.getLobby(id);
-        const statusChanged =
-          !this._game.getValue() || game.status !== this._game.getValue().status;
+        try {
+          const game = await this.gameService.getLobby(id);
+          const statusChanged =
+            !this._game.getValue() || game.status !== this._game.getValue().status;
 
-        observer.next(game);
-        this._game.next(game);
+          observer.next(game);
+          this._game.next(game);
 
-        if (statusChanged) {
-          this.statusChanged.next(undefined);
-        }
-
-        if (statusChanged || !this.secondsLeft) {
-          this.secondsLeft = game.secondsToNextRound;
-          if (this.timeLeftInterval) {
-            this.timeLeftInterval.unsubscribe();
+          if (statusChanged) {
+            this.statusChanged.next(undefined);
           }
-          this.updateTimeLeft();
-          this.timeLeftInterval = interval(1000).subscribe(() => {
-            if (this.secondsLeft >= 1) {
-              this.secondsLeft--;
-              this.updateTimeLeft();
+
+          if (statusChanged || !this.secondsLeft) {
+            this.secondsLeft = game.secondsToNextRound;
+            if (this.timeLeftInterval) {
+              this.timeLeftInterval.unsubscribe();
             }
-          });
+            this.updateTimeLeft();
+            this.timeLeftInterval = interval(1000).subscribe(() => {
+              if (this.secondsLeft >= 1) {
+                this.secondsLeft--;
+                this.updateTimeLeft();
+              }
+            });
+          }
+        } catch (e) {
+          console.error(e);
         }
         fetching = false;
       };
