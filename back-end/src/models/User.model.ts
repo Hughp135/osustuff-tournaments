@@ -11,7 +11,7 @@ export interface IUser extends mongoose.Document {
   elo: number;
   gamesPlayed: number;
   wins: number;
-  achievements: mongoose.Types.ObjectId[];
+  achievements: Array<{ achievementId: mongoose.Types.ObjectId; read?: boolean}>;
 }
 
 const UserSchema = new mongoose.Schema(
@@ -26,7 +26,12 @@ const UserSchema = new mongoose.Schema(
     country: { type: String, required: true },
     elo: { type: Number, required: true, default: 1500, index: true },
     achievements: {
-      type: [{ type: mongoose.Schema.Types.ObjectId, required: true }],
+      type: [
+        {
+          achievementId: { type: mongoose.Schema.Types.ObjectId, required: true },
+          read: { type: Boolean },
+        },
+      ],
       required: true,
       default: [],
     },

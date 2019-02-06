@@ -21,6 +21,7 @@ import { clearDb } from './admin/clear-db';
 import { getUser } from './user/get-user';
 import { loginVerify } from './user/login-verify';
 import { authMiddleware } from './auth/jwt-middleware';
+import { getUnreadAchievements } from './user/get-achievements';
 
 const PORT = config.get('API_PORT');
 const TEST_MODE = config.get('TEST_MODE');
@@ -54,6 +55,7 @@ router.get('/lobbies/:id', getLobby);
 router.post('/toggle-monitoring', toggleMonitoring);
 router.post('/admin/clear-db', clearDb);
 router.get('/users', getUsers);
+router.get('/unread-achievements', authMiddleware, getUnreadAchievements);
 router.get('/user/me', authMiddleware, getUser);
 router.get('/user/:username', getUser);
 router.get('/login-verify', loginVerify);

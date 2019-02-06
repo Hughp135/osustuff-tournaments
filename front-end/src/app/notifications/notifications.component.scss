@@ -1,0 +1,29 @@
+.notification-container.inverted.segment {
+  z-index: 1000;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  min-width: 250px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background: #4a1b37;
+  box-shadow: 0 0 15px #1d1d1d;
+
+  .ui.header {
+    margin: 0;
+  }
+
+  .times.icon {
+    position: absolute;
+    right: 10px;
+    top: 20px
+  }
+
+  .achievement-container {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding: 30px 14px;
+    background: rgba(15, 44, 66, 0.35);
+  }
+}

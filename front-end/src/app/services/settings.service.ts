@@ -61,10 +61,6 @@ export class SettingsService {
     }
   }
 
-  private getCurrentGame(): CurrentGame | null {
-    return JSON.parse(localStorage.getItem('currentGame') || 'null');
-  }
-
   public setUsername(username: string) {
     localStorage.setItem('username', username);
     this.username.next(username);

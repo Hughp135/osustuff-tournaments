@@ -1,6 +1,6 @@
 import { IGame, IPlayer } from './../models/Game.model';
 import { IRound } from './../models/Round.model';
-import { Score, IScore } from '../models/Score.model';
+import {  IScore } from '../models/Score.model';
 import { DURATION_ROUND_ENDED } from './durations';
 import { getAllUserBestScores } from './get-round-scores';
 
@@ -17,7 +17,6 @@ export async function roundEnded(game: IGame, round: IRound) {
   );
 
   // Calculate which players lost the round.
-  const alivePlayers = game.players.filter(p => !!p.alive);
   const winRate = Math.max(0.4, 0.8 - 0.1 * (<number> round.roundNumber - 1));
   const numberOfWinners =
     scores.length === 2 ? 1 : Math.max(1, Math.round(scores.length * winRate));

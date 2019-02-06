@@ -197,8 +197,14 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
   }
 
   private updateTimeLeft(): void {
-    if (this.secondsLeft || this.secondsLeft < 0) {
+    if (!this.secondsLeft) {
       this.timeLeft.next(undefined);
+      return;
+    }
+
+    if (this.secondsLeft < 0) {
+      this.timeLeft.next('now');
+      return;
     }
 
     const date = new Date();

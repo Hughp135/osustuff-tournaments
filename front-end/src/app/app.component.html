@@ -21,7 +21,7 @@
     </a>
     <a *ngIf="currentGame" class="item" [routerLink]="['/lobbies/', currentGame.gameId]">
       <i class="large orange play circle outline icon"></i>
-      Rejoin Game
+      Continue Game
     </a>
     <a *ngIf="currentUsername" class="item" [routerLink]="['/user/', currentUsername]">
       <i class="user icon"></i>
@@ -39,6 +39,8 @@
     class="ui mini button" (click)="clearDb()">Clear DB
   </div>
 </div>
+
+<app-notifications></app-notifications>
 
 <app-footer *ngIf="showMenu"></app-footer>
 

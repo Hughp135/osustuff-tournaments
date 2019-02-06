@@ -1,5 +1,7 @@
 import { IGame } from '../models/Game.model';
 import { updatePlayerGameStats } from './update-player-game-stats';
+import { achievementNewbie } from '../achievements/newbie';
+import winston from 'winston';
 
 export async function endGame(game: IGame) {
   const alivePlayers = game.players.filter(p => p.alive);
@@ -26,6 +28,12 @@ export async function endGame(game: IGame) {
   game.nextStageStarts = undefined;
 
   await game.save();
+
+  try {
+    await achievementNewbie(game);
+  } catch (e) {
+    winston.error('Failed to updated achievements', e);
+  }
 
   await updatePlayerGameStats(game);
 }

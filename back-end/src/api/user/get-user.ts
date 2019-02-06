@@ -14,8 +14,6 @@ export async function getUser(req: Request, res: Response) {
     username = req.app.get('claim').username;
   }
 
-  console.log('getting user', username);
-
   const user = await User.findOne({ username }).select({ __v: 0 }).lean();
 
   if (!user) {

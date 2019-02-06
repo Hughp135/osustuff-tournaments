@@ -31,6 +31,7 @@ import { SuiModule } from 'ng2-semantic-ui';
 import { LobbiesComponent } from './components/lobbies/lobbies.component';
 import { TwitchEmotesPipe } from 'src/pipes/twitch-emotes.pipe';
 import { LoginComponent } from './components/login/login.component';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { LoginComponent } from './components/login/login.component';
     LobbiesComponent,
     TwitchEmotesPipe,
     LoginComponent,
+    NotificationsComponent,
   ],
   imports: [
     BrowserModule,

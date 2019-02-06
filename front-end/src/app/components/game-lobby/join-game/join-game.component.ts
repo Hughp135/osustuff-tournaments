@@ -30,7 +30,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.route.snapshot.queryParams.autoJoin) {
-      this.joinGame();
+      this.joinGame(true);
     }
   }
 
@@ -50,7 +50,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     );
   }
 
-  async joinGame() {
+  async joinGame(auto?: boolean) {
     this.requestingJoin = true;
     this.success = false;
     this.error = undefined;
@@ -58,6 +58,9 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     try {
       await this.apiService.post(`lobbies/${this.game._id}/join`, {}).toPromise();
       this.success = true;
+      if (auto) {
+        this.router.navigate(['/lobbies', this.game._id]);
+      }
       this.settingsService.setCurrentGame(this.game._id);
       responsiveVoice.speak('You have joined the game');
     } catch (e) {

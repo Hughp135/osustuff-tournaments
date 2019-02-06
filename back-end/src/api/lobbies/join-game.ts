@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Game } from '../../models/Game.model';
 import { getUser } from '../../services/osu-api';
 import { updateOrCreateUser } from '../../models/User.model';
-import { achievementPlayAsTester } from '../../achievements/play-as-tester';
 import { addPlayer } from '../../game/add-player';
 
 export async function joinGame(req: Request, res: Response) {
@@ -33,6 +32,4 @@ export async function joinGame(req: Request, res: Response) {
   await addPlayer(game, user);
 
   res.status(200).end();
-
-  await achievementPlayAsTester(user);
 }
