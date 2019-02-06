@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div class="ui inverted center aligned padded red segment" *ngIf="inGame && !isAlive && game.status !== 'new'">
+<div class="ui inverted center aligned padded red segment" *ngIf="mePlayer && !isAlive && game.status !== 'new'">
   <div class="ui icon header">
     <i class="crosshairs icon"></i>
     You have been eliminated from the match.

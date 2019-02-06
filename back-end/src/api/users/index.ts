@@ -11,6 +11,7 @@ export async function getUsers(req: Request, res: Response) {
       achievements: 0,
       createdAt: 0,
       currentGame: 0,
+      results: 0,
     })
     .limit(100)
     .lean();

@@ -36,7 +36,7 @@ export async function updatePlayerAchievements(game: IGame) {
         });
 
         await achievementNewbie(allGameUsers);
-        await achievementVersatile(game, rounds, passedScores);
+        await achievementVersatile(allGameUsers, passedScores);
         await achievementWinAGame(game, allGameUsers);
         await achievementHdPlayer(allGameUsers);
         await achievementGrinder(allGameUsers);

@@ -19,6 +19,7 @@ export interface IPlayer {
   countryRank: number;
   country: string;
   gameRank?: number;
+  elo: number;
 }
 
 export interface IGame {
@@ -149,8 +150,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
             .replace(regexReplace, ' ')
             .toLowerCase()} - ${beatmap.title
             .replace(regexReplace, ' ')
-            .toLowerCase()}, ${beatmap.version.replace(regexReplace, ' ').toLowerCase()}`
-        );
+            .toLowerCase()}, ${beatmap.version.replace(regexReplace, ' ').toLowerCase()}`);
       }
       if (
         ((game.status === 'round-over' &&
@@ -158,7 +158,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
           (game.status === 'checking-scores' && this.game.status !== 'checking-scores')) &&
         this.inGame
       ) {
-        responsiveVoice.speak(`Round ${game.roundNumber} has ended. `);
+        responsiveVoice.speak(`Round ${game.roundNumber} has ended.`);
       }
       if (game.status === 'complete' && this.game.status !== 'complete') {
         const winnerString = game.winningUser

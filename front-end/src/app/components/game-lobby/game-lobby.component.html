@@ -7,7 +7,7 @@
       <div class="lobby-details" [suiTransition]="transitionController">
         <app-join-game [game]="game" [inAnotherGame]="inAnotherGame" *ngIf="showJoinGame"></app-join-game>
         <app-game-status [viewingRoundResults]="game.status === 'complete' || viewResults" [toggleViewResults]="toggleViewResults"
-          [timeLeft]="timeLeft" [game]="game" [isAlive]="isAlive" [inGame]="inGame" [mePlayer]="mePlayer"
+          [timeLeft]="timeLeft" [game]="game" [isAlive]="isAlive" [mePlayer]="mePlayer"
           [totalPlayers]="players.length"></app-game-status>
         <app-match-results [toggleViewResults]="toggleViewResults" *ngIf="game.status === 'complete' || viewResults"
           [game]="game"></app-match-results>

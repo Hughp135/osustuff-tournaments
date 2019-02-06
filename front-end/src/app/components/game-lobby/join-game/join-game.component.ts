@@ -30,7 +30,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.route.snapshot.queryParams.autoJoin) {
-      this.joinGame(true);
+      this.joinGame();
     }
   }
 
@@ -50,7 +50,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     );
   }
 
-  async joinGame(auto?: boolean) {
+  async joinGame() {
     this.requestingJoin = true;
     this.success = false;
     this.error = undefined;

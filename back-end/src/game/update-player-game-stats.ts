@@ -45,8 +45,7 @@ export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
 }
 
 async function calculatePlayerElo(rankedPlayers: Array<IPlayer & { user: IUser }>) {
-  const kValue = 10 / Math.max(Math.log(Math.max(rankedPlayers.length, 10)) / Math.LN10);
-
+  const kValue = 7 / Math.max(Math.log(Math.max(rankedPlayers.length, 10)) / Math.LN10);
   await Promise.all(
     rankedPlayers.map(async player1 => {
       let eloChange = 0;

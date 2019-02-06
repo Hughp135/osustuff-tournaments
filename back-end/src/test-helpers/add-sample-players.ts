@@ -9,7 +9,7 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
       .fill(null)
       .map(async (_, index) => {
         try {
-          const osuUser = getPlayer(index);
+          const osuUser = getOsuUser(index);
           const user = await updateOrCreateUser(osuUser);
           return userToPlayer(user);
         } catch (e) {
@@ -24,7 +24,7 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
   await game.save();
 }
 
-function getPlayer(index: number) {
+function getOsuUser(index: number) {
   return {
     user_id: userIds[index] || Math.floor(Math.random() * 100000) + 1,
     username: faker.name.findName(),

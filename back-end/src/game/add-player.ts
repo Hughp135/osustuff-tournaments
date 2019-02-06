@@ -14,8 +14,12 @@ export async function addPlayer(game: IGame, user: IUser) {
 }
 
 export function userToPlayer(user: IUser): IPlayer {
+  if (!user.elo) {
+    throw new Error('user has no elo');
+  }
   return {
     userId: user._id,
+    elo: user.elo,
     alive: true,
     username: user.username,
     osuUserId: user.osuUserId,

@@ -1,10 +1,8 @@
-import { IGame } from 'src/models/Game.model';
-import { Round, IRound } from 'src/models/Round.model';
-import { Score, IScore } from 'src/models/Score.model';
+import { IScore } from 'src/models/Score.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
-import { User } from 'src/models/User.model';
+import { IUser } from 'src/models/User.model';
 
-export async function achievementVersatile(game: IGame, rounds: IRound[], passedScores: IScore[]) {
+export async function achievementVersatile(allUsers: IUser[], passedScores: IScore[]) {
   const achievement = await getOrCreateAchievement(
     'Versatile',
     'Pass 4 rounds with different mods',
@@ -30,7 +28,8 @@ export async function achievementVersatile(game: IGame, rounds: IRound[], passed
   );
 
   const userScores = scoresPerUser.filter(u => u.uniqueMods.length >= 3);
-  const users = await User.find({ _id: userScores.map(u => u.userId) });
+  const userIds = userScores.map(u => u.userId.toString());
+  const users = allUsers.filter(u => userIds.includes(u._id.toString()));
 
   await Promise.all(
     users.map(async user => {

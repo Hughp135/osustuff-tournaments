@@ -11,6 +11,7 @@ export interface IPlayer {
   countryRank: number;
   country: string;
   gameRank?: number;
+  elo: number;
 }
 
 export interface IGame extends mongoose.Document {
@@ -44,6 +45,7 @@ const GameSchema = new mongoose.Schema(
           roundLostOn: { type: Number },
           gameRank: { type: Number },
           ppRank: { type: Number, required: true },
+          elo: { type: Number, required: true },
           countryRank: { type: Number, required: true },
           country: { type: String, required: true },
         },

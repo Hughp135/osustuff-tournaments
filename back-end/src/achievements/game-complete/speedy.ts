@@ -1,5 +1,4 @@
 import { IScore } from './../../models/Score.model';
-import { IGame } from 'src/models/Game.model';
 import { IUser, IUserAchievement } from './../../models/User.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { getAppliedMods } from 'src/helpers/get-applied-mods';

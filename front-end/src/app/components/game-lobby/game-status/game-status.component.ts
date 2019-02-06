@@ -8,7 +8,6 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class GameStatusComponent implements OnInit {
   @Input() game: IGame;
-  @Input() inGame: boolean;
   @Input() isAlive: boolean;
   @Input() mePlayer: IPlayer;
   @Input() totalPlayers: number;

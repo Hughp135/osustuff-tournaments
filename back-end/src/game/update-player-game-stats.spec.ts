@@ -52,6 +52,7 @@ async function createPlayers(count: number) {
     });
 
     return <IPlayer> {
+      elo: user.elo,
       alive: true,
       userId: user._id,
       osuUserId: user.osuUserId,
