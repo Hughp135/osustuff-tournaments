@@ -14,7 +14,7 @@ export interface IUser {
   ppRank: number;
   countryRank: number;
   country: string;
-  elo: number;
+  rating: { mu: number; };
   gamesPlayed: number;
   wins: number;
   achievements: IUserAchievement[];
@@ -31,7 +31,7 @@ export interface IUser {
   styleUrls: ['./user-profile.component.scss'],
 })
 export class UserProfileComponent implements OnInit {
-  public user: IUser[];
+  public user: IUser;
 
   constructor(route: ActivatedRoute) {
     this.user = route.snapshot.data.data.user;

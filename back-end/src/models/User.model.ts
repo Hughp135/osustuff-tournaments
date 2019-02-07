@@ -1,3 +1,4 @@
+import { Skill } from './../services/trueskill';
 import mongoose from 'mongoose';
 
 export interface IUserAchievement {
@@ -19,7 +20,10 @@ export interface IUser extends mongoose.Document {
   ppRank: number;
   countryRank: number;
   country: string;
-  elo: number;
+  rating: {
+    mu: number;
+    sigma: number;
+  };
   gamesPlayed: number;
   wins: number;
   achievements: IUserAchievement[];
@@ -41,7 +45,13 @@ const UserSchema = new mongoose.Schema(
     gamesPlayed: { type: Number, required: true, default: 0 },
     wins: { type: Number, required: true, default: 0 },
     country: { type: String, required: true },
-    elo: { type: Number, required: true, default: 1500, index: true },
+    rating: {
+      type: {
+        mu: { type: Number, required: true, index: true },
+        sigma: { type: Number, required: true },
+      },
+      required: true,
+    },
     percentiles: {
       type: {
         top10: { type: Number, required: true, default: 0 },
@@ -99,8 +109,14 @@ export async function updateOrCreateUser(osuUser: any): Promise<IUser> {
     return await found.save();
   }
 
+  const rating = Skill.createRating();
+
   return await User.create({
     username: osuUser.username,
+    rating: {
+      mu: rating.mu,
+      sigma: rating.sigma,
+    },
     osuUserId,
     ppRank,
     countryRank,

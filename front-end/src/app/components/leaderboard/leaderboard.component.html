@@ -1,14 +1,14 @@
 <div class="ui inverted basic segment">
   <h1 class="ui inverted header">Leaderboard</h1>
   <p>
-    Note: the ELO rating system in an experimental phase and may
+    Note: the rating system in an experimental phase and may
     be reset / changed frequently.
   </p>
 
   <table class="ui inverted unstackable table">
     <thead>
       <th class="center aligned">Rank</th>
-      <th>ELO</th>
+      <th>Rating</th>
       <th>Username</th>
       <th>Global PP Rank</th>
       <th>Country Rank</th>
@@ -26,7 +26,7 @@
         </td>
         <td class="collapsing">
           <i class="teal crosshairs icon"></i>
-          {{ user.gamesPlayed > 0 ? user.elo : '--' }}
+          {{ user.gamesPlayed > 0 ? user.rating.mu : '--' }}
         </td>
         <td class="collapsing">
           {{ user.username }}

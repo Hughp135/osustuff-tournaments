@@ -19,7 +19,6 @@ export interface IPlayer {
   countryRank: number;
   country: string;
   gameRank?: number;
-  elo: number;
 }
 
 export interface IGame {

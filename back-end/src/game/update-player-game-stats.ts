@@ -1,14 +1,14 @@
+import { Skill } from './../services/trueskill';
 import { User, IUser } from '../models/User.model';
 import { IPlayer } from '../models/Game.model';
-
-const eloRating = require('elo-rating');
+import { Rating } from 'ts-trueskill';
 
 export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
   const playerCount = game.players.length;
   const rankedPlayers: Array<IPlayer & { user: IUser }> = await Promise.all(
     game.players
       .filter(p => !!p.gameRank)
-      .sort((a, b) => <number> b.gameRank - <number> a.gameRank)
+      .sort((a, b) => <number> a.gameRank - <number> b.gameRank)
       .map(async (p: IPlayer & { user?: IUser }) => {
         p.user = <IUser> await User.findOne({ osuUserId: p.osuUserId });
         p.user.gamesPlayed++;
@@ -35,7 +35,7 @@ export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
       }),
   );
 
-  await calculatePlayerElo(rankedPlayers);
+  await calculatePlayerRatings(rankedPlayers);
 
   await Promise.all(
     rankedPlayers.map(async p => {
@@ -44,26 +44,14 @@ export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
   );
 }
 
-async function calculatePlayerElo(rankedPlayers: Array<IPlayer & { user: IUser }>) {
-  const kValue = 7 / Math.max(Math.log(Math.max(rankedPlayers.length, 10)) / Math.LN10);
-  await Promise.all(
-    rankedPlayers.map(async player1 => {
-      let eloChange = 0;
-      const otherPlayers = rankedPlayers.filter(p => p.osuUserId !== player1.osuUserId);
-
-      await Promise.all(
-        otherPlayers.map(async player2 => {
-          const playerWin = <number> player1.gameRank < <number> player2.gameRank;
-          const { playerRating } = eloRating.calculate(
-            player1.user.elo,
-            player2.user.elo,
-            playerWin,
-            kValue,
-          );
-          eloChange += playerRating - player1.user.elo;
-        }),
-      );
-      player1.user.elo += eloChange;
-    }),
-  );
+async function calculatePlayerRatings(rankedPlayers: Array<IPlayer & { user: IUser }>) {
+  const positions = rankedPlayers.map(p => [Skill.createRating(p.user.rating.mu, p.user.rating.sigma)]);
+  const result = Skill.rate(positions) as Rating[][];
+  result.forEach((r, index) => {
+    const player = rankedPlayers[index];
+    player.user.rating = {
+      mu: r[0].mu,
+      sigma: r[0].sigma,
+    };
+  });
 }

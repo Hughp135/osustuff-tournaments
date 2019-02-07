@@ -31,7 +31,7 @@ describe('update-player-game-stats', () => {
       });
     }
     const usersFinal = await User.find()
-      .select({ username: 1, elo: 1 })
+      .select({ username: 1, rating: 1 })
       .lean();
 
     usersFinal.forEach((u: any) => {
@@ -52,7 +52,6 @@ async function createPlayers(count: number) {
     });
 
     return <IPlayer> {
-      elo: user.elo,
       alive: true,
       userId: user._id,
       osuUserId: user.osuUserId,
