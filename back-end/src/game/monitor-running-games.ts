@@ -66,7 +66,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
             return await completeRound(game);
         }
       } catch (e) {
-        winston.log('error', 'Failed to update games', e);
+        winston.log('error', 'Failed to update games ', e);
       }
     }),
   );

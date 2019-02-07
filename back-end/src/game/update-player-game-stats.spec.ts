@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import config from 'config';
-import { Game, IPlayer } from '../models/Game.model';
+import { Game, IPlayer, IGame } from '../models/Game.model';
 import { User } from '../models/User.model';
 import { updatePlayerGameStats } from './update-player-game-stats';
 import { Skill } from 'src/services/trueskill';
@@ -24,8 +24,8 @@ describe('update-player-game-stats', () => {
     await Game.deleteMany({});
     await User.deleteMany({});
   });
-  it('ranks rating', async () => {
-    const players = await createPlayers(50);
+  it.only('ranks rating', async () => {
+    const players = await createPlayers(10);
     for (let i = 0; i < 3; i++) {
       const shuffled = shufflePlayerRanks(players);
       // console.log(
@@ -35,7 +35,8 @@ describe('update-player-game-stats', () => {
       //     .map(p => `${p.username} (${p.gameRank})`)
       //     .join(','),
       // );
-      await updatePlayerGameStats({
+      await updatePlayerGameStats(<IGame> {
+        _id: '',
         players: shuffled,
       });
     }

@@ -51,7 +51,6 @@ async function calculatePlayerRatings(
   ]);
   const rankings = rankedPlayers.map(p => <number> p.gameRank);
   const results = Skill.rate(ratings, rankings) as Rating[][];
-
   await Promise.all(
     results.map(async ([r], index) => {
       const player = rankedPlayers[index];
@@ -64,8 +63,10 @@ async function calculatePlayerRatings(
       const userResult = <IUserResult> (
         player.user.results.find(res => res.gameId.toHexString() === game._id.toString())
       );
-      userResult.gameEndedAt = gameEndedAt;
-      userResult.ratingChange = player.user.rating.mu - oldRating;
+      if (userResult) {
+        userResult.gameEndedAt = gameEndedAt;
+        userResult.ratingChange = player.user.rating.mu - oldRating;
+      }
 
       await player.user.save();
     }),

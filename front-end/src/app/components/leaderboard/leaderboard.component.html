@@ -29,7 +29,9 @@
           {{ user.gamesPlayed > 0 ? user.rating.mu.toFixed(0) : '--' }}
         </td>
         <td class="collapsing">
-          {{ user.username }}
+          <a [routerLink]="['/user', user.username]">
+            {{ user.username }}
+          </a>
         </td>
         <td class="collapsing">
           <i class="fitted blue globe icon"></i>
