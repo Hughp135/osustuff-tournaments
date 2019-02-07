@@ -1,7 +1,7 @@
 import { IUserAchievement } from './../../models/User.model';
-import { IUser, User } from 'src/models/User.model';
-import { Score, IScore } from 'src/models/Score.model';
-import { getAppliedMods } from 'src/helpers/get-applied-mods';
+import { IUser, User } from '../../models/User.model';
+import { Score, IScore } from '../../models/Score.model';
+import { getAppliedMods } from '../../helpers/get-applied-mods';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 
 export async function achievementHdPlayer(users: IUser[]) {

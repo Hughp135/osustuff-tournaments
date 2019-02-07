@@ -1,13 +1,13 @@
 import { ObjectId } from 'bson';
-import { User, IUser } from 'src/models/User.model';
-import { Game } from 'src/models/Game.model';
+import { User, IUser } from '../../models/User.model';
+import { Game } from '../../models/Game.model';
 import mongoose from 'mongoose';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
-import { Score } from 'src/models/Score.model';
+import { Score } from '../../models/Score.model';
 import config from 'config';
 import { achievementHdPlayer } from './hd-player';
-import { Skill } from 'src/services/trueskill';
+import { Skill } from '../../services/trueskill';
 
 const expect = chai.expect;
 chai.use(sinonChai);

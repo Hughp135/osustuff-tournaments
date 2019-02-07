@@ -1,7 +1,7 @@
 import { IScore } from './../../models/Score.model';
 import { IUser, IUserAchievement } from './../../models/User.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
-import { getAppliedMods } from 'src/helpers/get-applied-mods';
+import { getAppliedMods } from '../../helpers/get-applied-mods';
 
 export async function achievementSpeed(users: IUser[], passedScores: IScore[]) {
   const achievement = await getOrCreateAchievement(

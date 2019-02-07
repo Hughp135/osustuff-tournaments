@@ -3,13 +3,11 @@ import { Game } from '../../models/Game.model';
 import { getUser } from '../../services/osu-api';
 import { updateOrCreateUser } from '../../models/User.model';
 import { addPlayer } from '../../game/add-player';
-import { cache } from 'src/services/cache';
+import { cache } from '../../services/cache';
 
 export async function joinGame(req: Request, res: Response) {
   const game = await Game.findById(req.params.id);
-
   const claim = req.app.get('claim');
-
   const osuUser = await getUser(claim.username);
 
   if (!osuUser) {

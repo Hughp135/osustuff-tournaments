@@ -1,5 +1,5 @@
 import { IUserAchievement } from './../../models/User.model';
-import { User } from 'src/models/User.model';
+import { User } from '../../models/User.model';
 import { IUser } from '../../models/User.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 

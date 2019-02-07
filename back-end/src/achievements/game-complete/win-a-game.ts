@@ -1,5 +1,5 @@
-import { IUser } from 'src/models/User.model';
-import { IGame } from 'src/models/Game.model';
+import { IUser } from '../../models/User.model';
+import { IGame } from '../../models/Game.model';
 import winston = require('winston');
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 

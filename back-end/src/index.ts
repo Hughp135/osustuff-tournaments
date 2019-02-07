@@ -4,6 +4,10 @@ import { startMonitoring } from './game/monitor-running-games';
 import { startServer } from './api';
 import winston from 'winston';
 
+if (process.env.NODE_ENV !== 'production') {
+  require('source-map-support').install();
+}
+process.on('unhandledRejection', console.log);
 winston.add(new winston.transports.File({ filename: 'winston.log' }));
 winston.add(new winston.transports.Console());
 

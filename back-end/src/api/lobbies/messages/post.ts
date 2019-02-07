@@ -4,7 +4,7 @@ import { User } from '../../../models/User.model';
 import { Message } from '../../../models/Message.model';
 import { ObjectID } from 'bson';
 import { cache } from '../../../services/cache';
-import { Game } from 'src/models/Game.model';
+import { Game } from '../../../models/Game.model';
 
 export async function sendMessage(req: Request, res: Response) {
   const { id } = req.params;

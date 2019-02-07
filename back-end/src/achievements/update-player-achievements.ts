@@ -1,12 +1,12 @@
 import { achievementNewbie } from './game-complete/newbie';
 import winston from 'winston';
-import { IGame } from 'src/models/Game.model';
+import { IGame } from '../models/Game.model';
 import { achievementVersatile } from './game-complete/versatile';
 import { achievementPlayAsTester } from './join-game/play-as-tester';
-import { User } from 'src/models/User.model';
+import { User } from '../models/User.model';
 import { achievementWinAGame } from './game-complete/win-a-game';
-import { Round } from 'src/models/Round.model';
-import { Score } from 'src/models/Score.model';
+import { Round } from '../models/Round.model';
+import { Score } from '../models/Score.model';
 import { achievementHdPlayer } from './game-complete/hd-player';
 import { achievementGrinder } from './game-complete/grinder';
 import { achievementSpeed } from './game-complete/speedy';

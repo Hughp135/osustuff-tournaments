@@ -1,8 +1,8 @@
 import { IUserResult } from './../models/User.model';
 import { IGame } from '../models/Game.model';
 import { updatePlayerGameStats } from './update-player-game-stats';
-import { updatePlayerAchievements } from 'src/achievements/update-player-achievements';
-import { User } from 'src/models/User.model';
+import { updatePlayerAchievements } from '../achievements/update-player-achievements';
+import { User } from '../models/User.model';
 
 export async function endGame(game: IGame) {
   const alivePlayers = game.players.filter(p => p.alive);

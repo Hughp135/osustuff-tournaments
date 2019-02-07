@@ -4,8 +4,8 @@ import { IRound } from './../models/Round.model';
 import { IScore } from '../models/Score.model';
 import { DURATION_ROUND_ENDED } from './durations';
 import { getAllUserBestScores } from './get-round-scores';
-import { User } from 'src/models/User.model';
-import { updatePlayerAchievements } from 'src/achievements/update-player-achievements';
+import { User } from '../models/User.model';
+import { updatePlayerAchievements } from '../achievements/update-player-achievements';
 
 // Kills players with lowest score each round
 export async function roundEnded(game: IGame, round: IRound) {

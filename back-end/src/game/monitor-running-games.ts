@@ -11,9 +11,9 @@ import { getUserRecent, getRecentBeatmaps } from '../services/osu-api';
 import config from 'config';
 import { addSampleChatMessage } from '../test-helpers/add-sample-chat-message';
 import { DURATION_START } from './durations';
-import { cache } from 'src/services/cache';
+import { cache } from '../services/cache';
 import { ObjectId } from 'bson';
-import { Score } from 'src/models/Score.model';
+import { Score } from '../models/Score.model';
 
 const TEST_MODE = config.get('TEST_MODE');
 export let isMonitoring = false;

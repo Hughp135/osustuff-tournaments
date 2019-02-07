@@ -1,6 +1,6 @@
-import { IScore } from 'src/models/Score.model';
+import { IScore } from '../../models/Score.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
-import { IUser } from 'src/models/User.model';
+import { IUser } from '../../models/User.model';
 
 export async function achievementVersatile(allUsers: IUser[], passedScores: IScore[]) {
   const achievement = await getOrCreateAchievement(

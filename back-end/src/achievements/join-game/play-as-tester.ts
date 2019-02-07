@@ -1,5 +1,5 @@
 import { getOrCreateAchievement } from '../get-or-create-achievement';
-import { IUser } from 'src/models/User.model';
+import { IUser } from '../../models/User.model';
 
 export async function achievementPlayAsTester(users: IUser[]) {
   const achievement = await getOrCreateAchievement(

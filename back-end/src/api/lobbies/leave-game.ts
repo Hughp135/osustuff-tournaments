@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Game } from '../../models/Game.model';
 import { User } from '../../models/User.model';
-import { cache } from 'src/services/cache';
+import { cache } from '../../services/cache';
 
 export async function leaveGame(req: Request, res: Response) {
   const { username } = req.app.get('claim');

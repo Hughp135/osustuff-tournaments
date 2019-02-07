@@ -5,7 +5,7 @@ import config from 'config';
 import { Game, IPlayer, IGame } from '../models/Game.model';
 import { User } from '../models/User.model';
 import { updatePlayerGameStats } from './update-player-game-stats';
-import { Skill } from 'src/services/trueskill';
+import { Skill } from '../services/trueskill';
 
 mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
