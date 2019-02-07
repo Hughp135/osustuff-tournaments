@@ -26,6 +26,7 @@ export interface IUser extends mongoose.Document {
   };
   gamesPlayed: number;
   wins: number;
+  averageRank: number;
   achievements: IUserAchievement[];
   percentiles: {
     top10: number;
@@ -44,6 +45,7 @@ const UserSchema = new mongoose.Schema(
     countryRank: { type: Number, required: true },
     gamesPlayed: { type: Number, required: true, default: 0 },
     wins: { type: Number, required: true, default: 0 },
+    averageRank: { type: Number },
     country: { type: String, required: true },
     rating: {
       type: {
@@ -76,9 +78,9 @@ const UserSchema = new mongoose.Schema(
     results: {
       type: [
         {
-          gameId: {type: mongoose.Schema.Types.ObjectId, required: true},
-          place: {type: Number, required: true},
-          gameEndedAt: {type: Date, required: true},
+          gameId: { type: mongoose.Schema.Types.ObjectId, required: true },
+          place: { type: Number, required: true },
+          gameEndedAt: { type: Date, required: true },
         },
       ],
       required: true,

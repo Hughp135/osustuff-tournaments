@@ -197,6 +197,7 @@ describe('check-player-scores', () => {
 
 async function getUser(id: number) {
   return await User.create({
+    rating: { mu: 1500, sigma: 150 },
     username: `user${id}`,
     ppRank: id,
     countryRank: id,

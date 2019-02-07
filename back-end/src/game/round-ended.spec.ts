@@ -46,6 +46,53 @@ describe('round-ended', () => {
     expect(game.status).to.equal('round-over');
     expect(game.players[0].alive).to.equal(false);
   });
+  it('Players with no score set should draw', async () => {
+    const game = await Game.create({ title: 'test', beatmaps: [] });
+
+    for (let i = 1; i <= 3; i++) {
+      const u = await getUser(i);
+      await addPlayer(game, u);
+    }
+    const round = await Round.create({
+      roundNumber: 1,
+      beatmap: {
+        beatmapId: 'asd123',
+        title: 'b1',
+      },
+      gameId: game._id,
+    });
+    const winner = await getUser(4);
+    await addPlayer(game, winner);
+
+    const baseScoreData = getBaseScoreData(round);
+    const score1 = await Score.create({
+      ...baseScoreData,
+      score: 2,
+      userId: winner._id,
+      username: winner.username,
+    });
+    const loser = await getUser(5);
+    await addPlayer(game, loser);
+    const score2 = await Score.create({
+      ...baseScoreData,
+      score: 1,
+      userId: loser._id,
+      username: loser.username,
+    });
+
+    await roundEnded(game, round);
+
+    expect(game.players[0].gameRank).to.equal(3);
+    expect(game.players[0].alive).to.equal(false);
+    expect(game.players[1].gameRank).to.equal(3);
+    expect(game.players[1].alive).to.equal(false);
+    expect(game.players[2].gameRank).to.equal(3);
+    expect(game.players[2].alive).to.equal(false);
+    expect(game.players[3].gameRank).to.equal(undefined);
+    expect(game.players[3].alive).to.equal(true);
+    expect(game.players[4].gameRank).to.equal(2);
+    expect(game.players[4].alive).to.equal(false);
+  });
   it('Out of 3 players, 2 progress', async () => {
     const u1 = await getUser(1);
     const u2 = await getUser(2);
@@ -94,7 +141,53 @@ describe('round-ended', () => {
     expect(p2.alive).to.equal(false);
     expect(p3.alive).to.equal(true);
   });
-  it('for 2 players with same score, earliest score date wins', async () => {
+  it('Final 3, 2 players draw, all alive', async () => {
+    const u1 = await getUser(1);
+    const u2 = await getUser(2);
+    const u3 = await getUser(3);
+    const game = await Game.create({ title: 'test', beatmaps: [] });
+
+    await addPlayer(game, u2);
+    await addPlayer(game, u3);
+    await addPlayer(game, u1);
+
+    const round = await Round.create({
+      roundNumber: 1,
+      beatmap: {
+        beatmapId: 'asd123',
+        title: 'b1',
+      },
+      gameId: game._id,
+    });
+    const baseScoreData = getBaseScoreData(round);
+    await Score.create({
+      ...baseScoreData,
+      score: 3,
+      userId: u1._id,
+      username: u1.username,
+    });
+    await Score.create({
+      ...baseScoreData,
+      score: 1,
+      userId: u2._id,
+      username: u2.username,
+    });
+    await Score.create({
+      ...baseScoreData,
+      score: 1,
+      userId: u3._id,
+      username: u3.username,
+    });
+
+    await roundEnded(game, round);
+    expect(game.status).to.equal('round-over');
+
+    game.players.forEach((player, index) => {
+      expect(player.alive).to.equal(true);
+      expect(player.gameRank).to.equal(undefined);
+    });
+  });
+  it('last 2 players tied scores, both should stay alive', async () => {
     const u1 = await getUser(1);
     const u2 = await getUser(2);
     const game = await Game.create({ title: 'test', beatmaps: [] });
@@ -137,26 +230,18 @@ describe('round-ended', () => {
     await roundEnded(game, round);
     const p1 = <IPlayer> game.players.find(p => p.userId.toString() === u1._id.toString());
     const p2 = <IPlayer> game.players.find(p => p.userId.toString() === u2._id.toString());
-    expect(p1.alive).to.equal(false);
+    expect(p1.alive).to.equal(true);
+    expect(p1.gameRank).to.equal(undefined);
     expect(p2.alive).to.equal(true);
+    expect(p2.gameRank).to.equal(undefined);
   });
-  it('ranks losing scores accordingly', async () => {
-    const u1 = await getUser(1);
-    const u2 = await getUser(2);
-    const u3 = await getUser(3);
-    const u4 = await getUser(4);
-    const u5 = await getUser(5);
-    const u6 = await getUser(6);
-    const u7 = await getUser(7);
+  it('scores that tie with passing score should also pass', async () => {
     const game = await Game.create({ title: 'test', beatmaps: [] });
 
-    await addPlayer(game, u1);
-    await addPlayer(game, u4);
-    await addPlayer(game, u2);
-    await addPlayer(game, u3);
-    await addPlayer(game, u5);
-    await addPlayer(game, u6);
-    await addPlayer(game, u7);
+    const players = [];
+    for (let i = 0; i < 5; i++) {
+      players.push(await addPlayer(game, await getUser(i)));
+    }
 
     const round = await Round.create({
       roundNumber: 1,
@@ -170,50 +255,87 @@ describe('round-ended', () => {
     await Score.create({
       ...baseScoreData,
       score: 2,
-      userId: u1._id,
-      username: u1.username,
+      userId: players[0]._id,
+      username: players[0].username,
+    });
+    for (let i = 1; i <= 3; i++) {
+      await Score.create({
+        ...baseScoreData,
+        score: 1,
+        userId: players[i]._id,
+        username: players[i].username,
+      });
+    }
+    await roundEnded(game, round);
+
+    console.log(game.players.map(p => `${p.username} - ${p.gameRank}`));
+
+    for (let i = 0; i < 4; i++) {
+      expect(game.players[i].alive).to.equal(true);
+      expect(game.players[i].gameRank).to.equal(undefined);
+    }
+    expect(game.players[4].alive).to.equal(false);
+    expect(game.players[4].gameRank).to.equal(5);
+  });
+  it('ranks losing scores accordingly', async () => {
+    const game = await Game.create({ title: 'test', beatmaps: [] });
+
+    const players = [];
+    for (let i = 0; i < 7; i++) {
+      players.push(await addPlayer(game, await getUser(i)));
+    }
+
+    const round = await Round.create({
+      roundNumber: 1,
+      beatmap: {
+        beatmapId: 'asd123',
+        title: 'b1',
+      },
+      gameId: game._id,
+    });
+    const baseScoreData = getBaseScoreData(round);
+    await Score.create({
+      ...baseScoreData,
+      score: 2,
+      userId: players[0]._id,
+      username: players[0].username,
     });
     await Score.create({
       ...baseScoreData,
       score: 5,
-      userId: u5._id,
-      username: u5.username,
+      userId: players[1]._id,
+      username: players[1].username,
     });
     await Score.create({
       ...baseScoreData,
       score: 1,
-      userId: u2._id,
-      username: u2.username,
+      userId: players[2]._id,
+      username: players[2].username,
     });
     await Score.create({
       ...baseScoreData,
       score: 4,
-      userId: u3._id,
-      username: u3.username,
+      userId: players[3]._id,
+      username: players[3].username,
     });
     await Score.create({
       ...baseScoreData,
       score: 3,
-      userId: u4._id,
-      username: u4.username,
+      userId: players[4]._id,
+      username: players[4].username,
     });
 
     await roundEnded(game, round);
-    const p1 = <IPlayer> game.players.find(p => p.userId.toString() === u1._id.toString());
-    const p2 = <IPlayer> game.players.find(p => p.userId.toString() === u2._id.toString());
-    const p3 = <IPlayer> game.players.find(p => p.userId.toString() === u3._id.toString());
-    const p4 = <IPlayer> game.players.find(p => p.userId.toString() === u4._id.toString());
-    const p5 = <IPlayer> game.players.find(p => p.userId.toString() === u5._id.toString());
-    const p6 = <IPlayer> game.players.find(p => p.userId.toString() === u6._id.toString());
-    const p7 = <IPlayer> game.players.find(p => p.userId.toString() === u7._id.toString());
 
-    expect(p1.gameRank).to.equal(undefined, 'p1');
-    expect(p2.gameRank).to.equal(5, 'p2');
-    expect(p3.gameRank).to.equal(undefined, 'p3');
-    expect(p4.gameRank).to.equal(undefined, 'p4');
-    expect(p5.gameRank).to.equal(undefined, 'p5');
-    expect(p6.gameRank).to.equal(7, 'p6');
-    expect(p7.gameRank).to.equal(6, 'p7');
+    console.log(game.players.map(p => p.username + ' rank ' + p.gameRank));
+
+    expect(game.players[0].gameRank).to.equal(undefined);
+    expect(game.players[1].gameRank).to.equal(undefined);
+    expect(game.players[2].gameRank).to.equal(5);
+    expect(game.players[3].gameRank).to.equal(undefined);
+    expect(game.players[4].gameRank).to.equal(undefined);
+    expect(game.players[5].gameRank).to.equal(6);
+    expect(game.players[6].gameRank).to.equal(6);
   });
 });
 
@@ -224,6 +346,7 @@ async function getUser(id: number) {
     countryRank: id,
     osuUserId: id,
     country: 'US',
+    rating: { mu: 1500, sigma: 150 },
   });
 }
 

@@ -1,7 +1,7 @@
 import { IGame, IPlayer } from './../models/Game.model';
 import { IUser } from '../models/User.model';
 
-export async function addPlayer(game: IGame, user: IUser) {
+export async function addPlayer(game: IGame, user: IUser): Promise<IUser> {
   const player: IPlayer = userToPlayer(user);
 
   game.players = game.players.concat(player);
@@ -11,6 +11,8 @@ export async function addPlayer(game: IGame, user: IUser) {
   user.currentGame = game._id;
 
   await user.save();
+
+  return user;
 }
 
 export function userToPlayer(user: IUser): IPlayer {
