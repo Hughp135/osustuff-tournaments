@@ -28,16 +28,20 @@ export async function roundEnded(game: IGame, round: IRound) {
   }
   game.nextStageStarts = date;
 
-  await game.save();
-
   await updatePlayerAchievements(game);
+  await game.save();
 }
 
-async function setPlayerRanksAndResults(game: IGame, scores: IScore[], targetNumWinners: number) {
-  console.log('target numWinners');
+async function setPlayerRanksAndResults(
+  game: IGame,
+  scores: IScore[],
+  targetNumWinners: number,
+) {
+  console.log('target numWinners', targetNumWinners);
   const playersNoScore = game.players.filter(
-    p => !scores.some(s => s.userId.toString() === p.userId.toString()),
+    p => p.alive && !scores.some(s => s.userId.toString() === p.userId.toString()),
   );
+  console.log('players no score', playersNoScore.length);
   const noScoreRank = getLowestRank(game) - playersNoScore.length;
   playersNoScore.forEach(player => {
     player.gameRank = noScoreRank;
@@ -56,14 +60,13 @@ async function setPlayerRanksAndResults(game: IGame, scores: IScore[], targetNum
 
       const isDrawn = score.score === prevScore.score;
       score.place = isDrawn
-        ? <number> prevScore.place +
-          array.filter(
-            s => s._id.toString() !== prevScore._id.toString() && s.place === prevScore.place,
-          ).length
+        ? <number> prevScore.place
         : <number> prevScore.place + array.filter(s => s.place === prevScore.place).length;
-      score.passedRound = isDrawn ? score.place <= targetNumWinners : idx < targetNumWinners;
+      score.passedRound = isDrawn
+        ? score.place <= targetNumWinners
+        : idx < targetNumWinners;
+      // console.log('isDraw', isDrawn, 'prevScore', prevScore.place, 'place', score.place);
       await score.save();
-      console.log('isDraw', isDrawn, 'prevScore', prevScore.place, 'place', score.place);
 
       const player = <IPlayer> (
         game.players.find(p => p.userId.toString() === score.userId.toString())
@@ -81,15 +84,20 @@ async function setPlayerRanksAndResults(game: IGame, scores: IScore[], targetNum
   // Set losing score players' ranks
   scores
     .filter(s => {
-      const player = <IPlayer> game.players.find(p => p.userId.toString() === s.userId.toString());
+      const player = <IPlayer> (
+        game.players.find(p => p.userId.toString() === s.userId.toString())
+      );
       return !player.alive;
     })
     .sort((a, b) => a.score - b.score)
     .forEach((score, idx, array) => {
       const prevScore = array[idx - 1] || { score: -1 };
       const isDrawn = score.score === prevScore.score;
+      console.log('lowest rank', getLowestRank(game));
       const prevPlayer = prevScore.userId
-        ? <IPlayer> game.players.find(p => p.userId.toString() === prevScore.userId.toString())
+        ? <IPlayer> (
+            game.players.find(p => p.userId.toString() === prevScore.userId.toString())
+          )
         : { gameRank: getLowestRank(game) };
       if (!prevPlayer.gameRank) {
         console.error('prevScore', prevScore.userId);
@@ -99,7 +107,15 @@ async function setPlayerRanksAndResults(game: IGame, scores: IScore[], targetNum
         game.players.find(p => p.userId.toString() === score.userId.toString())
       );
 
-      player.gameRank = isDrawn ? prevPlayer.gameRank : <number> prevPlayer.gameRank - 1;
+      console.log(
+        'prev players with same rank',
+        game.players.filter(p => p.gameRank === prevPlayer.gameRank).length,
+      );
+      player.gameRank = isDrawn
+        ? prevPlayer.gameRank
+        : <number> prevPlayer.gameRank -
+          game.players.filter(p => p.gameRank === prevPlayer.gameRank).length;
+      console.log('player rank', player.gameRank, 'prev rank', prevPlayer.gameRank);
     });
 
   await Promise.all(

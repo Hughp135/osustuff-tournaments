@@ -65,7 +65,7 @@ describe('round-ended', () => {
     await addPlayer(game, winner);
 
     const baseScoreData = getBaseScoreData(round);
-    const score1 = await Score.create({
+    await Score.create({
       ...baseScoreData,
       score: 2,
       userId: winner._id,
@@ -73,7 +73,7 @@ describe('round-ended', () => {
     });
     const loser = await getUser(5);
     await addPlayer(game, loser);
-    const score2 = await Score.create({
+    await Score.create({
       ...baseScoreData,
       score: 1,
       userId: loser._id,

@@ -12,4 +12,7 @@
   <div class="scores-container">
     <app-scores-table [scores]="scores" [currentUser]="currentUser" [game]="game"></app-scores-table>
   </div>
+  <p class="m-top" *ngIf="playersNoScore.length">
+    The following players failed to set a score for this round in time: {{ playersNoScore.join(', ') }}
+  </p>
 </div>

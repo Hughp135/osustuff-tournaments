@@ -24,7 +24,7 @@ describe('update-player-game-stats', () => {
     await Game.deleteMany({});
     await User.deleteMany({});
   });
-  it.only('ranks rating', async () => {
+  it('ranks rating', async () => {
     const players = await createPlayers(10);
     for (let i = 0; i < 3; i++) {
       const shuffled = shufflePlayerRanks(players);

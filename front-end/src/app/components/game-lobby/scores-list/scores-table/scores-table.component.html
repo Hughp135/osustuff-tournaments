@@ -10,8 +10,8 @@
     <th>Mods</th>
   </thead>
   <tbody>
-    <tr [ngClass]="scoreClass(score)" *ngFor="let score of scoresTransformed">
-      <td>{{ score.isDraw ? '= ' : '' }}{{ score.place || '...' }}</td>
+    <tr [ngClass]="scoreClass(score)" *ngFor="let score of scores; let i = index;">
+      <td>{{ score.place || '...' }} {{ score.place && scores[i - 1] && scores[i - 1].place === score.place ? '= ' : '' }}</td>
       <td [class.my-name]="currentUser === score.username">{{ score.username }}</td>
       <td>{{ score.score | number }}</td>
       <td>{{ getRank(score.rank) }}</td>

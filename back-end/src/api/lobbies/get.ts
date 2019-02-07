@@ -49,7 +49,7 @@ async function getData(id: string) {
     .select({ beatmap: 1 })
     .lean();
   const scores = await getAllUserBestScores(game.currentRound);
-  const scoresTransformed = scores.map((score: any, idx: number) => {
+  const scoresTransformed = scores.map((score: any) => {
     const player = game.players.find((p: any) => p.userId.toString() === score.userId.toString());
     score.username = player.username;
     score.userId = undefined;

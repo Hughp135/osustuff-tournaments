@@ -28,6 +28,7 @@ export interface IGame {
   winningUser: {
     username: string;
   };
+  currentRound?: string;
   roundNumber?: number;
   nextStageStarts?: Date;
   beatmaps: any[];

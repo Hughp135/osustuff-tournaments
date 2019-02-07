@@ -12,7 +12,7 @@ export async function addSampleScores(game: IGame) {
           roundId: game.currentRound,
           userId: player.userId,
           username: player.username,
-          score: Math.floor(Math.random() * 10) * 1000000,
+          score: Math.floor(Math.random() * 1000),
           mods: arrayRandVal([64, 72, 80]), // 0, 8, 16, 32, 64, 24, 72
           rank: arrayRandVal(['A', 'F', 'B', 'S']),
           maxCombo: Math.floor(Math.random() * 1600),

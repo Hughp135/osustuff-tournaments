@@ -33,18 +33,6 @@ export class ScoresTableComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
-
-  public get scoresTransformed() {
-    return this.scores.map((score, index) => {
-      const next = this.scores[index + 1];
-      if (score.place !== undefined && next && next.place === score.place) {
-        score.isDraw = true;
-        next.isDraw = true;
-      }
-      return score;
-    });
-  }
-
   public scoreClass(score: any) {
     return score.passedRound === undefined ? '' : score.passedRound === true ? 'alive' : 'dead';
   }
