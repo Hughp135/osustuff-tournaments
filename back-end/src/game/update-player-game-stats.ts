@@ -1,15 +1,14 @@
 import { Skill } from './../services/trueskill';
-import { User, IUser } from '../models/User.model';
-import { IPlayer } from '../models/Game.model';
+import { User, IUser, IUserResult } from '../models/User.model';
+import { IPlayer, IGame } from '../models/Game.model';
 import { Rating } from 'ts-trueskill';
-import { Types } from 'mongoose';
 
-export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
+export async function updatePlayerGameStats(game: IGame) {
   const playerCount = game.players.length;
+
   const rankedPlayers: Array<IPlayer & { user: IUser }> = await Promise.all(
     game.players
       .filter(p => !!p.gameRank)
-      // .sort((a, b) => <number> a.gameRank - <number> b.gameRank)
       .map(async (p: IPlayer & { user?: IUser }) => {
         p.user = <IUser> await User.findOne({ osuUserId: p.osuUserId });
         if (p.gameRank === 1) {
@@ -19,6 +18,7 @@ export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
           ((p.user.averageRank || 0) * p.user.gamesPlayed + <number> p.gameRank) /
           (p.user.gamesPlayed + 1);
         p.user.gamesPlayed++;
+
         const gamePercentile = <number> p.gameRank / playerCount;
 
         if (gamePercentile <= 0.1) {
@@ -39,28 +39,35 @@ export async function updatePlayerGameStats(game: { players: IPlayer[] }) {
       }),
   );
 
-  await calculatePlayerRatings(rankedPlayers);
-
-  await Promise.all(
-    rankedPlayers.map(async p => {
-      await p.user.save();
-    }),
-  );
+  await calculatePlayerRatings(rankedPlayers, game);
 }
 
-async function calculatePlayerRatings(rankedPlayers: Array<IPlayer & { user: IUser }>) {
+async function calculatePlayerRatings(
+  rankedPlayers: Array<IPlayer & { user: IUser }>,
+  game: IGame,
+) {
   const ratings = rankedPlayers.map(p => [
     Skill.createRating(p.user.rating.mu, p.user.rating.sigma),
   ]);
   const rankings = rankedPlayers.map(p => <number> p.gameRank);
   const results = Skill.rate(ratings, rankings) as Rating[][];
 
-  // console.log('flattenedResults', flattenedResults.map(r => r.toString()));
-  results.forEach(([r], index) => {
-    const player = rankedPlayers[index];
-    player.user.rating = {
-      mu: r.mu,
-      sigma: r.sigma,
-    };
-  });
+  await Promise.all(
+    results.map(async ([r], index) => {
+      const player = rankedPlayers[index];
+      const oldRating = player.user.rating.mu;
+      player.user.rating = {
+        mu: r.mu,
+        sigma: r.sigma,
+      };
+      const gameEndedAt = new Date();
+      const userResult = <IUserResult> (
+        player.user.results.find(res => res.gameId.toHexString() === game._id.toString())
+      );
+      userResult.gameEndedAt = gameEndedAt;
+      userResult.ratingChange = player.user.rating.mu - oldRating;
+
+      await player.user.save();
+    }),
+  );
 }

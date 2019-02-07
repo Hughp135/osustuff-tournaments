@@ -55,7 +55,7 @@ export class GameStatusComponent implements OnInit {
         title: 'The game has finished!',
         message: this.game.winningUser
           ? `${this.game.winningUser.username} has won the match!`
-          : 'No one won this time. All players have either quit or failed to set a score in time.',
+          : 'No one won this time. Either no one set a score in the final round or it was a draw.',
       };
     }
   }

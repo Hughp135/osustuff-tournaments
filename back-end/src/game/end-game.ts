@@ -7,27 +7,30 @@ import { User } from 'src/models/User.model';
 export async function endGame(game: IGame) {
   const alivePlayers = game.players.filter(p => p.alive);
 
-  if (alivePlayers.length > 1) {
-    throw new Error('Cannot end game with more than 1 player alive: ' + game._id);
-  }
+  await Promise.all(
+    alivePlayers.map(async player => {
+      player.gameRank = 1;
+      const result: IUserResult = {
+        gameId: game._id,
+        place: 1,
+        gameEndedAt: new Date(),
+      };
 
-  const [winner] = alivePlayers;
+      await User.updateOne(
+        { _id: player.userId },
+        { currentGame: undefined, $addToSet: { results: result } },
+      );
+    }),
+  );
 
-  if (winner) {
+  if (alivePlayers.length === 1) {
+    const [winner] = alivePlayers;
+
     // Winner has been decided
     game.winningUser = {
       userId: winner.userId,
       username: winner.username,
     };
-    winner.gameRank = 1;
-
-    const result: IUserResult = {
-      gameId: game._id,
-      place: 1,
-      gameEndedAt: new Date(),
-    };
-
-    await User.updateOne({ _id: winner.userId }, { currentGame: undefined, $addToSet: { results: result } });
   }
 
   game.status = 'complete';

@@ -6,42 +6,18 @@ import { DURATION_ROUND_ENDED } from './durations';
 import { getAllUserBestScores } from './get-round-scores';
 import { User } from 'src/models/User.model';
 import { updatePlayerAchievements } from 'src/achievements/update-player-achievements';
-import winston = require('winston');
 
 // Kills players with lowest score each round
 export async function roundEnded(game: IGame, round: IRound) {
   // Get scores sorted by score
   const scores = await getAllUserBestScores(round._id);
 
-  // await Promise.all(
-  //   scores.map(async (score, idx) => {
-  //     score.place = idx + 1;
-  //     await score.save();
-  //   }),
-  // );
-
   // Calculate which players lost the round.
   const winRate = Math.max(0.4, 0.8 - 0.1 * (<number> round.roundNumber - 1));
   const targetNumberOfWinners =
     scores.length === 2 ? 1 : Math.max(1, Math.round(scores.length * winRate));
-  // const winningScores = scores.slice(0, numberOfWinners);
 
-  // await Promise.all(
-  //   winningScores.map(async score => {
-  //     score.passedRound = true;
-  //     await score.save();
-  //   }),
-  // );
-
-  // game.players.forEach(player => {
-  //   player.alive = winningScores.some(s => s.userId.toString() === player.userId.toString());
-  //   player.roundLostOn = player.alive ? undefined : <number> game.roundNumber;
-  // });
   await setPlayerRanksAndResults(game, scores, targetNumberOfWinners);
-
-  // const deadPlayerIds = game.players.filter(p => !p.alive).map(p => p.userId);
-
-  // await User.updateMany({ _id: deadPlayerIds }, { currentGame: undefined });
 
   game.status = 'round-over';
 
@@ -58,6 +34,7 @@ export async function roundEnded(game: IGame, round: IRound) {
 }
 
 async function setPlayerRanksAndResults(game: IGame, scores: IScore[], targetNumWinners: number) {
+  console.log('target numWinners');
   const playersNoScore = game.players.filter(
     p => !scores.some(s => s.userId.toString() === p.userId.toString()),
   );
@@ -69,27 +46,37 @@ async function setPlayerRanksAndResults(game: IGame, scores: IScore[], targetNum
   });
 
   // Set score places and determine winning scores
-  scores.map((score, idx) => {
-    const prevScore = scores[idx - 1] || { score: Infinity, place: 0 };
+  await Promise.all(
+    scores.map(async (score, idx, array) => {
+      const prevScore = array[idx - 1] || { score: Infinity, place: 1, _id: '' };
 
-    if (score.score > prevScore.score) {
-      throw new Error('scores are not ordered descendingly');
-    }
+      if (score.score > prevScore.score) {
+        throw new Error('scores are not ordered descendingly');
+      }
 
-    const isDrawn = score.score === prevScore.score;
+      const isDrawn = score.score === prevScore.score;
+      score.place = isDrawn
+        ? <number> prevScore.place +
+          array.filter(
+            s => s._id.toString() !== prevScore._id.toString() && s.place === prevScore.place,
+          ).length
+        : <number> prevScore.place + array.filter(s => s.place === prevScore.place).length;
+      score.passedRound = isDrawn ? score.place <= targetNumWinners : idx < targetNumWinners;
+      await score.save();
+      console.log('isDraw', isDrawn, 'prevScore', prevScore.place, 'place', score.place);
 
-    score.place = <number> prevScore.place + scores.filter(s => s.place === prevScore.place).length;
-    score.passedRound = isDrawn ? score.place <= targetNumWinners : idx < targetNumWinners;
+      const player = <IPlayer> (
+        game.players.find(p => p.userId.toString() === score.userId.toString())
+      );
 
-    const player = <IPlayer> game.players.find(p => p.userId.toString() === score.userId.toString());
+      player.alive = score.passedRound;
+      if (!player.alive) {
+        player.roundLostOn = game.roundNumber;
+      }
 
-    player.alive = score.passedRound;
-    if (!player.alive) {
-      player.roundLostOn = game.roundNumber;
-    }
-
-    return player;
-  });
+      return player;
+    }),
+  );
 
   // Set losing score players' ranks
   scores
@@ -98,13 +85,14 @@ async function setPlayerRanksAndResults(game: IGame, scores: IScore[], targetNum
       return !player.alive;
     })
     .sort((a, b) => a.score - b.score)
-    .forEach((score, idx) => {
-      const prevScore = scores[idx - 1] || { score: 0 };
+    .forEach((score, idx, array) => {
+      const prevScore = array[idx - 1] || { score: -1 };
       const isDrawn = score.score === prevScore.score;
       const prevPlayer = prevScore.userId
         ? <IPlayer> game.players.find(p => p.userId.toString() === prevScore.userId.toString())
         : { gameRank: getLowestRank(game) };
       if (!prevPlayer.gameRank) {
+        console.error('prevScore', prevScore.userId);
         throw new Error('not a player' + prevPlayer);
       }
       const player = <IPlayer> (
@@ -114,7 +102,6 @@ async function setPlayerRanksAndResults(game: IGame, scores: IScore[], targetNum
       player.gameRank = isDrawn ? prevPlayer.gameRank : <number> prevPlayer.gameRank - 1;
     });
 
-  const dateEnded = new Date();
   await Promise.all(
     game.players
       .filter(p => p.roundLostOn === game.roundNumber)
@@ -122,10 +109,12 @@ async function setPlayerRanksAndResults(game: IGame, scores: IScore[], targetNum
         const result: IUserResult = {
           gameId: game._id,
           place: <number> player.gameRank,
-          gameEndedAt: dateEnded,
         };
 
-        await User.updateOne({ _id: player.userId }, { $addToSet: { results: result } });
+        await User.updateOne(
+          { _id: player.userId },
+          { $addToSet: { results: result }, currentGame: undefined },
+        );
       }),
   );
 }

@@ -119,7 +119,7 @@ async function completeRound(game: IGame) {
   const alivePlayers = game.players.filter(p => p.alive);
 
   if (<Date> game.nextStageStarts < new Date()) {
-    if (alivePlayers.length > 1) {
+    if (game.roundNumber !== 10 && alivePlayers.length > 1) {
       console.log('players still alive, starting next round');
       // Start the next round
       await nextRound(game);
