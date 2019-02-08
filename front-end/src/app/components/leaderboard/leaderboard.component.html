@@ -1,8 +1,7 @@
 <div class="ui inverted basic segment">
   <h1 class="ui inverted header">Leaderboard</h1>
   <p>
-    Note: the rating system in an experimental phase and may
-    be reset / changed frequently.
+    Leaderboards may be reset when the rating algorithm is adjusted.
   </p>
 
   <table class="ui inverted unstackable table">
@@ -25,7 +24,7 @@
           # {{ index + 1 }}
         </td>
         <td class="collapsing">
-          <i class="teal crosshairs icon"></i>
+          <i class="icon" [ngClass]="getRatingIcon(user)"></i>
           {{ user.gamesPlayed > 0 ? (user.rating.mu - 3* user.rating.sigma).toFixed(0) : '--' }}
         </td>
         <td class="collapsing">

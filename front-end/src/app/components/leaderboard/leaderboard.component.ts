@@ -22,4 +22,12 @@ export class LeaderboardComponent implements OnInit {
     }
     return ((val / user.gamesPlayed) * 100).toFixed(0) + '%';
   }
+
+  public getRatingIcon(user: IUser): string {
+    if (user.gamesPlayed <= 3) {
+      return 'orange exclamation';
+    } else {
+      return 'teal crosshairs';
+    }
+  }
 }
