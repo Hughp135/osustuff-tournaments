@@ -9,3 +9,4 @@ OSU_OAUTH_ID: null
 OSU_OAUTH_SECRET: ''
 JWT_SECRET: 'secret'
 OSU_OAUTH_REDIRECT: 'http://localhost:4200/api/login-redirect'
+PLAYERS_REQUIRED_TO_START: 1

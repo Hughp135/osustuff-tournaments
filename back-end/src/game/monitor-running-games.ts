@@ -17,6 +17,7 @@ import { logger } from '../logger';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
+const PLAYERS_REQUIRED_TO_START = config.get('PLAYERS_REQUIRED_TO_START');
 export let isMonitoring = false;
 
 export async function startMonitoring() {
@@ -81,7 +82,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
 }
 
 async function startGame(game: IGame) {
-  const enoughPlayers = game.players.length > 1;
+  const enoughPlayers = game.players.length >= PLAYERS_REQUIRED_TO_START;
   if (!enoughPlayers) {
     if (game.nextStageStarts) {
       console.log('canceling countdown');
