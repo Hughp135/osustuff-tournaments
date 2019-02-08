@@ -19,6 +19,35 @@
           Only scores set after the round starts will count.
         </p>
       </div>
+      <div class="title" (click)="activeQuestion = 10">
+        <i class="dropdown icon"></i>
+        How are beatmaps chosen?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 10">
+        <p>
+          The system will automatically select 10 beatmaps for
+          every match from recently ranked/loved
+          maps
+          that have been ranked or achieved loved status within
+          the last month.
+        </p>
+        <p>
+          Support for custom games with your own choice of
+          beatmaps will be added in the future.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 11">
+        <i class="dropdown icon"></i>
+        Are there any plans to add additional tournament formats?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 11">
+        <p>
+          Currently the only tournament format is the 'Royale' format - e.g. elimination down to 1 winner.
+        </p>
+        <p>
+          More game modes will most likely be added in future as per popular demands.
+        </p>
+      </div>
       <div class="title" (click)="activeQuestion = 2">
         <i class="dropdown icon"></i>
         Can I play with any mods?
@@ -99,11 +128,11 @@
       </div>
       <div class="content" [class.active]="activeQuestion === 5">
         <p>
-          The system uses a multiplayer ranking algorithm called
-          TrueSkill. Player ratings are calculated at the end of
-          each match
-          based on their rank achieved in the match.
-          Each new player starts with 1050 rating, and will either
+          The ranking system is a custom implementation of the TrueSkill algorithm.
+          Player ratings are calculated at the end of each match
+          based on rank achieved in the match.
+          Each new player starts with 1050 rating, and will
+          either
           go up or down in rating after each match.
           The rating system attempts to judge player's skill and
           consistency rather than the number of games player, so
@@ -159,11 +188,14 @@
       </div>
       <div class="content" [class.active]="activeQuestion === 8">
         <p>
-          There are currently multiple achievements that are possible to achieve.
-          Achievements are normally rewarded after the match if they have been achieved by a player.
+          There are currently multiple achievements that are
+          possible to achieve.
+          Achievements are normally rewarded after the match if
+          they have been achieved by a player.
         </p>
         <p>
-          Achievements will continue to be added as time goes on, however the list of possible achievements
+          Achievements will continue to be added as time goes
+          on, however the list of possible achievements
           is not available publicly at this time.
         </p>
       </div>
