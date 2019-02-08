@@ -1,3 +1,16 @@
+:host {
+  &.finished {
+    .ui.inverted.segment {
+      background: #191919;
+    }
+  }
+  &.inprogress {
+    .ui.inverted.segment {
+      background: #343954;
+    }
+  }
+}
+
 .large.icon {
   margin-left: 8px !important;
   margin-top: 8px !important;

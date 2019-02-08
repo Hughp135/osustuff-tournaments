@@ -17,8 +17,8 @@
   <app-lobbies-list [lobbies]="joinableGames"></app-lobbies-list>
 
   <h2 *ngIf="inProgressGames.length">In Progress Matches</h2>
-  <app-lobbies-list [lobbies]="inProgressGames"></app-lobbies-list>
+  <app-lobbies-list class="inprogress" [lobbies]="inProgressGames"></app-lobbies-list>
 
   <h3 *ngIf="completedGames.length">Recently Finished Matches</h3>
-  <app-lobbies-list [lobbies]="completedGames"></app-lobbies-list>
+  <app-lobbies-list class="finished" [lobbies]="completedGames"></app-lobbies-list>
 </div>
