@@ -82,11 +82,11 @@ describe('round-ended', () => {
 
     await roundEnded(game, round);
 
-    expect(game.players[0].gameRank).to.equal(3);
+    expect(game.players[0].gameRank).to.equal(5);
     expect(game.players[0].alive).to.equal(false);
-    expect(game.players[1].gameRank).to.equal(3);
+    expect(game.players[1].gameRank).to.equal(5);
     expect(game.players[1].alive).to.equal(false);
-    expect(game.players[2].gameRank).to.equal(3);
+    expect(game.players[2].gameRank).to.equal(5);
     expect(game.players[2].alive).to.equal(false);
     expect(game.players[3].gameRank).to.equal(undefined);
     expect(game.players[3].alive).to.equal(true);
@@ -334,8 +334,8 @@ describe('round-ended', () => {
     expect(game.players[2].gameRank).to.equal(5);
     expect(game.players[3].gameRank).to.equal(undefined);
     expect(game.players[4].gameRank).to.equal(undefined);
-    expect(game.players[5].gameRank).to.equal(6);
-    expect(game.players[6].gameRank).to.equal(6);
+    expect(game.players[5].gameRank).to.equal(7);
+    expect(game.players[6].gameRank).to.equal(7);
   });
 });
 

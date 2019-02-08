@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import got from 'got';
 import config from 'config';
-import winston from 'winston';
 import { updateOrCreateUser } from '../../models/User.model';
 import { createJWT } from '../auth/jwt';
+import { logger } from '../../logger';
 
 const OSU_OAUTH_ID = config.get('OSU_OAUTH_ID');
 const OSU_OAUTH_SECRET = config.get('OSU_OAUTH_SECRET');
@@ -63,13 +63,13 @@ export async function loginVerify(req: Request, res: Response) {
 
         return res.redirect(`/lobbies/${gameId}?autoJoin=true`);
       } catch (e) {
-        winston.error('Failed to parse oauth state', state);
+        logger.error('Failed to parse oauth state', state);
       }
     }
 
     res.redirect('/lobbies');
   } catch (e) {
-    winston.error('Failed to verify oauth request', e);
+    logger.error('Failed to verify oauth request', e);
     res.status(400).end();
   }
 }

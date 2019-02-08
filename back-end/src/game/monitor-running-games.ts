@@ -3,7 +3,6 @@ import { Game } from '../models/Game.model';
 import { Round, IRound } from '../models/Round.model';
 import { checkRoundScores } from './check-player-scores';
 import { roundEnded } from './round-ended';
-import winston from 'winston';
 import { nextRound } from './next-round';
 import { endGame } from './end-game';
 import { createGame } from './create-game';
@@ -14,6 +13,7 @@ import { DURATION_START } from './durations';
 import { cache } from '../services/cache';
 import { ObjectId } from 'bson';
 import { Score } from '../models/Score.model';
+import { logger } from '../logger';
 
 const TEST_MODE = config.get('TEST_MODE');
 export let isMonitoring = false;
@@ -66,7 +66,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
             return await completeRound(game);
         }
       } catch (e) {
-        winston.log('error', 'Failed to update games ', e);
+        logger.error('Failed to update games ', e);
       }
     }),
   );
@@ -143,7 +143,7 @@ async function setNextStageStartsAt(game: IGame, seconds: number) {
 async function skipCheckingScore(game: IGame) {
   if (game.status === 'checking-scores' && <Date> game.nextStageStarts < new Date()) {
     const round = <IRound> await Round.findById(game.currentRound);
-    winston.error('Checking scores not complete after 2 minutes', {
+    logger.error('Checking scores not complete after 2 minutes', {
       gameId: game._id,
       round: round._id,
       playersAliveCount: game.players.filter(p => p.alive).length,
@@ -151,10 +151,10 @@ async function skipCheckingScore(game: IGame) {
     const scoresCount = await Score.count({ roundId: game._id });
     const alivePlayersCount = game.players.filter(p => p.alive).length;
     if (scoresCount >= alivePlayersCount / 2) {
-      winston.info('Ending round as at least half alive players have set score');
+      logger.info('Ending round as at least half alive players have set score');
       await roundEnded(game, round);
     } else {
-      winston.info('Checking scores again');
+      logger.info('Checking scores again');
       await checkRoundEnded(game);
     }
     clearGetLobbyCache(game._id);

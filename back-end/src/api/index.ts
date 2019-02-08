@@ -1,7 +1,6 @@
 import bodyParser from 'body-parser';
 import express, { Router } from 'express';
 import config from 'config';
-import winston from 'winston';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
@@ -22,6 +21,7 @@ import { getUser } from './user/get-user';
 import { loginVerify } from './user/login-verify';
 import { authMiddleware } from './auth/jwt-middleware';
 import { getUnreadAchievements } from './user/get-achievements';
+import { logger } from '../logger';
 
 const PORT = config.get('API_PORT');
 const TEST_MODE = config.get('TEST_MODE');
@@ -63,7 +63,7 @@ router.get('/login-verify', loginVerify);
 app.use('/api', router);
 
 export async function startServer() {
-  winston.log('info', 'Environment ' + process.env.NODE_ENV);
+  logger.info('Environment ' + process.env.NODE_ENV);
   await app.listen(PORT);
-  winston.log('info', 'API started on port ' + PORT);
+  logger.info('API started on port ' + PORT);
 }

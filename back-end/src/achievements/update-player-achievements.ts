@@ -1,5 +1,4 @@
 import { achievementNewbie } from './game-complete/newbie';
-import winston from 'winston';
 import { IGame } from '../models/Game.model';
 import { achievementVersatile } from './game-complete/versatile';
 import { achievementPlayAsTester } from './join-game/play-as-tester';
@@ -10,6 +9,7 @@ import { Score } from '../models/Score.model';
 import { achievementHdPlayer } from './game-complete/hd-player';
 import { achievementGrinder } from './game-complete/grinder';
 import { achievementSpeed } from './game-complete/speedy';
+import { logger } from '../logger';
 
 export async function updatePlayerAchievements(game: IGame) {
   const userOsuIds = game.players.map(p => p.osuUserId);
@@ -44,6 +44,6 @@ export async function updatePlayerAchievements(game: IGame) {
         break;
     }
   } catch (e) {
-    winston.error('Failed to updated achievements', e);
+    logger.error('Failed to updated achievements', e);
   }
 }

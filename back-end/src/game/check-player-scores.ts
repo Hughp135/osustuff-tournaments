@@ -2,8 +2,8 @@ import { IRound } from './../models/Round.model';
 import { IGame, IPlayer } from './../models/Game.model';
 import { Score, IScore } from '../models/Score.model';
 import config from 'config';
-import winston = require('winston');
 import { addSampleScores } from '../test-helpers/add-sample-scores';
+import { logger } from '../logger';
 
 const TEST_MODE = config.get('TEST_MODE');
 
@@ -27,7 +27,7 @@ export async function checkRoundScores(
     await Promise.all(
       players.map(async p =>
         checkPlayerScores(p, round, getUserRecent).catch(e =>
-          winston.error('Failed to check player scores: ' + p, e),
+          logger.error('Failed to check player scores: ' + p, e),
         ),
       ),
     );

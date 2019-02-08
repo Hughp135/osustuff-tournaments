@@ -1,6 +1,7 @@
 import { IAchievement, Achievement } from '../models/Achievement.model';
 import { getDataOrCache } from '../services/cache';
-import winston = require('winston');
+import { log } from 'winston';
+import { logger } from '../logger';
 
 export async function getOrCreateAchievement(
   title: string,
@@ -15,7 +16,7 @@ export async function getOrCreateAchievement(
       }
       return await Achievement.create({ title, description, icon });
     } catch (e) {
-      winston.error('Failed to create/get achievement', e);
+      logger.error('Failed to create/get achievement', e);
       return null;
     }
   });

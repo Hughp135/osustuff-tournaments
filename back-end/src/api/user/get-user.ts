@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { User, IUser, IUserAchievement } from '../../models/User.model';
 import { getAchievement } from '../../achievements/get-achievement';
-import winston = require('winston');
+import { logger } from '../../logger';
 
 export async function getUser(req: Request, res: Response) {
   let { username } = req.params;
@@ -30,7 +30,7 @@ export async function getUser(req: Request, res: Response) {
       .map(async ({ achievementId }: IUserAchievement) => {
         const achievement = await getAchievement(achievementId);
         if (!achievement) {
-          winston.error('Achievement ID no longer exists', [
+          logger.error('Achievement ID no longer exists', [
             'Achievement ID ' + achievementId.toHexString(),
             'User ID: ' + user._id.toHexString(),
           ]);
