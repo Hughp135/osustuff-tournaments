@@ -7,6 +7,9 @@ import { getAllUserBestScores } from './get-round-scores';
 import { User } from '../models/User.model';
 import { updatePlayerAchievements } from '../achievements/update-player-achievements';
 import { cache } from '../services/cache';
+import config from 'config';
+
+const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 
 // Kills players with lowest score each round
 export async function roundEnded(game: IGame, round: IRound) {
@@ -24,7 +27,7 @@ export async function roundEnded(game: IGame, round: IRound) {
 
   // Update next round start date
   const date = new Date();
-  if (game.players.filter(p => p.alive).length > 1) {
+  if (game.players.filter(p => p.alive).length > 1 && !FAST_FORWARD_MODE) {
     date.setSeconds(date.getSeconds() + DURATION_ROUND_ENDED);
   }
   game.nextStageStarts = date;

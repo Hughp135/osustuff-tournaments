@@ -12,6 +12,14 @@ body {
   }
 }
 
+.ui.inverted.table thead.blue th {
+  background-color: #334560;
+}
+
+.ui.inverted.segment {
+  background: #3f4f67;
+}
+
 .ui.inverted.segment.no-bg {
   border-radius: 0 !important;
   background: none !important;

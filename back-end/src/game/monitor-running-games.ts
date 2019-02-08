@@ -16,6 +16,7 @@ import { Score } from '../models/Score.model';
 import { logger } from '../logger';
 
 const TEST_MODE = config.get('TEST_MODE');
+const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 export let isMonitoring = false;
 
 export async function startMonitoring() {
@@ -96,7 +97,14 @@ async function startGame(game: IGame) {
   if (!game.nextStageStarts) {
     console.log('Beginning countdown....');
     // Set the countdown to start
-    await setNextStageStartsAt(game, DURATION_START);
+    if (!FAST_FORWARD_MODE) {
+      await setNextStageStartsAt(game, DURATION_START);
+    } else {
+      const date = new Date();
+      date.setSeconds(date.getSeconds() + 60);
+      game.nextStageStarts = date;
+      await game.save();
+    }
   } else if (game.nextStageStarts < new Date()) {
     clearGetLobbyCache(game._id);
     // Start the first round
@@ -134,7 +142,9 @@ async function completeRound(game: IGame) {
 
 async function setNextStageStartsAt(game: IGame, seconds: number) {
   const date = new Date();
-  date.setSeconds(date.getSeconds() + seconds);
+  if (!FAST_FORWARD_MODE) {
+    date.setSeconds(date.getSeconds() + seconds);
+  }
   // Update game status and set time to next stage
   game.nextStageStarts = date;
   await game.save();
@@ -148,7 +158,7 @@ async function skipCheckingScore(game: IGame) {
       round: round._id,
       playersAliveCount: game.players.filter(p => p.alive).length,
     });
-    const scoresCount = await Score.count({ roundId: game._id });
+    const scoresCount = await Score.countDocuments({ roundId: game._id });
     const alivePlayersCount = game.players.filter(p => p.alive).length;
     if (scoresCount >= alivePlayersCount / 2) {
       logger.info('Ending round as at least half alive players have set score');

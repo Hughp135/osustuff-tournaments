@@ -1,6 +1,9 @@
 import { IGame } from '../models/Game.model';
 import { Round } from '../models/Round.model';
 import { DURATION_ROUND_ADDITIONAL } from './durations';
+import config from 'config';
+
+const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 
 export async function nextRound(game: IGame) {
   const nextRoundNumber = (game.roundNumber || 0) + 1;
@@ -20,8 +23,9 @@ export async function nextRound(game: IGame) {
 
   // Set time that round should last
   const date = new Date();
-  date.setSeconds(date.getSeconds() + parseFloat(beatmap.total_length) + DURATION_ROUND_ADDITIONAL);
-  // date.setSeconds(date.getSeconds() + 20); // test
+  if (!FAST_FORWARD_MODE) {
+    date.setSeconds(date.getSeconds() + parseFloat(beatmap.total_length) + DURATION_ROUND_ADDITIONAL);
+  }
   game.nextStageStarts = date;
 
   const totalBeatmapDuration = game.beatmaps.reduce(

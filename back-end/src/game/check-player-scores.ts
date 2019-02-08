@@ -6,6 +6,7 @@ import { addSampleScores } from '../test-helpers/add-sample-scores';
 import { logger } from '../logger';
 
 const TEST_MODE = config.get('TEST_MODE');
+const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 
 export async function checkRoundScores(
   game: IGame,
@@ -13,14 +14,16 @@ export async function checkRoundScores(
   getUserRecent: (u: string) => Promise<any>,
 ) {
   const date = new Date();
-  date.setSeconds(date.getSeconds() + 120);
+  if (!FAST_FORWARD_MODE) {
+    date.setSeconds(date.getSeconds() + 120);
+  }
   game.status = 'checking-scores';
   game.nextStageStarts = date;
   await game.save();
 
   if (TEST_MODE) {
     await addSampleScores(game);
-    await new Promise(res => setTimeout(res, 5000));
+    await new Promise(res => setTimeout(res, 1000));
   } else {
     const players = game.players.filter(p => p.alive);
 

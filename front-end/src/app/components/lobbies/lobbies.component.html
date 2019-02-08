@@ -1,9 +1,19 @@
 <div class="ui inverted container section">
-  <h1 class="ui inverted header">Matches</h1>
+  <div class="ui grid">
+    <div class="fourteen wide column">
+      <h1 class="ui inverted header">Matches</h1>
+    </div>
+    <div class="two wide right aligned column">
+      <i class="large redo link icon" (click)="fetch()"></i>
+    </div>
+  </div>
 
   <h2>Open Matches</h2>
-  <p *ngIf="!joinableGames.length">No games are open at the
-    moment</p>
+  <div *ngIf="!joinableGames.length" class="ui inverted segment">
+    <p>
+      No matches are open to join at the moment
+    </p>
+  </div>
   <app-lobbies-list [lobbies]="joinableGames"></app-lobbies-list>
 
   <h2 *ngIf="inProgressGames.length">In Progress Matches</h2>

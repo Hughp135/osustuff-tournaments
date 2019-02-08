@@ -10,6 +10,9 @@ import { achievementHdPlayer } from './game-complete/hd-player';
 import { achievementGrinder } from './game-complete/grinder';
 import { achievementSpeed } from './game-complete/speedy';
 import { logger } from '../logger';
+import config from 'config';
+
+const TEST_MODE = config.get('TEST_MODE');
 
 export async function updatePlayerAchievements(game: IGame) {
   const userOsuIds = game.players.map(p => p.osuUserId);
@@ -22,10 +25,11 @@ export async function updatePlayerAchievements(game: IGame) {
   try {
     switch (game.status) {
       case 'round-over':
-        await achievementPlayAsTester(aliveUsers);
+        if (TEST_MODE) {
+          await achievementPlayAsTester(aliveUsers);
+        }
         break;
       case 'complete':
-        const rounds = await Round.find({ gameId: game._id });
         const passedScores = await Score.find({
           gameId: game._id,
           passedRound: true,

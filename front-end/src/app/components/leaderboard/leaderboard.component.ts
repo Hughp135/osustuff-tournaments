@@ -12,6 +12,7 @@ export class LeaderboardComponent implements OnInit {
 
   constructor(route: ActivatedRoute) {
     this.users = route.snapshot.data.data.users;
+    console.log(this.users);
   }
 
   ngOnInit() {}
@@ -24,10 +25,22 @@ export class LeaderboardComponent implements OnInit {
   }
 
   public getRatingIcon(user: IUser): string {
-    if (user.gamesPlayed <= 3) {
+    if (user.gamesPlayed < 5) {
       return 'orange exclamation';
     } else {
       return 'teal crosshairs';
+    }
+  }
+
+  public getWinsColor(user: IUser): string {
+    if (user.wins === 0) {
+      return '';
+    }
+    if (user.wins < 5) {
+      return 'yellow';
+    }
+    if (user.wins < 15) {
+      return 'teal';
     }
   }
 }

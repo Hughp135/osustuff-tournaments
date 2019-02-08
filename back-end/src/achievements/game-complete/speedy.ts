@@ -4,10 +4,15 @@ import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { getAppliedMods } from '../../helpers/get-applied-mods';
 
 export async function achievementSpeed(users: IUser[], passedScores: IScore[]) {
-  const achievement = await getOrCreateAchievement(
+  const achievement3 = await getOrCreateAchievement(
     'Speedy',
-    'Passed 3 rounds in one game with DT',
+    'Pass 3 rounds in one game with DT',
     'blue forward',
+  );
+  const achievement5 = await getOrCreateAchievement(
+    'DT God',
+    'Pass 5 rounds in one game with DT',
+    'red forward',
   );
 
   await Promise.all(
@@ -15,11 +20,13 @@ export async function achievementSpeed(users: IUser[], passedScores: IScore[]) {
       const dtScores = passedScores.filter(score => {
         return getAppliedMods(score.mods).includes('DT');
       });
-      const hasAchievement = user.achievements.some(
+      const achievement = dtScores.length >= 3 && dtScores.length < 5 ? achievement3
+        : dtScores.length >= 5 ? achievement5 : undefined;
+      const hasAchievement = achievement && user.achievements.some(
         a => a.achievementId.toString() === achievement._id.toString(),
       );
 
-      if (dtScores.length >= 3 && !hasAchievement) {
+      if (achievement && !hasAchievement) {
         const newAchievement: IUserAchievement = {
           achievementId: achievement._id,
           progress: 1,

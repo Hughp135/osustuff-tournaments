@@ -11,7 +11,7 @@ export class GameService {
   constructor(private apiService: ApiService) {}
 
   public async getLobbies() {
-    return await this.apiService.get('lobbies').toPromise();
+    return <IGame[]> await this.apiService.get('lobbies').toPromise();
   }
 
   public async getLobby(id: string) {

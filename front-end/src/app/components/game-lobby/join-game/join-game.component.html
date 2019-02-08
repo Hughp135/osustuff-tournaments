@@ -16,9 +16,10 @@
       <div *ngIf="!inAnotherGame">
         <div *ngIf="!success">
           <div class="small action input">
-            <button class="ui primary button" [disabled]="requestingJoin" [class.loading]="requestingJoin" (click)="joinGame()">Join
-              Game
+            <button class="ui primary button" [disabled]="requestingJoin" [class.loading]="requestingJoin" (click)="joinGame()">
+              Join Game
             </button>
+            Make sure you are ready to play before joining.
           </div>
 
           <div>

@@ -1,8 +1,8 @@
-
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription, interval } from 'rxjs';
 import { getTimeComponents } from 'src/app/resolvers/game-lobby.resolver';
+import { GameService } from '../../game.service';
 
 @Component({
   selector: 'app-lobbies',
@@ -13,7 +13,7 @@ export class LobbiesComponent implements OnInit, OnDestroy {
   public lobbies: any[];
   public subscriptions: Subscription[] = [];
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private gameService: GameService) {}
 
   ngOnInit() {
     const { data } = this.route.snapshot.data;
@@ -29,7 +29,7 @@ export class LobbiesComponent implements OnInit, OnDestroy {
             l.startsAt--;
           });
         this.setLobbiesStartString();
-      }),
+      })
     );
   }
 
@@ -49,7 +49,6 @@ export class LobbiesComponent implements OnInit, OnDestroy {
     return this.lobbies.filter(l => l.status === 'complete');
   }
 
-
   public setLobbiesStartString() {
     this.lobbies
       .filter(l => l.status === 'new')
@@ -66,5 +65,7 @@ export class LobbiesComponent implements OnInit, OnDestroy {
       });
   }
 
-
+  public async fetch() {
+    this.lobbies = await this.gameService.getLobbies();
+  }
 }

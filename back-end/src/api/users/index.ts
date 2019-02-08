@@ -5,16 +5,23 @@ export async function getUsers(req: Request, res: Response) {
   const users = await User.find()
     .sort({ 'rating.mu': -1 })
     .select({
-      updatedAt: 0,
-      __v: 0,
-      _id: 0,
-      achievements: 0,
-      createdAt: 0,
-      currentGame: 0,
-      results: 0,
+      rating: 1,
+      username: 1,
+      ppRank: 1,
+      countryRank: 1,
+      country: 1,
+      wins: 1,
+      gamesPlayed: 1,
+      percentiles: 1,
     })
-    .limit(100)
+    .limit(200)
     .lean();
 
-  res.json(users);
+  const transformed = (<any[]> users).map((u: any) => {
+    u.rating = u.rating.mu - 3 * u.rating.sigma;
+
+    return u;
+  }).sort((a, b) => b.rating - a.rating).slice(0, 100);
+
+  res.json(transformed);
 }

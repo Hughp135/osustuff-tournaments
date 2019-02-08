@@ -4,9 +4,11 @@
   bottom: 0;
   right: 0;
   width: 250px;
-  border-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   box-shadow: 0 0 15px #2a0e3e;
   background: #2b113e;
+  padding: 1.5em 0;
 
   .ui.header {
     margin: 0;
