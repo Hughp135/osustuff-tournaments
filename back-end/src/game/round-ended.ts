@@ -6,6 +6,7 @@ import { DURATION_ROUND_ENDED } from './durations';
 import { getAllUserBestScores } from './get-round-scores';
 import { User } from '../models/User.model';
 import { updatePlayerAchievements } from '../achievements/update-player-achievements';
+import { cache } from '../services/cache';
 
 // Kills players with lowest score each round
 export async function roundEnded(game: IGame, round: IRound) {
@@ -30,6 +31,7 @@ export async function roundEnded(game: IGame, round: IRound) {
 
   await updatePlayerAchievements(game);
   await game.save();
+  await cache.del(`get-lobby-users-${game._id}`);
 }
 
 async function setPlayerRanksAndResults(
@@ -37,87 +39,13 @@ async function setPlayerRanksAndResults(
   scores: IScore[],
   targetNumWinners: number,
 ) {
-  console.log('target numWinners', targetNumWinners);
-  const playersNoScore = game.players.filter(
-    p => p.alive && !scores.some(s => s.userId.toString() === p.userId.toString()),
-  );
-  console.log('players no score', playersNoScore.length);
-  const noScoreRank = getLowestRank(game) - playersNoScore.length;
-  playersNoScore.forEach(player => {
-    player.gameRank = noScoreRank;
-    player.alive = false;
-    player.roundLostOn = game.roundNumber;
-  });
+  rankNoScorePlayers(game, scores);
 
-  // Set score places and determine winning scores
-  await Promise.all(
-    scores.map(async (score, idx, array) => {
-      const prevScore = array[idx - 1] || { score: Infinity, place: 1, _id: '' };
+  await setScorePlaces(scores, targetNumWinners);
 
-      if (score.score > prevScore.score) {
-        throw new Error('scores are not ordered descendingly');
-      }
+  rankLosingScorePlayers(game, scores);
 
-      const isDrawn = score.score === prevScore.score;
-      score.place = isDrawn
-        ? <number> prevScore.place
-        : <number> prevScore.place + array.filter(s => s.place === prevScore.place).length;
-      score.passedRound = isDrawn
-        ? score.place <= targetNumWinners
-        : idx < targetNumWinners;
-      // console.log('isDraw', isDrawn, 'prevScore', prevScore.place, 'place', score.place);
-      await score.save();
-
-      const player = <IPlayer> (
-        game.players.find(p => p.userId.toString() === score.userId.toString())
-      );
-
-      player.alive = score.passedRound;
-      if (!player.alive) {
-        player.roundLostOn = game.roundNumber;
-      }
-
-      return player;
-    }),
-  );
-
-  // Set losing score players' ranks
-  scores
-    .filter(s => {
-      const player = <IPlayer> (
-        game.players.find(p => p.userId.toString() === s.userId.toString())
-      );
-      return !player.alive;
-    })
-    .sort((a, b) => a.score - b.score)
-    .forEach((score, idx, array) => {
-      const prevScore = array[idx - 1] || { score: -1 };
-      const isDrawn = score.score === prevScore.score;
-      console.log('lowest rank', getLowestRank(game));
-      const prevPlayer = prevScore.userId
-        ? <IPlayer> (
-            game.players.find(p => p.userId.toString() === prevScore.userId.toString())
-          )
-        : { gameRank: getLowestRank(game) };
-      if (!prevPlayer.gameRank) {
-        console.error('prevScore', prevScore.userId);
-        throw new Error('not a player' + prevPlayer);
-      }
-      const player = <IPlayer> (
-        game.players.find(p => p.userId.toString() === score.userId.toString())
-      );
-
-      console.log(
-        'prev players with same rank',
-        game.players.filter(p => p.gameRank === prevPlayer.gameRank).length,
-      );
-      player.gameRank = isDrawn
-        ? prevPlayer.gameRank
-        : <number> prevPlayer.gameRank -
-          game.players.filter(p => p.gameRank === prevPlayer.gameRank).length;
-      console.log('player rank', player.gameRank, 'prev rank', prevPlayer.gameRank);
-    });
-
+  // Save all losing users
   await Promise.all(
     game.players
       .filter(p => p.roundLostOn === game.roundNumber)
@@ -135,10 +63,75 @@ async function setPlayerRanksAndResults(
   );
 }
 
-function getLowestRank(game: IGame): number {
-  const [lowestRank] = game.players
-    .filter(p => !!p.gameRank)
-    .sort((a, b) => <number> a.gameRank - <number> b.gameRank);
+function rankNoScorePlayers(game: IGame, scores: IScore[]) {
+  const playersNoScore = game.players.filter(
+    p => p.alive && !scores.some(s => s.userId.toString() === p.userId.toString()),
+  );
+  const noScoreRank = game.players.filter(p => p.alive).length;
 
-  return lowestRank ? <number> lowestRank.gameRank : game.players.length + 1;
+  playersNoScore.forEach(player => {
+    player.gameRank = noScoreRank;
+    player.alive = false;
+    player.roundLostOn = game.roundNumber;
+  });
+}
+
+function rankLosingScorePlayers(game: IGame, scores: IScore[]) {
+  // Group all scores by place
+  const scoresByPlace = scores
+    .filter(s => !s.passedRound)
+    .reduce(
+      (acc: Array<{ place: number; scores: IScore[] }>, curr) => {
+        const placeScores = acc.find(x => x.place === curr.place);
+        if (placeScores) {
+          placeScores.scores.push(curr);
+        } else {
+          acc.push({ place: <number> curr.place, scores: [curr] });
+        }
+        return acc;
+      },
+      <Array<{ place: number; scores: [] }>> [],
+    );
+
+  // Give all scores with same place the same rank
+  scoresByPlace
+    .sort((a, b) => b.place - a.place)
+    .forEach(withSamePlace => {
+      const lowestRank = game.players.filter(p => p.alive).length;
+      const countScoresSamePlace = withSamePlace.scores.length - 1;
+
+      withSamePlace.scores.forEach(score => {
+        const player = <IPlayer> (
+          game.players.find(p => p.userId.toString() === score.userId.toString())
+        );
+        player.gameRank = lowestRank - countScoresSamePlace;
+        player.alive = false;
+        player.roundLostOn = game.roundNumber;
+      });
+    });
+}
+
+async function setScorePlaces(scores: IScore[], targetNumWinners: number) {
+  // Set score places
+  await Promise.all(
+    scores.map(async (score, idx, array) => {
+      const prevScore = array[idx - 1] || { score: Infinity, place: 1, _id: '' };
+
+      if (score.score > prevScore.score) {
+        throw new Error('scores are not ordered descendingly');
+      }
+
+      const isDrawn = score.score === prevScore.score;
+      score.place = isDrawn
+        ? <number> prevScore.place
+        : <number> prevScore.place + array.filter(s => s.place === prevScore.place).length;
+      score.passedRound = isDrawn
+        ? score.place <= targetNumWinners
+        : idx < targetNumWinners;
+
+      await score.save();
+
+      return score;
+    }),
+  );
 }

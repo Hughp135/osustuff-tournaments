@@ -26,7 +26,7 @@
         </td>
         <td class="collapsing">
           <i class="teal crosshairs icon"></i>
-          {{ user.gamesPlayed > 0 ? user.rating.mu.toFixed(0) : '--' }}
+          {{ user.gamesPlayed > 0 ? (user.rating.mu - 3* user.rating.sigma).toFixed(0) : '--' }}
         </td>
         <td class="collapsing">
           <a [routerLink]="['/user', user.username]">
