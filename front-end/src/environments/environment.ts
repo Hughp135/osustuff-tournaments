@@ -5,6 +5,8 @@
 export const environment = {
   production: false,
   base_api_url: '/api/',
+  osu_redirect_url: 'http://localhost:4200/api/login-verify',
+  osu_oauth_id: '46',
 };
 
 /*

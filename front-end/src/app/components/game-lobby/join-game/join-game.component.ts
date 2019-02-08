@@ -2,6 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from './../../../services/api.service';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { SettingsService } from 'src/app/services/settings.service';
+import { environment } from 'src/environments/environment';
 
 declare var responsiveVoice: any;
 
@@ -44,8 +45,10 @@ export class JoinGameComponent implements OnInit, OnDestroy {
   }
 
   get loginLink() {
+    const id = environment.osu_oauth_id;
+    const redirect = environment.osu_redirect_url;
     return (
-      'https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=46&redirect_uri=http://localhost:4200/api/login-verify&state=' +
+      `https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=${id}&redirect_uri=${redirect}&state=` +
       JSON.stringify({ gameId: this.game._id })
     );
   }
