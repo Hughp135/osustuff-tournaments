@@ -37,10 +37,11 @@ export class LeaderboardComponent implements OnInit {
       return '';
     }
     if (user.wins < 5) {
-      return 'yellow';
-    }
-    if (user.wins < 15) {
       return 'teal';
     }
+    if (user.wins < 15) {
+      return 'yellow';
+    }
+    return 'orange';
   }
 }

@@ -4,7 +4,7 @@
       <h1 class="ui inverted header">Matches</h1>
     </div>
     <div class="two wide right aligned column">
-      <i class="large redo link icon" (click)="fetch()"></i>
+      <i class="large link icon" [class.redo]="!fetching" [class.spinner]="fetching" [class.loading]="fetching" (click)="fetch()"></i>
     </div>
   </div>
 

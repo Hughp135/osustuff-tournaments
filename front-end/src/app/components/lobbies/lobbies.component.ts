@@ -12,6 +12,7 @@ import { GameService } from '../../game.service';
 export class LobbiesComponent implements OnInit, OnDestroy {
   public lobbies: any[];
   public subscriptions: Subscription[] = [];
+  public fetching = false;
 
   constructor(private route: ActivatedRoute, private gameService: GameService) {}
 
@@ -66,6 +67,12 @@ export class LobbiesComponent implements OnInit, OnDestroy {
   }
 
   public async fetch() {
-    this.lobbies = await this.gameService.getLobbies();
+    this.fetching = true;
+    try {
+      this.lobbies = await this.gameService.getLobbies();
+    } catch (e) {
+      console.error(e);
+    }
+    this.fetching = false;
   }
 }
