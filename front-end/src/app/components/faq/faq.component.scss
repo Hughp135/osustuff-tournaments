@@ -1,0 +1,17 @@
+.container.section {
+  min-height: calc(100vh - 375px);
+}
+
+.accordion {
+  .title {
+    font-weight: 700;
+  }
+
+  .content {
+    padding: 10px 20px !important;
+
+    a {
+      color: #a3ccf5;
+    }
+  }
+}

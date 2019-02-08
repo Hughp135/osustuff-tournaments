@@ -1,3 +1,4 @@
+import { IUser } from './../user-profile/user-profile.component';
 import { AdminService } from './../../services/admin.service';
 import { GameService } from './../../game.service';
 import { SettingsService, CurrentGame } from './../../services/settings.service';
@@ -19,6 +20,10 @@ export interface IPlayer {
   countryRank: number;
   country: string;
   gameRank?: number;
+  rating: IUser['rating'];
+  gamesPlayed: number;
+  wins: number;
+  percentiles: IUser['percentiles'];
 }
 
 export interface IGame {

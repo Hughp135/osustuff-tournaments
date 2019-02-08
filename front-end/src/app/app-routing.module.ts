@@ -10,6 +10,7 @@ import { GameLobbyResolver } from './resolvers/game-lobby.resolver';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 import { LobbiesComponent } from './components/lobbies/lobbies.component';
 import { LoginComponent } from './components/login/login.component';
+import { FaqComponent } from './components/faq/faq.component';
 
 const routes: Routes = [
   {
@@ -39,6 +40,10 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'faq',
+    component: FaqComponent,
   }
 ];
 

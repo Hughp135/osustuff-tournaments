@@ -32,6 +32,7 @@ import { LobbiesComponent } from './components/lobbies/lobbies.component';
 import { TwitchEmotesPipe } from 'src/pipes/twitch-emotes.pipe';
 import { LoginComponent } from './components/login/login.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { FaqComponent } from './components/faq/faq.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { NotificationsComponent } from './notifications/notifications.component'
     TwitchEmotesPipe,
     LoginComponent,
     NotificationsComponent,
+    FaqComponent,
   ],
   imports: [
     BrowserModule,

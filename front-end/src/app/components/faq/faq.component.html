@@ -1,0 +1,172 @@
+<div class="ui container section">
+  <h1>Frequently Asked Questions</h1>
+
+  <div class="ui inverted segment">
+    <div class="ui inverted accordion">
+      <div class="title" (click)="activeQuestion = 1">
+        <i class="dropdown icon"></i>
+        How are scores automatically detected?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 1">
+        <p>
+          At the end of each round, the system checks your
+          recent scores from the osu! API. It finds any scores
+          you have
+          set on the beatmap and takes the one with the highest
+          score, and uses that to determine if you pass the
+          round.
+          <br>
+          Only scores set after the round starts will count.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 2">
+        <i class="dropdown icon"></i>
+        Can I play with any mods?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 2">
+        <p>
+          Every round is currently freemod. This means you can
+          play with any mods except mods that are not
+          submittable
+          (e.g. AutoPlay / ScoreV2, etc). However, keep in mind
+          that if you select a difficulty reduction mod like
+          NoFail,
+          your score will be drastically reduce and your chances
+          of passing the round will be lower compared to people
+          who pass without difficulty reduction mods.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 3">
+        <i class="dropdown icon"></i>
+        How many players pass/fail each round?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 3">
+        <p>
+          A certain percent of players will fail each round. The
+          percent value used depends on which round the match is
+          currently in.
+          Currently, on the first round, 80% of players who have
+          set a score will pass, and the remaining 20% will be
+          eliminated.
+        </p>
+        <p>
+          On round 2, 70% of players who set a score will pass
+          and 30% will fail. On each subsequent round, the pass
+          rate drops
+          by 10% down to a minimum of 40% on round 4. This means
+          that on round 4, if there are 10 players remaining,
+          only up to 4 will pass (unless there are tied scores
+          or players leave).
+        </p>
+        <p>The exceptions to the rule are when players either
+          fail to set a score on the map within the time limit
+          (in which case
+          they will automatically lose), or if there are tied
+          scores at the lower threshold of winning players (i.e.
+          both players
+          got exactly the same score).
+
+          In the rare event of ties, every player who tied with
+          the lowest placed passing player will also pass the
+          round.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 4">
+        <i class="dropdown icon"></i>
+        How are players ranked in each match?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 4">
+        <p>
+          After each round, players who set a score will be
+          ranked using <a href="https://en.wikipedia.org/wiki/Ranking#Standard_competition_ranking_(%221224%22_ranking)">Standard
+            competition ranking</a>.
+          This means that scores tied will each gain the same
+          rank (i.e. there can be multiple players with the same
+          rank if they get the exact same score on a round).
+        </p>
+        <p>
+          Players who fail to set a score will be ranked
+          according to <a href="https://en.wikipedia.org/wiki/Ranking#Modified_competition_ranking_(%221334%22_ranking)">Modified
+            competition ranking</a>.
+          In other words, all players who did not set a score
+          will be given the lowest possible rank out of all
+          remaining players in the match.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 5">
+        <i class="dropdown icon"></i>
+        How does the skill rating system work?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 5">
+        <p>
+          The system uses a multiplayer ranking algorithm called
+          TrueSkill. Player ratings are calculated at the end of
+          each match
+          based on their rank achieved in the match.
+          Each new player starts with 1050 rating, and will either
+          go up or down in rating after each match.
+          The rating system attempts to judge player's skill and
+          consistency rather than the number of games player, so
+          below average skilled players will drop in rating,
+          while above average players will gain rating.
+        </p>
+        <p>
+          Players who quit the match or fail to set a score
+          during the round will still lose points and will be
+          judged
+          according to the rank they achieved in the match in
+          the same way as every other player.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 6">
+        <i class="dropdown icon"></i>
+        How many rounds are played each match?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 6">
+        <p>
+          A maximum of 10 rounds will be played, however in the
+          majority of cases matches will not last
+          as long as 10 rounds. The average number of rounds
+          players in a match is about 7 (assuming everyone
+          continues to the end). Matches with a large number of
+          players (>500) may continue to round 9 or 10.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 7">
+        <i class="dropdown icon"></i>
+        How can a match end with no winner?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 7">
+        <p>
+          The conditions for a match to end with no winner are
+          as follows:
+          <br>
+          - All of the alive players fail to set a score and are
+          eliminated
+          <br>
+          - The game makes it to 10 rounds and the final two
+          players tie scores at the end (highly unlikely)
+        </p>
+        <p>
+          Note that even matches with no winner are still ranked
+          and player ratings will be adjusted according to
+          the results.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 8">
+        <i class="dropdown icon"></i>
+        What achievements are there and how are they obtained?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 8">
+        <p>
+          There are currently multiple achievements that are possible to achieve.
+          Achievements are normally rewarded after the match if they have been achieved by a player.
+        </p>
+        <p>
+          Achievements will continue to be added as time goes on, however the list of possible achievements
+          is not available publicly at this time.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

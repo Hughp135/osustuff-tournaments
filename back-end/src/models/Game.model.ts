@@ -1,3 +1,4 @@
+import { IUser } from './User.model';
 import { IBeatmap } from './Round.model';
 import mongoose from 'mongoose';
 

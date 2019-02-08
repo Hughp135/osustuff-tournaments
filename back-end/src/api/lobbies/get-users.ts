@@ -39,6 +39,10 @@ async function getData(id: string) {
       ppRank: 1,
       osuUserId: 1,
       username: 1,
+      wins: 1,
+      gamesPlayed: 1,
+      percentiles: 1,
+      rating: 1,
     })
     .lean();
 

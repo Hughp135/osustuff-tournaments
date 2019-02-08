@@ -3,13 +3,19 @@
     <img src="/assets/osustuff-colors.png" alt="">
     <b>osuStuff</b>
   </a>
-  <a class="item" [class.active]="url === '/lobbies'" [routerLink]="'/lobbies'">
+  <a class="item" [class.active]="url === '/lobbies'"
+    [routerLink]="'/lobbies'">
     <i class="play icon"></i>
     Play
   </a>
-  <a class="item" [class.active]="url === '/leaderboard'" [routerLink]="'/leaderboard'">
+  <a class="item" [class.active]="url === '/leaderboard'"
+    [routerLink]="'/leaderboard'">
     <i class="trophy icon"></i>
     Leaderboard
+  </a>
+  <a class="item" [routerLink]="['/faq']">
+    <i class="info icon"></i>
+    FAQ
   </a>
 
   <div class="right menu">
@@ -33,7 +39,8 @@
 <router-outlet></router-outlet>
 
 <div *ngIf="isAdmin && url === '/lobbies'">
-  <div style="position: absolute; top: 0; right: 100px; z-index:999;" class="ui mini button" (click)="clearDb()">Clear
+  <div style="position: absolute; top: 0; right: 100px; z-index:999;"
+    class="ui mini button" (click)="clearDb()">Clear
     DB
   </div>
 </div>

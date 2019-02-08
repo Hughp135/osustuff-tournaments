@@ -50,3 +50,14 @@ body {
     vertical-align: middle;
   }
 }
+
+.ui.popup {
+  .content {
+    .ui.button {
+      margin-bottom: 8px;
+    }
+    p {
+      margin: 0;
+    }
+  }
+}
