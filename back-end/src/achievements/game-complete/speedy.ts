@@ -18,13 +18,22 @@ export async function achievementSpeed(users: IUser[], passedScores: IScore[]) {
   await Promise.all(
     users.map(async user => {
       const dtScores = passedScores.filter(score => {
-        return getAppliedMods(score.mods).includes('DT');
+        return (
+          score.userId.toHexString() === user.osuUserId.toString() &&
+          getAppliedMods(score.mods).includes('DT')
+        );
       });
-      const achievement = dtScores.length >= 3 && dtScores.length < 5 ? achievement3
-        : dtScores.length >= 5 ? achievement5 : undefined;
-      const hasAchievement = achievement && user.achievements.some(
-        a => a.achievementId.toString() === achievement._id.toString(),
-      );
+      const achievement =
+        dtScores.length >= 3 && dtScores.length < 5
+          ? achievement3
+          : dtScores.length >= 5
+          ? achievement5
+          : undefined;
+      const hasAchievement =
+        achievement &&
+        user.achievements.some(
+          a => a.achievementId.toString() === achievement._id.toString(),
+        );
 
       if (achievement && !hasAchievement) {
         const newAchievement: IUserAchievement = {
