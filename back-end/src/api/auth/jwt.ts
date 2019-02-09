@@ -9,7 +9,9 @@ export function verifyJWT(token: string) {
     jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
       if (err || !decodedToken) {
         /* istanbul ignore next */
-        logger.error('Invalid token error', [err.message || err]);
+        if (err) {
+          logger.error('Invalid token error', [err.message || err]);
+        }
         return reject(err);
       }
 

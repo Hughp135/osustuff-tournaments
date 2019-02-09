@@ -3,9 +3,11 @@ import { Request, Response } from 'express';
 
 export async function authMiddleware(req: Request, res: Response, next: any) {
   try {
-    const claim: any = await verifyJWT(req.cookies.jwt_token);
+    if (req.cookies.jwt_token && req.cookies.jwt_token.length) {
+      const claim: any = await verifyJWT(req.cookies.jwt_token);
 
-    req.app.set('claim', claim);
+      req.app.set('claim', claim);
+    }
 
     return next();
   } catch (e) {

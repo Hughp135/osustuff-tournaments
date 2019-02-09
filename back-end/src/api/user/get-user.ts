@@ -9,7 +9,7 @@ export async function getUser(req: Request, res: Response) {
   if (!username) {
     const claim = req.app.get('claim');
     if (!claim) {
-      res.status(401).end();
+      return res.status(401).end();
     }
     username = req.app.get('claim').username;
   }
