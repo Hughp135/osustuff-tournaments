@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { getAchievement } from '../../achievements/get-achievement';
 
 export async function getUnreadAchievements(req: Request, res: Response) {
-  const { username } = req.app.get('claim');
+  const { username } = (<any> req).claim;
 
   const user = await User.findOne({ username }).select({ achievements: 1 });
 

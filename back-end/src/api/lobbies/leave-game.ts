@@ -4,7 +4,7 @@ import { User } from '../../models/User.model';
 import { cache } from '../../services/cache';
 
 export async function leaveGame(req: Request, res: Response) {
-  const { username } = req.app.get('claim');
+  const { username } = (<any> req).claim;
 
   const game = await Game.findById(req.params.id);
 

@@ -6,7 +6,7 @@ export async function authMiddleware(req: Request, res: Response, next: any) {
     if (req.cookies.jwt_token && req.cookies.jwt_token.length) {
       const claim: any = await verifyJWT(req.cookies.jwt_token);
 
-      req.app.set('claim', claim);
+      (<any> req).claim = claim;
     }
 
     return next();

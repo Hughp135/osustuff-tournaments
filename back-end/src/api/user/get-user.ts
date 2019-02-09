@@ -7,11 +7,11 @@ export async function getUser(req: Request, res: Response) {
   let { username } = req.params;
 
   if (!username || username === 'me') {
-    const claim = req.app.get('claim');
+    const claim = (<any> req).claim;
     if (!claim) {
       return res.status(401).end();
     }
-    username = req.app.get('claim').username;
+    username = (<any> req).claim.username;
   }
 
   const user = await User.findOne({ username })
