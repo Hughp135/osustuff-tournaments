@@ -11,6 +11,10 @@ export async function sendMessage(req: Request, res: Response) {
   const { message } = req.body;
   const { username }: any = (<any> req).claim || {};
 
+  if (!username) {
+    return res.status(401).end();
+  }
+
   if (!Types.ObjectId.isValid(id)) {
     return res.status(404).end();
   }

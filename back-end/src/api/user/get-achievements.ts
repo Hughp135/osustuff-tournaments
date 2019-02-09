@@ -5,6 +5,10 @@ import { getAchievement } from '../../achievements/get-achievement';
 export async function getUnreadAchievements(req: Request, res: Response) {
   const { username }: any = (<any> req).claim || {};
 
+  if (!username) {
+    return res.status(401).end();
+  }
+
   const user = await User.findOne({ username }).select({ achievements: 1 });
 
   if (!user) {

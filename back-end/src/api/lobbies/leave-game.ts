@@ -6,6 +6,10 @@ import { cache } from '../../services/cache';
 export async function leaveGame(req: Request, res: Response) {
   const { username }: any = (<any> req).claim || {};
 
+  if (!username) {
+    return res.status(401).end();
+  }
+
   const game = await Game.findById(req.params.id);
 
   if (!game) {
