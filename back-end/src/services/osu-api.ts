@@ -72,10 +72,7 @@ export async function getRecentBeatmaps(): Promise<IBeatmap[]> {
     since: date2.toISOString(),
   });
 
-  console.log(beatmaps1.length, beatmaps2.length);
   const all = beatmaps1.concat(beatmaps2);
-
-  shuffleArray(all);
 
   return all;
 }
