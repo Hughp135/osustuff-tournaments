@@ -205,8 +205,11 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get showBeatmap() {
+    const alivePlayers = this.players.filter(p => p.alive);
     return (
-      !['new', 'complete', 'scheduled'].includes(this.game.status) && !this.viewResults
+      !['new', 'complete', 'scheduled'].includes(this.game.status) &&
+      !this.viewResults &&
+      (alivePlayers.length > 1 || this.game.roundNumber === 1)
     );
   }
 

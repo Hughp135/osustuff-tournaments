@@ -38,14 +38,17 @@
       </div>
       <div class="title" (click)="activeQuestion = 11">
         <i class="dropdown icon"></i>
-        Are there any plans to add additional tournament formats?
+        Are there any plans to add additional tournament
+        formats?
       </div>
       <div class="content" [class.active]="activeQuestion === 11">
         <p>
-          Currently the only tournament format is the 'Royale' format - e.g. elimination down to 1 winner.
+          Currently the only tournament format is the 'Royale'
+          format - e.g. elimination down to 1 winner.
         </p>
         <p>
-          More game modes will most likely be added in future as per popular demands.
+          More game modes will most likely be added in future as
+          per popular demands.
         </p>
       </div>
       <div class="title" (click)="activeQuestion = 2">
@@ -128,7 +131,8 @@
       </div>
       <div class="content" [class.active]="activeQuestion === 5">
         <p>
-          The ranking system is a custom implementation of the TrueSkill algorithm.
+          The ranking system is a custom implementation of the
+          TrueSkill algorithm.
           Player ratings are calculated at the end of each match
           based on rank achieved in the match.
           Each new player starts with 1050 rating, and will
@@ -197,6 +201,33 @@
           Achievements will continue to be added as time goes
           on, however the list of possible achievements
           is not available publicly at this time.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 12">
+        <i class="dropdown icon"></i>
+        Will other game modes (mania/taiko/ctb etc) be supported
+      </div>
+      <div class="content" [class.active]="activeQuestion === 12">
+        <p>
+          Yes! Currently only osu standard is supported (to keep
+          things simpler for launch), however
+          I intend to add lobbies for every game mode in the
+          near future.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 13">
+        <i class="dropdown icon"></i>
+        Can I create my own lobbies?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 13">
+        <p>
+          We will add the ability to create custom lobbies at some point in the future, where you will be
+          able to choose your own map pool, and set the lobby to be either private (invite-only) or public.
+          This feature will probably be a paid-only feature or will be given to specific players in the community
+          for hosting specific tournaments.
+        </p>
+        <p>
+          Custom lobbies will also have the ability to limit players by country or rank (for example, a country-only tournament).
         </p>
       </div>
     </div>

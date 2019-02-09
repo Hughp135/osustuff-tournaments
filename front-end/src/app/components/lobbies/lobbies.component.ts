@@ -63,7 +63,6 @@ export class LobbiesComponent implements OnInit, OnDestroy {
         const date = new Date();
         date.setSeconds(date.getSeconds() + lobby.startsAt);
         const { seconds, minutes, hours } = getTimeComponents(date.getTime() - Date.now());
-        console.log(hours);
 
         if (parseInt(seconds, 10) < 0) {
           return (lobby.startsAtString = `now`);

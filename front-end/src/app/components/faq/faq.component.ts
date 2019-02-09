@@ -11,9 +11,6 @@ export class FaqComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    setInterval(() => {
-      console.log(this.activeQuestion);
-    }, 1000);
   }
 
 }

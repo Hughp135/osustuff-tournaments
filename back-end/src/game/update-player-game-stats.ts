@@ -2,6 +2,7 @@ import { Skill } from './../services/trueskill';
 import { User, IUser, IUserResult } from '../models/User.model';
 import { IPlayer, IGame } from '../models/Game.model';
 import { Rating } from 'ts-trueskill';
+import { logger } from '../logger';
 
 export async function updatePlayerGameStats(game: IGame) {
   const playerCount = game.players.length;
@@ -39,10 +40,14 @@ export async function updatePlayerGameStats(game: IGame) {
       }),
   );
 
-  await calculatePlayerRatings(rankedPlayers, game);
+  updatePlayerRatings(rankedPlayers, game);
+
+  await Promise.all(rankedPlayers.map(async p => {
+    await p.user.save();
+  }));
 }
 
-async function calculatePlayerRatings(
+function updatePlayerRatings(
   rankedPlayers: Array<IPlayer & { user: IUser }>,
   game: IGame,
 ) {
@@ -50,25 +55,26 @@ async function calculatePlayerRatings(
     Skill.createRating(p.user.rating.mu, p.user.rating.sigma),
   ]);
   const rankings = rankedPlayers.map(p => <number> p.gameRank);
-  const results = Skill.rate(ratings, rankings) as Rating[][];
-  await Promise.all(
-    results.map(async ([r], index) => {
-      const player = rankedPlayers[index];
-      const oldRating = player.user.rating.mu;
-      player.user.rating = {
-        mu: r.mu,
-        sigma: r.sigma,
-      };
-      const gameEndedAt = new Date();
-      const userResult = <IUserResult> (
-        player.user.results.find(res => res.gameId.toHexString() === game._id.toString())
-      );
-      if (userResult) {
-        userResult.gameEndedAt = gameEndedAt;
-        userResult.ratingChange = player.user.rating.mu - oldRating;
-      }
-
-      await player.user.save();
-    }),
-  );
+  const results =
+    rankedPlayers.length > 1 ? (Skill.rate(ratings, rankings) as Rating[][]) : undefined;
+  if (!results) {
+    logger.info('Not updating stats because only 1 or less players were ranked');
+    return;
+  }
+  results.forEach(([r], index) => {
+    const player = rankedPlayers[index];
+    const oldRating = player.user.rating.mu;
+    player.user.rating = {
+      mu: r.mu,
+      sigma: r.sigma,
+    };
+    const gameEndedAt = new Date();
+    const userResult = <IUserResult> (
+      player.user.results.find(res => res.gameId.toHexString() === game._id.toString())
+    );
+    if (userResult) {
+      userResult.gameEndedAt = gameEndedAt;
+      userResult.ratingChange = player.user.rating.mu - oldRating;
+    }
+  });
 }
