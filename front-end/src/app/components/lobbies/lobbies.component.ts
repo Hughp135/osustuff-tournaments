@@ -62,13 +62,14 @@ export class LobbiesComponent implements OnInit, OnDestroy {
       .forEach(lobby => {
         const date = new Date();
         date.setSeconds(date.getSeconds() + lobby.startsAt);
-        const { seconds, minutes } = getTimeComponents(date.getTime() - Date.now());
+        const { seconds, minutes, hours } = getTimeComponents(date.getTime() - Date.now());
+        console.log(hours);
 
         if (parseInt(seconds, 10) < 0) {
           return (lobby.startsAtString = `now`);
         }
 
-        lobby.startsAtString = `${minutes}:${seconds}s`;
+        lobby.startsAtString = `${parseInt(hours, 10) > 0 ? `${hours}:` : ''}${minutes}:${seconds}s`;
       });
   }
 

@@ -17,7 +17,7 @@ export class LobbiesListComponent implements OnInit {
   public getStatus(game) {
     switch (game.status) {
       case 'scheduled':
-        return 'Scheduled for ' +  this.datePipe.transform(game.nextStageStarts, ' h:mm a, MMM d') + ' (UTC)';
+        return 'Scheduled for ' +  this.datePipe.transform(game.nextStageStarts, ' h:mma, MMM d') + ' (UTC)';
       case 'new':
         return 'Open to join';
       case 'complete':
