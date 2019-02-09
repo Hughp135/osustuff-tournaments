@@ -6,7 +6,7 @@ import { logger } from '../../logger';
 export async function getUser(req: Request, res: Response) {
   let { username } = req.params;
 
-  if (!username) {
+  if (!username || username === 'me') {
     const claim = req.app.get('claim');
     if (!claim) {
       return res.status(401).end();
