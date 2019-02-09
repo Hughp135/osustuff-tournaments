@@ -28,6 +28,10 @@ export async function joinGame(req: Request, res: Response) {
     return res.status(423).end();
   }
 
+  if (game.players.some(p => p.username === claim.username)) {
+    return res.status(400).end();
+  }
+
   await addPlayer(game, user);
 
   await cache.del(`get-lobby-users-${game._id}`);
