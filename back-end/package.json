@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
-    "start:prod": "pm2 start --env production --watch",
+    "start:prod": "pm2 start --env production",
     "start": "nodemon",
     "test": "cross-env NODE_CONFIG_ENV=test mocha --exit  -t 10000 -r ts-node/register  -r tsconfig-paths/register \"src/**/*.spec.ts\""
   },
