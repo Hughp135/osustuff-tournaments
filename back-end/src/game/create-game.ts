@@ -7,7 +7,7 @@ const TEST_MODE = config.get('TEST_MODE');
 let beatmaps: any[];
 
 export async function createGame(getRecentBeatmaps: () => Promise<any>, scheduledDate?: Date): Promise<IGame> {
-  beatmaps = await getRecentBeatmaps();
+  beatmaps = (await getRecentBeatmaps()).filter((b: any) => parseInt(b.total_length, 10) <= 600);
 
   const roundBeatmaps = [
     getBeatmapBetweenStars(3, 4),
