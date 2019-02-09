@@ -9,7 +9,7 @@ import { createGame } from './create-game';
 import { getUserRecent, getRecentBeatmaps } from '../services/osu-api';
 import config from 'config';
 import { addSampleChatMessage } from '../test-helpers/add-sample-chat-message';
-import { DURATION_START } from './durations';
+import { COUNTDOWN_START } from './durations';
 import { cache } from '../services/cache';
 import { ObjectId } from 'bson';
 import { Score } from '../models/Score.model';
@@ -100,7 +100,7 @@ async function startGame(game: IGame) {
     console.log('Beginning countdown....');
     // Set the countdown to start
     if (!FAST_FORWARD_MODE) {
-      await setNextStageStartsAt(game, DURATION_START);
+      await setNextStageStartsAt(game, COUNTDOWN_START);
     } else {
       const date = new Date();
       date.setSeconds(date.getSeconds() + 60);
