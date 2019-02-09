@@ -61,7 +61,7 @@ export async function getRecentBeatmaps(): Promise<IBeatmap[]> {
   const date = new Date();
   date.setDate(date.getDate() - 30);
   const date2 = new Date();
-  date.setDate(date.getDate() - 730);
+  date2.setFullYear(date.getFullYear() - Math.floor(Math.random() * 4) + 1);
 
   const beatmaps1 = await request('get_beatmaps', {
     m: '0',
@@ -72,5 +72,17 @@ export async function getRecentBeatmaps(): Promise<IBeatmap[]> {
     since: date2.toISOString(),
   });
 
-  return beatmaps1.concat(beatmaps2);
+  console.log(beatmaps1.length, beatmaps2.length);
+  const all = beatmaps1.concat(beatmaps2);
+
+  shuffleArray(all);
+
+  return all;
+}
+
+function shuffleArray(array: any[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
