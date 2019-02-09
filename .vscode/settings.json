@@ -1,4 +1,5 @@
 {
   "typescript.tsdk": "front-end/node_modules/typescript/lib/",
-  "javascript.preferences.importModuleSpecifier": "relative"
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "relative"
 }

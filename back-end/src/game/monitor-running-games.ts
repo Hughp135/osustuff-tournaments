@@ -18,7 +18,7 @@ import { logger } from '../logger';
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 const PLAYERS_REQUIRED_TO_START = config.get('PLAYERS_REQUIRED_TO_START');
-const DISABLE_AUTO_GAME_CREATION = config.get('DISABLE_AUTO_GAME_CREATION');
+let DISABLE_AUTO_GAME_CREATION = config.get('DISABLE_AUTO_GAME_CREATION');
 export let isMonitoring = false;
 
 export async function startMonitoring() {
@@ -40,12 +40,13 @@ export function stopMonitoring() {
 // Update games based on status
 export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   const games = await Game.find({
-    status: ['new', 'in-progress', 'round-over', 'checking-scores'],
+    status: ['scheduled', 'new', 'in-progress', 'round-over', 'checking-scores'],
   });
 
-  const testSkipCreate = TEST_MODE && games.filter(g => g.status !== 'new').length;
+  const newGamesLength =  games.filter(g => g.status === 'new').length;
+  const testSkipCreate = TEST_MODE && newGamesLength;
 
-  if (!DISABLE_AUTO_GAME_CREATION && games.filter(g => g.status === 'new').length === 0 && !testSkipCreate) {
+  if (!DISABLE_AUTO_GAME_CREATION && newGamesLength === 0 && !testSkipCreate) {
     console.log('creating a new game as no "new" status ones are running');
     // If no games are active, create a new one
     await createGame(getRecentMaps);
@@ -59,6 +60,8 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     games.map(async game => {
       try {
         switch (game.status) {
+          case 'scheduled':
+            return await openScheduledGame(game);
           case 'new':
             return await startGame(game);
           case 'in-progress':
@@ -82,6 +85,15 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   }, 1000);
 }
 
+async function openScheduledGame(game: IGame) {
+  if (game.nextStageStarts && game.nextStageStarts < new Date()) {
+    console.log('Opening scheduled game');
+    game.nextStageStarts = undefined;
+    game.status = 'new';
+    await game.save();
+  }
+}
+
 async function startGame(game: IGame) {
   const enoughPlayers = game.players.length >= PLAYERS_REQUIRED_TO_START;
   if (!enoughPlayers) {
@@ -89,8 +101,8 @@ async function startGame(game: IGame) {
       console.log('canceling countdown');
       // Cancel countdown
       game.nextStageStarts = undefined;
-      clearGetLobbyCache(game._id);
       await game.save();
+      clearGetLobbyCache(game._id);
     }
 
     return;
@@ -108,9 +120,9 @@ async function startGame(game: IGame) {
       await game.save();
     }
   } else if (game.nextStageStarts < new Date()) {
-    clearGetLobbyCache(game._id);
     // Start the first round
     await nextRound(game);
+    clearGetLobbyCache(game._id);
   }
 }
 
@@ -175,4 +187,12 @@ async function skipCheckingScore(game: IGame) {
 
 async function clearGetLobbyCache(gameId: string | ObjectId) {
   cache.del(`get-lobby-${gameId}`);
+}
+
+export function toggleAutoCreation() {
+  DISABLE_AUTO_GAME_CREATION = !DISABLE_AUTO_GAME_CREATION;
+}
+
+export async function createScheduledGame(date: Date) {
+  await createGame(getRecentBeatmaps, date);
 }

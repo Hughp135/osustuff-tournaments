@@ -19,6 +19,8 @@ export class GameInfoComponent implements OnInit {
 
   get status() {
     switch (this.game.status) {
+      case 'scheduled':
+        return 'Scheduled';
       case 'new':
         return this.game.nextStageStarts
           ? 'About to start...'
@@ -38,6 +40,8 @@ export class GameInfoComponent implements OnInit {
 
   get nextStageStartsMsg() {
     switch (this.game.status) {
+      case 'scheduled':
+        return 'Game open to join in';
       case 'new':
         return 'Game will start in';
       case 'in-progress':

@@ -19,7 +19,7 @@ async function getGames() {
     game.playerCount = game.players.length;
     game.players = undefined;
     const secondsToStart =
-      game.status === 'new' && game.nextStageStarts
+      ['new', 'scheduled'].includes(game.status) && game.nextStageStarts
         ? (game.nextStageStarts.getTime() - Date.now()) / 1000
         : undefined;
     game.startsAt = secondsToStart;

@@ -20,6 +20,12 @@ export class GameStatusComponent implements OnInit {
   ngOnInit() {}
 
   private getTitleAndMessage(): { title: string; message: string } {
+    if (this.game.status === 'scheduled') {
+      return {
+        title: 'Game is scheduled to start later',
+        message: 'The game will be open to join in ' + this.timeLeft,
+      };
+    }
     if (this.game.status === 'new') {
       if (this.game.nextStageStarts) {
         return {

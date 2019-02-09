@@ -6,7 +6,7 @@ const TEST_MODE = config.get('TEST_MODE');
 
 let beatmaps: any[];
 
-export async function createGame(getRecentBeatmaps: () => Promise<any>): Promise<IGame> {
+export async function createGame(getRecentBeatmaps: () => Promise<any>, scheduledDate?: Date): Promise<IGame> {
   beatmaps = await getRecentBeatmaps();
 
   const roundBeatmaps = [
@@ -25,11 +25,13 @@ export async function createGame(getRecentBeatmaps: () => Promise<any>): Promise
   const game = await Game.create({
     title: 'osu! Royale Match',
     beatmaps: roundBeatmaps,
+    status: scheduledDate ? 'scheduled' : 'new',
+    nextStageStarts: scheduledDate || undefined,
   });
 
-  if (TEST_MODE) {
+  if (TEST_MODE && game.status !== 'scheduled') {
     console.log('Creating game with sample players');
-    await addSamplePlayers(game, 100);
+    await addSamplePlayers(game, 5);
   }
 
   return game;

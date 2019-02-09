@@ -33,6 +33,7 @@ import { TwitchEmotesPipe } from 'src/pipes/twitch-emotes.pipe';
 import { LoginComponent } from './components/login/login.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { FaqComponent } from './components/faq/faq.component';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,7 @@ import { FaqComponent } from './components/faq/faq.component';
     }),
     SuiModule,
   ],
-  providers: [ApiService, SettingsService],
+  providers: [ApiService, SettingsService, DatePipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

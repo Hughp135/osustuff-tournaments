@@ -1,5 +1,4 @@
 import { IUser } from './../user-profile/user-profile.component';
-import { AdminService } from './../../services/admin.service';
 import { GameService } from './../../game.service';
 import { SettingsService, CurrentGame } from './../../services/settings.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -29,7 +28,13 @@ export interface IPlayer {
 export interface IGame {
   _id: string;
   title: string;
-  status: 'new' | 'in-progress' | 'checking-scores' | 'round-over' | 'complete';
+  status:
+    | 'scheduled'
+    | 'new'
+    | 'in-progress'
+    | 'checking-scores'
+    | 'round-over'
+    | 'complete';
   winningUser: {
     username: string;
   };
@@ -69,7 +74,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private settingsService: SettingsService,
     private gameService: GameService,
-    private adminService: AdminService
   ) {
     this.isAdmin = !!settingsService.adminPw;
   }
@@ -96,7 +100,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     this.visibilityTimers.push(
       Visibility.every(2000, 2000 * 10, async () => {
         await this.getMoreMessages();
-      })
+      }),
     );
   }
 
@@ -123,7 +127,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     try {
       const newMessages = await this.gameService.getLobbyMessages(
         this.game._id,
-        lastMessage && lastMessage._id
+        lastMessage && lastMessage._id,
       );
 
       this.messages = newMessages.concat(this.messages);
@@ -155,12 +159,14 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
             .replace(regexReplace, ' ')
             .toLowerCase()} - ${beatmap.title
             .replace(regexReplace, ' ')
-            .toLowerCase()}, ${beatmap.version.replace(regexReplace, ' ').toLowerCase()}`);
+            .toLowerCase()}, ${beatmap.version.replace(regexReplace, ' ').toLowerCase()}`,
+        );
       }
       if (
         ((game.status === 'round-over' &&
           !['round-over', 'checking-scores'].includes(this.game.status)) ||
-          (game.status === 'checking-scores' && this.game.status !== 'checking-scores')) &&
+          (game.status === 'checking-scores' &&
+            this.game.status !== 'checking-scores')) &&
         this.inGame
       ) {
         responsiveVoice.speak(`Round ${game.roundNumber} has ended.`);
@@ -178,7 +184,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
         this.inGame
       ) {
         responsiveVoice.speak(
-          `The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`
+          `The first round is starting in ${Math.floor(game.secondsToNextRound)} seconds`,
         );
         this.announcedStart = true;
       }
@@ -199,11 +205,15 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get showBeatmap() {
-    return !['new', 'complete'].includes(this.game.status) && !this.viewResults;
+    return (
+      !['new', 'complete', 'scheduled'].includes(this.game.status) && !this.viewResults
+    );
   }
 
   get showScores() {
-    return ['round-over', 'checking-scores'].includes(this.game.status) && !this.viewResults;
+    return (
+      ['round-over', 'checking-scores'].includes(this.game.status) && !this.viewResults
+    );
   }
 
   get inAnotherGame() {
@@ -215,11 +225,14 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get showJoinGame() {
-    return !(this.mePlayer || this.inGame) && this.game.status !== 'complete';
+    return (
+      !(this.mePlayer || this.inGame) &&
+      !['complete', 'scheduled'].includes(this.game.status)
+    );
   }
 
   get showBeatmaps() {
-    return this.game.status === 'new' || this.showBeatmapList;
+    return ['new', 'scheduled'].includes(this.game.status) || this.showBeatmapList;
   }
 
   get isAlive() {
@@ -242,21 +255,13 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     return this.beatmaps[this.game.roundNumber];
   }
 
-  public async skipRound() {
-    await this.adminService.skipRound(this.game);
-  }
-
-  public async toggleFreeze() {
-    await this.adminService.toggleFreeze();
-  }
-
   private async animate(direction: TransitionDirection) {
     return new Promise(res => {
       const name = direction === TransitionDirection.Out ? 'fly right' : 'fly left';
       this.transitionController.animate(
         new Transition(name, 250, direction, () => {
           res();
-        })
+        }),
       );
     });
   }

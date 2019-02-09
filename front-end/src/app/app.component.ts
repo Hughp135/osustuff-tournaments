@@ -16,6 +16,7 @@ export class AppComponent {
   public isAdmin: boolean;
   public currentGame: CurrentGame;
   public currentUsername: string;
+  public gameId: string;
 
   constructor(
     router: Router,
@@ -27,13 +28,36 @@ export class AppComponent {
       .subscribe((event: NavigationEnd) => {
         this.showMenu = !event.url.startsWith('/lobbies/');
         this.url = event.url;
+        if (event.url.startsWith('/lobbies/')) {
+          const idx = event.url.indexOf('?');
+          const endIdx = idx !== -1 ? event.url.indexOf('?') - '/lobbies/'.length : undefined;
+          this.gameId = event.url.substr('/lobbies/'.length, endIdx);
+        } else {
+          this.gameId = undefined;
+        }
       });
     this.isAdmin = !!settingsService.adminPw;
-    settingsService.currentGame.subscribe(val => this.currentGame = val );
-    settingsService.username.subscribe(val => this.currentUsername = val);
+    settingsService.currentGame.subscribe(val => (this.currentGame = val));
+    settingsService.username.subscribe(val => (this.currentUsername = val));
   }
 
   public async clearDb() {
     await this.adminService.clearDb();
+  }
+
+  public async skipRound() {
+    await this.adminService.skipRound(this.gameId);
+  }
+
+  public async deleteLobby() {
+    await this.adminService.deleteLobby(this.gameId);
+  }
+
+  public async toggleFreeze() {
+    await this.adminService.toggleFreeze();
+  }
+
+  public async toggleAutoCreation() {
+    await this.adminService.toggleAutoCreate();
   }
 }

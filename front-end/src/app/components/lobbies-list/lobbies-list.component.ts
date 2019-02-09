@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-lobbies-list',
@@ -8,15 +9,17 @@ import { Component, OnInit, Input } from '@angular/core';
 export class LobbiesListComponent implements OnInit {
   @Input() lobbies: any[];
 
-  constructor() { }
+  constructor(private datePipe: DatePipe) { }
 
   ngOnInit() {
   }
 
   public getStatus(game) {
     switch (game.status) {
+      case 'scheduled':
+        return 'Scheduled for ' +  this.datePipe.transform(game.nextStageStarts, ' h:mm a, MMM d') + ' (UTC)';
       case 'new':
-        return 'Waiting for more players';
+        return 'Open to join';
       case 'complete':
         return 'Finished';
       default:
@@ -26,6 +29,8 @@ export class LobbiesListComponent implements OnInit {
 
   public getLobbyIconClass(lobby) {
     switch (lobby.status) {
+      case 'scheduled':
+        return 'grey calendar alternate outline';
       case 'new':
         return 'green play';
       case 'complete':

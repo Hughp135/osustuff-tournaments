@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <h2>Open Matches</h2>
+  <h2>New Matches</h2>
   <div *ngIf="!joinableGames.length" class="ui inverted segment">
     <p>
       No matches are open to join at the moment
@@ -19,6 +19,6 @@
   <h2 *ngIf="inProgressGames.length">In Progress Matches</h2>
   <app-lobbies-list class="inprogress" [lobbies]="inProgressGames"></app-lobbies-list>
 
-  <h3 *ngIf="completedGames.length">Recently Finished Matches</h3>
+  <h3 *ngIf="completedGames.length">Complete Matches</h3>
   <app-lobbies-list class="finished" [lobbies]="completedGames"></app-lobbies-list>
 </div>

@@ -8,7 +8,8 @@
     </div>
     <div *ngIf="loggedIn">
       <div *ngIf="inAnotherGame">
-        <p>You are in another game, so you must leave before you can join.</p>
+        <p>You are in another game, so you must leave before you
+          can join.</p>
         <div class="ui tiny orange button" (click)="leaveGame()">
           Leave other game
         </div>
@@ -16,7 +17,8 @@
       <div *ngIf="!inAnotherGame">
         <div *ngIf="!success">
           <div class="small action input">
-            <button class="ui primary button" [disabled]="requestingJoin" [class.loading]="requestingJoin" (click)="joinGame()">
+            <button class="ui primary button" [disabled]="requestingJoin"
+              [class.loading]="requestingJoin" (click)="joinGame()">
               Join Game
             </button>
             Make sure you are ready to play before joining.
@@ -30,8 +32,7 @@
     </div>
   </div>
   <div *ngIf="!canJoin">
-    <p>
-      This game is in progress. You cannot join a game that has already started.
-    </p>
+    This game is in progress. You cannot join a game that has
+    already started.
   </div>
 </div>

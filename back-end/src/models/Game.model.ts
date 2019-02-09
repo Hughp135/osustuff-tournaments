@@ -18,7 +18,7 @@ export interface IGame extends mongoose.Document {
   title: string;
   players: IPlayer[];
   currentRound: mongoose.Types.ObjectId;
-  status: 'new' | 'in-progress' | 'checking-scores' | 'round-over' | 'complete';
+  status: 'scheduled' | 'new' | 'in-progress' | 'checking-scores' | 'round-over' | 'complete';
   winningUser: {
     userId: mongoose.Schema.Types.ObjectId;
     username: string;

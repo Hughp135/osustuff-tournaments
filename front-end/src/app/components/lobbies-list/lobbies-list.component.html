@@ -29,13 +29,16 @@
               </div>
             </div>
             <div class="column" *ngIf="lobby.startsAt">
-              <h5>
+              <h5 *ngIf="lobby.status === 'new'">
                 Starting in: {{ lobby.startsAtString }}
+              </h5>
+              <h5 *ngIf="lobby.status === 'scheduled'">
+                Opens in: {{ lobby.startsAtString }}
               </h5>
             </div>
             <div class="column">
               <h5>
-                <i class="grey user icon"></i> {{
+                <i class="user icon" [class.green]="lobby.playerCount" [class.grey]="!lobby.playerCount"></i> {{
                 lobby.playerCount }}
               </h5>
             </div>

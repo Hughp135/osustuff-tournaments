@@ -25,11 +25,17 @@ export class LobbiesComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       interval(1000).subscribe(() => {
         this.lobbies
-          .filter(l => l.status === 'new')
+          .filter(l => l.startsAt !== undefined && ['new', 'scheduled'].includes(l.status))
           .forEach(l => {
             l.startsAt--;
           });
         this.setLobbiesStartString();
+      })
+    );
+
+    this.subscriptions.push(
+      interval(30000).subscribe(() => {
+        this.fetch();
       })
     );
   }
@@ -39,11 +45,11 @@ export class LobbiesComponent implements OnInit, OnDestroy {
   }
 
   get joinableGames() {
-    return this.lobbies.filter(l => l.status === 'new');
+    return this.lobbies.filter(l => ['new', 'scheduled'].includes(l.status));
   }
 
   get inProgressGames() {
-    return this.lobbies.filter(l => !['new', 'complete'].includes(l.status));
+    return this.lobbies.filter(l => !['new', 'scheduled', 'complete'].includes(l.status));
   }
 
   get completedGames() {
@@ -52,7 +58,7 @@ export class LobbiesComponent implements OnInit, OnDestroy {
 
   public setLobbiesStartString() {
     this.lobbies
-      .filter(l => l.status === 'new')
+      .filter(l => ['new', 'scheduled'].includes(l.status))
       .forEach(lobby => {
         const date = new Date();
         date.setSeconds(date.getSeconds() + lobby.startsAt);
@@ -67,6 +73,10 @@ export class LobbiesComponent implements OnInit, OnDestroy {
   }
 
   public async fetch() {
+    if (this.fetching) {
+      return;
+    }
+
     this.fetching = true;
     try {
       this.lobbies = await this.gameService.getLobbies();

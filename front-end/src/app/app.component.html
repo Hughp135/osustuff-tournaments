@@ -38,13 +38,24 @@
 </div>
 <router-outlet></router-outlet>
 
-<div *ngIf="isAdmin && url === '/lobbies'">
-  <div style="position: absolute; top: 0; right: 100px; z-index:999;"
-    class="ui mini button" (click)="clearDb()">Clear
-    DB
-  </div>
-</div>
-
 <app-notifications></app-notifications>
 
 <app-footer *ngIf="showMenu"></app-footer>
+
+<div *ngIf="isAdmin">
+    <div style="position: absolute; bottom: 10px; right: 40px; z-index:999;"
+      class="ui mini button" suiPopup popupPlacement="top left" [popupTemplate]="popupTemplate" popupTrigger="outsideClick">
+      <ng-template let-popup #popupTemplate>
+        <div class="content">
+          <div class="ui blue button" *ngIf="url === '/lobbies'" (click)="toggleAutoCreation()">Toggle Lobbies AutoCreate</div>
+          <div class="ui red button" *ngIf="url === '/lobbies'" (click)="clearDb()">Clear DB</div>
+          <div class="ui teal button" *ngIf="url.startsWith('/lobbies/')" (click)="toggleFreeze()">Freeze</div>
+          <div class="ui orange button" *ngIf="url.startsWith('/lobbies/')" (click)="skipRound()">Skip Round</div>
+          <div class="ui red button" *ngIf="url.startsWith('/lobbies/')" (click)="deleteLobby()">Delete Lobby</div>
+        </div>
+      </ng-template>
+      <div>
+        <i class="star icon"></i> Admin
+      </div>
+    </div>
+</div>
