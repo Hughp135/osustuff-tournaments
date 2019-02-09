@@ -9,7 +9,7 @@ import { Game } from '../../../models/Game.model';
 export async function sendMessage(req: Request, res: Response) {
   const { id } = req.params;
   const { message } = req.body;
-  const { username } = (<any> req).claim;
+  const { username }: any = (<any> req).claim || {};
 
   if (!Types.ObjectId.isValid(id)) {
     return res.status(404).end();

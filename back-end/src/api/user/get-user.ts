@@ -12,6 +12,9 @@ export async function getUser(req: Request, res: Response) {
       return res.status(401).end();
     }
     username = (<any> req).claim.username;
+    if (!username) {
+      return res.status(401).end();
+    }
   }
 
   const user = await User.findOne({ username })
