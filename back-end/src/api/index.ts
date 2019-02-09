@@ -29,13 +29,13 @@ import { deleteLobby } from './admin/delete-lobby';
 const PORT = config.get('API_PORT');
 const TEST_MODE = config.get('TEST_MODE');
 const app = express();
-const limiter = new rateLimit({
-  windowMs: 60 * 1000, // time for requests
-  max: 500, // limit each IP to x requests per windowMs
-});
+// const limiter = new rateLimit({
+//   windowMs: 60 * 1000, // time for requests
+//   max: 500, // limit each IP to x requests per windowMs
+// });
 
 if (!TEST_MODE) {
-  app.use(limiter);
+  // app.use(limiter);
 }
 
 app.use(bodyParser.json());
