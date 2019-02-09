@@ -15,8 +15,8 @@ export async function createGame(getRecentBeatmaps: () => Promise<any>): Promise
     getBeatmapBetweenStars(4.5, 5),
     getBeatmapBetweenStars(4.8, 5.3),
     getBeatmapBetweenStars(5, 6),
-    getBeatmapBetweenStars(5.3, 6.3),
     getBeatmapBetweenStars(5.5, 6.5),
+    getBeatmapBetweenStars(6, 6.5),
     getBeatmapBetweenStars(6),
     getBeatmapBetweenStars(6),
     getBeatmapBetweenStars(6),
@@ -29,7 +29,7 @@ export async function createGame(getRecentBeatmaps: () => Promise<any>): Promise
 
   if (TEST_MODE) {
     console.log('Creating game with sample players');
-    await addSamplePlayers(game, 500);
+    await addSamplePlayers(game, 100);
   }
 
   return game;
