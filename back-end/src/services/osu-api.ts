@@ -60,9 +60,17 @@ export async function getUserRecent(username: string) {
 export async function getRecentBeatmaps(): Promise<IBeatmap[]> {
   const date = new Date();
   date.setDate(date.getDate() - 30);
+  const date2 = new Date();
+  date.setDate(date.getDate() - 730);
 
-  return await request('get_beatmaps', {
+  const beatmaps1 = await request('get_beatmaps', {
     m: '0',
     since: date.toISOString(),
   });
+  const beatmaps2 = await request('get_beatmaps', {
+    m: '0',
+    since: date2.toISOString(),
+  });
+
+  return beatmaps1.concat(beatmaps2);
 }
