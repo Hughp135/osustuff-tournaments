@@ -41,7 +41,13 @@ This lobby is for rank ${this.game.minRank /
       }
       return {
         title: 'Waiting for players',
-        message: 'More players are needed before the game automatically starts.',
+        message: `More players are needed before the game automatically starts (at least 4 players).${
+          this.game.minRank
+            ? `
+This lobby is for rank ${this.game.minRank /
+                1000}k and above players. You will still gain and lose rating, but at a lower rate compared to normal lobbies` // tslint:disable-line
+            : ''
+        }`,
       };
     }
     if (this.game.status === 'in-progress') {
