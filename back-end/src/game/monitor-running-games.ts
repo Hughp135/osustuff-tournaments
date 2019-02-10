@@ -49,7 +49,11 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   if (!DISABLE_AUTO_GAME_CREATION && newGamesLength === 0 && !testSkipCreate) {
     console.log('creating a new game as no "new" status ones are running');
     // If no games are active, create a new one
-    await createGame(getRecentMaps);
+    await createGame(getRecentMaps, undefined, 1000);
+    await createGame(getRecentMaps, undefined, 250);
+    await createGame(getRecentMaps, undefined, 75);
+    await createGame(getRecentMaps, undefined, 30);
+    await createGame(getRecentMaps, undefined, 15);
   }
 
   if (TEST_MODE) {
@@ -115,7 +119,7 @@ async function startGame(game: IGame) {
       await setNextStageStartsAt(game, COUNTDOWN_START);
     } else {
       const date = new Date();
-      date.setSeconds(date.getSeconds() + 60);
+      date.setSeconds(date.getSeconds() + 120);
       game.nextStageStarts = date;
       await game.save();
     }

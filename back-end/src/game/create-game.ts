@@ -6,8 +6,14 @@ const TEST_MODE = config.get('TEST_MODE');
 
 let beatmaps: any[];
 
-export async function createGame(getRecentBeatmaps: () => Promise<any>, scheduledDate?: Date): Promise<IGame> {
-  beatmaps = (await getRecentBeatmaps()).filter((b: any) => parseInt(b.total_length, 10) <= 600);
+export async function createGame(
+  getRecentBeatmaps: () => Promise<any>,
+  scheduledDate?: Date,
+  testPlayers?: number,
+): Promise<IGame> {
+  beatmaps = (await getRecentBeatmaps()).filter(
+    (b: any) => parseInt(b.total_length, 10) <= 600,
+  );
 
   const roundBeatmaps = [
     getBeatmapBetweenStars(3, 4),
@@ -31,7 +37,7 @@ export async function createGame(getRecentBeatmaps: () => Promise<any>, schedule
 
   if (TEST_MODE && game.status !== 'scheduled') {
     console.log('Creating game with sample players');
-    await addSamplePlayers(game, 5);
+    await addSamplePlayers(game, testPlayers || 50);
   }
 
   return game;

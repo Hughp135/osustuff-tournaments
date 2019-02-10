@@ -25,6 +25,8 @@ export async function checkRoundScores(
     await addSampleScores(game);
     await new Promise(res => setTimeout(res, 1000));
   } else {
+    // Wait 5 seconds before starting to check
+    await new Promise(res => setTimeout(res, 5000));
     const players = game.players.filter(p => p.alive);
 
     await Promise.all(

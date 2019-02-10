@@ -17,9 +17,13 @@ export async function roundEnded(game: IGame, round: IRound) {
   const scores = await getAllUserBestScores(round._id);
 
   // Calculate which players lost the round.
-  const winRate = Math.max(0.4, 0.8 - 0.1 * (<number> round.roundNumber - 1));
+  const roundNum = <number> game.roundNumber;
+  const alivePlayers = game.players.filter(p => p.alive);
+  const winRate = 0.8 - 0.04 * (roundNum - 1) * Math.log10(alivePlayers.length);
   const targetNumberOfWinners =
-    scores.length === 2 ? 1 : Math.max(1, Math.round(scores.length * winRate));
+    roundNum === 10 || scores.length === 2
+      ? 1
+      : Math.max(1, Math.round(alivePlayers.length * winRate));
 
   await setPlayerRanksAndResults(game, scores, targetNumberOfWinners);
 
