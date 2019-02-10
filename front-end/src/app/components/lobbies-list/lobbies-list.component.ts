@@ -19,7 +19,7 @@ export class LobbiesListComponent implements OnInit {
       case 'scheduled':
         return 'Scheduled for ' +  this.datePipe.transform(game.nextStageStarts, ' h:mma, MMM d') + ' (UTC)';
       case 'new':
-        return 'Open to join';
+        return `Open ${game.minRank ? ` for rank ${game.minRank / 1000}k+ players` : ' to join'}`;
       case 'complete':
         return 'Finished';
       default:
@@ -32,7 +32,7 @@ export class LobbiesListComponent implements OnInit {
       case 'scheduled':
         return 'grey calendar alternate outline';
       case 'new':
-        return 'green play';
+        return `${lobby.minRank ? 'teal' : 'green'} play`;
       case 'complete':
         return 'grey flag checkered';
       default:

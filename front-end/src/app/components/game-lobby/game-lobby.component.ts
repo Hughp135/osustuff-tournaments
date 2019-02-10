@@ -46,6 +46,7 @@ export interface IGame {
   scores?: any[];
   round: any;
   timeLeft: string;
+  minRank?: number;
 }
 
 @Component({

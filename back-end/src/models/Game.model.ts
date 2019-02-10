@@ -18,7 +18,13 @@ export interface IGame extends mongoose.Document {
   title: string;
   players: IPlayer[];
   currentRound: mongoose.Types.ObjectId;
-  status: 'scheduled' | 'new' | 'in-progress' | 'checking-scores' | 'round-over' | 'complete';
+  status:
+    | 'scheduled'
+    | 'new'
+    | 'in-progress'
+    | 'checking-scores'
+    | 'round-over'
+    | 'complete';
   winningUser: {
     userId: mongoose.Schema.Types.ObjectId;
     username: string;
@@ -27,6 +33,7 @@ export interface IGame extends mongoose.Document {
   nextStageStarts?: Date;
   beatmaps: IBeatmap[];
   estimatedEnd: Date;
+  minRank?: number;
 }
 
 const GameSchema = new mongoose.Schema(
@@ -63,6 +70,7 @@ const GameSchema = new mongoose.Schema(
     nextStageStarts: { type: Date },
     estimatedEnd: { type: Date },
     beatmaps: { type: [], required: true },
+    minRank: { type: Number },
   },
   { timestamps: true },
 );

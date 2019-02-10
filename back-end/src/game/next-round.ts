@@ -29,8 +29,7 @@ export async function nextRound(game: IGame) {
   const date = new Date();
   date.setSeconds(
     date.getSeconds() +
-      parseFloat(beatmap.total_length) +
-      (FAST_FORWARD_MODE ? 1 : DURATION_ROUND_ADDITIONAL),
+      (FAST_FORWARD_MODE ? 1 : parseFloat(beatmap.total_length) + DURATION_ROUND_ADDITIONAL),
   );
   game.nextStageStarts = date;
 

@@ -72,7 +72,11 @@ export class JoinGameComponent implements OnInit, OnDestroy {
       } else if (e.status === 423) {
         this.error = 'The game is now full and cannot be joined.';
       } else if (e.status === 401) {
-        this.router.navigateByUrl('/login');
+        if (e.error && e.error.error) {
+          this.error = e.error.error;
+        } else {
+          this.router.navigateByUrl('/login');
+        }
       } else {
         throw e;
       }

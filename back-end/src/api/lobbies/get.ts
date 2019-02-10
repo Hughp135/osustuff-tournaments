@@ -34,6 +34,7 @@ async function getData(id: string) {
       currentRoundNumber: 1,
       players: 1,
       winningUser: 1,
+      minRank: 1,
     })
     .lean();
 

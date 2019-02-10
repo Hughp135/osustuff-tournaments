@@ -9,6 +9,7 @@ let beatmaps: any[];
 export async function createGame(
   getRecentBeatmaps: () => Promise<any>,
   scheduledDate?: Date,
+  minRank?: number,
   testPlayers?: number,
 ): Promise<IGame> {
   beatmaps = (await getRecentBeatmaps()).filter(
@@ -29,10 +30,11 @@ export async function createGame(
   ];
 
   const game = await Game.create({
-    title: 'osu! Royale Match',
+    title: `osu! Royale Match${minRank ? ` (rank ${minRank / 1000}k+)` : ''}`,
     beatmaps: roundBeatmaps,
     status: scheduledDate ? 'scheduled' : 'new',
     nextStageStarts: scheduledDate || undefined,
+    minRank,
   });
 
   if (TEST_MODE && game.status !== 'scheduled') {

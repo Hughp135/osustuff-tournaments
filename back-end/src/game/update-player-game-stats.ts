@@ -54,28 +54,34 @@ function updatePlayerRatings(
   const ratings = rankedPlayers.map(p => [
     Skill.createRating(p.user.rating.mu, p.user.rating.sigma),
   ]);
-  const rankings = rankedPlayers.map(p => <number> p.gameRank);
-  const results =
-    rankedPlayers.length > 1 ? (Skill.rate(ratings, rankings) as Rating[][]) : undefined;
-  if (!results) {
+  if (rankedPlayers.length < 1) {
+    console.log(rankedPlayers);
     logger.info('Not updating stats because only 1 or less players were ranked');
     return;
   }
+  const rankings = rankedPlayers.map(p => <number> p.gameRank);
+  const results = Skill.rate(ratings, rankings) as Rating[][];
+
   results.forEach(([r], index) => {
     const player = rankedPlayers[index];
-    const oldRating = player.user.rating.mu;
+    const oldRating = player.user.rating;
+    const ratingChange =  r.mu - oldRating.mu;
+    const sigmaChange = r.sigma - oldRating.sigma;
+
     player.user.rating = {
-      mu: r.mu,
-      sigma: r.sigma,
+      mu: game.minRank ? player.user.rating.mu + (ratingChange / 5) : r.mu,
+      sigma: game.minRank ? player.user.rating.sigma + (sigmaChange / 5) : r.sigma,
     };
+
     const gameEndedAt = new Date();
     const userResult = <IUserResult> (
       player.user.results.find(res => res.gameId.toHexString() === game._id.toString())
     );
+
     if (userResult) {
       userResult.gameEndedAt = gameEndedAt;
-      userResult.ratingChange = player.user.rating.mu - oldRating;
-      userResult.ratingBefore = oldRating;
+      userResult.ratingChange = player.user.rating.mu - oldRating.mu;
+      userResult.ratingBefore = oldRating.mu;
       userResult.ratingAfter = player.user.rating.mu;
     }
   });

@@ -27,8 +27,10 @@
         <p>
           The system will automatically select 10 beatmaps for
           every match from recently ranked/loved
-          maps. It picks a mix of new maps (ranked in the last month) and old maps (a year is randomly picked from
-          the last 5 years to choose older maps from). There should be a roughly 50/50 mix of new and older maps.
+          maps. It picks a mix of new maps (ranked in the last
+          month) and old maps (a year is randomly picked from
+          the last 5 years to choose older maps from). There
+          should be a roughly 50/50 mix of new and older maps.
         </p>
         <p>
           Support for custom games with your own choice of
@@ -75,7 +77,8 @@
         <p>
           A certain percent of players will fail each round. The
           percent value used depends on which round the match is
-          currently in. It also varies with how many players are in the game, and attempts
+          currently in. It also varies with how many players are
+          in the game, and attempts
           to make the total number of rounds close to 10.
         </p>
       </div>
@@ -111,9 +114,10 @@
           TrueSkill algorithm.
           Player ratings are calculated at the end of each match
           based on rank achieved in the match.
-          Each new player starts with 1050 rating, and will
-          either
-          go up or down in rating after each match.
+          Each new player starts with an initial rating between
+          950 and 1250 (this is based on their pp rank),
+          and will either go up or down in rating after each
+          match.
           The rating system attempts to judge player's skill and
           consistency rather than the number of games player, so
           below average skilled players will drop in rating,
@@ -125,6 +129,18 @@
           judged
           according to the rank they achieved in the match in
           the same way as every other player.
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 14">
+        <i class="dropdown icon"></i>
+        How do lower rank lobbies affect skill gains/losses?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 14">
+        <p>
+          Currently, rating change for lower ranked lobbies is 1/5th
+          that of normal lobies. This means that players in lower ranked lobbies will
+          gain and lose rating slower than in non rank restricted lobbies.
+          This amount is subject to change based on how it performs.
         </p>
       </div>
       <div class="title" (click)="activeQuestion = 6">
@@ -197,13 +213,18 @@
       </div>
       <div class="content" [class.active]="activeQuestion === 13">
         <p>
-          We will add the ability to create custom lobbies at some point in the future, where you will be
-          able to choose your own map pool, and set the lobby to be either private (invite-only) or public.
-          This feature will probably be a paid-only feature or will be given to specific players in the community
+          We will add the ability to create custom lobbies at
+          some point in the future, where you will be
+          able to choose your own map pool, and set the lobby to
+          be either private (invite-only) or public.
+          This feature will probably be a paid-only feature or
+          will be given to specific players in the community
           for hosting specific tournaments.
         </p>
         <p>
-          Custom lobbies will also have the ability to limit players by country or rank (for example, a country-only tournament).
+          Custom lobbies will also have the ability to limit
+          players by country or rank (for example, a
+          country-only tournament).
         </p>
       </div>
     </div>

@@ -1,7 +1,7 @@
 <div class="ui inverted segment">
   <div *ngIf="canJoin">
     <div *ngIf="!loggedIn">
-      <a class="ui primary button" [href]="loginLink">
+      <a class="ui green button" [href]="loginLink">
         Join Game
       </a>
       Your osu! account will be authorized
@@ -17,7 +17,7 @@
       <div *ngIf="!inAnotherGame">
         <div *ngIf="!success">
           <div class="small action input">
-            <button class="ui primary button" [disabled]="requestingJoin"
+            <button class="ui green button" [disabled]="requestingJoin"
               [class.loading]="requestingJoin" (click)="joinGame()">
               Join Game
             </button>

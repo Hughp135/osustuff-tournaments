@@ -7,6 +7,11 @@ import { cache } from '../../services/cache';
 
 export async function joinGame(req: Request, res: Response) {
   const game = await Game.findById(req.params.id);
+
+  if (!game) {
+    return res.status(404).end();
+  }
+
   const claim = (<any> req).claim;
   if (!claim) {
     return res.status(401).end();
@@ -18,11 +23,11 @@ export async function joinGame(req: Request, res: Response) {
     return res.status(404).json({ error: 'Failed to retrieve osu user details.' });
   }
 
-  const user = await updateOrCreateUser(osuUser);
-
-  if (!game) {
-    return res.status(404).end();
+  if (game.minRank && osuUser.pp_rank < game.minRank) {
+    return res.status(401).json({ error: `Only rank ${game.minRank} players and above can join this lobby.`});
   }
+
+  const user = await updateOrCreateUser(osuUser);
 
   if (game.status !== 'new') {
     return res.status(400).end();

@@ -43,16 +43,29 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     status: ['scheduled', 'new', 'in-progress', 'round-over', 'checking-scores'],
   });
 
-  const newGamesLength = games.filter(g => g.status === 'new').length;
-  const testSkipCreate = TEST_MODE && newGamesLength;
+  const newGames = games.filter(g => g.status === 'new');
+  const testSkipCreate = TEST_MODE && newGames.length >= 2;
+  const anyRankGames = newGames.filter(g => !g.minRank);
+  const minRankGames = newGames.filter(g => !!g.minRank);
 
-  if (!DISABLE_AUTO_GAME_CREATION && newGamesLength === 0 && !testSkipCreate) {
-    console.log('creating a new game as no "new" status ones are running');
+  if (!DISABLE_AUTO_GAME_CREATION && !testSkipCreate) {
     // If no games are active, create a new one
+
     try {
-      await createGame(getRecentMaps);
+      if (anyRankGames.length === 0) {
+        console.log('creating a new game');
+        await createGame(getRecentMaps).catch(e =>
+          logger.error('Failed to create game', e),
+        );
+      }
+      if (minRankGames.length === 0) {
+        console.log('creating a new game with min rank');
+        await createGame(getRecentMaps, undefined, 35000).catch(e =>
+          logger.error('Failed to create game', e),
+        );
+      }
     } catch (e) {
-      logger.error('Failed to create game', e);
+      console.error(e);
     }
   }
 

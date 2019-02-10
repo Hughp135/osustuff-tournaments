@@ -30,7 +30,13 @@ export class GameStatusComponent implements OnInit {
       if (this.game.nextStageStarts) {
         return {
           title: 'Game is starting soon',
-          message: `The game is starting in ${this.timeLeft}`,
+          message: `The game is starting in ${this.timeLeft}${
+            this.game.minRank
+              ? `
+This lobby is for rank ${this.game.minRank /
+                  1000}k and above players. You will still gain and lose rating, but at a lower rate compared to normal lobbies` // tslint:disable-line
+              : ''
+          }`,
         };
       }
       return {
