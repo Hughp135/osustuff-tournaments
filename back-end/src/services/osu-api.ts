@@ -5,11 +5,11 @@ import Bottleneck from 'bottleneck';
 
 const limiter = new Bottleneck({
   maxConcurrent: 100,
-  minTime: 43, // time delay between each request
+  minTime: 50, // time delay between each request
   highWater: 5000, // max queued requests
   reservoir: 1200, // limit per minute
   reservoirRefreshAmount: 1200, // limit per minute
-  reservoirRefreshInterval: 60 * 1000, // limit per minute
+  reservoirRefreshInterval: 60 * 1000, // time to reset
 });
 const OSU_API_KEY = config.get('OSU_API_KEY');
 const BASE_URL = 'https://osu.ppy.sh/api/';

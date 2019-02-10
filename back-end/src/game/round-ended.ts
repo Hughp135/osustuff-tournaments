@@ -23,7 +23,7 @@ export async function roundEnded(game: IGame, round: IRound) {
   const targetNumberOfWinners =
     roundNum === 10 || scores.length === 2
       ? 1
-      : Math.max(1, Math.round(alivePlayers.length * winRate));
+      : Math.max(1, Math.floor(alivePlayers.length * winRate));
 
   await setPlayerRanksAndResults(game, scores, targetNumberOfWinners);
 
