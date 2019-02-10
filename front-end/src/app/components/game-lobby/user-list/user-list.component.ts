@@ -1,10 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 import { IPlayer } from './../game-lobby.component';
-import {
-  Component,
-  OnInit,
-  Input,
-} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-user-list',
@@ -19,10 +15,23 @@ export class UserListComponent implements OnInit {
 
   public hiddenPlayers: number;
   public playerCount: number;
+  public showUserStats: string;
+  public ignoreClickEvent = false;
 
   constructor() {}
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  public showPlayerStats(player) {
+    this.showUserStats = player.username;
+    this.ignoreClickEvent = true;
+  }
+
+  public onDocumentClick() {
+    if (!this.ignoreClickEvent) {
+      this.showUserStats = undefined;
+    }
+    this.ignoreClickEvent = false;
   }
 
   get alivePlayers() {

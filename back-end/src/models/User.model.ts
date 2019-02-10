@@ -12,6 +12,8 @@ export interface IUserResult {
   place: number;
   gameEndedAt?: Date;
   ratingChange?: number;
+  ratingBefore?: number;
+  ratingAfter?: number;
 }
 
 export interface IUser extends mongoose.Document {
@@ -83,6 +85,8 @@ const UserSchema = new mongoose.Schema(
           place: { type: Number, required: true },
           gameEndedAt: { type: Date },
           ratingChange: { type: Number },
+          ratingBefore: { type: Number },
+          ratingAfter: { type: Number },
         },
       ],
       required: true,

@@ -18,6 +18,7 @@
     padding: 0.5em 1em;
     display: flex;
     flex: 1 0 50px;
+    position: relative;
 
     &.dead {
       background: rgba(200, 50, 50, 0.2);
@@ -75,4 +76,33 @@
 
 .white {
   color: white;
+}
+
+.user-rating {
+  position: absolute;
+  left: 33px;
+  background: #191919;
+  border-radius: 5px;
+  box-shadow: 2px 2px 8px #1f211f;
+  padding: 14px;
+  color: white;
+  top: 40px;
+  z-index: 50;
+
+  i.icon {
+    color: grey !important;
+  }
+
+  .ui.button {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.ui.list .list>a.item .user i.icon, .ui.list>a.item i.icon {
+  color: grey;
 }

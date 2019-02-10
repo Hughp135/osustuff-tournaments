@@ -75,6 +75,8 @@ function updatePlayerRatings(
     if (userResult) {
       userResult.gameEndedAt = gameEndedAt;
       userResult.ratingChange = player.user.rating.mu - oldRating;
+      userResult.ratingBefore = oldRating;
+      userResult.ratingAfter = player.user.rating.mu;
     }
   });
 }

@@ -1,14 +1,13 @@
-<div class="ui inverted compact segment no-bg">
+<div class="ui inverted compact segment no-bg" (document:click)="onDocumentClick()">
   <h4>Players ({{ alivePlayers.length }}/{{ players.length }})</h4>
   <p *ngIf="!players.length">
     No players have joined yet.
   </p>
 </div>
 <div class="ui relaxed inverted list" *ngIf="players.length">
-  <a class="item" *ngFor="let player of sortedPlayers"
-    popupPlacement="bottom" popupInverted="true" suiPopup
-    [popupTemplate]="popupTemplate" popupTrigger="outsideClick"
-    [ngClass]="player.alive ? 'alive' : 'dead'" [class.winner]="winningUser === player.username">
+  <a class="item user" *ngFor="let player of sortedPlayers"
+    [ngClass]="player.alive ? 'alive' : 'dead'" [class.winner]="winningUser === player.username"
+    (click)="showPlayerStats(player)">
     <div class="image-container">
       <img class="ui mini image" [useSrcset]="true" [lazyLoad]="'//a.ppy.sh/' + player.osuUserId"
         alt="">
@@ -28,7 +27,7 @@
         </span>
       </div>
     </div>
-    <ng-template let-popup #popupTemplate>
+    <div class="user-rating" *ngIf="showUserStats === player.username">
       <div class="header"> <i class="fitted flag" [ngClass]="player.country.toLowerCase()"></i>
         {{ player.username }}</div>
       <div class="content">
@@ -45,26 +44,25 @@
           Rating: {{ (player.rating.mu - 3* player.rating.sigma).toFixed(0) }}
         </p>
         <p>
-          <i class="green play icon"></i> Games Played: {{
-          player.gamesPlayed }}
+          <i class="green play icon"></i> Games Played: {{ player.gamesPlayed }}
         </p>
         <p>
-          <i class="trophy icon"></i> Wins: {{ player.wins }}
+          <i class="trophy icon" [class.green]="player.wins > 0" [class.grey]="player.wins < 1"></i> Wins: {{ player.wins }}
         </p>
         <p>
-          <i class="crosshairs icon"></i> Top 10%: {{
+          <i class="grey crosshairs icon"></i> Top 10%: {{
           player.percentiles.top10 }}
         </p>
         <p>
-          <i class="crosshairs icon"></i> Top 20%: {{
+          <i class="grey crosshairs icon"></i> Top 20%: {{
           player.percentiles.top20 }}
         </p>
         <p>
-          <i class="crosshairs icon"></i> Top 50%: {{
+          <i class="grey crosshairs icon"></i> Top 50%: {{
           player.percentiles.top50 }}
         </p>
       </div>
-    </ng-template>
+    </div>
   </a>
   <div class="item" *ngIf="hiddenPlayers">
     <div class="content">
