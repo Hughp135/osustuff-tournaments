@@ -8,6 +8,10 @@ import { cache } from '../../services/cache';
 export async function joinGame(req: Request, res: Response) {
   const game = await Game.findById(req.params.id);
   const claim = (<any> req).claim;
+  if (!claim) {
+    return res.status(401).end();
+  }
+
   const osuUser = await getUser(claim.username);
 
   if (!osuUser) {

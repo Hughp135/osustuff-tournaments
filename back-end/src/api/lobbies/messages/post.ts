@@ -5,6 +5,9 @@ import { Message } from '../../../models/Message.model';
 import { ObjectID } from 'bson';
 import { cache } from '../../../services/cache';
 import { Game } from '../../../models/Game.model';
+const Filter = require('bad-words');
+
+const filter = new Filter();
 
 export async function sendMessage(req: Request, res: Response) {
   const { id } = req.params;
@@ -35,7 +38,7 @@ export async function sendMessage(req: Request, res: Response) {
     userId: user._id,
     osuUserId: user.osuUserId,
     gameId: new ObjectID(id),
-    message,
+    message: filter.clean(message),
   });
 
   cache.put('last-message-id', _id.toString());
