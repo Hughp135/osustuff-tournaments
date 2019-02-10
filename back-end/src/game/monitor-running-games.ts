@@ -43,13 +43,17 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     status: ['scheduled', 'new', 'in-progress', 'round-over', 'checking-scores'],
   });
 
-  const newGamesLength =  games.filter(g => g.status === 'new').length;
+  const newGamesLength = games.filter(g => g.status === 'new').length;
   const testSkipCreate = TEST_MODE && newGamesLength;
 
   if (!DISABLE_AUTO_GAME_CREATION && newGamesLength === 0 && !testSkipCreate) {
     console.log('creating a new game as no "new" status ones are running');
     // If no games are active, create a new one
-    await createGame(getRecentMaps).catch(e => logger.error('Failed to create game', e));
+    try {
+      await createGame(getRecentMaps);
+    } catch (e) {
+      logger.error('Failed to create game', e);
+    }
   }
 
   if (TEST_MODE) {
@@ -156,9 +160,8 @@ async function completeRound(game: IGame) {
 
 async function setNextStageStartsAt(game: IGame, seconds: number) {
   const date = new Date();
-  if (!FAST_FORWARD_MODE) {
-    date.setSeconds(date.getSeconds() + seconds);
-  }
+  date.setSeconds(date.getSeconds() + (FAST_FORWARD_MODE ? 1 : seconds));
+
   // Update game status and set time to next stage
   game.nextStageStarts = date;
   await game.save();
@@ -185,7 +188,7 @@ async function skipCheckingScore(game: IGame) {
   }
 }
 
-async function clearGetLobbyCache(gameId: string | ObjectId) {
+function clearGetLobbyCache(gameId: string | ObjectId) {
   cache.del(`get-lobby-${gameId}`);
 }
 

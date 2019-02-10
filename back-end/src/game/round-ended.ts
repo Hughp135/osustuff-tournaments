@@ -31,8 +31,8 @@ export async function roundEnded(game: IGame, round: IRound) {
 
   // Update next round start date
   const date = new Date();
-  if (game.players.filter(p => p.alive).length > 1 && !FAST_FORWARD_MODE) {
-    date.setSeconds(date.getSeconds() + DURATION_ROUND_ENDED);
+  if (game.players.filter(p => p.alive).length > 1) {
+    date.setSeconds(date.getSeconds() + (FAST_FORWARD_MODE ? 1 : DURATION_ROUND_ENDED));
   }
   game.nextStageStarts = date;
 
@@ -133,7 +133,7 @@ async function setScorePlaces(scores: IScore[], targetNumWinners: number) {
         ? <number> prevScore.place
         : <number> prevScore.place + array.filter(s => s.place === prevScore.place).length;
       score.passedRound = isDrawn
-        ? score.place <= targetNumWinners
+        ? prevScore.passedRound
         : idx < targetNumWinners;
 
       await score.save();

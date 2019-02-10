@@ -39,6 +39,10 @@ export async function loginVerify(req: Request, res: Response) {
       json: true,
     });
 
+    if (!body.username || !body.pp_rank || !body.country || !body.statisctics) {
+      throw new Error('get user v2/me request didnt have right data: ' +  body);
+    }
+
     const user = await updateOrCreateUser({
       user_id: body.id,
       username: body.username,

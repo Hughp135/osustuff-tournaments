@@ -13,7 +13,11 @@ export async function nextRound(game: IGame) {
     throw new Error('No more beatmaps to go to next round with');
   }
 
-  const round = await Round.create({ beatmap, gameId: game._id, roundNumber: nextRoundNumber });
+  const round = await Round.create({
+    beatmap,
+    gameId: game._id,
+    roundNumber: nextRoundNumber,
+  });
 
   game.status = 'in-progress';
   game.currentRound = round._id;
@@ -23,9 +27,11 @@ export async function nextRound(game: IGame) {
 
   // Set time that round should last
   const date = new Date();
-  if (!FAST_FORWARD_MODE) {
-    date.setSeconds(date.getSeconds() + parseFloat(beatmap.total_length) + DURATION_ROUND_ADDITIONAL);
-  }
+  date.setSeconds(
+    date.getSeconds() +
+      parseFloat(beatmap.total_length) +
+      (FAST_FORWARD_MODE ? 1 : DURATION_ROUND_ADDITIONAL),
+  );
   game.nextStageStarts = date;
 
   const totalBeatmapDuration = game.beatmaps.reduce(

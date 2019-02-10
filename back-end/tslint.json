@@ -11,7 +11,8 @@
         "no-angle-bracket-type-assertion": false,
         "arrow-parens": false,
         "no-console": false,
-        "no-var-requires": false
+        "no-var-requires": false,
+        "no-floating-promises": true
     },
     "rulesDirectory": []
 }

@@ -14,9 +14,7 @@ export async function checkRoundScores(
   getUserRecent: (u: string) => Promise<any>,
 ) {
   const date = new Date();
-  if (!FAST_FORWARD_MODE) {
-    date.setSeconds(date.getSeconds() + 120);
-  }
+  date.setSeconds(date.getSeconds() + (FAST_FORWARD_MODE ? 1 : 120));
   game.status = 'checking-scores';
   game.nextStageStarts = date;
   await game.save();

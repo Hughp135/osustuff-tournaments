@@ -9,7 +9,7 @@ export async function addSampleScores(game: IGame) {
       .map(async (player, index) => {
         const score = player.username === 'Mongoose-' || player.osuUserId === 4787150
         ? (Math.floor(Math.random() * 100) + 100) * 100000
-        : Math.floor(Math.random() * 100000);
+        : Math.floor(Math.random() * 10);
         await Score.create({
           gameId: game._id,
           roundId: game.currentRound,
