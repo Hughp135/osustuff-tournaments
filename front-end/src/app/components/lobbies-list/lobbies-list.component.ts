@@ -19,7 +19,7 @@ export class LobbiesListComponent implements OnInit {
       case 'scheduled':
         return 'Scheduled for ' +  this.datePipe.transform(game.nextStageStarts, ' h:mma, MMM d') + ' (UTC)';
       case 'new':
-        return `Open ${game.minRank ? ` for rank ${game.minRank / 1000}k+ players` : ' to join'}`;
+        return `Open ${game.minRank ? ` for lower ranked players (${game.minRank / 1000}k+)` : ' to join'}`;
       case 'complete':
         return 'Finished';
       default:
