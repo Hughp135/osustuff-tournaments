@@ -44,6 +44,7 @@ export class ScoresTableComponent implements OnInit {
   public getRank(rank: string) {
     switch (rank) {
       case 'XH':
+      case 'X':
         return 'SS';
       case 'SH':
         return 'S';

@@ -16,16 +16,16 @@ export async function createGame(
   );
 
   const roundBeatmaps = [
-    getBeatmapBetweenStars(3, 4),
-    getBeatmapBetweenStars(4, 4.5),
-    getBeatmapBetweenStars(4.5, 5),
-    getBeatmapBetweenStars(4.8, 5.3),
-    getBeatmapBetweenStars(5, 6),
-    getBeatmapBetweenStars(5.5, 6.5),
-    getBeatmapBetweenStars(6, 6.5),
-    getBeatmapBetweenStars(6),
-    getBeatmapBetweenStars(6),
-    getBeatmapBetweenStars(6),
+    getBeatmapBetweenStars(3, 4, 40, 160),
+    getBeatmapBetweenStars(4, 4.5, 50, 180),
+    getBeatmapBetweenStars(4.5, 5, 60, 200),
+    getBeatmapBetweenStars(4.8, 5.3, 70, 220),
+    getBeatmapBetweenStars(5, 6, 80, 240),
+    getBeatmapBetweenStars(5.5, 6.5, 90, 260),
+    getBeatmapBetweenStars(6, 6.5, 100, 280),
+    getBeatmapBetweenStars(6, 110, 300),
+    getBeatmapBetweenStars(6, 120, 360),
+    getBeatmapBetweenStars(6, 140, 480),
   ];
 
   const game = await Game.create({
@@ -43,16 +43,23 @@ export async function createGame(
   return game;
 }
 
-function getBeatmapBetweenStars(min: number, max?: number): any {
+function getBeatmapBetweenStars(min: number, max?: number, minLength?: number, maxLength?: number): any {
   const filtered = beatmaps.filter((b: any) => {
     const stars = parseFloat(b.difficultyrating);
+    const inStarRange = stars >= min && (max ? stars < max : true);
+    const longEnough = minLength ? b.total_length >= minLength : true;
+    const shortEnough = maxLength ? b.total_length <= maxLength : true;
 
-    return stars >= min && (max ? stars < max : true);
+    return inStarRange && longEnough && shortEnough;
   });
 
   if (!filtered.length) {
     if (min >= 0) {
       return getBeatmapBetweenStars(min - 0.5, max);
+    } else if (minLength && minLength >= 0) {
+      return getBeatmapBetweenStars(min, max, minLength - 20);
+    } else if (maxLength && maxLength < 500) {
+      return getBeatmapBetweenStars(min, max, minLength, maxLength + 20);
     } else {
       throw new Error('Ran out of beatmaps to pick from');
     }
