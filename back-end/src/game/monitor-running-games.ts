@@ -60,7 +60,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
       }
       if (minRankGames.length === 0) {
         console.log('creating a new game with min rank');
-        await createGame(getRecentMaps, undefined, 35000).catch(e =>
+        await createGame(getRecentMaps, undefined, 45000).catch(e =>
           logger.error('Failed to create game', e),
         );
       }
