@@ -11,6 +11,7 @@ import { achievementGrinder } from './game-complete/grinder';
 import { achievementSpeed } from './game-complete/speedy';
 import { logger } from '../logger';
 import config from 'config';
+import { passWithAnF } from './round-over/pass-with-f';
 
 const TEST_MODE = config.get('TEST_MODE');
 
@@ -28,6 +29,12 @@ export async function updatePlayerAchievements(game: IGame) {
         if (TEST_MODE) {
           await achievementPlayAsTester(aliveUsers);
         }
+        const passedRoundScores = await Score.find({
+          roundId: game.currentRound,
+          gameId: game._id,
+          passedRound: true,
+        });
+        await passWithAnF(passedRoundScores, aliveUsers);
         break;
       case 'complete':
         const passedScores = await Score.find({

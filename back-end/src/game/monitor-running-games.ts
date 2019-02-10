@@ -49,7 +49,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   if (!DISABLE_AUTO_GAME_CREATION && newGamesLength === 0 && !testSkipCreate) {
     console.log('creating a new game as no "new" status ones are running');
     // If no games are active, create a new one
-    await createGame(getRecentMaps, undefined, 1000).catch(e => logger.error('Failed to create game', e));
+    await createGame(getRecentMaps).catch(e => logger.error('Failed to create game', e));
   }
 
   if (TEST_MODE) {
