@@ -61,7 +61,9 @@ export async function getRecentBeatmaps(): Promise<IBeatmap[]> {
   const date = new Date();
   date.setDate(date.getDate() - 30);
   const date2 = new Date();
-  date2.setFullYear(date.getFullYear() - Math.floor(Math.random() * 4) + 1);
+  date2.setFullYear(date2.getFullYear() - Math.floor(Math.random() * 4) + 1);
+  const date3 = new Date();
+  date.setMonth(date3.getMonth() - 6);
 
   const beatmaps1 = await request('get_beatmaps', {
     m: '0',
@@ -71,8 +73,14 @@ export async function getRecentBeatmaps(): Promise<IBeatmap[]> {
     m: '0',
     since: date2.toISOString(),
   });
+  const beatmaps3 = await request('get_beatmaps', {
+    m: '0',
+    since: date3.toISOString(),
+  });
 
-  const all = beatmaps1.concat(beatmaps2);
+  const allBeatmaps = beatmaps1;
+  allBeatmaps.push(...beatmaps2);
+  allBeatmaps.push(...beatmaps3);
 
-  return all;
+  return allBeatmaps;
 }
