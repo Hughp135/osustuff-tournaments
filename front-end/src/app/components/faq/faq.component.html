@@ -75,31 +75,8 @@
         <p>
           A certain percent of players will fail each round. The
           percent value used depends on which round the match is
-          currently in.
-          Currently, on the first round, 80% of players who have
-          set a score will pass, and the remaining 20% will be
-          eliminated.
-        </p>
-        <p>
-          On round 2, 70% of players who set a score will pass
-          and 30% will fail. On each subsequent round, the pass
-          rate drops
-          by 10% down to a minimum of 40% on round 4. This means
-          that on round 4, if there are 10 players remaining,
-          only up to 4 will pass (unless there are tied scores
-          or players leave).
-        </p>
-        <p>The exceptions to the rule are when players either
-          fail to set a score on the map within the time limit
-          (in which case
-          they will automatically lose), or if there are tied
-          scores at the lower threshold of winning players (i.e.
-          both players
-          got exactly the same score).
-
-          In the rare event of ties, every player who tied with
-          the lowest placed passing player will also pass the
-          round.
+          currently in. It also varies with how many players are in the game, and attempts
+          to make the total number of rounds close to 10.
         </p>
       </div>
       <div class="title" (click)="activeQuestion = 4">
