@@ -119,8 +119,6 @@ export async function updateOrCreateUser(osuUser: any): Promise<IUser> {
 
   const rating = Skill.createRating(1650 - 20 * Math.log10(ppRank));
 
-  console.log('new player rating', rating.mu, rating.sigma, 'rank', ppRank);
-
   return await User.create({
     username: osuUser.username,
     rating: {

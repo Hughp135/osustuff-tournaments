@@ -55,7 +55,6 @@ function updatePlayerRatings(
     Skill.createRating(p.user.rating.mu, p.user.rating.sigma),
   ]);
   if (rankedPlayers.length < 1) {
-    console.log(rankedPlayers);
     logger.info('Not updating stats because only 1 or less players were ranked');
     return;
   }

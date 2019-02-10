@@ -13,7 +13,7 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
           const user = await updateOrCreateUser(osuUser);
           return userToPlayer(user);
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       })
       .filter(p => !!p),
