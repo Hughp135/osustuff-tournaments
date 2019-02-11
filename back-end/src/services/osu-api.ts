@@ -57,6 +57,14 @@ export async function getUserRecent(username: string) {
   });
 }
 
+export async function getBeatmaps(from: Date, limit?: number): Promise<IBeatmap[]> {
+  return await request('get_beatmaps', {
+    m: '0',
+    since: from.toISOString(),
+    limit: limit ? limit.toString() : '500',
+  });
+}
+
 export async function getRecentBeatmaps(): Promise<IBeatmap[]> {
   const date = new Date();
   date.setDate(date.getDate() - 30);
