@@ -4,3 +4,4 @@ config/development.yml
 config/production.yml
 logs
 dist
+winston.log
