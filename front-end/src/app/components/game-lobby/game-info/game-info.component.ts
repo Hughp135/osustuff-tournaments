@@ -1,21 +1,32 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Router } from '@angular/router';
+import { ApiService } from '../../../services/api.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-game-info',
   templateUrl: './game-info.component.html',
   styleUrls: ['./game-info.component.scss']
 })
-export class GameInfoComponent implements OnInit {
+export class GameInfoComponent implements OnInit, OnDestroy {
   @Input() game: any;
   @Input() timeLeft: string;
   @Input() inGame: boolean;
 
-  constructor(private settingsService: SettingsService, private router: Router) {
+  public connectionLost: boolean;
+  private subscription: Subscription;
+
+  constructor(private settingsService: SettingsService, private router: Router, private apiService: ApiService) {
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.subscription = this.apiService.connectionLost.subscribe(val => this.connectionLost = val);
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 
   get status() {
     switch (this.game.status) {

@@ -13,18 +13,10 @@ export async function checkRoundScores(
   round: IRound,
   getUserRecent: (u: string) => Promise<any>,
 ) {
-  const date = new Date();
-  date.setSeconds(date.getSeconds() + (FAST_FORWARD_MODE ? 1 : 120));
-  game.status = 'checking-scores';
-  game.nextStageStarts = date;
-  await game.save();
-
   if (TEST_MODE) {
     await addSampleScores(game);
-    await new Promise(res => setTimeout(res, 1000));
   } else {
     // Wait 5 seconds before starting to check
-    await new Promise(res => setTimeout(res, 5000));
     const players = game.players.filter(p => p.alive);
 
     await Promise.all(

@@ -22,7 +22,7 @@ export class SettingsService {
 
   public async checkCurrentGame() {
       try {
-        const me: any = await this.apiService.get(`user/me`).toPromise();
+        const me: any = await this.apiService.get(`user/me`);
 
         if (me) {
           this.setUsername(me.username);
@@ -86,7 +86,7 @@ export class SettingsService {
       return;
     }
 
-    await this.apiService.post(`lobbies/${gameId}/leave`, {}).toPromise();
+    await this.apiService.post(`lobbies/${gameId}/leave`, {});
 
     this.clearCurrentGame();
   }

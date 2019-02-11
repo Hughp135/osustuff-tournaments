@@ -11,7 +11,7 @@ export class LeaderboardResolver implements Resolve<any> {
 
   async resolve(): Promise<Observable<any> | any> {
     return {
-      users: await this.apiService.get('users').toPromise()
+      users: await this.apiService.get('users'),
     };
   }
 }

@@ -3,10 +3,10 @@ import mongoose from 'mongoose';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import config from 'config';
-import { Game, IPlayer } from '../models/Game.model';
+import { Game, IPlayer, IGame } from '../models/Game.model';
 import { Score } from '../models/Score.model';
-import { User } from '../models/User.model';
-import { Round } from '../models/Round.model';
+import { User, IUser } from '../models/User.model';
+import { Round, IRound } from '../models/Round.model';
 import { roundEnded } from './round-ended';
 import { addPlayer } from './add-player';
 
@@ -31,7 +31,7 @@ describe('round-ended', () => {
 
   it('No one wins if no scores set', async () => {
     const u1 = await getUser(1);
-    const game = await Game.create({ title: 'test', beatmaps: [] });
+    const game = await Game.create({ title: 'test', beatmaps: [], roundNumber: 1 });
     await addPlayer(game, u1);
     const round = await Round.create({
       roundNumber: 1,
@@ -47,7 +47,7 @@ describe('round-ended', () => {
     expect(game.players[0].alive).to.equal(false);
   });
   it('Players with no score set should draw', async () => {
-    const game = await Game.create({ title: 'test', beatmaps: [] });
+    const game = await Game.create({ title: 'test', beatmaps: [], roundNumber: 1 });
 
     for (let i = 1; i <= 3; i++) {
       const u = await getUser(i);
@@ -93,11 +93,11 @@ describe('round-ended', () => {
     expect(game.players[4].gameRank).to.equal(2);
     expect(game.players[4].alive).to.equal(false);
   });
-  it('Out of 3 players, 2 progress', async () => {
+  it('Out of 3 players, 1 progress', async () => {
     const u1 = await getUser(1);
     const u2 = await getUser(2);
     const u3 = await getUser(3);
-    const game = await Game.create({ title: 'test', beatmaps: [] });
+    const game = await Game.create({ title: 'test', beatmaps: [], roundNumber: 1 });
 
     await addPlayer(game, u2);
     await addPlayer(game, u3);
@@ -145,7 +145,7 @@ describe('round-ended', () => {
     const u1 = await getUser(1);
     const u2 = await getUser(2);
     const u3 = await getUser(3);
-    const game = await Game.create({ title: 'test', beatmaps: [] });
+    const game = await Game.create({ title: 'test', beatmaps: [], roundNumber: 1 });
 
     await addPlayer(game, u2);
     await addPlayer(game, u3);
@@ -236,7 +236,7 @@ describe('round-ended', () => {
     expect(p2.gameRank).to.equal(undefined);
   });
   it('scores that tie with passing score should also pass', async () => {
-    const game = await Game.create({ title: 'test', beatmaps: [] });
+    const game = await Game.create({ title: 'test', beatmaps: [], roundNumber: 1 });
 
     const players = [];
     for (let i = 0; i < 5; i++) {
@@ -268,8 +268,6 @@ describe('round-ended', () => {
     }
     await roundEnded(game, round);
 
-    console.log(game.players.map(p => `${p.username} - ${p.gameRank}`));
-
     for (let i = 0; i < 4; i++) {
       expect(game.players[i].alive).to.equal(true);
       expect(game.players[i].gameRank).to.equal(undefined);
@@ -277,65 +275,26 @@ describe('round-ended', () => {
     expect(game.players[4].alive).to.equal(false);
     expect(game.players[4].gameRank).to.equal(5);
   });
-  it('ranks losing scores accordingly', async () => {
-    const game = await Game.create({ title: 'test', beatmaps: [] });
+  it('Number of winners is dependant on round number', async () => {
+    const getWinRate = (roundNum: number, playersAlive: number) =>
+      0.8 - 0.04 * (roundNum - 1) * Math.log10(playersAlive);
 
-    const players = [];
-    for (let i = 0; i < 7; i++) {
-      players.push(await addPlayer(game, await getUser(i)));
+    const numOfRounds = 10;
+    const expectedAliveCountPerRound = [8, 7, 7, 6, 6, 6, 5, 5, 4, 1];
+
+    if (expectedAliveCountPerRound.length !== numOfRounds) {
+      throw new Error(
+        'expectedAliveCountPerRound length must equal numofRounds to check each round properly',
+      );
     }
 
-    const round = await Round.create({
-      roundNumber: 1,
-      beatmap: {
-        beatmapId: 'asd123',
-        title: 'b1',
-      },
-      gameId: game._id,
-    });
-    const baseScoreData = getBaseScoreData(round);
-    await Score.create({
-      ...baseScoreData,
-      score: 2,
-      userId: players[0]._id,
-      username: players[0].username,
-    });
-    await Score.create({
-      ...baseScoreData,
-      score: 5,
-      userId: players[1]._id,
-      username: players[1].username,
-    });
-    await Score.create({
-      ...baseScoreData,
-      score: 1,
-      userId: players[2]._id,
-      username: players[2].username,
-    });
-    await Score.create({
-      ...baseScoreData,
-      score: 4,
-      userId: players[3]._id,
-      username: players[3].username,
-    });
-    await Score.create({
-      ...baseScoreData,
-      score: 3,
-      userId: players[4]._id,
-      username: players[4].username,
-    });
-
-    await roundEnded(game, round);
-
-    console.log(game.players.map(p => p.username + ' rank ' + p.gameRank));
-
-    expect(game.players[0].gameRank).to.equal(undefined);
-    expect(game.players[1].gameRank).to.equal(undefined);
-    expect(game.players[2].gameRank).to.equal(5);
-    expect(game.players[3].gameRank).to.equal(undefined);
-    expect(game.players[4].gameRank).to.equal(undefined);
-    expect(game.players[5].gameRank).to.equal(7);
-    expect(game.players[6].gameRank).to.equal(7);
+    for (let i = 1; i <= numOfRounds; i++) {
+      const game = await Game.create({ title: 'test', beatmaps: [], roundNumber: i });
+      const [users, round] = await generateUsersAndScores(game, 10);
+      await roundEnded(game, round);
+      const aliveUsers = game.players.filter(p => p.alive);
+      expect(aliveUsers.length).to.equal(expectedAliveCountPerRound[i - 1], 'Round ' + i);
+    }
   });
 });
 
@@ -350,6 +309,40 @@ async function getUser(id: number) {
   });
 }
 
+async function createScore(round: IRound, user: IUser, score: number) {
+  await Score.create({
+    ...getBaseScoreData(round),
+    score,
+    userId: user._id,
+    username: user.username,
+  });
+}
+
+async function generateUsersAndScores(
+  game: IGame,
+  numberOfUsers: number,
+): Promise<[IUser[], IRound]> {
+  const users: IUser[] = [];
+  for (let i = 0; i < numberOfUsers; i++) {
+    users.push(await addPlayer(game, await getUser(i)));
+  }
+
+  const round = await Round.create({
+    roundNumber: 1,
+    beatmap: {
+      beatmapId: 'asd123',
+      title: 'b1',
+    },
+    gameId: game._id,
+  });
+
+  for (let i = 0; i < numberOfUsers; i++) {
+    await createScore(round, users[i], i + 1);
+  }
+
+  return [users, round];
+}
+
 function getBaseScoreData(round: any) {
   return {
     gameId: new ObjectId(),
@@ -362,4 +355,12 @@ function getBaseScoreData(round: any) {
     count100: 1,
     date: new Date(),
   };
+}
+
+function executePromisesInParallel(tasks: Array<Promise<any>>) {
+  return tasks.reduce((promiseChain, currentTask) => {
+    return promiseChain.then(chainResults =>
+      currentTask.then(currentResult => [...chainResults, currentResult]),
+    );
+  }, Promise.resolve([]));
 }

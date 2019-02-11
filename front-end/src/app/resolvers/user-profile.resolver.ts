@@ -13,7 +13,7 @@ export class UserProfileResolver implements Resolve<any> {
     const { username } = route.params;
 
     return {
-      user: await this.apiService.get(`user/${username}`).toPromise()
+      user: await this.apiService.get(`user/${username}`)
     };
   }
 }

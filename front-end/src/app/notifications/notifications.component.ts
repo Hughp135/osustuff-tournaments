@@ -31,7 +31,7 @@ export class NotificationsComponent implements OnInit {
           .subscribe(async () => {
             try {
               const achievement: Achievement | undefined = <Achievement | undefined>(
-                await this.apiService.get('unread-achievements').toPromise()
+                await this.apiService.get('unread-achievements')
               );
 
               if (achievement) {

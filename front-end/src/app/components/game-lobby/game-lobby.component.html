@@ -8,9 +8,11 @@
         <app-join-game [game]="game" [inAnotherGame]="inAnotherGame" *ngIf="showJoinGame"></app-join-game>
         <app-game-status [viewingRoundResults]="game.status === 'complete' || viewResults" [toggleViewResults]="toggleViewResults"
           [timeLeft]="timeLeft" [game]="game" [isAlive]="isAlive" [mePlayer]="mePlayer"
-          [totalPlayers]="players.length"></app-game-status>
+          [totalPlayers]="players.length">
+        </app-game-status>
         <app-match-results [toggleViewResults]="toggleViewResults" *ngIf="game.status === 'complete' || viewResults"
-          [game]="game"></app-match-results>
+          [game]="game">
+        </app-match-results>
         <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
         <app-beatmap-info *ngIf="showBeatmap" [timeLeft]="timeLeft" [game]="game" [beatmap]="currentBeatmap" [isAlive]="isAlive"></app-beatmap-info>
         <app-scores-list *ngIf="showScores" [inGame]="inGame" [currentUser]="currentUsername" [players]="players" [game]="game" [scores]="game.scores"></app-scores-list>

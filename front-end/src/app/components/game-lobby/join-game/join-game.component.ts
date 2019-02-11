@@ -59,7 +59,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     this.error = undefined;
 
     try {
-      await this.apiService.post(`lobbies/${this.game._id}/join`, {}).toPromise();
+      await this.apiService.post(`lobbies/${this.game._id}/join`, {});
       this.success = true;
       this.settingsService.setCurrentGame(this.game._id);
       responsiveVoice.speak('You have joined the game');

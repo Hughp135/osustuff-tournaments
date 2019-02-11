@@ -3,6 +3,7 @@ import { SettingsService, CurrentGame } from 'src/app/services/settings.service'
 import { NavigationEnd, Router } from '@angular/router';
 import { Component } from '@angular/core';
 import { filter } from 'rxjs/operators';
+import { ApiService } from './services/api.service';
 
 @Component({
   selector: 'app-root',
@@ -17,11 +18,13 @@ export class AppComponent {
   public currentGame: CurrentGame;
   public currentUsername: string;
   public gameId: string;
+  public connectionLost = false;
 
   constructor(
     router: Router,
     settingsService: SettingsService,
     private adminService: AdminService,
+    private apiService: ApiService,
   ) {
     router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -39,6 +42,7 @@ export class AppComponent {
     this.isAdmin = !!settingsService.adminPw;
     settingsService.currentGame.subscribe(val => (this.currentGame = val));
     settingsService.username.subscribe(val => (this.currentUsername = val));
+    this.apiService.connectionLost.subscribe(val => this.connectionLost = val);
   }
 
   public async clearDb() {

@@ -43,6 +43,42 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     status: ['scheduled', 'new', 'in-progress', 'round-over', 'checking-scores'],
   });
 
+  await createNewGame(games, getRecentMaps);
+
+  if (TEST_MODE) {
+    await Promise.all(games.map(async g => await addSampleChatMessage(g)));
+  }
+
+  await Promise.all(
+    games.map(async game => {
+      try {
+        switch (game.status) {
+          case 'scheduled':
+            return await openScheduledGame(game);
+          case 'new':
+            return await startGame(game);
+          case 'in-progress':
+            return await checkRoundEnded(game);
+          case 'checking-scores':
+            return await skipCheckingScore(game);
+          case 'round-over':
+            return await completeRound(game);
+        }
+      } catch (e) {
+        console.error('Failed to update game with status ' + game.status, e);
+      }
+    }),
+  );
+
+  // Call self again
+  setTimeout(async () => {
+    if (isMonitoring) {
+      await updateRunningGames(getRecentMaps);
+    }
+  }, 1000);
+}
+
+async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) {
   const newGames = games.filter(g => g.status === 'new');
   const testSkipCreate = TEST_MODE && newGames.length >= 2;
   const anyRankGames = newGames.filter(g => !g.minRank);
@@ -68,38 +104,6 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
       console.error(e);
     }
   }
-
-  if (TEST_MODE) {
-    await Promise.all(games.map(async g => await addSampleChatMessage(g)));
-  }
-
-  await Promise.all(
-    games.map(async game => {
-      try {
-        switch (game.status) {
-          case 'scheduled':
-            return await openScheduledGame(game);
-          case 'new':
-            return await startGame(game);
-          case 'in-progress':
-            return await checkRoundEnded(game);
-          case 'checking-scores':
-            return await skipCheckingScore(game);
-          case 'round-over':
-            return await completeRound(game);
-        }
-      } catch (e) {
-        logger.error('Failed to update games ', e);
-      }
-    }),
-  );
-
-  // Call self again
-  setTimeout(async () => {
-    if (isMonitoring) {
-      await updateRunningGames(getRecentMaps);
-    }
-  }, 1000);
 }
 
 async function openScheduledGame(game: IGame) {
@@ -148,6 +152,9 @@ async function checkRoundEnded(game: IGame) {
 
   // Check if next round should start
   if (<Date> game.nextStageStarts < new Date()) {
+    game.status = 'checking-scores';
+    setNextStageStartsAt(game, FAST_FORWARD_MODE ? 1 : 120);
+    await new Promise(res => setTimeout(res, TEST_MODE ? 10000 : 5000));
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
     clearGetLobbyCache(game._id);

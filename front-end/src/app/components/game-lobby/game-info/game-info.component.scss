@@ -5,6 +5,12 @@
   z-index: 2;
 }
 
+.column {
+  h5 {
+    margin: 0;
+  }
+}
+
 .one.wide.column {
   width: 60px !important;
 }
