@@ -1,12 +1,10 @@
 import { IAchievement, Achievement } from '../models/Achievement.model';
 import { getDataOrCache } from '../services/cache';
-import { log } from 'winston';
-import { logger } from '../logger';
 
 export async function getOrCreateAchievement(
   title: string,
-  description: string,
-  icon: string,
+  description?: string,
+  icon?: string,
 ): Promise<IAchievement> {
   const achievement = await getDataOrCache(`achievement-${title}`, 60000 * 60, async () => {
     try {
@@ -14,9 +12,12 @@ export async function getOrCreateAchievement(
       if (existing) {
         return existing;
       }
-      return await Achievement.create({ title, description, icon });
+      if (description && icon) {
+        return await Achievement.create({ title, description, icon });
+      }
+      return null;
     } catch (e) {
-      logger.error('Failed to create/get achievement', e);
+      console.error('Failed to create/get achievement ' + title, e);
       return null;
     }
   });
@@ -25,12 +26,12 @@ export async function getOrCreateAchievement(
     throw new Error('Failed to get achievement');
   }
 
-  if (achievement.description !== description) {
+  if (description && achievement.description !== description) {
     achievement.description = description;
     await achievement.save();
   }
 
-  if (achievement.icon !== icon) {
+  if (icon && achievement.icon !== icon) {
     await achievement.save();
   }
 

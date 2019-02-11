@@ -1,5 +1,5 @@
 import { IUser } from './User.model';
-import { IBeatmap } from './Round.model';
+import { IBeatmap } from './Beatmap.model';
 import mongoose from 'mongoose';
 
 export interface IPlayer {

@@ -4,7 +4,9 @@ import { Score, IScore } from '../models/Score.model';
 import config from 'config';
 import { addSampleScores } from '../test-helpers/add-sample-scores';
 import { logger } from '../logger';
+import { cache } from '../services/cache';
 
+const TEST_ENV = process.env.NODE_ENV === 'test';
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 
@@ -13,6 +15,17 @@ export async function checkRoundScores(
   round: IRound,
   getUserRecent: (u: string) => Promise<any>,
 ) {
+  game.status = 'checking-scores';
+
+  // Set the timeout for checking scores should before it is re-checked
+  const date = new Date();
+  date.setSeconds(date.getSeconds() + 120); // times out after 2 mins
+  game.nextStageStarts = date;
+  await game.save();
+  cache.del(`get-lobby-${game._id}`);
+
+  await new Promise(res => setTimeout(res, TEST_ENV ? 0 : TEST_MODE ? 1000 : 5000));
+
   if (TEST_MODE) {
     await addSampleScores(game);
   } else {

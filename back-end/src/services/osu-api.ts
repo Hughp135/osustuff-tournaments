@@ -1,6 +1,6 @@
 import config from 'config';
 import got from 'got';
-import { IBeatmap } from '../models/Round.model';
+import { IBeatmap } from '../models/Beatmap.model';
 import Bottleneck from 'bottleneck';
 
 const limiter = new Bottleneck({

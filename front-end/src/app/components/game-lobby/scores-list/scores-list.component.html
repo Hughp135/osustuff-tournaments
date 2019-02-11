@@ -1,5 +1,5 @@
 <div class="ui inverted basic segment no-bg">
-  <h3 *ngIf="scores && !myScore && inGame">
+  <h3 *ngIf="game.status === 'round-over' && !myScore && inGame">
     <p>
       You did not set a score this round.
     </p>
@@ -9,8 +9,11 @@
     <app-scores-table [scores]="[myScore]" [currentUser]="currentUser" [game]="game"></app-scores-table>
   </div>
   <h3>Round {{ game.roundNumber }} scores</h3>
-  <div class="scores-container">
-    <app-scores-table [scores]="scores" [currentUser]="currentUser" [game]="game"></app-scores-table>
+  <div class="ui active centered inline inverted medium teal text loader" *ngIf="game.status === 'checking-scores' && !scores.length">
+    Checking scores...
+  </div>
+  <div class="scores-container" *ngIf="scores">
+    <app-scores-table *ngIf="game.status === 'round-over' || scores.length" [scores]="scores" [currentUser]="currentUser" [game]="game"></app-scores-table>
   </div>
   <p class="m-top" *ngIf="playersNoScore.length">
     The following players failed to set a score for this round in time: {{ playersNoScore.join(', ') }}

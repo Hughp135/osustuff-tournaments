@@ -53,7 +53,6 @@ describe('check-player-scores', () => {
     const getUserRecent = sinon
       .stub()
       .callsFake(async (u: string) => [getScore('932223', '1000000')]);
-
     await checkRoundScores(game, round, getUserRecent);
     expect(getUserRecent).calledTwice; // tslint:disable-line:no-unused-expression
 
@@ -121,6 +120,7 @@ describe('check-player-scores', () => {
       .callsFake(async (u: string) => [getScore('932223', '1000000')]);
 
     await checkRoundScores(game, round, getUserRecent);
+
     await checkRoundScores(game, round, getUserRecent);
 
     const scores = await Score.find({
@@ -182,6 +182,7 @@ describe('check-player-scores', () => {
     await checkRoundScores(game, round, async (u: string) => [
       getScore('932223', '1000000', '2030-06-22 9:11:16'),
     ]);
+
     await checkRoundScores(game, round, async () => [
       getScore('932223', '3000000', '2030-06-22 9:12:16'),
     ]);

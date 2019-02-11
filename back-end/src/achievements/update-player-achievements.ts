@@ -6,7 +6,7 @@ import { User } from '../models/User.model';
 import { achievementWinAGame } from './game-complete/win-a-game';
 import { Round } from '../models/Round.model';
 import { Score } from '../models/Score.model';
-import { achievementHdPlayer } from './game-complete/hd-player';
+import { achievementModScores } from './game-complete/mod-scores';
 import { achievementGrinder } from './game-complete/grinder';
 import { achievementSpeed } from './game-complete/speedy';
 import { logger } from '../logger';
@@ -49,7 +49,7 @@ export async function updatePlayerAchievements(game: IGame) {
         await achievementNewbie(allGameUsers);
         await achievementVersatile(allGameUsers, passedScores);
         await achievementWinAGame(game, allGameUsers);
-        await achievementHdPlayer(allGameUsers);
+        await achievementModScores(allGameUsers);
         await achievementGrinder(allGameUsers);
         await achievementSpeed(allGameUsers, passedScores);
         break;

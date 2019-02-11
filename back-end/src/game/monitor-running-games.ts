@@ -20,20 +20,27 @@ const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 const PLAYERS_REQUIRED_TO_START = config.get('PLAYERS_REQUIRED_TO_START');
 let DISABLE_AUTO_GAME_CREATION = config.get('DISABLE_AUTO_GAME_CREATION');
 export let isMonitoring = false;
+let gamesBeingUpdated: string[] = [];
+let creatingNewGame = false;
 
 export async function startMonitoring() {
   console.log('starting monitoring');
+
   if (isMonitoring) {
     throw new Error('Already monitoring');
   }
 
   isMonitoring = true;
 
-  await updateRunningGames(getRecentBeatmaps);
+  // Call self again
+  setInterval(async () => {
+    if (isMonitoring) {
+      await updateRunningGames(getRecentBeatmaps);
+    }
+  }, 1000);
 }
 
 export function stopMonitoring() {
-  console.log('stopping monitoring');
   isMonitoring = false;
 }
 
@@ -43,39 +50,53 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     status: ['scheduled', 'new', 'in-progress', 'round-over', 'checking-scores'],
   });
 
-  await createNewGame(games, getRecentMaps);
+  if (!creatingNewGame) {
+    creatingNewGame = true;
+    try {
+       // NOT awaited
+      await createNewGame(games, getRecentMaps);
+    } catch (e) {
+      console.error('Failed to create game', e);
+    }
+    creatingNewGame = false;
+  }
 
   if (TEST_MODE) {
     await Promise.all(games.map(async g => await addSampleChatMessage(g)));
   }
 
-  await Promise.all(
-    games.map(async game => {
-      try {
-        switch (game.status) {
-          case 'scheduled':
-            return await openScheduledGame(game);
-          case 'new':
-            return await startGame(game);
-          case 'in-progress':
-            return await checkRoundEnded(game);
-          case 'checking-scores':
-            return await skipCheckingScore(game);
-          case 'round-over':
-            return await completeRound(game);
-        }
-      } catch (e) {
-        console.error('Failed to update game with status ' + game.status, e);
-      }
-    }),
-  );
-
-  // Call self again
-  setTimeout(async () => {
-    if (isMonitoring) {
-      await updateRunningGames(getRecentMaps);
+  const promises = games.map(async game => {
+    if (gamesBeingUpdated.includes(game._id.toString())) {
+      console.log('not updating');
+      // This game is being updated already, don't do anything.
+      return;
     }
-  }, 1000);
+    gamesBeingUpdated.push(game._id.toString());
+    try {
+      switch (game.status) {
+        case 'scheduled':
+          await openScheduledGame(game);
+          break;
+        case 'new':
+          await startGame(game);
+          break;
+        case 'in-progress':
+          await checkRoundEnded(game);
+          break;
+        case 'checking-scores':
+          await skipCheckingScore(game);
+          break;
+        case 'round-over':
+          await completeRound(game);
+          break;
+      }
+    } catch (e) {
+      console.error('Failed to update game with status ' + game.status, e);
+    }
+    gamesBeingUpdated = gamesBeingUpdated.filter(g => g !== game._id.toString());
+  });
+
+  await Promise.all(promises);
 }
 
 async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) {
@@ -90,9 +111,7 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
     try {
       if (anyRankGames.length === 0) {
         console.log('creating a new game');
-        await createGame(getRecentMaps).catch(e =>
-          logger.error('Failed to create game', e),
-        );
+        await createGame(getRecentMaps).catch(e => logger.error('Failed to create game', e));
       }
       if (minRankGames.length === 0) {
         console.log('creating a new game with min rank');
@@ -152,9 +171,6 @@ async function checkRoundEnded(game: IGame) {
 
   // Check if next round should start
   if (<Date> game.nextStageStarts < new Date()) {
-    game.status = 'checking-scores';
-    setNextStageStartsAt(game, FAST_FORWARD_MODE ? 1 : 120);
-    await new Promise(res => setTimeout(res, TEST_MODE ? 10000 : 5000));
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
     clearGetLobbyCache(game._id);
@@ -208,7 +224,7 @@ async function skipCheckingScore(game: IGame) {
   }
 }
 
-function clearGetLobbyCache(gameId: string | ObjectId) {
+export function clearGetLobbyCache(gameId: string | ObjectId) {
   cache.del(`get-lobby-${gameId}`);
 }
 

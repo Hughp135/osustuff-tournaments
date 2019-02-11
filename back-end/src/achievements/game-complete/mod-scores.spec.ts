@@ -6,8 +6,9 @@ import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import { Score } from '../../models/Score.model';
 import config from 'config';
-import { achievementHdPlayer } from './hd-player';
+import { achievementModScores } from './mod-scores';
 import { Skill } from '../../services/trueskill';
+import { Achievement, IAchievement } from '../../models/Achievement.model';
 
 const expect = chai.expect;
 chai.use(sinonChai);
@@ -26,64 +27,58 @@ describe('achievement - hd player', async () => {
     await Score.deleteMany({});
     await User.deleteMany({});
   });
-  it('does not add achievement if under 5 scores set', async () => {
+  it('does not add achievement if under 25 scores set', async () => {
     const user = await getUser(1);
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 24; i++) {
       await Score.create({
         ...getBaseScoreData(user._id, 10), // HD
       });
     }
-    await achievementHdPlayer([user]);
+    await achievementModScores([user]);
 
     const userUpdated = <IUser> await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(0);
   });
-  it('adds achievement if 5 scores and all HD', async () => {
+  it('adds achievement if 25 HD only scores and all have HD', async () => {
     const user = await getUser(1);
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 25; i++) {
       await Score.create({
-        ...getBaseScoreData(user._id, 24), // HDHR
+        ...getBaseScoreData(user._id, 8), // HD
       });
     }
-    await achievementHdPlayer([user]);
+    await achievementModScores([user]);
 
     const userUpdated = <IUser> await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(1);
+    const achievement = <IAchievement> await Achievement.findOne({_id: userUpdated.achievements[0].achievementId });
+    expect(achievement.title).to.equal('HD Adept');
   });
-  it('does not give achievement if half scores are HD', async () => {
+  it('does not achievement if mods have anything other than just HD', async () => {
     const user = await getUser(1);
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 25; i++) {
+      await Score.create({
+        ...getBaseScoreData(user._id, 16), // HDHR
+      });
+    }
+    await achievementModScores([user]);
+
+    const userUpdated = <IUser> await User.findById(user._id);
+    expect(userUpdated.achievements.length).to.equal(0);
+  });
+  it('does not give achievement if not all scores are HD - only', async () => {
+    const user = await getUser(1);
+    for (let i = 0; i < 15; i++) {
       await Score.create({
         ...getBaseScoreData(user._id, 8), // HD
       });
       await Score.create({
-        ...getBaseScoreData(user._id, 0), // nomod
+        ...getBaseScoreData(user._id, 16), // HDHR
       });
     }
-    await achievementHdPlayer([user]);
+    await achievementModScores([user]);
 
     const userUpdated = <IUser> await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(0);
-  });
-  it('removes achievement if HD scores drops below thershold', async () => {
-    const user = await getUser(1);
-    for (let i = 0; i < 5; i++) {
-      await Score.create({
-        ...getBaseScoreData(user._id, 10), // HD
-      });
-    }
-    await achievementHdPlayer([user]);
-
-    const updatedUser = <IUser> await User.findById(user._id);
-    expect(updatedUser.achievements.length).to.equal(1);
-
-    await Score.create({
-      ...getBaseScoreData(user._id, 0),
-    });
-    await achievementHdPlayer([updatedUser]);
-
-    const userUpdated2 = <IUser> await User.findById(user._id);
-    expect(userUpdated2.achievements.length).to.equal(0);
   });
 });
 

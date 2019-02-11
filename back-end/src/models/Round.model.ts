@@ -1,13 +1,5 @@
 import mongoose from 'mongoose';
-
-export interface IBeatmap {
-  title: string;
-  artist: string;
-  version: string;
-  beatmap_id: string;
-  beatmapset_id: string;
-  total_length: string;
-}
+import { IBeatmap } from './Beatmap.model';
 
 export interface IRound extends mongoose.Document {
   beatmap: IBeatmap;

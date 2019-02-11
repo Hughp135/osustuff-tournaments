@@ -14,7 +14,7 @@ export async function getUsers(req: Request, res: Response) {
       gamesPlayed: 1,
       percentiles: 1,
     })
-    .limit(200)
+    .limit(400)
     .lean();
 
   const transformed = (<any[]> users).map((u: any) => {
