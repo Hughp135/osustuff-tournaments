@@ -29,7 +29,6 @@ export async function achievementSpeed(
           getAppliedMods(score.mods).includes('DT')
         );
       });
-      console.log(dtScores);
       const achievement: any =
         dtScores.length >= 3 && dtScores.length < 5
           ? achievement3
