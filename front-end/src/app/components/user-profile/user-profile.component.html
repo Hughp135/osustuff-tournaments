@@ -32,7 +32,7 @@
         <h5 class="ui inverted header">Match Rating</h5>
         <h3>
           <i class="large teal crosshairs icon"></i>
-          {{ (user.rating.mu - 3 * user.rating.sigma).toFixed(0) }}
+          {{ (user.rating.weighted).toFixed(0) }}
         </h3>
       </div>
 

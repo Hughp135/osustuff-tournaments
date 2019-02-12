@@ -35,6 +35,7 @@ export async function achievementVersatile(allUsers: IUser[], passedScores: ISco
     users.map(async user => {
       if (!user.achievements.some(a => a.achievementId.toString() === achievement._id.toString())) {
         user.achievements.push({ achievementId: achievement._id, progress: 1 });
+        user.markModified('achievements');
         await user.save();
       }
     }),

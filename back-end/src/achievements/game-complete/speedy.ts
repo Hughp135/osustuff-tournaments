@@ -19,7 +19,7 @@ export async function achievementSpeed(users: IUser[], passedScores: IScore[]) {
     users.map(async user => {
       const dtScores = passedScores.filter(score => {
         return (
-          score.userId.toHexString() === user.osuUserId.toString() &&
+          score.userId.toHexString() === user._id.toString() &&
           getAppliedMods(score.mods).includes('DT')
         );
       });
@@ -41,6 +41,7 @@ export async function achievementSpeed(users: IUser[], passedScores: IScore[]) {
           progress: 1,
         };
         user.achievements.push(newAchievement);
+        user.markModified('achievements');
         await user.save();
       }
     }),
