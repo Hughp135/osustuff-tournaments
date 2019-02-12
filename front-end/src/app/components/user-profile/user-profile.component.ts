@@ -23,7 +23,7 @@ export interface IUser {
   ppRank: number;
   countryRank: number;
   country: string;
-  rating: { mu: number; sigma: number };
+  rating: { mu: number; sigma: number; weighted: number };
   gamesPlayed: number;
   wins: number;
   achievements: IUserAchievement[];
