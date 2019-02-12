@@ -32,7 +32,6 @@ export async function startMonitoring() {
 
   isMonitoring = true;
 
-  // Call self again
   setInterval(async () => {
     if (isMonitoring) {
       await updateRunningGames(getRecentBeatmaps);
@@ -53,12 +52,13 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   if (!creatingNewGame) {
     creatingNewGame = true;
     try {
-       // NOT awaited
-      await createNewGame(games, getRecentMaps);
+       // NOT awaited intentionally
+      createNewGame(games, getRecentMaps).then(() => {
+        creatingNewGame = false;
+      });
     } catch (e) {
       console.error('Failed to create game', e);
     }
-    creatingNewGame = false;
   }
 
   if (TEST_MODE) {
@@ -113,7 +113,7 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
         console.log('creating a new game');
         await createGame(getRecentMaps).catch(e => logger.error('Failed to create game', e));
       }
-      if (minRankGames.length === 0) {
+      if (minRankGames.length === 0 && !TEST_MODE) {
         console.log('creating a new game with min rank');
         await createGame(getRecentMaps, undefined, 45000).catch(e =>
           logger.error('Failed to create game', e),
