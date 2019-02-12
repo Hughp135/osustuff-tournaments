@@ -29,7 +29,8 @@ async function run() {
       }
     });
 
-  console.log(`Updated ${updated} out of ${count} users`);
+  console.log(`Updated ${updated} out of ${count} total users`);
+  await mongoose.disconnect();
 }
 
 run().catch(e => console.log(e));
