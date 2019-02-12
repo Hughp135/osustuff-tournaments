@@ -14,6 +14,7 @@ export async function endGame(game: IGame) {
         gameId: game._id,
         place: 1,
         gameEndedAt: new Date(),
+        gamePlayers: game.players.length,
       };
 
       await User.updateOne(
