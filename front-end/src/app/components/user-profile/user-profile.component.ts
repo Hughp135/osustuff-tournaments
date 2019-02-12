@@ -7,6 +7,13 @@ export interface IUserAchievement {
   read?: boolean;
 }
 
+export interface IResult {
+  ratingBefore: { weighted: number };
+  ratingAfter: { weighted: number };
+  gamePlayers: number;
+  gameEndedAt: Date;
+}
+
 export interface IUser {
   username: string;
   osuUserId: number;
@@ -23,6 +30,8 @@ export interface IUser {
     top20: number;
     top50: number;
   };
+  results: IResult[];
+  averageRank?: number;
 }
 
 @Component({
@@ -38,4 +47,10 @@ export class UserProfileComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+  public getRatingChange(result) {
+    if (result.ratingAfter.weighted && result.ratingBefore.weighted) {
+      return parseFloat((result.ratingAfter.weighted - result.ratingBefore.weighted).toFixed(1));
+    }
+  }
 }

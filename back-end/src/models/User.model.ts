@@ -7,13 +7,19 @@ export interface IUserAchievement {
   read?: boolean;
 }
 
+export interface IRating {
+  mu: number;
+  sigma: number;
+  weighted: number;
+}
+
 export interface IUserResult {
   gameId: mongoose.Types.ObjectId;
   place: number;
+  gamePlayers: number;
   gameEndedAt?: Date;
-  ratingChange?: number;
-  ratingBefore?: number;
-  ratingAfter?: number;
+  ratingBefore?: IRating;
+  ratingAfter?: IRating;
 }
 
 export interface IUser extends mongoose.Document {
@@ -23,13 +29,10 @@ export interface IUser extends mongoose.Document {
   ppRank: number;
   countryRank: number;
   country: string;
-  rating: {
-    mu: number;
-    sigma: number;
-  };
+  rating: IRating;
   gamesPlayed: number;
   wins: number;
-  averageRank: number;
+  averageRank?: number;
   achievements: IUserAchievement[];
   percentiles: {
     top10: number;
@@ -54,6 +57,7 @@ const UserSchema = new mongoose.Schema(
       type: {
         mu: { type: Number, required: true, index: true },
         sigma: { type: Number, required: true },
+        weighted: { type: Number },
       },
       required: true,
     },
@@ -82,11 +86,23 @@ const UserSchema = new mongoose.Schema(
       type: [
         {
           gameId: { type: mongoose.Schema.Types.ObjectId, required: true },
+          gamePlayers: { type: Number, required: true },
           place: { type: Number, required: true },
           gameEndedAt: { type: Date },
-          ratingChange: { type: Number },
-          ratingBefore: { type: Number },
-          ratingAfter: { type: Number },
+          ratingBefore: {
+            type: {
+              mu: { type: Number, required: true, index: true },
+              sigma: { type: Number, required: true },
+              weighted: { type: Number },
+            },
+          },
+          ratingAfter: {
+            type: {
+              mu: { type: Number, required: true, index: true },
+              sigma: { type: Number, required: true },
+              weighted: { type: Number },
+            },
+          },
         },
       ],
       required: true,
@@ -124,6 +140,7 @@ export async function updateOrCreateUser(osuUser: any): Promise<IUser> {
     rating: {
       mu: rating.mu,
       sigma: rating.sigma,
+      weighted: rating.mu - 3 * rating.sigma,
     },
     osuUserId,
     ppRank,

@@ -60,6 +60,7 @@ async function setPlayerRanksAndResults(
         const result: IUserResult = {
           gameId: game._id,
           place: <number> player.gameRank,
+          gamePlayers: game.players.length,
         };
 
         await User.updateOne(
