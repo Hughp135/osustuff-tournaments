@@ -53,7 +53,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     creatingNewGame = true;
     try {
        // NOT awaited intentionally
-      createNewGame(games, getRecentMaps).then(() => {
+      createNewGame(games, getRecentMaps).then(() => { // tslint:disable-line:no-floating-promises
         creatingNewGame = false;
       });
     } catch (e) {

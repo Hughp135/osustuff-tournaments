@@ -1,6 +1,7 @@
 import { Game, IGame } from '../models/Game.model';
 import { addSamplePlayers } from '../test-helpers/add-sample-players';
 import config from 'config';
+import { Beatmap } from '../models/Beatmap.model';
 
 const TEST_MODE = config.get('TEST_MODE');
 
@@ -12,15 +13,26 @@ export async function createGame(
   minRank?: number,
   testPlayers?: number,
 ): Promise<IGame> {
+  const savedBeatmaps = (await Beatmap.aggregate([{ $sample: { size: 1500 } }]))
+    .filter((b, _, array) => !array.some(b2 => b.beatmapset_id === b2.beatmapset_id));
   beatmaps = (await getRecentBeatmaps()).filter(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
+  console.log('beatmaps length from api', beatmaps.length);
+  beatmaps.push(...savedBeatmaps);
+  console.log('beatmaps length after saved', beatmaps.length);
 
-  const numRounds = 10;
-  // Min/Max beatmap difficulties per round
+  const numRounds = 10; // max number of rounds that will be played
+
+  // Set Min/Max beatmap difficulties per round for each type of lobby
   const standardStars: Array<[number, number]> = new Array(numRounds)
   .fill(null)
-  .map((_, idx) => <[number, number]> [4 + idx * 0.3, idx > 7 ? undefined : 5 + idx * 0.3]);
+  .map((_, idx) => {
+    if (idx < 3) {
+      return <[number, number]> [3 + idx * 0.5, 3.8 + idx * 0.5];
+    }
+    return <[number, number]> [4 + idx * 0.4, idx > 7 ? undefined : 5 + idx * 0.4];
+  });
   const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
     .fill(null)
     .map((_, idx) => <[number, number]> [2 + idx * 0.3, 3 + idx * 0.3]);
