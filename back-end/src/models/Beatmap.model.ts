@@ -1,20 +1,22 @@
 import mongoose from 'mongoose';
 
 export interface IBeatmap extends mongoose.Document {
+  beatmapset_id: string;
+  beatmap_id: string;
+  approved: string;
+  total_length: string;
+  hit_length: string;
+  version: string;
   title: string;
   artist: string;
-  version: string;
-  beatmap_id: string;
-  beatmapset_id: string;
-  total_length: string;
+  approved_date: string;
 }
 
 const BeatmapSchema = new mongoose.Schema(
-  {
-    type: Object,
-  },
+  {},
   {
     timestamps: true,
+    strict: false,
   },
 );
 

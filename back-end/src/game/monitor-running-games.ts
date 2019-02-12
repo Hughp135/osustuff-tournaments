@@ -53,7 +53,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     creatingNewGame = true;
     try {
        // NOT awaited intentionally
-      createNewGame(games, getRecentMaps).then(() => {
+      createNewGame(games, getRecentMaps).then(() => { // tslint:disable-line:no-floating-promises
         creatingNewGame = false;
       });
     } catch (e) {
@@ -113,7 +113,7 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
         console.log('creating a new game');
         await createGame(getRecentMaps).catch(e => logger.error('Failed to create game', e));
       }
-      if (minRankGames.length === 0 && !TEST_MODE) {
+      if (minRankGames.length === 0) {
         console.log('creating a new game with min rank');
         await createGame(getRecentMaps, undefined, 45000).catch(e =>
           logger.error('Failed to create game', e),
