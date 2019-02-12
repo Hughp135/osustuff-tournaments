@@ -12,15 +12,21 @@ export async function achievementNewbie(allGameUsers: IUser[]) {
 
   await Promise.all(
     allGameUsers
-      .filter(u => !u.gamesPlayed)
+      .filter(u => u.gamesPlayed === 1)
       .map(async user => {
         if (
           !user.achievements.some(
             a => a.achievementId.toString() === achievement._id.toString(),
           )
         ) {
-          const newAchievement: IUserAchievement = { achievementId: achievement._id, progress: 1 };
-          await User.updateOne({_id : user._id }, { $addToSet: { achievements: newAchievement } });
+          const newAchievement: IUserAchievement = {
+            achievementId: achievement._id,
+            progress: 1,
+          };
+          await User.updateOne(
+            { _id: user._id },
+            { $addToSet: { achievements: newAchievement } },
+          );
         }
       }),
   );
