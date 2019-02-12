@@ -1,30 +1,59 @@
-<div class="ui inverted relaxed list" #chatMessages (scroll)="onChatScrolled()" (mousedown)="onMouseDown()"
-  (body:mouseup)="onMouseUp()">
+<div
+  class="ui inverted relaxed list"
+  #chatMessages
+  (scroll)="onChatScrolled()"
+  (mousedown)="onMouseDown()"
+  (body:mouseup)="onMouseUp()"
+>
   <div class="item" *ngFor="let message of sortedMessages">
-    <div class="image-container">
-      <img class="ui avatar image" [src]="'//a.ppy.sh/' + message.osuUserId">
+    <div class="image-container" *ngIf="!isSystem(message)">
+      <img class="ui avatar image" [src]="'//a.ppy.sh/' + message.osuUserId" />
     </div>
     <div class="content">
       <div class="header">
-        {{ message.username }}
-        <span class="text-muted"> {{ message.createdAt | date:'short' }}</span>
+        <ng-container *ngIf="!isSystem(message)">{{
+          message.username
+        }}</ng-container>
+        <span class="text-muted"> {{ message.createdAt | date: 'short' }}</span>
       </div>
-      <div class="description chat-message" [innerHTML]="message.message | twitchEmotes | emojify ">
-      </div>
+      <div
+        class="description chat-message"
+        [ngClass]="{ system: isSystem(message) }"
+        [innerHTML]="message.message | twitchEmotes | emojify"
+      ></div>
     </div>
   </div>
 </div>
 <form (submit)="sendMessage()">
   <div class="ui fluid action inverted input">
-    <input #chatInput autocomplete="off" [disabled]="sendingMessage || !canChat" [ngModel]="messageInput | emojify"
-      (ngModelChange)="messageInput=$event" name="messageInput" type="text" [placeholder]="canChat ? 'Chat...' : 'You cannot chat'">
-    <emoji-mart *ngIf="showEmojiPicker" (emojiClick)="addEmoji($event)"></emoji-mart>
+    <input
+      #chatInput
+      autocomplete="off"
+      [disabled]="sendingMessage || !canChat"
+      [ngModel]="messageInput | emojify"
+      (ngModelChange)="messageInput = $event"
+      name="messageInput"
+      type="text"
+      [placeholder]="canChat ? 'Chat...' : 'You cannot chat'"
+    />
+    <emoji-mart
+      *ngIf="showEmojiPicker"
+      (emojiClick)="addEmoji($event)"
+    ></emoji-mart>
 
-    <button class="ui inverted icon button show-emoji-picker" (document:click)="windowClick($event)" [disabled]="sendingMessage || !canChat"
-      type="button">
+    <button
+      class="ui inverted icon button show-emoji-picker"
+      (document:click)="windowClick($event)"
+      [disabled]="sendingMessage || !canChat"
+      type="button"
+    >
       <i class="smile outline icon show-emoji-picker"></i>
     </button>
-    <button class="ui inverted icon button" type="submit" [disabled]="sendingMessage || !canChat">
+    <button
+      class="ui inverted icon button"
+      type="submit"
+      [disabled]="sendingMessage || !canChat"
+    >
       <i class="comment outline icon"></i>
     </button>
   </div>
