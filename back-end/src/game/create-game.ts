@@ -1,3 +1,4 @@
+import { IBeatmap } from './../models/Beatmap.model';
 import { Game, IGame } from '../models/Game.model';
 import { addSamplePlayers } from '../test-helpers/add-sample-players';
 import config from 'config';
@@ -5,47 +6,63 @@ import { Beatmap } from '../models/Beatmap.model';
 
 const TEST_MODE = config.get('TEST_MODE');
 
-let beatmaps: any[];
-
 export async function createGame(
   getRecentBeatmaps: () => Promise<any>,
   scheduledDate?: Date,
   minRank?: number,
   testPlayers?: number,
 ): Promise<IGame> {
-  const savedBeatmaps = (await Beatmap.aggregate([{ $sample: { size: 1500 } }]))
-    .filter((b, _, array) => !array.some(b2 => b.beatmapset_id === b2.beatmapset_id));
-  beatmaps = (await getRecentBeatmaps()).filter(
+  const savedBeatmaps = (await Beatmap.aggregate([
+    { $sample: { size: 1500 } },
+  ]));
+  const beatmaps = (await getRecentBeatmaps()).filter(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
-  console.log('beatmaps length from api', beatmaps.length);
   beatmaps.push(...savedBeatmaps);
-  console.log('beatmaps length after saved', beatmaps.length);
 
   const numRounds = 10; // max number of rounds that will be played
 
   // Set Min/Max beatmap difficulties per round for each type of lobby
   const standardStars: Array<[number, number]> = new Array(numRounds)
-  .fill(null)
-  .map((_, idx) => {
-    if (idx < 3) {
-      return <[number, number]> [3 + idx * 0.5, 3.8 + idx * 0.5];
-    }
-    return <[number, number]> [4 + idx * 0.4, idx > 7 ? undefined : 5 + idx * 0.4];
-  });
+    .fill(null)
+    .map((_, idx) => {
+      if (idx < 3) {
+        return <[number, number]>[3 + idx * 0.5, 3.8 + idx * 0.5];
+      }
+      return <[number, number]>[
+        4 + idx * 0.4,
+        idx > 7 ? undefined : 5 + idx * 0.4,
+      ];
+    });
   const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
     .fill(null)
-    .map((_, idx) => <[number, number]> [2 + idx * 0.3, 3 + idx * 0.3]);
+    .map((_, idx) => <[number, number]>[2 + idx * 0.3, 3 + idx * 0.3]);
+
+  // console.log(
+  //   standardStars.map(
+  //     (range, idx) =>
+  //       `Round: ${idx + 1}, Difficulty Range: ${range[0]} - ${range[1] || 'any'}`,
+  //   ),
+  // );
+  // console.log(
+  //   easyLobbyStars.map(
+  //     (range, idx) =>
+  //       `Round: ${idx + 1}, Difficulty Range: ${range[0]} - ${range[1] || 'any'}`,
+  //   ),
+  // );
 
   const difficulties = minRank ? easyLobbyStars : standardStars;
-  const roundBeatmaps = new Array(difficulties.length).fill(null).map((_, idx) =>
-    getBeatmapBetweenStars(
-      difficulties[idx][0],
-      difficulties[idx][1],
-      40 + 10 * idx, // min length starts 40 secs, increment by 10 per round
-      160 + 20 * idx, // max length starts 160, increments by 20
-    ),
-  );
+  const roundBeatmaps = new Array(difficulties.length)
+    .fill(null)
+    .map((_, idx) =>
+      getBeatmapBetweenStars(
+        beatmaps,
+        difficulties[idx][0],
+        difficulties[idx][1],
+        40 + 10 * idx, // min length starts 40 secs, increment by 10 per round
+        160 + 20 * idx, // max length starts 160, increments by 20
+      ),
+    );
 
   const game = await Game.create({
     title: `osu! Royale Match${minRank ? ` (rank ${minRank / 1000}k+)` : ''}`,
@@ -57,13 +74,14 @@ export async function createGame(
 
   if (TEST_MODE && game.status !== 'scheduled') {
     console.log('Creating game with sample players');
-    await addSamplePlayers(game, testPlayers || 8);
+    await addSamplePlayers(game, testPlayers || 5);
   }
 
   return game;
 }
 
 function getBeatmapBetweenStars(
+  beatmaps: IBeatmap[],
   min: number,
   max?: number,
   minLength?: number,
@@ -80,11 +98,17 @@ function getBeatmapBetweenStars(
 
   if (!filtered.length) {
     if (min >= 0) {
-      return getBeatmapBetweenStars(min - 0.5, max);
+      return getBeatmapBetweenStars(beatmaps, min - 0.5, max);
     } else if (minLength && minLength >= 0) {
-      return getBeatmapBetweenStars(min, max, minLength - 20);
+      return getBeatmapBetweenStars(beatmaps, min, max, minLength - 20);
     } else if (maxLength && maxLength < 500) {
-      return getBeatmapBetweenStars(min, max, minLength, maxLength + 20);
+      return getBeatmapBetweenStars(
+        beatmaps,
+        min,
+        max,
+        minLength,
+        maxLength + 20,
+      );
     } else {
       throw new Error('Ran out of beatmaps to pick from');
     }
