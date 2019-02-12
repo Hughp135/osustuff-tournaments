@@ -51,10 +51,16 @@ export class UserProfileComponent implements OnInit {
   ngOnInit() {}
 
   public getRatingChange(result) {
+    if (!result.ratingAfter || !result.ratingBefore) {
+      return '- -';
+    }
+
     if (result.ratingAfter.weighted && result.ratingBefore.weighted) {
-      return parseFloat(
+      const value = parseFloat(
         (result.ratingAfter.weighted - result.ratingBefore.weighted).toFixed(1),
       );
+
+      return value >= 0 ? `+${value}` : value;
     }
   }
 }

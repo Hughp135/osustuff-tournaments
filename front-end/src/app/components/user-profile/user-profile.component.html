@@ -99,14 +99,20 @@
         <i
           class="icon"
           [ngClass]="{
-            'green play': result.place !== 1,
+            play: result.place !== 1,
+            green: !result.gameEndedAt,
+            blue: result.gameEndedAt,
             'yellow trophy': result.place === 1
           }"
         ></i>
 
         <div class="result-main">
           <h3 class="ui sub header">Finished {{ result.place | ordinal }}</h3>
-          <i class="game-date">{{ result.gameEndedAt | date: 'medium' }}</i>
+          <i class="game-date">{{
+            result.gameEndedAt
+              ? (result.gameEndedAt | date: 'medium')
+              : 'Match still in progress...'
+          }}</i>
         </div>
 
         <span class="elo">{{ getRatingChange(result) }}</span>

@@ -48,17 +48,7 @@ export async function getUser(req: Request, res: Response) {
       }),
   )).filter((a: any) => !!a);
 
-  user.results = (<IUserResult[]>user.results).sort((a, b) => {
-    if (a.gameEndedAt && b.gameEndedAt && a.gameEndedAt > b.gameEndedAt) {
-      return -1;
-    }
-
-    if (a.gameEndedAt && b.gameEndedAt && a.gameEndedAt < b.gameEndedAt) {
-      return 1;
-    }
-
-    return 0;
-  });
+  user.results = user.results.reverse();
 
   return res.json(user);
 }
