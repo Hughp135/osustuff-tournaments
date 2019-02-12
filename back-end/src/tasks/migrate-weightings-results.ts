@@ -15,10 +15,6 @@ async function run() {
   const allUsers = await User.find({});
   for (const user of allUsers) {
     let changed = false;
-    if (user.results.length) {
-      user.results = [];
-      changed = true;
-    }
     if (!user.rating.weighted) {
       user.rating.weighted = user.rating.mu - 3 * user.rating.sigma;
       changed = true;
