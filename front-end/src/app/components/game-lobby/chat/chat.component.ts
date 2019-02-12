@@ -132,8 +132,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
   public isSystem(message: Message) {
     return (
-      message.osuUserId === 967760000000 &&
-      message.username.toLowerCase() === 'system'
+      message.osuUserId === 0 && message.username.toLowerCase() === 'system'
     );
   }
 }

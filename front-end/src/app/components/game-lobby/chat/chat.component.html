@@ -6,19 +6,26 @@
   (body:mouseup)="onMouseUp()"
 >
   <div class="item" *ngFor="let message of sortedMessages">
-    <div class="image-container" *ngIf="!isSystem(message)">
-      <img class="ui avatar image" [src]="'//a.ppy.sh/' + message.osuUserId" />
+    <div class="image-container">
+      <img
+        class="ui avatar image"
+        *ngIf="!isSystem(message)"
+        [src]="
+          isSystem(message)
+            ? '/assets/osustuff-colors.png'
+            : '//a.ppy.sh/' + message.osuUserId
+        "
+      />
     </div>
     <div class="content">
       <div class="header">
-        <ng-container *ngIf="!isSystem(message)">{{
+        <span [ngClass]="{ 'system-name': isSystem(message) }">{{
           message.username
-        }}</ng-container>
+        }}</span>
         <span class="text-muted"> {{ message.createdAt | date: 'short' }}</span>
       </div>
       <div
         class="description chat-message"
-        [ngClass]="{ system: isSystem(message) }"
         [innerHTML]="message.message | twitchEmotes | emojify"
       ></div>
     </div>
