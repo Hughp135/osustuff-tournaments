@@ -37,6 +37,24 @@ export function getAppliedMods(value): string[] {
           acc.modsArray.push(val);
         }
 
+        // Check if NC and DT exist, if so leave only NC
+        if (
+          acc.modsArray.indexOf(modEnums[512]) !== -1 &&
+          acc.modsArray.indexOf(modEnums[64]) !== -1
+        ) {
+          const dtIndex = acc.modsArray.indexOf(modEnums[64]);
+          acc.modsArray.splice(dtIndex, 1);
+        }
+
+        // Check if PF and SD exist, if so leave only PF
+        if (
+          acc.modsArray.indexOf(modEnums[16384]) !== -1 &&
+          acc.modsArray.indexOf(modEnums[32]) !== -1
+        ) {
+          const sdIndex = acc.modsArray.indexOf(modEnums[32]);
+          acc.modsArray.splice(sdIndex, 1);
+        }
+
         return acc;
       },
       { modsEnum: num, modsArray: [] },
