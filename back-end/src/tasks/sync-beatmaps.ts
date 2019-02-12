@@ -28,27 +28,30 @@ async function start() {
       const existing = await Beatmap.findOne({ beatmapset_id: beatmap.beatmapset_id });
       if (existing) {
         existingMaps.push(beatmap.beatmap_id);
+        continue;
       }
       if (downloadUnavailable.includes(beatmap.beatmapset_id)) {
+        console.log('dl unavailable', beatmap.beatmapset_id);
         continue;
       }
 
-      if (!existingMaps.includes(beatmap.beatmap_id)) {
-        try {
-          await got.head(
-            `https://osu.ppy.sh/beatmapsets/${beatmap.beatmapset_id}/download`,
-            {},
-          );
-          await Beatmap.create(beatmap);
-          added.push(beatmap.beatmap_id);
-          downloadAvailable.push(beatmap.beatmapset_id);
-        } catch (e) {
-          if (e.statusCode === 404) {
-            console.log('Download not available', beatmap.beatmapset_id);
-            downloadUnavailable.push(beatmap.beatmapset_id);
-          } else {
-            console.log('failed', beatmap.beatmapset_id, e);
-          }
+      await new Promise(res => setTimeout(res, 500));
+
+      try {
+        // Check if beatmap is available for download. Will throw 404 if not
+        await got.head(`https://osu.ppy.sh/beatmapsets/${beatmap.beatmapset_id}/download`, {});
+        // Add beatmap to database
+        await Beatmap.create(beatmap);
+        added.push(beatmap.beatmap_id);
+        downloadAvailable.push(beatmap.beatmapset_id);
+      } catch (e) {
+        if (e.statusCode === 404) {
+          // Unavailable to download
+          console.log('Download not available', beatmap.beatmapset_id);
+          downloadUnavailable.push(beatmap.beatmapset_id);
+        } else {
+          // Some unexpected error occured
+          console.log('failed', beatmap.beatmapset_id, e);
         }
       }
 
@@ -58,8 +61,6 @@ async function start() {
 
     const lastBeatmap = beatmaps[beatmaps.length - 1];
     date = new Date(lastBeatmap.approved_date);
-
-    await new Promise(res => setTimeout(res, 500));
   }
 
   console.log('beatmaps added', downloadAvailable.length);

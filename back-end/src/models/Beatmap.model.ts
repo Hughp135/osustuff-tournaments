@@ -7,6 +7,7 @@ export interface IBeatmap extends mongoose.Document {
   beatmap_id: string;
   beatmapset_id: string;
   total_length: string;
+  approved_date: string;
 }
 
 const BeatmapSchema = new mongoose.Schema(
