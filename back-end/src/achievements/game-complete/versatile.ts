@@ -1,8 +1,14 @@
 import { IScore } from '../../models/Score.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { IUser } from '../../models/User.model';
+import { giveAchievement } from '../give-achievement';
+import { IGame } from '../../models/Game.model';
 
-export async function achievementVersatile(allUsers: IUser[], passedScores: IScore[]) {
+export async function achievementVersatile(
+  allUsers: IUser[],
+  passedScores: IScore[],
+  game: IGame,
+) {
   const achievement = await getOrCreateAchievement(
     'Versatile',
     'Pass 4 rounds with different mods',
@@ -17,14 +23,18 @@ export async function achievementVersatile(allUsers: IUser[], passedScores: ISco
         usr = { userId: curr.userId.toHexString(), scores: [], uniqueMods: [] };
         acc.push(usr);
       }
-      if (!usr.scores.some(s => s.roundId.toString() === curr.roundId.toString())) {
+      if (
+        !usr.scores.some(s => s.roundId.toString() === curr.roundId.toString())
+      ) {
         usr.scores.push(curr);
-        usr.uniqueMods = usr.uniqueMods.filter(m => m !== curr.mods).concat(curr.mods);
+        usr.uniqueMods = usr.uniqueMods
+          .filter(m => m !== curr.mods)
+          .concat(curr.mods);
       }
 
       return acc;
     },
-    <Array<{ userId: string; scores: IScore[]; uniqueMods: number[] }>> [],
+    <Array<{ userId: string; scores: IScore[]; uniqueMods: number[] }>>[],
   );
 
   const userScores = scoresPerUser.filter(u => u.uniqueMods.length >= 3);
@@ -33,11 +43,7 @@ export async function achievementVersatile(allUsers: IUser[], passedScores: ISco
 
   await Promise.all(
     users.map(async user => {
-      if (!user.achievements.some(a => a.achievementId.toString() === achievement._id.toString())) {
-        user.achievements.push({ achievementId: achievement._id, progress: 1 });
-        user.markModified('achievements');
-        await user.save();
-      }
+      await giveAchievement(user, achievement, game);
     }),
   );
 }

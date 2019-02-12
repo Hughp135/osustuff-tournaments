@@ -1,8 +1,14 @@
 import { IScore } from './../../models/Score.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { IUser } from '../../models/User.model';
+import { giveAchievement } from '../give-achievement';
+import { IGame } from '../../models/Game.model';
 
-export async function passWithAnF(passedScores: IScore[], aliveUsers: IUser[]) {
+export async function passWithAnF(
+  passedScores: IScore[],
+  aliveUsers: IUser[],
+  game: IGame,
+) {
   const achievement = await getOrCreateAchievement(
     'Best of the Worst',
     'Pass a round with an F rank score',
@@ -13,15 +19,14 @@ export async function passWithAnF(passedScores: IScore[], aliveUsers: IUser[]) {
 
   await Promise.all(
     fScores.map(async score => {
-      const user = aliveUsers.find(u => u._id.toString() === score.userId.toHexString());
+      const user = aliveUsers.find(
+        u => u._id.toString() === score.userId.toHexString(),
+      );
       if (!user) {
         return;
       }
 
-      if (!user.achievements.some(a => a.achievementId.toString() === achievement._id.toString())) {
-        user.achievements.push({ achievementId: achievement._id, progress: 1 });
-        await user.save();
-      }
+      await giveAchievement(user, achievement, game);
     }),
   );
 }

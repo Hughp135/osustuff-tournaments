@@ -27,14 +27,14 @@ export async function updatePlayerAchievements(game: IGame) {
     switch (game.status) {
       case 'round-over':
         if (TEST_MODE) {
-          await achievementPlayAsTester(aliveUsers);
+          await achievementPlayAsTester(aliveUsers, game);
         }
         const passedRoundScores = await Score.find({
           roundId: game.currentRound,
           gameId: game._id,
           passedRound: true,
         });
-        await passWithAnF(passedRoundScores, aliveUsers);
+        await passWithAnF(passedRoundScores, aliveUsers, game);
         break;
       case 'complete':
         const passedScores = await Score.find({
@@ -46,12 +46,12 @@ export async function updatePlayerAchievements(game: IGame) {
           date: 1,
         });
 
-        await achievementNewbie(allGameUsers);
-        await achievementVersatile(allGameUsers, passedScores);
+        await achievementNewbie(allGameUsers, game);
+        await achievementVersatile(allGameUsers, passedScores, game);
         await achievementWinAGame(game, allGameUsers);
-        await achievementModScores(allGameUsers);
-        await achievementGrinder(allGameUsers);
-        await achievementSpeed(allGameUsers, passedScores);
+        await achievementModScores(allGameUsers, game);
+        await achievementGrinder(allGameUsers, game);
+        await achievementSpeed(allGameUsers, passedScores, game);
         break;
     }
   } catch (e) {

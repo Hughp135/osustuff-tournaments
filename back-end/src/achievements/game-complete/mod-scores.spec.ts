@@ -15,9 +15,12 @@ chai.use(sinonChai);
 
 describe('achievement - hd player', async () => {
   before(async () => {
-    await mongoose.connect('mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test', {
-      useNewUrlParser: true,
-    });
+    await mongoose.connect(
+      'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
+      {
+        useNewUrlParser: true,
+      },
+    );
   });
   after(async () => {
     await mongoose.disconnect();
@@ -34,9 +37,9 @@ describe('achievement - hd player', async () => {
         ...getBaseScoreData(user._id, 10), // HD
       });
     }
-    await achievementModScores([user]);
+    await achievementModScores([user], <any>{ _id: 123 });
 
-    const userUpdated = <IUser> await User.findById(user._id);
+    const userUpdated = <IUser>await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(0);
   });
   it('adds achievement if 25 HD only scores and all have HD', async () => {
@@ -46,11 +49,15 @@ describe('achievement - hd player', async () => {
         ...getBaseScoreData(user._id, 8), // HD
       });
     }
-    await achievementModScores([user]);
+    await achievementModScores([user], <any>{ _id: 123 });
 
-    const userUpdated = <IUser> await User.findById(user._id);
+    const userUpdated = <IUser>await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(1);
-    const achievement = <IAchievement> await Achievement.findOne({_id: userUpdated.achievements[0].achievementId });
+    const achievement = <IAchievement>(
+      await Achievement.findOne({
+        _id: userUpdated.achievements[0].achievementId,
+      })
+    );
     expect(achievement.title).to.equal('HD Adept');
   });
   it('does not achievement if mods have anything other than just HD', async () => {
@@ -60,9 +67,9 @@ describe('achievement - hd player', async () => {
         ...getBaseScoreData(user._id, 16), // HDHR
       });
     }
-    await achievementModScores([user]);
+    await achievementModScores([user], <any>{ _id: 123 });
 
-    const userUpdated = <IUser> await User.findById(user._id);
+    const userUpdated = <IUser>await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(0);
   });
   it('does not give achievement if not all scores are HD - only', async () => {
@@ -75,9 +82,9 @@ describe('achievement - hd player', async () => {
         ...getBaseScoreData(user._id, 16), // HDHR
       });
     }
-    await achievementModScores([user]);
+    await achievementModScores([user], <any>{ _id: 123 });
 
-    const userUpdated = <IUser> await User.findById(user._id);
+    const userUpdated = <IUser>await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(0);
   });
 });

@@ -2,8 +2,10 @@ import { IUserAchievement } from './../../models/User.model';
 import { User } from '../../models/User.model';
 import { IUser } from '../../models/User.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
+import { giveAchievement } from '../give-achievement';
+import { IGame } from '../../models/Game.model';
 
-export async function achievementNewbie(allGameUsers: IUser[]) {
+export async function achievementNewbie(allGameUsers: IUser[], game: IGame) {
   const achievement = await getOrCreateAchievement(
     'Newbie',
     'Complete your first match',
@@ -14,20 +16,7 @@ export async function achievementNewbie(allGameUsers: IUser[]) {
     allGameUsers
       .filter(u => u.gamesPlayed === 1)
       .map(async user => {
-        if (
-          !user.achievements.some(
-            a => a.achievementId.toString() === achievement._id.toString(),
-          )
-        ) {
-          const newAchievement: IUserAchievement = {
-            achievementId: achievement._id,
-            progress: 1,
-          };
-          await User.updateOne(
-            { _id: user._id },
-            { $addToSet: { achievements: newAchievement } },
-          );
-        }
+        await giveAchievement(user, achievement, game);
       }),
   );
 }
