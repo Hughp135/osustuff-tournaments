@@ -2,16 +2,18 @@ import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 
 export interface IUserAchievement {
-  achievementId: string;
-  progress: number; // A number from 0 to 1 (1 = achieved)
-  read?: boolean;
+  title: string;
+  description: string;
+  icon: string;
 }
 
-export interface IResult {
-  ratingBefore: { weighted: number };
-  ratingAfter: { weighted: number };
-  gamePlayers: number;
-  gameEndedAt: Date;
+export interface IUserResult {
+  gameId: string;
+  place: number;
+  gameEndedAt?: Date;
+  ratingChange?: number;
+  ratingBefore?: number;
+  ratingAfter?: number;
 }
 
 export interface IUser {
@@ -21,16 +23,16 @@ export interface IUser {
   ppRank: number;
   countryRank: number;
   country: string;
-  rating: { mu: number; sigma: number; };
+  rating: { mu: number; sigma: number; weighted: number };
   gamesPlayed: number;
   wins: number;
   achievements: IUserAchievement[];
+  results: IUserResult[];
   percentiles: {
     top10: number;
     top20: number;
     top50: number;
   };
-  results: IResult[];
   averageRank?: number;
 }
 
@@ -49,8 +51,16 @@ export class UserProfileComponent implements OnInit {
   ngOnInit() {}
 
   public getRatingChange(result) {
+    if (!result.ratingAfter || !result.ratingBefore) {
+      return '- -';
+    }
+
     if (result.ratingAfter.weighted && result.ratingBefore.weighted) {
-      return parseFloat((result.ratingAfter.weighted - result.ratingBefore.weighted).toFixed(1));
+      const value = parseFloat(
+        (result.ratingAfter.weighted - result.ratingBefore.weighted).toFixed(1),
+      );
+
+      return value >= 0 ? `+${value}` : value;
     }
   }
 }

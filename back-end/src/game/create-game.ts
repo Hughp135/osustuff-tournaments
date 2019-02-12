@@ -16,18 +16,24 @@ export async function createGame(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
 
-  const roundBeatmaps = [
-    getBeatmapBetweenStars(3, 4, 40, 160),
-    getBeatmapBetweenStars(4, 4.5, 50, 180),
-    getBeatmapBetweenStars(4.5, 5, 60, 200),
-    getBeatmapBetweenStars(4.8, 5.3, 70, 220),
-    getBeatmapBetweenStars(5, 6, 80, 240),
-    getBeatmapBetweenStars(5.5, 6.5, 90, 260),
-    getBeatmapBetweenStars(6, 6.5, 100, 280),
-    getBeatmapBetweenStars(6, 110, 300),
-    getBeatmapBetweenStars(6, 120, 360),
-    getBeatmapBetweenStars(6, 140, 480),
-  ];
+  const numRounds = 10;
+  // Min/Max beatmap difficulties per round
+  const standardStars: Array<[number, number]> = new Array(numRounds)
+  .fill(null)
+  .map((_, idx) => <[number, number]> [4 + idx * 0.3, idx > 7 ? undefined : 5 + idx * 0.3]);
+  const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
+    .fill(null)
+    .map((_, idx) => <[number, number]> [2 + idx * 0.3, 3 + idx * 0.3]);
+
+  const difficulties = minRank ? easyLobbyStars : standardStars;
+  const roundBeatmaps = new Array(difficulties.length).fill(null).map((_, idx) =>
+    getBeatmapBetweenStars(
+      difficulties[idx][0],
+      difficulties[idx][1],
+      40 + 10 * idx, // min length starts 40 secs, increment by 10 per round
+      160 + 20 * idx, // max length starts 160, increments by 20
+    ),
+  );
 
   const game = await Game.create({
     title: `osu! Royale Match${minRank ? ` (rank ${minRank / 1000}k+)` : ''}`,
@@ -45,7 +51,12 @@ export async function createGame(
   return game;
 }
 
-function getBeatmapBetweenStars(min: number, max?: number, minLength?: number, maxLength?: number): any {
+function getBeatmapBetweenStars(
+  min: number,
+  max?: number,
+  minLength?: number,
+  maxLength?: number,
+): any {
   const filtered = beatmaps.filter((b: any) => {
     const stars = parseFloat(b.difficultyrating);
     const inStarRange = stars >= min && (max ? stars < max : true);

@@ -42,5 +42,9 @@ export function getAppliedMods(value): string[] {
       { modsEnum: num, modsArray: [] },
     );
 
-  return reduced.modsArray;
+  const hasNC = reduced.modsArray.includes('NC');
+  const hasPF = reduced.modsArray.includes('SD');
+  return reduced.modsArray.filter(
+    mod => (hasNC ? mod !== 'DT' : true) && (hasPF ? mod !== 'SD' : true),
+  );
 }
