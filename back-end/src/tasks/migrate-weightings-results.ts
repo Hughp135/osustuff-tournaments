@@ -18,6 +18,7 @@ async function run() {
     if (!user.rating.weighted) {
       user.rating.weighted = user.rating.mu - 3 * user.rating.sigma;
       changed = true;
+      user.markModified('rating');
     }
 
     count++;
