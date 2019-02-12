@@ -1,6 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import * as moment from 'moment';
 
 export interface IUserAchievement {
   title: string;
@@ -12,7 +11,6 @@ export interface IUserResult {
   gameId: string;
   place: number;
   gameEndedAt?: Date;
-  gameEndedAtFromNow?: string;
   ratingChange?: number;
   ratingBefore?: number;
   ratingAfter?: number;
@@ -35,6 +33,7 @@ export interface IUser {
     top20: number;
     top50: number;
   };
+  averageRank?: number;
 }
 
 @Component({
@@ -47,17 +46,15 @@ export class UserProfileComponent implements OnInit {
 
   constructor(route: ActivatedRoute) {
     this.user = route.snapshot.data.data.user;
-
-    this.user.results = this.user.results.map(result => {
-      result.gameEndedAtFromNow = moment(result.gameEndedAt).fromNow();
-      return result;
-    });
   }
 
   ngOnInit() {}
 
-  formatEloGained(elo: number) {
-    const roundedElo = Math.round(elo * 100) / 100;
-    return isNaN(roundedElo) ? 0.0 : roundedElo;
+  public getRatingChange(result) {
+    if (result.ratingAfter.weighted && result.ratingBefore.weighted) {
+      return parseFloat(
+        (result.ratingAfter.weighted - result.ratingBefore.weighted).toFixed(1),
+      );
+    }
   }
 }

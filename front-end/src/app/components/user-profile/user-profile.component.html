@@ -1,21 +1,17 @@
 <div class="ui container section">
   <h1>{{ user.username }}'s Profile</h1>
+  <a
+    class="ui purple button"
+    target="_blank"
+    [href]="'https://osu.ppy.sh/users/' + user.osuUserId"
+  >
+    <i class="external icon"></i>
+    View osu! Profile
+  </a>
 
   <h2>Stats</h2>
-
-  <div class="ui inverted segment">
+  <div class="ui inverted padded segment">
     <div class="ui equal width center aligned grid">
-      <div class="column">
-        <h5 class="ui inverted header">View osu! profile</h5>
-        <a
-          class="ui pink basic button"
-          target="_blank"
-          [href]="'https://osu.ppy.sh/users/' + user.osuUserId"
-        >
-          osu! Profile
-        </a>
-      </div>
-
       <div class="column">
         <h5 class="ui inverted header">Games Played</h5>
         <h3>
@@ -33,10 +29,33 @@
       </div>
 
       <div class="column">
-        <h5 class="ui inverted header">Rating</h5>
+        <h5 class="ui inverted header">Match Rating</h5>
         <h3>
           <i class="large teal crosshairs icon"></i>
           {{ (user.rating.mu - 3 * user.rating.sigma).toFixed(0) }}
+        </h3>
+      </div>
+
+      <div class="column">
+        <h5 class="ui inverted header">Win Rate</h5>
+        <h3>
+          <i class="yellow percent icon"></i>
+          {{
+            user.wins
+              ? ((user.wins / user.gamesPlayed) * 100).toFixed(2)
+              : '0.00'
+          }}
+        </h3>
+      </div>
+
+      <div class="column">
+        <h5 class="ui inverted header">Average Rank</h5>
+        <h3 *ngIf="user.gamesPlayed">
+          <i class="teal arrows alternate vertical icon"></i>
+          {{ user.averageRank.toFixed(2) }}
+        </h3>
+        <h3 *ngIf="!user.gamesPlayed">
+          --
         </h3>
       </div>
     </div>
@@ -60,6 +79,9 @@
 
   <h2>Match history</h2>
 
+  <p *ngIf="!user.results.length">
+    No match history data available yet.
+  </p>
   <div class="ui one column doubling grid">
     <div
       class="column result"
@@ -77,10 +99,10 @@
 
         <div class="result-main">
           <h3 class="ui sub header">Finished {{ result.place | ordinal }}</h3>
-          {{ result.gameEndedAtFromNow }}
+          <i class="game-date">{{ result.gameEndedAt | date: 'medium' }}</i>
         </div>
 
-        <span class="elo">{{ formatEloGained(result.ratingChange) }}</span>
+        <span class="elo">{{ getRatingChange(result) }}</span>
       </div>
     </div>
   </div>

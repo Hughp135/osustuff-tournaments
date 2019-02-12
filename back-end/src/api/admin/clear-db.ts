@@ -7,6 +7,10 @@ import { Message } from '../../models/Message.model';
 import { Score } from '../../models/Score.model';
 
 export async function clearDb(req: Request, res: Response) {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(404).end();
+  }
+
   if (req.body.pw !== config.get('ADMIN_PASS')) {
     return res.status(401).end();
   }
