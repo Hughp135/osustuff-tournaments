@@ -1,10 +1,21 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
+import * as moment from 'moment';
 
 export interface IUserAchievement {
-  achievementId: string;
-  progress: number; // A number from 0 to 1 (1 = achieved)
-  read?: boolean;
+  title: string;
+  description: string;
+  icon: string;
+}
+
+export interface IUserResult {
+  gameId: string;
+  place: number;
+  gameEndedAt?: Date;
+  gameEndedAtFromNow?: string;
+  ratingChange?: number;
+  ratingBefore?: number;
+  ratingAfter?: number;
 }
 
 export interface IUser {
@@ -14,10 +25,11 @@ export interface IUser {
   ppRank: number;
   countryRank: number;
   country: string;
-  rating: { mu: number; sigma: number; };
+  rating: { mu: number; sigma: number };
   gamesPlayed: number;
   wins: number;
   achievements: IUserAchievement[];
+  results: IUserResult[];
   percentiles: {
     top10: number;
     top20: number;
@@ -35,7 +47,17 @@ export class UserProfileComponent implements OnInit {
 
   constructor(route: ActivatedRoute) {
     this.user = route.snapshot.data.data.user;
+
+    this.user.results = this.user.results.map(result => {
+      result.gameEndedAtFromNow = moment(result.gameEndedAt).fromNow();
+      return result;
+    });
   }
 
   ngOnInit() {}
+
+  formatEloGained(elo: number) {
+    const roundedElo = Math.round(elo * 100) / 100;
+    return isNaN(roundedElo) ? 0.0 : roundedElo;
+  }
 }

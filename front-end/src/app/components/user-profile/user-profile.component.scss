@@ -11,3 +11,27 @@
     font-size: 1em;
   }
 }
+
+.result {
+  margin: 0;
+  padding: 5px 0 !important;
+  cursor: pointer;
+
+  h3 {
+    color: white;
+  }
+
+  .icon {
+    margin-right: 10px;
+  }
+
+  .flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .result-main {
+    flex-grow: 1;
+  }
+}

@@ -4,11 +4,14 @@
   <h2>Stats</h2>
 
   <div class="ui inverted segment">
-
     <div class="ui equal width center aligned grid">
       <div class="column">
         <h5 class="ui inverted header">View osu! profile</h5>
-        <a class="ui pink basic button" target="_blank" [href]="'https://osu.ppy.sh/users/' + user.osuUserId">
+        <a
+          class="ui pink basic button"
+          target="_blank"
+          [href]="'https://osu.ppy.sh/users/' + user.osuUserId"
+        >
           osu! Profile
         </a>
       </div>
@@ -33,10 +36,9 @@
         <h5 class="ui inverted header">Rating</h5>
         <h3>
           <i class="large teal crosshairs icon"></i>
-          {{ (user.rating.mu - 3* user.rating.sigma).toFixed(0) }}
+          {{ (user.rating.mu - 3 * user.rating.sigma).toFixed(0) }}
         </h3>
       </div>
-
     </div>
   </div>
 
@@ -49,9 +51,36 @@
           <i class="big icon" [ngClass]="achievement.icon"></i>
         </div>
         <h3 class="ui sub header">
-          {{ achievement.title}}
+          {{ achievement.title }}
         </h3>
         {{ achievement.description }}
+      </div>
+    </div>
+  </div>
+
+  <h2>Match history</h2>
+
+  <div class="ui one column doubling grid">
+    <div
+      class="column result"
+      *ngFor="let result of user.results"
+      routerLink="/lobbies/{{ result.gameId }}"
+    >
+      <div class="ui inverted segment flex">
+        <i
+          class="icon"
+          [ngClass]="{
+            'green play': result.place !== 1,
+            'yellow trophy': result.place === 1
+          }"
+        ></i>
+
+        <div class="result-main">
+          <h3 class="ui sub header">Finished {{ result.place | ordinal }}</h3>
+          {{ result.gameEndedAtFromNow }}
+        </div>
+
+        <span class="elo">{{ formatEloGained(result.ratingChange) }}</span>
       </div>
     </div>
   </div>
