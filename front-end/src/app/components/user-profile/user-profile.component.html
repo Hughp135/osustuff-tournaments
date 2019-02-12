@@ -1,16 +1,17 @@
 <div class="ui container section">
   <h1>{{ user.username }}'s Profile</h1>
-  <a class="ui purple button" target="_blank" [href]="'https://osu.ppy.sh/users/' + user.osuUserId">
+  <a
+    class="ui purple button"
+    target="_blank"
+    [href]="'https://osu.ppy.sh/users/' + user.osuUserId"
+  >
     <i class="external icon"></i>
     View osu! Profile
   </a>
 
   <h2>Stats</h2>
-
   <div class="ui inverted padded segment">
-
     <div class="ui equal width center aligned grid">
-
       <div class="column">
         <h5 class="ui inverted header">Games Played</h5>
         <h3>
@@ -31,7 +32,7 @@
         <h5 class="ui inverted header">Match Rating</h5>
         <h3>
           <i class="large teal crosshairs icon"></i>
-          {{ (user.rating.mu - 3* user.rating.sigma).toFixed(0) }}
+          {{ (user.rating.mu - 3 * user.rating.sigma).toFixed(0) }}
         </h3>
       </div>
 
@@ -39,7 +40,11 @@
         <h5 class="ui inverted header">Win Rate</h5>
         <h3>
           <i class="yellow percent icon"></i>
-          {{ user.wins ? (user.wins / user.gamesPlayed * 100).toFixed(2) : '0.00' }}
+          {{
+            user.wins
+              ? ((user.wins / user.gamesPlayed) * 100).toFixed(2)
+              : '0.00'
+          }}
         </h3>
       </div>
 
@@ -53,12 +58,16 @@
           --
         </h3>
       </div>
-
     </div>
   </div>
 
+  <br />
+
   <h2>Achievements</h2>
 
+  <p *ngIf="!user.achievements.length">
+    No achievements gained yet.
+  </p>
   <div class="ui four column doubling grid">
     <div class="column" *ngFor="let achievement of user.achievements">
       <div class="ui center aligned inverted segment achievement">
@@ -66,41 +75,48 @@
           <i class="big icon" [ngClass]="achievement.icon"></i>
         </div>
         <h3 class="ui sub header">
-          {{ achievement.title}}
+          {{ achievement.title }}
         </h3>
         {{ achievement.description }}
       </div>
     </div>
   </div>
 
-  <h2>Match History</h2>
+  <br />
+
+  <h2>Match history</h2>
+
   <p *ngIf="!user.results.length">
     No match history data available yet.
   </p>
-  <table *ngIf="user.results.length" class="ui inverted unstackable blue table">
-    <thead>
-      <th>Date</th>
-      <th class="center aligned">Rank Achieved</th>
-      <th class="center aligned">Players</th>
-      <th class="center aligned">Rating Change</th>
-    </thead>
-    <tbody>
-      <tr *ngFor="let result of user.results">
-        <td>
-          {{ result.gameEndedAt | date:'medium' }} (UTC)
-        </td>
-        <td class="center aligned">
-          {{ result.place | ordinal }}
-        </td>
-        <td class="center aligned">
-          {{ result.gamePlayers }}
-        </td>
-        <td class="center aligned">
-          <i class="blue plus icon" *ngIf="getRatingChange(result) > 0"></i>
-          <i class="red minus icon" *ngIf="getRatingChange(result) < 0"></i>
-          {{ getRatingChange(result) }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="ui one column doubling grid">
+    <div
+      class="column result"
+      *ngFor="let result of user.results"
+      routerLink="/lobbies/{{ result.gameId }}"
+    >
+      <div class="ui inverted segment flex">
+        <i
+          class="icon"
+          [ngClass]="{
+            play: result.place !== 1,
+            green: !result.gameEndedAt,
+            blue: result.gameEndedAt,
+            'yellow trophy': result.place === 1
+          }"
+        ></i>
+
+        <div class="result-main">
+          <h3 class="ui sub header">Finished {{ result.place | ordinal }}</h3>
+          <i class="game-date">{{
+            result.gameEndedAt
+              ? (result.gameEndedAt | date: 'medium')
+              : 'Match still in progress...'
+          }}</i>
+        </div>
+
+        <span class="elo">{{ getRatingChange(result) }}</span>
+      </div>
+    </div>
+  </div>
 </div>

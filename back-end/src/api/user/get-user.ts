@@ -1,5 +1,10 @@
 import { Request, Response } from 'express';
-import { User, IUser, IUserAchievement } from '../../models/User.model';
+import {
+  User,
+  IUser,
+  IUserAchievement,
+  IUserResult,
+} from '../../models/User.model';
 import { getAchievement } from '../../achievements/get-achievement';
 import { logger } from '../../logger';
 
@@ -7,11 +12,11 @@ export async function getUser(req: Request, res: Response) {
   let { username } = req.params;
 
   if (!username || username === 'me') {
-    const claim = (<any> req).claim;
+    const claim = (<any>req).claim;
     if (!claim) {
       return res.status(401).end();
     }
-    username = (<any> req).claim.username;
+    username = (<any>req).claim.username;
     if (!username) {
       return res.status(401).end();
     }
@@ -42,6 +47,8 @@ export async function getUser(req: Request, res: Response) {
         return achievement;
       }),
   )).filter((a: any) => !!a);
+
+  user.results = user.results.reverse();
 
   return res.json(user);
 }
