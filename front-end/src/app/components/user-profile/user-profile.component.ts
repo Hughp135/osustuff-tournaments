@@ -65,4 +65,16 @@ export class UserProfileComponent implements OnInit {
       return value >= 0 ? `+${value}` : value;
     }
   }
+
+  public getResultIconClass(result: IUserResult) {
+    if (result.place === 1) {
+      return 'yellow trophy';
+    }
+
+    if (result.gameEndedAt) {
+      return 'grey flag checkered';
+    }
+
+    return 'orange eye';
+  }
 }
