@@ -182,7 +182,6 @@ async function completeRound(game: IGame) {
 
   if (<Date> game.nextStageStarts < new Date()) {
     if (game.roundNumber !== 10 && alivePlayers.length > 1) {
-      console.log('players still alive, starting next round');
       // Start the next round
       await nextRound(game);
       clearGetLobbyCache(game._id);

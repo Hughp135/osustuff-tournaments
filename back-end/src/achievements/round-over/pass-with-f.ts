@@ -5,7 +5,7 @@ import { giveAchievement } from '../give-achievement';
 import { IGame } from '../../models/Game.model';
 
 export async function passWithAnF(
-  passedScores: IScore[],
+  passedScores: IScore[],  // referring to scores which passed the round
   aliveUsers: IUser[],
   game: IGame,
 ) {

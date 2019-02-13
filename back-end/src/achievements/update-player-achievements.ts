@@ -4,7 +4,6 @@ import { achievementVersatile } from './game-complete/versatile';
 import { achievementPlayAsTester } from './join-game/play-as-tester';
 import { User } from '../models/User.model';
 import { achievementWinAGame } from './game-complete/win-a-game';
-import { Round } from '../models/Round.model';
 import { Score } from '../models/Score.model';
 import { achievementModScores } from './game-complete/mod-scores';
 import { achievementGrinder } from './game-complete/grinder';
@@ -22,6 +21,17 @@ export async function updatePlayerAchievements(game: IGame) {
     const player = game.players.find(p => p.osuUserId === u.osuUserId);
     return player && !!player.alive;
   });
+  const passedScores = await Score.find({
+    gameId: game._id,
+    passedRound: true,
+  }).sort({
+    roundId: 1,
+    score: -1,
+    date: 1,
+  });
+
+  // console.log('Starting update achievements');
+  // console.time('a');
 
   try {
     switch (game.status) {
@@ -29,32 +39,24 @@ export async function updatePlayerAchievements(game: IGame) {
         if (TEST_MODE) {
           await achievementPlayAsTester(aliveUsers, game);
         }
-        const passedRoundScores = await Score.find({
-          roundId: game.currentRound,
-          gameId: game._id,
-          passedRound: true,
-        });
+        const passedRoundScores = passedScores.filter(
+          s => s.roundId.toHexString() === game.currentRound.toHexString(),
+        );
         await passWithAnF(passedRoundScores, aliveUsers, game);
+        await achievementVersatile(allGameUsers, passedScores, game);
+        await achievementSpeed(allGameUsers, passedScores, game);
         break;
       case 'complete':
-        const passedScores = await Score.find({
-          gameId: game._id,
-          passedRound: true,
-        }).sort({
-          roundId: 1,
-          score: -1,
-          date: 1,
-        });
-
         await achievementNewbie(allGameUsers, game);
-        await achievementVersatile(allGameUsers, passedScores, game);
         await achievementWinAGame(game, allGameUsers);
-        await achievementModScores(allGameUsers, game);
         await achievementGrinder(allGameUsers, game);
-        await achievementSpeed(allGameUsers, passedScores, game);
+        await achievementModScores(allGameUsers, game); // Highly DB Intensive
         break;
     }
   } catch (e) {
     logger.error('Failed to updated achievements', e);
   }
+
+  // console.log('ended achievments check');
+  // console.timeEnd('a');
 }

@@ -5,6 +5,7 @@ import { User } from '../../models/User.model';
 import { Round } from '../../models/Round.model';
 import { Message } from '../../models/Message.model';
 import { Score } from '../../models/Score.model';
+import { Achievement } from '../../models/Achievement.model';
 
 export async function clearDb(req: Request, res: Response) {
   if (process.env.NODE_ENV === 'production') {
@@ -20,6 +21,7 @@ export async function clearDb(req: Request, res: Response) {
   await User.deleteMany({});
   await Message.deleteMany({});
   await Score.deleteMany({});
+  await Achievement.deleteMany({});
 
   res.status(200).end();
 }

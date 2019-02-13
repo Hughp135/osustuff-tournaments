@@ -1,47 +1,33 @@
-import { IUserAchievement } from '../../models/User.model';
-import { IUser, User } from '../../models/User.model';
+import { IUser } from '../../models/User.model';
 import { Score, IScore } from '../../models/Score.model';
-import { getAppliedMods } from '../../helpers/get-applied-mods';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
-import { Achievement } from '../../models/Achievement.model';
 import { giveAchievement } from '../give-achievement';
 import { IGame } from '../../models/Game.model';
 
 export async function achievementModScores(users: IUser[], game: IGame) {
-  const oldAchievement = await Achievement.findOne({ title: 'HD Main' });
-  const achievement = await getOrCreateAchievement(
+  const hd25 = await getOrCreateAchievement(
     'HD Adept',
     'Play 25 rounds with HD only',
     'low vision',
   );
+  const hd50 = await getOrCreateAchievement(
+    'HD Experienced',
+    'Play 50 rounds with HD only',
+    'low vision',
+  );
+
   await Promise.all(
     users.map(async user => {
-      // Legacy: remove old achievement ('HD Main')
-      if (
-        oldAchievement &&
-        user.achievements.some(
-          a => a.achievementId.toHexString() === oldAchievement._id.toString(),
-        )
-      ) {
-        user.achievements = user.achievements.filter(
-          a => a.achievementId.toString() !== oldAchievement._id.toString(),
-        );
-      }
-      const hasAchievement = user.achievements.some(
-        a => a.achievementId.toString() === achievement._id.toString(),
-      );
-
-      if (hasAchievement) {
-        return;
-      }
-
       const scoreMods: Array<Partial<IScore>> = await Score.find({
         userId: user._id,
       }).select({ mods: 1 });
+
       const hdScores = scoreMods.filter(({ mods }) => mods === 8);
       if (hdScores.length >= 25) {
-        console.log('adding HD achievement');
-        await giveAchievement(user, achievement, game);
+        await giveAchievement(user, hd25, game);
+      }
+      if (hdScores.length >= 50) {
+        await giveAchievement(user, hd50, game);
       }
     }),
   );

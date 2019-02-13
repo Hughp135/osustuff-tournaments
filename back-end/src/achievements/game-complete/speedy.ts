@@ -1,5 +1,5 @@
 import { IScore } from './../../models/Score.model';
-import { IUser, IUserAchievement } from './../../models/User.model';
+import { IUser } from './../../models/User.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { getAppliedMods } from '../../helpers/get-applied-mods';
 import { giveAchievement } from '../give-achievement';

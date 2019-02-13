@@ -13,7 +13,7 @@ import { Achievement, IAchievement } from '../../models/Achievement.model';
 const expect = chai.expect;
 chai.use(sinonChai);
 
-describe('achievement - hd player', async () => {
+describe('achievement - mods scores', async () => {
   before(async () => {
     await mongoose.connect(
       'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
@@ -37,7 +37,7 @@ describe('achievement - hd player', async () => {
         ...getBaseScoreData(user._id, 10), // HD
       });
     }
-    await achievementModScores([user], <any>{ _id: 123 });
+    await achievementModScores([user], <any>{ _id: new ObjectId() });
 
     const userUpdated = <IUser>await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(0);
@@ -49,7 +49,7 @@ describe('achievement - hd player', async () => {
         ...getBaseScoreData(user._id, 8), // HD
       });
     }
-    await achievementModScores([user], <any>{ _id: 123 });
+    await achievementModScores([user], <any>{ _id: new ObjectId() });
 
     const userUpdated = <IUser>await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(1);
@@ -67,7 +67,7 @@ describe('achievement - hd player', async () => {
         ...getBaseScoreData(user._id, 16), // HDHR
       });
     }
-    await achievementModScores([user], <any>{ _id: 123 });
+    await achievementModScores([user], <any>{ _id: new ObjectId() });
 
     const userUpdated = <IUser>await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(0);
@@ -82,7 +82,7 @@ describe('achievement - hd player', async () => {
         ...getBaseScoreData(user._id, 16), // HDHR
       });
     }
-    await achievementModScores([user], <any>{ _id: 123 });
+    await achievementModScores([user], <any>{ _id: new ObjectId() });
 
     const userUpdated = <IUser>await User.findById(user._id);
     expect(userUpdated.achievements.length).to.equal(0);

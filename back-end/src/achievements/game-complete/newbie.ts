@@ -11,7 +11,7 @@ export async function achievementNewbie(allGameUsers: IUser[], game: IGame) {
   );
   const achievement2 = await getOrCreateAchievement(
     'Prodigy',
-    'Win your first ever match',
+    'Win the first match you play',
     'pink child',
   );
 
