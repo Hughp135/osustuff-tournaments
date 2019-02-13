@@ -13,12 +13,13 @@ export async function createGame(
   testPlayers?: number,
 ): Promise<IGame> {
   const savedBeatmaps = (await Beatmap.aggregate([
-    { $sample: { size: 1500 } },
+    { $sample: { size: 500 } },
   ]));
   const beatmaps = (await getRecentBeatmaps()).filter(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
   beatmaps.push(...savedBeatmaps);
+  console.log('total beatmaps', beatmaps.length);
 
   const numRounds = 10; // max number of rounds that will be played
 
@@ -30,8 +31,8 @@ export async function createGame(
         return <[number, number]>[3 + idx * 0.5, 3.8 + idx * 0.5];
       }
       return <[number, number]>[
-        4 + idx * 0.4,
-        idx > 7 ? undefined : 5 + idx * 0.4,
+        Math.min(6, 4 + idx * 0.3),
+        idx > 7 ? 8 : 5 + idx * 0.3,
       ];
     });
   const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
