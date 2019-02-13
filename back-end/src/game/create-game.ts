@@ -13,12 +13,13 @@ export async function createGame(
   testPlayers?: number,
 ): Promise<IGame> {
   const savedBeatmaps = (await Beatmap.aggregate([
-    { $sample: { size: 1500 } },
+    { $sample: { size: 500 } },
   ]));
   const beatmaps = (await getRecentBeatmaps()).filter(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
   beatmaps.push(...savedBeatmaps);
+  console.log('total beatmaps', beatmaps.length);
 
   const numRounds = 10; // max number of rounds that will be played
 
@@ -30,39 +31,24 @@ export async function createGame(
         return <[number, number]>[3 + idx * 0.5, 3.8 + idx * 0.5];
       }
       return <[number, number]>[
-        4 + idx * 0.4,
-        idx > 7 ? undefined : 5 + idx * 0.4,
+        Math.min(6, 4 + idx * 0.3),
+        idx > 7 ? 8 : 5 + idx * 0.3,
       ];
     });
   const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
     .fill(null)
-    .map((_, idx) => <[number, number]>[2 + idx * 0.3, 3 + idx * 0.3]);
-
-  // console.log(
-  //   standardStars.map(
-  //     (range, idx) =>
-  //       `Round: ${idx + 1}, Difficulty Range: ${range[0]} - ${range[1] || 'any'}`,
-  //   ),
-  // );
-  // console.log(
-  //   easyLobbyStars.map(
-  //     (range, idx) =>
-  //       `Round: ${idx + 1}, Difficulty Range: ${range[0]} - ${range[1] || 'any'}`,
-  //   ),
-  // );
+    .map((_, idx) => <[number, number]> [Math.max(5, 2 + idx * 0.4), Math.min(5.5,  3 + idx * 0.4)]);
 
   const difficulties = minRank ? easyLobbyStars : standardStars;
-  const roundBeatmaps = new Array(difficulties.length)
-    .fill(null)
-    .map((_, idx) =>
-      getBeatmapBetweenStars(
-        beatmaps,
-        difficulties[idx][0],
-        difficulties[idx][1],
-        40 + 10 * idx, // min length starts 40 secs, increment by 10 per round
-        160 + 20 * idx, // max length starts 160, increments by 20
-      ),
-    );
+  const roundBeatmaps = new Array(difficulties.length).fill(null).map((_, idx) =>
+    getBeatmapBetweenStars(
+      beatmaps,
+      difficulties[idx][0],
+      difficulties[idx][1],
+      40 + 10 * idx, // min length starts 40 secs, increment by 10 per round
+      160 + 20 * idx, // max length starts 160, increments by 20
+    ),
+  ).sort((a, b) => parseFloat(a.difficultyrating) - parseFloat(b.difficultyrating));
 
   const game = await Game.create({
     title: `osu! Royale Match${minRank ? ` (rank ${minRank / 1000}k+)` : ''}`,
