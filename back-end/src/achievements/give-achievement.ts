@@ -1,8 +1,8 @@
 import { IUser } from '../models/User.model';
 import { IAchievement } from '../models/Achievement.model';
+import { IGame } from '../models/Game.model';
 import { Message } from '../models/Message.model';
 import { cache } from '../services/cache';
-import { IGame } from '../models/Game.model';
 
 export async function giveAchievement(
   user: IUser,
@@ -26,5 +26,7 @@ export async function giveAchievement(
     });
 
     cache.put('last-message-id', _id.toString());
+
+    return {  user, achievement };
   }
 }

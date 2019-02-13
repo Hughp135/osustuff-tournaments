@@ -1,34 +1,43 @@
 import { IUser } from '../../models/User.model';
 import { Score, IScore } from '../../models/Score.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
-import { giveAchievement } from '../give-achievement';
-import { IGame } from '../../models/Game.model';
+import { IUserAchieved } from '../update-player-achievements';
 
-export async function achievementModScores(users: IUser[], game: IGame) {
+export async function achievementModScores(users: IUser[]): Promise<IUserAchieved[]> {
   const hd25 = await getOrCreateAchievement(
     'HD Adept',
     'Play 25 rounds with HD only',
     'low vision',
   );
   const hd50 = await getOrCreateAchievement(
-    'HD Experienced',
+    'HD Expert',
     'Play 50 rounds with HD only',
-    'low vision',
+    'blue low vision',
   );
 
-  await Promise.all(
-    users.map(async user => {
-      const scoreMods: Array<Partial<IScore>> = await Score.find({
-        userId: user._id,
-      }).select({ mods: 1 });
+  const achieved: IUserAchieved[] = [];
 
-      const hdScores = scoreMods.filter(({ mods }) => mods === 8);
-      if (hdScores.length >= 25) {
-        await giveAchievement(user, hd25, game);
-      }
-      if (hdScores.length >= 50) {
-        await giveAchievement(user, hd50, game);
-      }
-    }),
-  );
+  for (const user of users) {
+    const scoreMods: Array<Partial<IScore>> = await Score.find({
+      userId: user._id,
+    }).select({ mods: 1 });
+
+    const hdScores = scoreMods.filter(({ mods }) => mods === 8);
+    console.log('hdScores', hdScores.length);
+
+    if (hdScores.length >= 25) {
+      achieved.push({
+        user,
+        achievement: hd25,
+      });
+    }
+    if (hdScores.length >= 50) {
+      achieved.push({
+        user,
+        achievement: hd50,
+      });
+    }
+  }
+
+  return achieved;
 }

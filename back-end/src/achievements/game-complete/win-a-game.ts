@@ -1,12 +1,14 @@
 import { IUser } from '../../models/User.model';
 import { IGame } from '../../models/Game.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
-import { logger } from '../../logger';
-import { giveAchievement } from '../give-achievement';
+import { IUserAchieved } from '../update-player-achievements';
 
-export async function achievementWinAGame(game: IGame, users: IUser[]) {
+export async function achievementWinAGame(
+  users: IUser[],
+  game: IGame,
+): Promise<IUserAchieved[]> {
   if (!game.winningUser) {
-    return;
+    return [];
   }
 
   const user = users.find(
@@ -14,10 +16,12 @@ export async function achievementWinAGame(game: IGame, users: IUser[]) {
   );
 
   if (!user) {
-    return logger.error('Winning user not found in achievementWinAGame()', {
+    console.error('Winning user not found in achievementWinAGame()', {
       gameId: game._id,
       winningUser: game.winningUser,
     });
+
+    return [];
   }
 
   const achievement = await getOrCreateAchievement(
@@ -26,5 +30,5 @@ export async function achievementWinAGame(game: IGame, users: IUser[]) {
     'yellow trophy',
   );
 
-  await giveAchievement(user, achievement, game);
+  return [{ user, achievement }];
 }

@@ -37,10 +37,8 @@ describe('achievement - mods scores', async () => {
         ...getBaseScoreData(user._id, 10), // HD
       });
     }
-    await achievementModScores([user], <any>{ _id: new ObjectId() });
-
-    const userUpdated = <IUser>await User.findById(user._id);
-    expect(userUpdated.achievements.length).to.equal(0);
+    const achieved = await achievementModScores([user]);
+    expect(achieved.length).to.equal(0);
   });
   it('adds achievement if 25 HD only scores and all have HD', async () => {
     const user = await getUser(1);
@@ -49,13 +47,12 @@ describe('achievement - mods scores', async () => {
         ...getBaseScoreData(user._id, 8), // HD
       });
     }
-    await achievementModScores([user], <any>{ _id: new ObjectId() });
+    const achieved = await achievementModScores([user]);
+    expect(achieved.length).to.equal(1);
 
-    const userUpdated = <IUser>await User.findById(user._id);
-    expect(userUpdated.achievements.length).to.equal(1);
     const achievement = <IAchievement>(
       await Achievement.findOne({
-        _id: userUpdated.achievements[0].achievementId,
+        _id: achieved[0].achievement._id,
       })
     );
     expect(achievement.title).to.equal('HD Adept');
@@ -67,10 +64,8 @@ describe('achievement - mods scores', async () => {
         ...getBaseScoreData(user._id, 16), // HDHR
       });
     }
-    await achievementModScores([user], <any>{ _id: new ObjectId() });
-
-    const userUpdated = <IUser>await User.findById(user._id);
-    expect(userUpdated.achievements.length).to.equal(0);
+    const achieved = await achievementModScores([user]);
+    expect(achieved.length).to.equal(0);
   });
   it('does not give achievement if not all scores are HD - only', async () => {
     const user = await getUser(1);
@@ -82,10 +77,26 @@ describe('achievement - mods scores', async () => {
         ...getBaseScoreData(user._id, 16), // HDHR
       });
     }
-    await achievementModScores([user], <any>{ _id: new ObjectId() });
+    const achieved = await achievementModScores([user]);
+    expect(achieved.length).to.equal(0);
+  });
+  it('adds achievement for 50 HD only scores', async () => {
+    const user = await getUser(1);
+    for (let i = 0; i < 50; i++) {
+      await Score.create({
+        ...getBaseScoreData(user._id, 8), // HD
+      });
+    }
+    const achieved = await achievementModScores([user]);
+    expect(achieved.length).to.equal(2);
 
-    const userUpdated = <IUser>await User.findById(user._id);
-    expect(userUpdated.achievements.length).to.equal(0);
+    const achievement = <IAchievement[]>(
+      await Achievement.find({
+        _id: achieved.map(a => a.achievement._id),
+      })
+    );
+    expect(achievement[0].title).to.equal('HD Adept');
+    expect(achievement[1].title).to.equal('HD Expert');
   });
 });
 

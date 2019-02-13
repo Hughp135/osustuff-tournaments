@@ -4,12 +4,12 @@ import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { getAppliedMods } from '../../helpers/get-applied-mods';
 import { giveAchievement } from '../give-achievement';
 import { IGame } from '../../models/Game.model';
+import { IUserAchieved } from '../update-player-achievements';
 
 export async function achievementSpeed(
   users: IUser[],
   passedScores: IScore[],
-  game: IGame,
-) {
+): Promise<IUserAchieved[]> {
   const achievement3 = await getOrCreateAchievement(
     'Speedy',
     'Pass 3 rounds in one game with DT',
@@ -21,8 +21,7 @@ export async function achievementSpeed(
     'red forward',
   );
 
-  await Promise.all(
-    users.map(async user => {
+  return <IUserAchieved[]> users.map(user => {
       const dtScores = passedScores.filter(score => {
         return (
           score.userId.toHexString() === user._id.toString() &&
@@ -37,8 +36,7 @@ export async function achievementSpeed(
           : undefined;
 
       if (achievement) {
-        await giveAchievement(user, achievement, game);
+        return {user, achievement};
       }
-    }),
-  );
+    }).filter(a => !!a); // filter out undefined values
 }
