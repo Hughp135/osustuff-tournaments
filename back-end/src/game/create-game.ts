@@ -12,9 +12,7 @@ export async function createGame(
   minRank?: number,
   testPlayers?: number,
 ): Promise<IGame> {
-  const savedBeatmaps = (await Beatmap.aggregate([
-    { $sample: { size: 500 } },
-  ]));
+  const savedBeatmaps = await Beatmap.aggregate([{ $sample: { size: 500 } }]);
   const beatmaps = (await getRecentBeatmaps()).filter(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
@@ -60,7 +58,7 @@ export async function createGame(
 
   if (TEST_MODE && game.status !== 'scheduled') {
     console.log('Creating game with sample players');
-    await addSamplePlayers(game, testPlayers || 5);
+    await addSamplePlayers(game, testPlayers || 25);
   }
 
   return game;

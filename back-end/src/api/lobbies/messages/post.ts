@@ -9,7 +9,7 @@ const Filter = require('bad-words');
 
 const filter = new Filter();
 filter.addWords('rape');
-filter.removeWords('god');
+filter.removeWords('god', 'damn');
 
 export async function sendMessage(req: Request, res: Response) {
   const { id } = req.params;

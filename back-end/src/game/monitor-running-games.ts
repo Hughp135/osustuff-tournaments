@@ -18,6 +18,7 @@ import { logger } from '../logger';
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 const PLAYERS_REQUIRED_TO_START = config.get('PLAYERS_REQUIRED_TO_START');
+const DISABLE_LOWER_LVL_LOBBIES = config.get('DISABLE_LOWER_LVL_LOBBIES');
 let DISABLE_AUTO_GAME_CREATION = config.get('DISABLE_AUTO_GAME_CREATION');
 export let isMonitoring = false;
 let gamesBeingUpdated: string[] = [];
@@ -67,7 +68,6 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
 
   const promises = games.map(async game => {
     if (gamesBeingUpdated.includes(game._id.toString())) {
-      console.log('not updating');
       // This game is being updated already, don't do anything.
       return;
     }
@@ -113,7 +113,7 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
         console.log('creating a new game');
         await createGame(getRecentMaps).catch(e => logger.error('Failed to create game', e));
       }
-      if (!TEST_MODE && minRankGames.length === 0) {
+      if (!DISABLE_LOWER_LVL_LOBBIES && minRankGames.length === 0) {
         console.log('creating a new game with min rank');
         await createGame(getRecentMaps, undefined, 45000).catch(e =>
           logger.error('Failed to create game', e),

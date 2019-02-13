@@ -21,21 +21,25 @@ const routes: Routes = [
     path: 'lobbies',
     component: LobbiesComponent,
     resolve: { data: LobbiesResolver },
+    runGuardsAndResolvers: 'always',
   },
   {
     path: 'lobbies/:id',
     component: GameLobbyComponent,
     resolve: { data: GameLobbyResolver },
+    runGuardsAndResolvers: 'always',
   },
   {
     path: 'leaderboard',
     component: LeaderboardComponent,
     resolve: { data: LeaderboardResolver },
+    runGuardsAndResolvers: 'always',
   },
   {
     path: 'user/:username',
     component: UserProfileComponent,
     resolve: { data: UserProfileResolver },
+    runGuardsAndResolvers: 'always',
   },
   {
     path: 'login',
@@ -48,7 +52,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {enableTracing: false, onSameUrlNavigation: 'reload'})],
   exports: [RouterModule],
   providers: [GameLobbyResolver, LobbiesResolver, LeaderboardResolver, UserProfileResolver],
 })

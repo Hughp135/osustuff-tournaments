@@ -1,8 +1,6 @@
 import { IScore } from './../../models/Score.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { IUser } from '../../models/User.model';
-import { giveAchievement } from '../give-achievement';
-import { IGame } from '../../models/Game.model';
 import { IUserAchieved } from '../update-player-achievements';
 
 export async function passWithAnF(

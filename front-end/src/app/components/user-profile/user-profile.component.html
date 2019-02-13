@@ -41,7 +41,7 @@
         <h3>
           <i class="yellow percent icon"></i>
           {{
-            user.wins
+            user.wins && user.gamesPlayed
               ? ((user.wins / user.gamesPlayed) * 100).toFixed(2)
               : '0.00'
           }}
@@ -50,7 +50,7 @@
 
       <div class="column">
         <h5 class="ui inverted header">Average Rank</h5>
-        <h3 *ngIf="user.gamesPlayed">
+        <h3 *ngIf="user.gamesPlayed && user.averageRank">
           <i class="teal arrows alternate vertical icon"></i>
           {{ user.averageRank.toFixed(2) }}
         </h3>
