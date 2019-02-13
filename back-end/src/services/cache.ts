@@ -7,20 +7,17 @@ export async function getDataOrCache(key: string, expires: number, func: () => P
   const cached = cache.get(key);
 
   if (cached) {
-    return cached;
+    return cached; // Return cached data
   }
 
-  const promiseInProgress = caching[key];
-
-  if (promiseInProgress) {
-    return await promiseInProgress;
+  if (caching[key]) {
+    return await caching[key]; // Return the awaited promise
   }
 
-  const promise = func();
-  caching[key] = promise;
+  caching[key] = func(); // Save promise to state to avoid race conditions
 
   try {
-    const data = await promise;
+    const data = await caching[key]; // Store the finished promise in cache
     cache.put(key, data, expires);
     delete caching[key];
 

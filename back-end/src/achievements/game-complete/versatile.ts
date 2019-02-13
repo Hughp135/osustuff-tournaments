@@ -1,43 +1,59 @@
 import { IScore } from '../../models/Score.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { IUser } from '../../models/User.model';
+import { giveAchievement } from '../give-achievement';
+import { IGame } from '../../models/Game.model';
+import { IUserAchieved } from '../update-player-achievements';
 
-export async function achievementVersatile(allUsers: IUser[], passedScores: IScore[]) {
+export async function achievementVersatile(
+  allUsers: IUser[],
+  passedScores: IScore[],
+): Promise<IUserAchieved[]> {
   const achievement = await getOrCreateAchievement(
     'Versatile',
     'Pass 4 rounds with different mods',
     'yellow sliders horizontal',
   );
 
-  const scoresPerUser = passedScores.reduce(
-    // reduce to 1 score per person per round
-    (acc, curr) => {
-      let usr = acc.find(s => s.userId === curr.userId.toHexString());
+  const uniqueModsPerUser = passedScores
+    // Filter out users who already have the achievement
+    .filter(score => {
+      const user = allUsers.find(u => u._id.toString() === score.userId.toHexString());
+      return user && !user.achievements.some(a => a.achievementId.toHexString() === achievement._id.toString());
+    })
+    // Cycle through all passed scores and count unique mods used per user
+    .reduce(
+    (
+      acc: Array<{ userId: string; uniqueMods: number[] }>,
+      curr,
+    ) => {
+      let usr = acc.find(x => x.userId === curr.userId.toHexString());
       if (!usr) {
-        usr = { userId: curr.userId.toHexString(), scores: [], uniqueMods: [] };
+        // create temp user object to hold scores/unique mods
+        usr = {
+          userId: curr.userId.toHexString(),
+          uniqueMods: <number[]>[],
+        };
         acc.push(usr);
       }
-      if (!usr.scores.some(s => s.roundId.toString() === curr.roundId.toString())) {
-        usr.scores.push(curr);
-        usr.uniqueMods = usr.uniqueMods.filter(m => m !== curr.mods).concat(curr.mods);
+      // Add to unique mods if not already added
+      if (!usr.uniqueMods.includes(curr.mods)) {
+        usr.uniqueMods.push(curr.mods);
       }
 
       return acc;
     },
-    <Array<{ userId: string; scores: IScore[]; uniqueMods: number[] }>> [],
+    [],
   );
 
-  const userScores = scoresPerUser.filter(u => u.uniqueMods.length >= 3);
+  const userScores = uniqueModsPerUser.filter(u => u.uniqueMods.length >= 4);
   const userIds = userScores.map(u => u.userId.toString());
-  const users = allUsers.filter(u => userIds.includes(u._id.toString()));
-
-  await Promise.all(
-    users.map(async user => {
-      if (!user.achievements.some(a => a.achievementId.toString() === achievement._id.toString())) {
-        user.achievements.push({ achievementId: achievement._id, progress: 1 });
-        user.markModified('achievements');
-        await user.save();
-      }
-    }),
+  const qualifyingUsers = allUsers.filter(u =>
+    userIds.includes(u._id.toString()),
   );
+
+  return qualifyingUsers.map(user => ({
+    user,
+    achievement,
+  }));
 }

@@ -1,9 +1,10 @@
-import { IUserAchievement } from './../../models/User.model';
-import { User } from '../../models/User.model';
 import { IUser } from '../../models/User.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
+import { IUserAchieved } from '../update-player-achievements';
 
-export async function achievementNewbie(allGameUsers: IUser[]) {
+export async function achievementNewbie(
+  allGameUsers: IUser[],
+): Promise<IUserAchieved[]> {
   const achievement1 = await getOrCreateAchievement(
     'Newbie',
     'Complete your first match',
@@ -11,29 +12,15 @@ export async function achievementNewbie(allGameUsers: IUser[]) {
   );
   const achievement2 = await getOrCreateAchievement(
     'Prodigy',
-    'Win your first ever match',
+    'Win the first match you play',
     'pink child',
   );
 
-  await Promise.all(
-    allGameUsers
-      .filter(u => u.gamesPlayed === 1)
-      .map(async user => {
-        const achievement = user.wins === 0 ? achievement1 : achievement2;
-        if (
-          !user.achievements.some(
-            a => a.achievementId.toString() === achievement._id.toString(),
-          )
-        ) {
-          const newAchievement: IUserAchievement = {
-            achievementId: achievement._id,
-            progress: 1,
-          };
-          await User.updateOne(
-            { _id: user._id },
-            { $addToSet: { achievements: newAchievement } },
-          );
-        }
-      }),
-  );
+  return allGameUsers
+    .filter(u => u.gamesPlayed === 1)
+    .map(user => {
+      const achievement = user.wins === 0 ? achievement1 : achievement2;
+
+      return { user, achievement };
+    });
 }

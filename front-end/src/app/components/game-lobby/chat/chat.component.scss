@@ -41,13 +41,19 @@ h5 {
 
       .header {
         color: rgba(255, 255, 255, 0.726);
+
+        .system-name {
+          color: rgba(255, 255, 255, 0.911);
+          background-color: rgba(186, 67, 255, 0.609);
+          padding: 1px 4px;
+          border-radius: 5px;
+        }
       }
 
       .description.chat-message {
         color: rgba(255, 255, 255, 0.9);
       }
     }
-
   }
 }
 

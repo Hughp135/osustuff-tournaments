@@ -11,6 +11,8 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
         try {
           const osuUser = getOsuUser(index);
           const user = await updateOrCreateUser(osuUser);
+          user.currentGame = game._id;
+          await user.save();
           return userToPlayer(user);
         } catch (e) {
           console.error(e);
@@ -19,7 +21,7 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
       .filter(p => !!p),
   );
 
-  game.players = <IPlayer[]> players;
+  game.players = <IPlayer[]>players;
 
   await game.save();
 }

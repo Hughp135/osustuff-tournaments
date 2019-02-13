@@ -1,5 +1,11 @@
 import { GameService } from './../../../game.service';
-import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IGame } from '../game-lobby.component';
 
@@ -35,7 +41,10 @@ export class ChatComponent implements OnInit, AfterViewInit {
   private stopAutoScroll = false;
   private detectScroll = false;
 
-  constructor(private gameService: GameService, private settingsService: SettingsService) {}
+  constructor(
+    private gameService: GameService,
+    private settingsService: SettingsService,
+  ) {}
 
   ngOnInit() {}
 
@@ -119,5 +128,11 @@ export class ChatComponent implements OnInit, AfterViewInit {
     } else if (!e.path || !e.path.some(el => el.tagName === 'EMOJI-MART')) {
       this.showEmojiPicker = false;
     }
+  }
+
+  public isSystem(message: Message) {
+    return (
+      message.osuUserId === 0 && message.username.toLowerCase() === 'system'
+    );
   }
 }

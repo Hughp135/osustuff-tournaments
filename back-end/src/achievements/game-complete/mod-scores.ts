@@ -1,47 +1,42 @@
-import { IUserAchievement } from '../../models/User.model';
-import { IUser, User } from '../../models/User.model';
+import { IUser } from '../../models/User.model';
 import { Score, IScore } from '../../models/Score.model';
-import { getAppliedMods } from '../../helpers/get-applied-mods';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
-import { Achievement } from '../../models/Achievement.model';
+import { IUserAchieved } from '../update-player-achievements';
 
-export async function achievementModScores(users: IUser[]) {
-  const oldAchievement = await Achievement.findOne({ title: 'HD Main' });
-  const achievement = await getOrCreateAchievement(
+export async function achievementModScores(users: IUser[]): Promise<IUserAchieved[]> {
+  const hd25 = await getOrCreateAchievement(
     'HD Adept',
-    'Play with 25 rounds with HD only',
+    'Play 25 rounds with HD only',
     'low vision',
   );
-  await Promise.all(
-    users.map(async user => {
-      // Legacy: remove old achievement ('HD Main')
-      if (
-        oldAchievement &&
-        user.achievements.some(a => a.achievementId.toHexString() === oldAchievement._id.toString())
-      ) {
-        user.achievements = user.achievements.filter(
-          a => a.achievementId.toString() !== oldAchievement._id.toString(),
-        );
-      }
-      const hasAchievement = user.achievements.some(
-        a => a.achievementId.toString() === achievement._id.toString(),
-      );
-
-      if (hasAchievement) {
-        return;
-      }
-
-      const scoreMods: Array<Partial<IScore>> = (await Score.find({ userId: user._id })
-        .select({ mods: 1 }));
-      const hdScores = scoreMods.filter(({mods}) => mods === 8);
-      if (hdScores.length >= 25) {
-        console.log('adding HD achievement');
-        const newAchievement: IUserAchievement = {
-          achievementId: achievement._id,
-          progress: 1,
-        };
-        await User.updateOne({ _id: user._id }, { $addToSet: { achievements: newAchievement } });
-      }
-    }),
+  const hd50 = await getOrCreateAchievement(
+    'HD Expert',
+    'Play 50 rounds with HD only',
+    'blue low vision',
   );
+
+  const achieved: IUserAchieved[] = [];
+
+  for (const user of users) {
+    const scoreMods: Array<Partial<IScore>> = await Score.find({
+      userId: user._id,
+    }).select({ mods: 1 });
+
+    const hdScores = scoreMods.filter(({ mods }) => mods === 8);
+
+    if (hdScores.length >= 25) {
+      achieved.push({
+        user,
+        achievement: hd25,
+      });
+    }
+    if (hdScores.length >= 50) {
+      achieved.push({
+        user,
+        achievement: hd50,
+      });
+    }
+  }
+
+  return achieved;
 }
