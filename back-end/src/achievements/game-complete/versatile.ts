@@ -1,8 +1,6 @@
 import { IScore } from '../../models/Score.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { IUser } from '../../models/User.model';
-import { giveAchievement } from '../give-achievement';
-import { IGame } from '../../models/Game.model';
 import { IUserAchieved } from '../update-player-achievements';
 
 export async function achievementVersatile(
@@ -11,7 +9,7 @@ export async function achievementVersatile(
 ): Promise<IUserAchieved[]> {
   const achievement = await getOrCreateAchievement(
     'Versatile',
-    'Pass 4 rounds with different mods',
+    'Pass 4 rounds with different mods in one match',
     'yellow sliders horizontal',
   );
 

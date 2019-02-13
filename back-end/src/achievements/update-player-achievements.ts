@@ -13,6 +13,7 @@ import { passWithAnF } from './round-over/pass-with-f';
 import { IAchievement } from '../models/Achievement.model';
 import { giveAchievement } from './give-achievement';
 import { sendAchievementMessages } from './send-achievement-msgs';
+import { achievementAccuracy } from './round-over/accuracy';
 
 export interface IUserAchieved {
   user: IUser;
@@ -34,7 +35,6 @@ export async function updatePlayerAchievements(game: IGame) {
     score: -1,
     date: 1,
   });
-
   const passedRoundScores = passedScores.filter(
     s => s.roundId.toHexString() === game.currentRound.toHexString(),
   );
@@ -50,6 +50,7 @@ export async function updatePlayerAchievements(game: IGame) {
             await passWithAnF(passedRoundScores, aliveUsers),
             await achievementVersatile(allGameUsers, passedScores),
             await achievementSpeed(allGameUsers, passedScores),
+            await achievementAccuracy(passedRoundScores, aliveUsers),
           ],
         );
         break;

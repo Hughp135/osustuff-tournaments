@@ -3,19 +3,19 @@ import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { IUser } from '../../models/User.model';
 import { IUserAchieved } from '../update-player-achievements';
 
-export async function passWithAnF(
+export async function achievementAccuracy(
   passedScores: IScore[], // referring to scores which passed the round
   aliveUsers: IUser[],
 ): Promise<IUserAchieved[]> {
   const achievement = await getOrCreateAchievement(
-    'Best of the Worst',
-    'Pass a round with an F rank score',
-    'green times',
+    'MingAcc',
+    'Pass a round with a <60% acc non-F score',
+    'purple percent',
   );
 
-  const fScores = passedScores.filter(s => s.rank === 'F');
+  const qualifyingScores = passedScores.filter(s => s.rank !== 'F' && s.accuracy < 60);
 
-  return fScores
+  return qualifyingScores
     .map(score => {
       const user = <IUser> aliveUsers.find(u => u._id.toString() === score.userId.toHexString());
       return { user, achievement };

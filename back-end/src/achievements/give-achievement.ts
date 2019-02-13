@@ -1,6 +1,5 @@
 import { IUser } from '../models/User.model';
 import { IAchievement } from '../models/Achievement.model';
-import { IGame } from '../models/Game.model';
 
 export async function giveAchievement(
   user: IUser,
