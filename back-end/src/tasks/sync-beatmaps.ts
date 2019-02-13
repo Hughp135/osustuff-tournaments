@@ -14,7 +14,7 @@ async function start() {
 
   const downloadAvailable: string[] = [];
   const downloadUnavailable: string[] = [];
-  let date = new Date('2013-01-01');
+  let date = new Date('2013-11-01');
   const lastMonth = new Date();
   lastMonth.setMonth(lastMonth.getMonth() - 1);
   console.time('start');
@@ -43,7 +43,7 @@ async function start() {
         continue;
       }
 
-      await new Promise(res => setTimeout(res, 1000));
+      await new Promise(res => setTimeout(res, 1500));
 
       try {
         // Check if beatmap is available for download. Will throw 404 if not
@@ -80,6 +80,7 @@ async function start() {
         new Date(a.approved_date).getTime(),
     );
     date = new Date(lastBeatmap.approved_date);
+    date.setMonth(date.getMonth() + 4);
   }
 
   console.log('beatmaps added', downloadAvailable.length);
