@@ -32,5 +32,4 @@ export async function addSampleScores(game: IGame) {
       }),
   );
 
-  console.log('scores Added', scoresAdded, 'players count', game.players.filter(p => p.alive).length);
 }

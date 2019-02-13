@@ -68,7 +68,6 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
 
   const promises = games.map(async game => {
     if (gamesBeingUpdated.includes(game._id.toString())) {
-      console.log('not updating');
       // This game is being updated already, don't do anything.
       return;
     }
