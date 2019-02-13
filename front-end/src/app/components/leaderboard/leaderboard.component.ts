@@ -11,7 +11,9 @@ export class LeaderboardComponent implements OnInit {
   public users: IUser[];
 
   constructor(route: ActivatedRoute) {
-    this.users = route.snapshot.data.data.users;
+    route.data.subscribe(({ data }) => {
+      this.users = data.users;
+    });
   }
 
   ngOnInit() {}

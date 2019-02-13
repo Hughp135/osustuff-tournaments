@@ -12,9 +12,7 @@ export async function createGame(
   minRank?: number,
   testPlayers?: number,
 ): Promise<IGame> {
-  const savedBeatmaps = (await Beatmap.aggregate([
-    { $sample: { size: 500 } },
-  ]));
+  const savedBeatmaps = await Beatmap.aggregate([{ $sample: { size: 500 } }]);
   const beatmaps = (await getRecentBeatmaps()).filter(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
@@ -35,6 +33,7 @@ export async function createGame(
         idx > 7 ? 8 : 5 + idx * 0.3,
       ];
     });
+  console.log('standard', standardStars);
   const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
     .fill(null)
     .map((_, idx) => <[number, number]> [Math.max(5, 2 + idx * 0.4), Math.min(5.5,  3 + idx * 0.4)]);

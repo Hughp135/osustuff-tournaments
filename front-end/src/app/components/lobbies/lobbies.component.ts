@@ -14,29 +14,36 @@ export class LobbiesComponent implements OnInit, OnDestroy {
   public subscriptions: Subscription[] = [];
   public fetching = false;
 
-  constructor(private route: ActivatedRoute, private gameService: GameService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private gameService: GameService,
+  ) {}
 
   ngOnInit() {
-    const { data } = this.route.snapshot.data;
-
-    this.lobbies = data.lobbies;
-    this.setLobbiesStartString();
+    this.route.data.subscribe(({ data }) => {
+      this.lobbies = data.lobbies;
+      this.setLobbiesStartString();
+    });
 
     this.subscriptions.push(
       interval(1000).subscribe(() => {
         this.lobbies
-          .filter(l => l.startsAt !== undefined && ['new', 'scheduled'].includes(l.status))
+          .filter(
+            l =>
+              l.startsAt !== undefined &&
+              ['new', 'scheduled'].includes(l.status),
+          )
           .forEach(l => {
             l.startsAt--;
           });
         this.setLobbiesStartString();
-      })
+      }),
     );
 
     this.subscriptions.push(
       interval(30000).subscribe(() => {
         this.fetch();
-      })
+      }),
     );
   }
 
@@ -49,7 +56,9 @@ export class LobbiesComponent implements OnInit, OnDestroy {
   }
 
   get inProgressGames() {
-    return this.lobbies.filter(l => !['new', 'scheduled', 'complete'].includes(l.status));
+    return this.lobbies.filter(
+      l => !['new', 'scheduled', 'complete'].includes(l.status),
+    );
   }
 
   get completedGames() {
@@ -62,13 +71,17 @@ export class LobbiesComponent implements OnInit, OnDestroy {
       .forEach(lobby => {
         const date = new Date();
         date.setSeconds(date.getSeconds() + lobby.startsAt);
-        const { seconds, minutes, hours } = getTimeComponents(date.getTime() - Date.now());
+        const { seconds, minutes, hours } = getTimeComponents(
+          date.getTime() - Date.now(),
+        );
 
         if (parseInt(seconds, 10) < 0) {
           return (lobby.startsAtString = `now`);
         }
 
-        lobby.startsAtString = `${parseInt(hours, 10) > 0 ? `${hours}:` : ''}${minutes}:${seconds}s`;
+        lobby.startsAtString = `${
+          parseInt(hours, 10) > 0 ? `${hours}:` : ''
+        }${minutes}:${seconds}s`;
       });
   }
 
