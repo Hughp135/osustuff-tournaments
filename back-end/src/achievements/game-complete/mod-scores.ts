@@ -23,7 +23,6 @@ export async function achievementModScores(users: IUser[]): Promise<IUserAchieve
     }).select({ mods: 1 });
 
     const hdScores = scoreMods.filter(({ mods }) => mods === 8);
-    console.log('hdScores', hdScores.length);
 
     if (hdScores.length >= 25) {
       achieved.push({

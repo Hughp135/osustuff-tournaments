@@ -12,6 +12,7 @@ import { logger } from '../logger';
 import { passWithAnF } from './round-over/pass-with-f';
 import { IAchievement } from '../models/Achievement.model';
 import { giveAchievement } from './give-achievement';
+import { sendAchievementMessages } from './send-achievement-msgs';
 
 export interface IUserAchieved {
   user: IUser;
@@ -34,8 +35,6 @@ export async function updatePlayerAchievements(game: IGame) {
     date: 1,
   });
 
-  // console.log('Starting update achievements');
-  // console.time('a');
   const passedRoundScores = passedScores.filter(
     s => s.roundId.toHexString() === game.currentRound.toHexString(),
   );
@@ -68,18 +67,15 @@ export async function updatePlayerAchievements(game: IGame) {
 
     const achievementsGiven: IUserAchieved[] = results.reduce((acc, curr) => {
       acc.push(...curr);
-
       return acc;
     }, []);
 
     for (const { user, achievement } of achievementsGiven) {
-      await giveAchievement(user, achievement, game);
+      await giveAchievement(user, achievement);
     }
 
+    await sendAchievementMessages(achievementsGiven, game);
   } catch (e) {
     logger.error('Failed to updated achievements', e);
   }
-
-  // console.log('ended achievments check');
-  // console.timeEnd('a');
 }
