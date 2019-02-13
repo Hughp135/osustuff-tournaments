@@ -69,16 +69,17 @@ export async function updatePlayerAchievements(game: IGame) {
         break;
     }
 
-    const achievementsGiven: IUserAchieved[] = results.reduce((acc, curr) => {
+    const achievementsQualified: IUserAchieved[] = results.reduce((acc, curr) => {
       acc.push(...curr);
       return acc;
     }, []);
 
-    for (const { user, achievement } of achievementsGiven) {
-      await giveAchievement(user, achievement);
+    const achievementsAwarded: IUserAchieved[] = [];
+    for (const { user, achievement } of achievementsQualified) {
+      achievementsAwarded.push(...await giveAchievement(user, achievement));
     }
 
-    await sendAchievementMessages(achievementsGiven, game);
+    await sendAchievementMessages(achievementsAwarded, game);
   } catch (e) {
     logger.error('Failed to updated achievements', e);
   }
