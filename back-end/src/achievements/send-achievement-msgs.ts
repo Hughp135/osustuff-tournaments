@@ -34,7 +34,7 @@ export async function sendAchievementMessages(achievementsGiven: IUserAchieved[]
       gameId: game._id,
       message: `${achievement.usernames.join(', ')} ${
         count > 1 ? 'have' : 'has'
-      } just achieved "${achievement.title}"!`,
+      } earned the achievement "${achievement.title}"!`,
     });
 
     cache.put('last-message-id', _id.toString());

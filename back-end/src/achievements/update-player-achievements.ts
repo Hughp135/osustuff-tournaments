@@ -14,6 +14,9 @@ import { IAchievement } from '../models/Achievement.model';
 import { giveAchievement } from './give-achievement';
 import { sendAchievementMessages } from './send-achievement-msgs';
 import { achievementAccuracy } from './round-over/accuracy';
+import config from 'config';
+
+const TEST_MODE = config.get('TEST_MODE');
 
 export interface IUserAchieved {
   user: IUser;
@@ -46,7 +49,7 @@ export async function updatePlayerAchievements(game: IGame) {
       case 'round-over':
         results.push(
           ...[
-            await achievementPlayAsTester(aliveUsers),
+            TEST_MODE ? await achievementPlayAsTester(aliveUsers) : [],
             await passWithAnF(passedRoundScores, aliveUsers),
             await achievementVersatile(allGameUsers, passedScores),
             await achievementSpeed(allGameUsers, passedScores),
