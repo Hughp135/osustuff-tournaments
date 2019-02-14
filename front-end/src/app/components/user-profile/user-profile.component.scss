@@ -22,7 +22,8 @@
   }
 
   .icon {
-    margin-right: 2rem;
+    margin-right: 1rem;
+    margin-top: -8px;
   }
 
   .flex {
@@ -30,12 +31,12 @@
     flex-direction: row;
     align-items: center;
     margin: 0 1rem;
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
   }
 
   .elo {
     &.green {
-      color: #76ff6a;
+      color: #71be6a;
     }
 
     &.red {
