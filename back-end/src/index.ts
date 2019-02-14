@@ -6,7 +6,7 @@ import { startServer } from './api';
 if (process.env.NODE_ENV !== 'production') {
   require('source-map-support').install();
 }
-process.on('unhandledRejection', console.log);
+process.on('unhandledRejection', console.error);
 
 mongoose.set('useCreateIndex', true);
 

@@ -11,8 +11,6 @@ export async function removeAfkPlayers(game: IGame) {
     return !!cache.get(`user-active-${p.userId}`);
   });
 
-  console.log('active', activePlayers.length, 'inactive', afkPlayers.length);
-
   for (const player of afkPlayers) {
     console.log('removing afk player', player.username);
     await User.updateOne(

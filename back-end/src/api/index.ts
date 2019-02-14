@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser';
-import express, { Router } from 'express';
+import express, { Router, Request } from 'express';
 import config from 'config';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
@@ -27,21 +27,29 @@ import { toggleAutoCreateReq } from './admin/toggle-auto-create';
 import { deleteLobby } from './admin/delete-lobby';
 
 const PORT = config.get('API_PORT');
-const TEST_MODE = config.get('TEST_MODE');
 const app = express();
-const limiter = new rateLimit({
+
+const checkIp = (req: Request) => {
+  // Use cloud-flare's connecting-ip to determine user's real IP
+  if (!req.headers['cf-connecting-ip'] && process.env.NODE_ENV === 'production') {
+    console.error('Request has no cf-connecting-ip', req.headers);
+  }
+  return <string>req.headers['cf-connecting-ip'] || Math.random().toString();
+};
+
+const appWideLimit = new rateLimit({
   windowMs: 60 * 1000, // time to refresh (60 seconds)
   max: 240, // limit each IP to x requests per windowMs
-  keyGenerator(req /*, res*/) {
-    // Use cloud-flare's connecting-ip to determine user's real IP
-    if (!req.headers['cf-connecting-ip'] && process.env.NODE_ENV === 'production') {
-      console.error('Request has no cf-connecting-ip', req.headers);
-    }
-    return <string>req.headers['cf-connecting-ip'] || Math.random().toString();
-  },
+  keyGenerator: checkIp,
 });
 
-app.use(limiter);
+const smallLimit = new rateLimit({
+  windowMs: 60 * 1000, // time to refresh (60 seconds)
+  max: 10, // limit each IP to x requests per windowMs
+  keyGenerator: checkIp,
+});
+
+app.use(appWideLimit);
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -52,7 +60,7 @@ const router = Router();
 router.get('', async (req, res) => res.send('Hello world!'));
 router.get('/lobbies', getLobbies);
 router.get('/lobbies/:id/rounds/:roundNum', getRound);
-router.post('/lobbies/:id/join', authMiddleware, joinGame);
+router.post('/lobbies/:id/join', smallLimit, authMiddleware, joinGame);
 router.post('/lobbies/:id/leave', authMiddleware, leaveGame);
 router.post('/lobbies/:id/skip-round', skipRound);
 router.get('/lobbies/:id/beatmaps', getLobbyBeatmaps);

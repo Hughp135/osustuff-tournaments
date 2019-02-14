@@ -28,30 +28,12 @@ describe('update-player-game-stats', () => {
     const players = await createPlayers(10);
     for (let i = 0; i < 3; i++) {
       const shuffled = shufflePlayerRanks(players);
-      // console.log(
-      //   'Results',
-      //   shuffled
-      //     .sort((a, b) => <number> a.gameRank - <number> b.gameRank)
-      //     .map(p => `${p.username} (${p.gameRank})`)
-      //     .join(','),
-      // );
       await updatePlayerGameStats(<IGame> {
         _id: '',
         players: shuffled,
       });
     }
     const usersFinal = await User.find();
-
-    // console.log(
-    //   usersFinal
-    //     .sort((a, b) => b.rating.mu - a.rating.mu)
-    //     .map(
-    //       u =>
-    //         `${u.username} - wins: ${u.wins}, avg rank: ${
-    //           u.averageRank
-    //         }, rating: ${u.rating.mu.toFixed(0)}, ${u.rating.sigma.toFixed(0)}`,
-    //     ),
-    // );
 
     usersFinal.forEach((u: any) => {
       expect(u.rating.mu).not.to.equal(1500);
