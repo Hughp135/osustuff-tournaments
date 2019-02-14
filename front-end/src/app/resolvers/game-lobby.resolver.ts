@@ -55,7 +55,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       };
     } catch (e) {
       console.error(e);
-      setTimeout(() => this.router.navigate(['']), 0);
+      setTimeout(() => this.router.navigate(['/lobbies']), 0);
       return undefined;
     }
   }

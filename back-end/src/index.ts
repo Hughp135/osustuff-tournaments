@@ -11,6 +11,8 @@ process.on('unhandledRejection', console.error);
 
 mongoose.set('useCreateIndex', true);
 
+export const SERVER_START_DATE = new Date();
+
 (async function start() {
   await mongoose.connect('mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br', {
     useNewUrlParser: true,

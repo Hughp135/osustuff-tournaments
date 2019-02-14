@@ -1,3 +1,4 @@
+import { SERVER_START_DATE } from './../index';
 import { IGame } from './../models/Game.model';
 import { Game } from '../models/Game.model';
 import { Round, IRound } from '../models/Round.model';
@@ -136,7 +137,9 @@ async function openScheduledGame(game: IGame) {
 }
 
 async function startGame(game: IGame) {
-  await removeAfkPlayers(game);
+  if (Date.now() - SERVER_START_DATE.getTime() > 30000) {
+    await removeAfkPlayers(game);
+  }
 
   const enoughPlayers = game.players.length >= PLAYERS_REQUIRED_TO_START;
   if (!enoughPlayers) {
