@@ -38,7 +38,7 @@ export async function createGame(
     .map((_, idx) => <[number, number]> [Math.max(5, 2 + idx * 0.4), Math.min(5.5,  3 + idx * 0.4)]);
 
   const difficulties = minRank ? easyLobbyStars : standardStars;
-  const roundBeatmaps = new Array(difficulties.length).fill(null).map((_, idx) =>
+  const roundBeatmaps = difficulties.map((_, idx) =>
     getBeatmapBetweenStars(
       beatmaps,
       difficulties[idx][0],
@@ -106,5 +106,6 @@ function getBeatmapBetweenStars(
 }
 
 export function arrayRandVal(myArray: any[]) {
-  return myArray[Math.floor(Math.random() * myArray.length)];
+  const index = Math.floor(Math.random() * myArray.length);
+  return myArray[index];
 }

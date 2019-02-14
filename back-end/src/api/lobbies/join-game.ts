@@ -4,6 +4,7 @@ import { getUser } from '../../services/osu-api';
 import { updateOrCreateUser } from '../../models/User.model';
 import { addPlayer } from '../../game/add-player';
 import { cache } from '../../services/cache';
+import { addOnlineUser } from '../../helpers/add-online-user';
 
 export async function joinGame(req: Request, res: Response) {
   const game = await Game.findById(req.params.id);
@@ -12,7 +13,7 @@ export async function joinGame(req: Request, res: Response) {
     return res.status(404).end();
   }
 
-  const claim = (<any> req).claim;
+  const claim = (<any>req).claim;
   if (!claim) {
     return res.status(401).end();
   }
@@ -20,16 +21,25 @@ export async function joinGame(req: Request, res: Response) {
   const osuUser = await getUser(claim.username);
 
   if (!osuUser) {
-    return res.status(404).json({ error: 'Failed to retrieve osu user details.' });
+    return res
+      .status(404)
+      .json({ error: 'Failed to retrieve osu user details.' });
   }
 
   if (game.minRank && osuUser.pp_rank < game.minRank) {
-    return res.status(401).json({ error: `Only rank ${game.minRank} players and above can join this lobby.`});
+    return res
+      .status(401)
+      .json({
+        error: `Only rank ${
+          game.minRank
+        } players and above can join this lobby.`,
+      });
   }
 
   const user = await updateOrCreateUser(osuUser);
 
   // Store that user is active
+  addOnlineUser(user);
   cache.put(`user-active-${user._id}`, true, 60000);
 
   if (game.status !== 'new') {

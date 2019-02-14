@@ -25,6 +25,7 @@ import { logger } from '../logger';
 import { makeScheduledGame } from './admin/create-scheduled-game';
 import { toggleAutoCreateReq } from './admin/toggle-auto-create';
 import { deleteLobby } from './admin/delete-lobby';
+import { getOnlineUsers } from './users/get-online-users';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -78,6 +79,7 @@ router.get('/unread-achievements', authMiddleware, getUnreadAchievements);
 router.get('/user/me', authMiddleware, getUser);
 router.get('/user/:username', getUser);
 router.get('/login-verify', loginVerify);
+router.get('/online-players', getOnlineUsers);
 
 app.use('/api', router);
 

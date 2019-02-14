@@ -1,3 +1,4 @@
+import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription, interval } from 'rxjs';
@@ -13,15 +14,18 @@ export class LobbiesComponent implements OnInit, OnDestroy {
   public lobbies: any[];
   public subscriptions: Subscription[] = [];
   public fetching = false;
+  public onlinePlayersCount: number;
 
   constructor(
     private route: ActivatedRoute,
     private gameService: GameService,
+    private apiService: ApiService,
   ) {}
 
   ngOnInit() {
     this.route.data.subscribe(({ data }) => {
       this.lobbies = data.lobbies;
+      this.onlinePlayersCount = data.onlinePlayers;
       this.setLobbiesStartString();
     });
 
@@ -93,6 +97,9 @@ export class LobbiesComponent implements OnInit, OnDestroy {
     this.fetching = true;
     try {
       this.lobbies = await this.gameService.getLobbies();
+      this.onlinePlayersCount = (<{ onlinePlayers: number }>(
+        await this.apiService.get('online-players')
+      )).onlinePlayers;
     } catch (e) {
       console.error(e);
     }
