@@ -22,13 +22,26 @@
   }
 
   .icon {
-    margin-right: 10px;
+    margin-right: 1rem;
+    margin-top: -8px;
   }
 
   .flex {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin: 0 1rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .elo {
+    &.green {
+      color: #71be6a;
+    }
+
+    &.red {
+      color: #ff7171;
+    }
   }
 
   .result-main {

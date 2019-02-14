@@ -32,7 +32,7 @@
         <h5 class="ui inverted header">Match Rating</h5>
         <h3>
           <i class="large teal crosshairs icon"></i>
-          {{ (user.rating.weighted).toFixed(0) }}
+          {{ user.rating.weighted.toFixed(0) }}
         </h3>
       </div>
 
@@ -96,15 +96,7 @@
       routerLink="/lobbies/{{ result.gameId }}"
     >
       <div class="ui inverted segment flex">
-        <i
-          class="icon"
-          [ngClass]="{
-            play: result.place !== 1,
-            green: !result.gameEndedAt,
-            blue: result.gameEndedAt,
-            'yellow trophy': result.place === 1
-          }"
-        ></i>
+        <i class="icon" [ngClass]="getResultIconClass(result)"></i>
 
         <div class="result-main">
           <h3 class="ui sub header">Finished {{ result.place | ordinal }}</h3>
@@ -115,7 +107,14 @@
           }}</i>
         </div>
 
-        <span class="elo">{{ getRatingChange(result) }}</span>
+        <span
+          class="elo"
+          [ngClass]="{
+            green: getRatingChange(result) >= 0,
+            red: getRatingChange(result) < 0
+          }"
+          >{{ getRatingChange(result) }}</span
+        >
       </div>
     </div>
   </div>
