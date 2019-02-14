@@ -17,7 +17,7 @@
         <app-beatmap-info *ngIf="showBeatmap" [timeLeft]="timeLeft" [game]="game" [beatmap]="currentBeatmap" [isAlive]="isAlive"></app-beatmap-info>
         <app-scores-list *ngIf="showScores" [inGame]="inGame" [currentUser]="currentUsername" [players]="players" [game]="game" [scores]="game.scores"></app-scores-list>
       </div>
-      <app-chat [game]="game" [messages]="messages" [getMoreMessages]="getMoreMessages" [canChat]="mePlayer">
+      <app-chat [game]="game" [messages]="messages" [getMoreMessages]="getMoreMessages" [canChat]="mePlayer" [currentUsername]="currentUsername">
       </app-chat>
     </div>
     <div class="right">

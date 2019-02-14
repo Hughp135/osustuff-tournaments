@@ -2,8 +2,12 @@ import { IUserAchieved } from './update-player-achievements';
 import { IGame } from '../models/Game.model';
 import { cache } from '../services/cache';
 import { Message } from '../models/Message.model';
+import { sendSystemMessage } from '../game/send-system-message';
 
-export async function sendAchievementMessages(achievementsGiven: IUserAchieved[], game: IGame) {
+export async function sendAchievementMessages(
+  achievementsGiven: IUserAchieved[],
+  game: IGame,
+) {
   const byAchievement: Array<{
     title: string;
     usernames: string[];
@@ -27,15 +31,12 @@ export async function sendAchievementMessages(achievementsGiven: IUserAchieved[]
 
   for (const achievement of byAchievement) {
     const count = achievement.usernames.length;
-    const { _id } = await Message.create({
-      username: 'System',
-      userId: 967760000000,
-      osuUserId: 0,
-      gameId: game._id,
-      message: `${achievement.usernames.join(', ')} ${
+    const { _id } = await sendSystemMessage(
+      game,
+      `${achievement.usernames.join(', ')} ${
         count > 1 ? 'have' : 'has'
       } earned the achievement "${achievement.title}"!`,
-    });
+    );
 
     cache.put('last-message-id', _id.toString());
   }

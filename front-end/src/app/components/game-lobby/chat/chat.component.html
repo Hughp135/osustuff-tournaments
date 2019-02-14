@@ -25,7 +25,7 @@
       </div>
       <div
         class="description chat-message"
-        [innerHTML]="message.message | twitchEmotes | emojify"
+        [innerHTML]="message.message | twitchEmotes | emojify | userHighlight:currentUsername"
       ></div>
     </div>
   </div>

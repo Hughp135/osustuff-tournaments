@@ -2,6 +2,7 @@ import { IGame, IPlayer } from '../models/Game.model';
 import { updateOrCreateUser } from '../models/User.model';
 import { userToPlayer } from '../game/add-player';
 import faker from 'faker';
+import { cache } from '../services/cache';
 
 export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
   const players = await Promise.all(
@@ -11,6 +12,7 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
         try {
           const osuUser = getOsuUser(index);
           const user = await updateOrCreateUser(osuUser);
+          cache.put(`user-active-${user._id}`, true, 60000);
           user.currentGame = game._id;
           await user.save();
           return userToPlayer(user);

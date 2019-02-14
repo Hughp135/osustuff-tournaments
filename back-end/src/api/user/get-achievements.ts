@@ -1,6 +1,7 @@
 import { User } from '../../models/User.model';
 import { Request, Response } from 'express';
 import { getAchievement } from '../../achievements/get-achievement';
+import { cache } from '../../services/cache';
 
 export async function getUnreadAchievements(req: Request, res: Response) {
   const { username }: any = (<any> req).claim || {};
@@ -14,6 +15,9 @@ export async function getUnreadAchievements(req: Request, res: Response) {
   if (!user) {
     return res.status(404).end();
   }
+
+  // Store that user is active (this is pinged regularly by logged-in users)
+  cache.put(`user-active-${user._id}`, true, 60000);
 
   const firstUnread = user.achievements.find(a => a.progress >= 1 && !a.read);
   const achievement = firstUnread ? await getAchievement(firstUnread.achievementId) : null;
