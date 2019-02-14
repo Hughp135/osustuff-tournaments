@@ -1,5 +1,5 @@
 import { ObjectId } from 'bson';
-import { User, IUser } from '../../models/User.model';
+import { User } from '../../models/User.model';
 import { Game } from '../../models/Game.model';
 import mongoose from 'mongoose';
 import chai from 'chai';

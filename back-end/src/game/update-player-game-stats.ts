@@ -51,13 +51,13 @@ function updatePlayerRatings(
   rankedPlayers: Array<IPlayer & { user: IUser }>,
   game: IGame,
 ) {
-  const ratings = rankedPlayers.map(p => [
-    Skill.createRating(p.user.rating.mu, p.user.rating.sigma),
-  ]);
   if (rankedPlayers.length < 1) {
     logger.info('Not updating stats because only 1 or less players were ranked');
     return;
   }
+  const ratings = rankedPlayers.map(p => [
+    Skill.createRating(p.user.rating.mu, p.user.rating.sigma),
+  ]);
   const rankings = rankedPlayers.map(p => <number> p.gameRank);
   const results = Skill.rate(ratings, rankings) as Rating[][];
 

@@ -14,6 +14,7 @@ import { cache } from '../services/cache';
 import { ObjectId } from 'bson';
 import { Score } from '../models/Score.model';
 import { logger } from '../logger';
+import { removeAfkPlayers } from './remove-afk-players';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
@@ -135,6 +136,8 @@ async function openScheduledGame(game: IGame) {
 }
 
 async function startGame(game: IGame) {
+  await removeAfkPlayers(game);
+
   const enoughPlayers = game.players.length >= PLAYERS_REQUIRED_TO_START;
   if (!enoughPlayers) {
     if (game.nextStageStarts) {

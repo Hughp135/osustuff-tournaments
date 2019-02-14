@@ -34,6 +34,7 @@ import { LoginComponent } from './components/login/login.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { FaqComponent } from './components/faq/faq.component';
 import { DatePipe } from '@angular/common';
+import { UsernameHighlightPipe } from '../pipes/username-highlight.pipe';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { DatePipe } from '@angular/common';
     UserProfileComponent,
     LobbiesComponent,
     TwitchEmotesPipe,
+    UsernameHighlightPipe,
     LoginComponent,
     NotificationsComponent,
     FaqComponent,

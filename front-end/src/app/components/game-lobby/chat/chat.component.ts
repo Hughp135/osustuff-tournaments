@@ -31,6 +31,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   @Input() canChat: boolean;
   @Input() getMoreMessages: () => Promise<void>;
   @Input() game: IGame;
+  @Input() currentUsername: string;
 
   @ViewChild('chatInput') chatInputEl;
   @ViewChild('chatMessages') chatMessages;

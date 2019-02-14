@@ -6,7 +6,7 @@ import { SettingsService, CurrentGame } from '../services/settings.service';
 import { IGame, IPlayer } from '../components/game-lobby/game-lobby.component';
 import * as Visibility from 'visibilityjs';
 import { Message } from '../components/game-lobby/chat/chat.component';
-import { takeWhile, startWith } from 'rxjs/operators';
+import { takeWhile } from 'rxjs/operators';
 
 export interface GameLobbyData {
   lobby: Observable<IGame>;

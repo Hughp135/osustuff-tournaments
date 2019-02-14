@@ -29,6 +29,9 @@ export async function joinGame(req: Request, res: Response) {
 
   const user = await updateOrCreateUser(osuUser);
 
+  // Store that user is active
+  cache.put(`user-active-${user._id}`, true, 60000);
+
   if (game.status !== 'new') {
     return res.status(400).end();
   }

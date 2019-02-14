@@ -20,6 +20,7 @@ export async function achievementModScores(users: IUser[]): Promise<IUserAchieve
   for (const user of users) {
     const scoreMods: Array<Partial<IScore>> = await Score.find({
       userId: user._id,
+      passedRound: true,
     }).select({ mods: 1 });
 
     const hdScores = scoreMods.filter(({ mods }) => mods === 8);
