@@ -13,7 +13,7 @@ export async function createGame(
   testPlayers?: number,
 ): Promise<IGame> {
   const savedBeatmaps = await Beatmap.aggregate([{ $sample: { size: 500 } }]);
-  const beatmaps = (await getRecentBeatmaps()).filter(
+  let beatmaps = (await getRecentBeatmaps()).filter(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
   beatmaps.push(...savedBeatmaps);
@@ -35,18 +35,31 @@ export async function createGame(
     });
   const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
     .fill(null)
-    .map((_, idx) => <[number, number]> [Math.max(5, 2 + idx * 0.4), Math.min(5.5,  3 + idx * 0.4)]);
+    .map(
+      (_, idx) =>
+        <[number, number]>[
+          Math.max(5, 2 + idx * 0.4),
+          Math.min(5.5, 3 + idx * 0.4),
+        ],
+    );
 
   const difficulties = minRank ? easyLobbyStars : standardStars;
-  const roundBeatmaps = difficulties.map((_, idx) =>
-    getBeatmapBetweenStars(
-      beatmaps,
-      difficulties[idx][0],
-      difficulties[idx][1],
-      40 + 10 * idx, // min length starts 40 secs, increment by 10 per round
-      160 + 20 * idx, // max length starts 160, increments by 20
-    ),
-  ).sort((a, b) => parseFloat(a.difficultyrating) - parseFloat(b.difficultyrating));
+  const roundBeatmaps = difficulties
+    .map((_, idx) => {
+      const [beatmap, remaining] = getBeatmapBetweenStars(
+        beatmaps,
+        difficulties[idx][0],
+        difficulties[idx][1],
+        40 + 10 * idx, // min length starts 40 secs, increment by 10 per round
+        160 + 20 * idx, // max length starts 160, increments by 20
+      );
+      beatmaps = remaining;
+
+      return beatmap;
+    })
+    .sort(
+      (a, b) => parseFloat(a.difficultyrating) - parseFloat(b.difficultyrating),
+    );
 
   const game = await Game.create({
     title: `osu! Royale Match${minRank ? ` (rank ${minRank / 1000}k+)` : ''}`,
@@ -70,7 +83,7 @@ function getBeatmapBetweenStars(
   max?: number,
   minLength?: number,
   maxLength?: number,
-): any {
+): [IBeatmap, IBeatmap[]] {
   const filtered = beatmaps.filter((b: any) => {
     const stars = parseFloat(b.difficultyrating);
     const inStarRange = stars >= min && (max ? stars < max : true);
@@ -102,7 +115,7 @@ function getBeatmapBetweenStars(
 
   beatmaps = beatmaps.filter(b => b.beatmapset_id !== random.beatmapset_id);
 
-  return random;
+  return [random, beatmaps];
 }
 
 export function arrayRandVal(myArray: any[]) {

@@ -10,6 +10,7 @@ export interface IBeatmap extends mongoose.Document {
   title: string;
   artist: string;
   approved_date: string;
+  difficultyrating: string;
 }
 
 const BeatmapSchema = new mongoose.Schema(

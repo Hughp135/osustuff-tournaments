@@ -170,10 +170,9 @@ async function startGame(game: IGame) {
 }
 
 async function checkRoundEnded(game: IGame) {
-  const round = <IRound> await Round.findById(game.currentRound);
-
   // Check if next round should start
   if (<Date> game.nextStageStarts < new Date()) {
+    const round = <IRound> await Round.findById(game.currentRound);
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
     clearGetLobbyCache(game._id);
