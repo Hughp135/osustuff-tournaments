@@ -34,7 +34,7 @@ function getOsuUser(index: number) {
   return {
     user_id: userIds[index] || Math.floor(Math.random() * 100000) + 1,
     username: faker.name.findName(),
-    pp_rank: faker.random.number(1000000),
+    pp_rank: Math.random() <= 0.04 ? 0 : faker.random.number(1000000),
     country: faker.address.countryCode(),
     pp_country_rank: '1',
   };
