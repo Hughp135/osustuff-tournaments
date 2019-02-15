@@ -52,6 +52,13 @@ export class UserListComponent implements OnInit {
           return -1;
         }
 
+        if (a.ppRank > 0) {
+          return -1;
+        }
+        if (b.ppRank > 0) {
+          return 1;
+        }
+
         return a.ppRank - b.ppRank;
       })
       .sort((a, b) => {

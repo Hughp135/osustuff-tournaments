@@ -35,7 +35,7 @@
         </td>
         <td class="collapsing">
           <i class="fitted blue globe icon"></i>
-          {{ user.ppRank | number }}
+          {{ user.ppRank ? ('#' + (user.ppRank | number)) : '—' }}
         </td>
         <td class="collapsing">
           <i class="fitted flag" [ngClass]="user.country.toLowerCase()"></i>

@@ -19,7 +19,7 @@
           player.username }}</span>
       </div>
       <div class="description">
-        #{{ player.ppRank | number }}
+        {{ player.ppRank ? ('#' + (player.ppRank | number)) : '—' }}
         <span *ngIf="winningUser === player.username" class="text-muted">Winner</span>
         <span *ngIf="player.gameRank && winningUser !== player.username"
           class="text-muted">
@@ -37,7 +37,7 @@
         </a>
         <p>
           <i class="blue globe icon"></i>
-          Rank: #{{ player.ppRank | number }}
+          Rank: {{ player.ppRank ? ('#' + (player.ppRank | number)) : '—' }}
         </p>
         <p>
           <i class="teal crosshairs icon"></i>
