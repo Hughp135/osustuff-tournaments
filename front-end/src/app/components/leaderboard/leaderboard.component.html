@@ -26,7 +26,7 @@
         <td class="collapsing">
           <i class="orange exclamation link icon" *ngIf="user.gamesPlayed < 5" popupPlacement="right" suiPopup popupText="User has less than 5 games played"></i>
           <i class="teal crosshairs icon" *ngIf="user.gamesPlayed >= 5"></i>
-          {{ user.gamesPlayed > 0 && user.rating.weighted ? user.rating.weighted.toFixed(0) : '--' }}
+          {{ user.gamesPlayed > 0 && user.rating.weighted ? user.rating.weighted.toFixed(0) : '—' }}
         </td>
         <td class="collapsing">
           <a [routerLink]="['/user', user.username]">
@@ -53,20 +53,20 @@
             {{ getPercent(user.wins, user) }}
           </span>
           <span *ngIf="!user.gamesPlayed">
-            --
+            —
           </span>
         </td>
         <td class="center aligned">
           {{ user.gamesPlayed ?
-          getPercent(user.percentiles.top10, user) : '--' }}
+          getPercent(user.percentiles.top10, user) : '—' }}
         </td>
         <td class="center aligned">
           {{ user.gamesPlayed ?
-          getPercent(user.percentiles.top20, user) : '--' }}
+          getPercent(user.percentiles.top20, user) : '—' }}
         </td>
         <td class="center aligned">
           {{ user.gamesPlayed ?
-          getPercent(user.percentiles.top50, user) : '--' }}
+          getPercent(user.percentiles.top50, user) : '—' }}
         </td>
       </tr>
     </tbody>
