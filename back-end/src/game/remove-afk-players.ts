@@ -2,8 +2,15 @@ import { IGame } from '../models/Game.model';
 import { cache } from '../services/cache';
 import { User } from '../models/User.model';
 import { sendSystemMessage } from './send-system-message';
+import config from 'config';
+
+const REMOVE_AFK_PLAYERS = config.get('REMOVE_AFK_PLAYERS');
 
 export async function removeAfkPlayers(game: IGame) {
+  if (!REMOVE_AFK_PLAYERS) {
+    return;
+  }
+
   const afkPlayers = game.players.filter(p => {
     return !cache.get(`user-active-${p.userId}`);
   });
