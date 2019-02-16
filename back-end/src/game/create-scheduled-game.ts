@@ -2,10 +2,30 @@ import { IUser } from './../models/User.model';
 import { ICreateScheduledGameOptions } from '../api/lobbies/create-game';
 import { Game, IGame } from '../models/Game.model';
 import { Beatmap, IBeatmap } from '../models/Beatmap.model';
-import { getBeatmapBetweenStars, standardStars } from './create-game';
+import { getBeatmapBetweenStars } from './create-game';
+
+const stars = [
+  [3, 3.8],
+  [4.5, 5],
+  [5, 5.5],
+  [5.2, 5.7],
+  [5.4, 5.9],
+  [5.5, 6.1],
+  [5.7, 6.2],
+  [6],
+  [6],
+  [6.5],
+];
 
 export async function createScheduledGame(
-  { title, roundBeatmaps, date, minRank, maxRank, description }: ICreateScheduledGameOptions,
+  {
+    title,
+    roundBeatmaps,
+    date,
+    minRank,
+    maxRank,
+    description,
+  }: ICreateScheduledGameOptions,
   user: IUser,
 ): Promise<IGame> {
   const shouldUseRandombeatmaps = roundBeatmaps.some(b => !b) || undefined;
@@ -22,10 +42,10 @@ export async function createScheduledGame(
         // Get a random beatmap from the standard star ratings
         const [beatmap, remaining] = getBeatmapBetweenStars(
           <IBeatmap[]>beatmaps,
-          standardStars[idx][0],
-          standardStars[idx][1],
-          40 + 10 * idx, // min length starts 40 secs, increment by 10 per round
-          160 + 20 * idx, // max length starts 160, increments by 20
+          stars[idx][0],
+          stars[idx][1],
+          90 + 15 * idx, // min length
+          160 + 20 * idx, // max length
         );
         beatmaps = remaining;
 
