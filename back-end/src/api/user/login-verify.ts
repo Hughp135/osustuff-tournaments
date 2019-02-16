@@ -10,6 +10,7 @@ const OSU_OAUTH_ID = config.get('OSU_OAUTH_ID');
 const OSU_OAUTH_SECRET = config.get('OSU_OAUTH_SECRET');
 const OSU_OAUTH_REDIRECT = config.get('OSU_OAUTH_REDIRECT');
 const TEST_MODE = config.get('TEST_MODE');
+const BANNED_PLAYERS = ['Reggie Wedgie'];
 
 export async function loginVerify(req: Request, res: Response) {
   const { code, state } = req.query;
@@ -44,6 +45,10 @@ export async function loginVerify(req: Request, res: Response) {
     if (!body.id || !body.username || !body.country || !body.statistics) {
       console.error('get user request didnt have user data', body);
       throw new Error('get user v2/me request didnt have right data: ');
+    }
+
+    if (BANNED_PLAYERS.includes(body.username)) {
+      return res.status(401).end();
     }
 
     const roles: Role[] | undefined = TEST_MODE ? ['creator', 'admin', 'moderator'] : undefined;
