@@ -5,6 +5,7 @@ import config from 'config';
 import { addSampleScores } from '../test-helpers/add-sample-scores';
 import { logger } from '../logger';
 import { cache } from '../services/cache';
+import { getAppliedMods } from '../helpers/get-applied-mods';
 
 const TEST_ENV = process.env.NODE_ENV === 'test';
 const TEST_MODE = config.get('TEST_MODE');
@@ -24,7 +25,9 @@ export async function checkRoundScores(
   await game.save();
   cache.del(`get-lobby-${game._id}`);
 
-  await new Promise(res => setTimeout(res, TEST_ENV ? 0 : TEST_MODE ? 1000 : 5000));
+  await new Promise(res =>
+    setTimeout(res, TEST_ENV ? 0 : TEST_MODE ? 1000 : 5000),
+  );
 
   if (TEST_MODE) {
     await addSampleScores(game);
@@ -42,7 +45,11 @@ export async function checkRoundScores(
   }
 }
 
-async function checkPlayerScores(player: IPlayer, round: IRound, getUserRecent: any) {
+async function checkPlayerScores(
+  player: IPlayer,
+  round: IRound,
+  getUserRecent: any,
+) {
   const scores = await getUserRecent(player.username);
   const existingScores = await Score.find({
     roundId: round._id,
@@ -83,11 +90,18 @@ async function checkPlayerScores(player: IPlayer, round: IRound, getUserRecent: 
   await Promise.all(promises);
 }
 
-function scoreValidAndUnique(score: any, round: IRound, existingScores: IScore[]) {
+function scoreValidAndUnique(
+  score: any,
+  round: IRound,
+  existingScores: IScore[],
+) {
   const correctBeatmap = score.beatmap_id === round.beatmap.beatmap_id;
-  const correctDate = new Date(score.date) > (<any> round).createdAt;
+  const minDate = new Date(
+    (<any>round).createdAt.getTime() - 10 +
+      parseInt(round.beatmap.total_length, 10) / 1.5 * 1000,
+  );
 
-  if (!correctBeatmap || !correctDate) {
+  if (!correctBeatmap || !(new Date(score.date) > minDate)) {
     return false;
   }
 
