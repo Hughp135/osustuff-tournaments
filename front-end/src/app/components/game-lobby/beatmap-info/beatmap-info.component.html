@@ -10,7 +10,7 @@
       <div class="ui inverted relaxed list">
         <div class="item">
           <div class="ui stackable grid">
-            <div class="ten wide column">
+            <div class="six wide column">
               <a [href]="beatmapHref" target="_blank" class="beatmap-link">
                 <h3>
                   <i class="download icon"></i> {{
@@ -22,7 +22,17 @@
                 </h2>
               </a>
             </div>
-            <div class="six wide right aligned column">
+            <div class="six wide column">
+              <a class="ui primary tiny button" target="_blank" [href]="dlLink">
+                <i class="download icon"></i>
+                Download
+              </a>
+              <a class="ui primary tiny button" [href]="osuDirectLink">
+                <i class="download icon"></i>
+                osu!direct
+              </a>
+            </div>
+            <div class="four wide right aligned column">
               <p>
                 Star Difficulty: <i class="yellow star outline icon"></i>
                 {{ starRating }}

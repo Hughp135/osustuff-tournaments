@@ -1,5 +1,7 @@
+import { IBeatmap } from './../../create-lobby/create-lobby.component';
 import { Component, OnInit, Input } from '@angular/core';
 import { getTimeComponents } from 'src/app/resolvers/game-lobby.resolver';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-beatmap-info',
@@ -8,12 +10,12 @@ import { getTimeComponents } from 'src/app/resolvers/game-lobby.resolver';
 })
 export class BeatmapInfoComponent implements OnInit {
   @Input() game;
-  @Input() beatmap;
+  @Input() beatmap: IBeatmap;
   @Input() isAlive: boolean;
   @Input() timeLeft: string;
   @Input() hideTitle?: boolean;
 
-  constructor() {}
+  constructor(private sanitizer:DomSanitizer) {}
 
   ngOnInit() {}
 
@@ -35,6 +37,20 @@ export class BeatmapInfoComponent implements OnInit {
     return (
       this.beatmap &&
       `https://osu.ppy.sh/beatmapsets/${this.beatmap.beatmapset_id}#osu/${this.beatmap.beatmap_id}`
+    );
+  }
+
+  get dlLink() {
+    return (
+      this.beatmap &&
+      `https://osu.ppy.sh/beatmapsets/${this.beatmap.beatmapset_id}/download?noVideo=true`
+    );
+  }
+
+  get osuDirectLink() {
+    return (
+      this.beatmap &&
+      this.sanitizer.bypassSecurityTrustUrl(`osu://dl/${this.beatmap.beatmapset_id}`)
     );
   }
 
