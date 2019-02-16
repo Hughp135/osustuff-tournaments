@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { getTimeComponents } from 'src/app/resolvers/game-lobby.resolver';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-beatmap-list',
@@ -9,7 +10,7 @@ import { getTimeComponents } from 'src/app/resolvers/game-lobby.resolver';
 export class BeatmapListComponent implements OnInit {
   @Input() beatmaps;
 
-  constructor() {}
+  constructor(private sanitizer:DomSanitizer) {}
 
   ngOnInit() {}
 
@@ -29,5 +30,17 @@ export class BeatmapListComponent implements OnInit {
     const { minutes, seconds } = getTimeComponents(millis);
 
     return `${minutes}:${seconds}`;
+  }
+
+  public dlLink(beatmap) {
+    return (
+      `https://osu.ppy.sh/beatmapsets/${beatmap.beatmapset_id}/download?noVideo=true`
+    );
+  }
+
+  public osuDirectLink(beatmap) {
+    return (
+      this.sanitizer.bypassSecurityTrustUrl(`osu://dl/${beatmap.beatmapset_id}`)
+    );
   }
 }
