@@ -5,13 +5,22 @@
   <div class="ui inverted form">
 
     <div class="field">
-      <h2>Lobby Title</h2>
+      <h2>Lobby Title and Description</h2>
       <p>
         Enter a name for your lobby. This could be your
         tournament title, or some other description
         of the match.
       </p>
-      <input [(ngModel)]="title" maxlength="70" placeholder="Title of the Lobby">
+      <div class="field">
+        <input [(ngModel)]="title" maxlength="70" placeholder="Title of the Lobby">
+      </div>
+
+      <div class="field">
+        <textarea rows="5" [(ngModel)]="description" maxlength="1500"
+          placeholder="A description of your lobby (optional)">
+
+        </textarea>
+      </div>
     </div>
 
     <div class="ui divider"></div>

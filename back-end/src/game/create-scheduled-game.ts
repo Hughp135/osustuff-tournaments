@@ -5,7 +5,7 @@ import { Beatmap, IBeatmap } from '../models/Beatmap.model';
 import { getBeatmapBetweenStars, standardStars } from './create-game';
 
 export async function createScheduledGame(
-  { title, roundBeatmaps, date, minRank, maxRank }: ICreateScheduledGameOptions,
+  { title, roundBeatmaps, date, minRank, maxRank, description }: ICreateScheduledGameOptions,
   user: IUser,
 ): Promise<IGame> {
   const shouldUseRandombeatmaps = roundBeatmaps.some(b => !b) || undefined;
@@ -42,5 +42,6 @@ export async function createScheduledGame(
     minRank,
     maxRank,
     owner: user._id,
+    description,
   });
 }

@@ -50,6 +50,7 @@ export interface IGame {
   maxRank?: number;
   startsAt?: number;
   startsAtString?: string;
+  description?: string;
 }
 
 @Component({
@@ -264,6 +265,10 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
   get currentUsername() {
     return this.currentUser && this.currentUser.username;
+  }
+
+  get showDescription() {
+    return this.game.description && ['new', 'scheduled'].includes(this.game.status);
   }
 
   private async animate(direction: TransitionDirection) {

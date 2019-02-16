@@ -36,6 +36,7 @@ export interface IGame extends mongoose.Document {
   minRank?: number;
   maxRank?: number;
   owner?: mongoose.Schema.Types.ObjectId;
+  description?: string;
 }
 
 const GameSchema = new mongoose.Schema(
@@ -44,6 +45,7 @@ const GameSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    description: { type: String },
     owner: { type: mongoose.Schema.Types.ObjectId },
     players: {
       type: [

@@ -37,6 +37,7 @@ async function getData(id: string) {
       minRank: 1,
       maxRank: 1,
       owner: 1,
+      description: 1,
     })
     .lean();
 

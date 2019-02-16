@@ -13,6 +13,7 @@ export interface ICreateScheduledGameOptions {
   maxPlayers: number;
   minRank?: number;
   maxRank?: number;
+  description?: string;
 }
 
 @Injectable({

@@ -43,6 +43,7 @@ export class CreateLobbyComponent implements OnInit {
   }));
   public creating = false;
   public error: string;
+  public description?: string;
 
   public getBeatmap = debounce(async (value: number, index: number) => {
     const roundBeatmap = this.roundBeatmaps[index];
@@ -89,6 +90,7 @@ export class CreateLobbyComponent implements OnInit {
     const options: ICreateScheduledGameOptions = {
       date: this.startDate,
       title: this.title,
+      description: this.description,
       minPlayers: this.minPlayers,
       maxPlayers: this.maxPlayers,
       roundBeatmaps: this.roundBeatmaps.map(r => r.beatmap),

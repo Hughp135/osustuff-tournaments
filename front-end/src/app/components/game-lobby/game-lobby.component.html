@@ -10,6 +10,7 @@
           [timeLeft]="timeLeft" [game]="game" [isAlive]="isAlive" [mePlayer]="mePlayer"
           [totalPlayers]="players.length">
         </app-game-status>
+        <app-game-description *ngIf="showDescription" [game]="game"></app-game-description>
         <app-match-results [toggleViewResults]="toggleViewResults" *ngIf="game.status === 'complete' || viewResults"
           [game]="game">
         </app-match-results>

@@ -11,6 +11,7 @@ export interface ICreateScheduledGameOptions {
   maxRank?: number;
   minPlayers: number;
   maxPlayers: number;
+  description?: string;
 }
 
 export async function makeScheduledGame(req: Request, res: Response) {
@@ -34,6 +35,7 @@ export async function makeScheduledGame(req: Request, res: Response) {
     maxRank,
     minPlayers,
     maxPlayers,
+    description,
   }: ICreateScheduledGameOptions = req.body;
 
   if (!title || title.length < 5 || title.length > 70) {
@@ -46,9 +48,12 @@ export async function makeScheduledGame(req: Request, res: Response) {
     return res.status(400).json({ error: 'A start date must be chosen' });
   }
 
-
   if (new Date(date) < new Date()) {
     return res.status(400).json({ error: 'Start date must be in the future' });
+  }
+
+  if (description && description.length > 1500) {
+    return res.status(400).json({ error: 'Please keep the description to under 1500 characters' });
   }
 
   if (!roundBeatmaps) {
