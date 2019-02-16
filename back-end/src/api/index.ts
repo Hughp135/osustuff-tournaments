@@ -22,10 +22,11 @@ import { loginVerify } from './user/login-verify';
 import { authMiddleware } from './auth/jwt-middleware';
 import { getUnreadAchievements } from './user/get-achievements';
 import { logger } from '../logger';
-import { makeScheduledGame } from './admin/create-scheduled-game';
+import { makeScheduledGame } from './lobbies/create-game';
 import { toggleAutoCreateReq } from './admin/toggle-auto-create';
 import { deleteLobby } from './admin/delete-lobby';
 import { getOnlineUsers } from './users/get-online-users';
+import { getBeatmap } from './beatmap/get';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -60,6 +61,7 @@ const router = Router();
 
 router.get('', async (req, res) => res.send('Hello world!'));
 router.get('/lobbies', getLobbies);
+router.post('/lobbies/schedule-game', authMiddleware, makeScheduledGame);
 router.get('/lobbies/:id/rounds/:roundNum', getRound);
 router.post('/lobbies/:id/join', smallLimit, authMiddleware, joinGame);
 router.post('/lobbies/:id/leave', authMiddleware, leaveGame);
@@ -71,7 +73,6 @@ router.post('/lobbies/:id/messages', authMiddleware, sendMessage);
 router.get('/lobbies/:id', getLobby);
 router.post('/toggle-monitoring', toggleMonitoring);
 router.post('/admin/clear-db', clearDb);
-router.post('/admin/schedule-game', makeScheduledGame);
 router.post('/admin/toggle-autocreate', toggleAutoCreateReq);
 router.post('/admin/delete-lobby', deleteLobby);
 router.get('/users', getUsers);
@@ -80,6 +81,7 @@ router.get('/user/me', authMiddleware, getUser);
 router.get('/user/:username', getUser);
 router.get('/login-verify', loginVerify);
 router.get('/online-players', getOnlineUsers);
+router.get('/beatmap/:beatmapId', authMiddleware, getBeatmap);
 
 app.use('/api', router);
 

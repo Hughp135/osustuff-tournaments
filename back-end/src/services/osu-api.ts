@@ -65,6 +65,14 @@ export async function getBeatmaps(from: Date, limit?: number): Promise<IBeatmap[
     limit: limit ? limit.toString() : '500',
   });
 }
+export async function getBeatmapById(beatmapId: string): Promise<IBeatmap[]> {
+  const query: {[key: string]: string} = {
+    m: '0',
+    b: beatmapId,
+  };
+
+  return (await request('get_beatmaps', query))[0];
+}
 
 export async function getRecentBeatmaps(): Promise<IBeatmap[]> {
   const date = new Date();

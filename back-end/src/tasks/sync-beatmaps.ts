@@ -14,7 +14,7 @@ async function start() {
 
   const downloadAvailable: string[] = [];
   const downloadUnavailable: string[] = [];
-  let date = new Date('2013-11-01');
+  let date = new Date('2014-11-01');
   const lastMonth = new Date();
   lastMonth.setMonth(lastMonth.getMonth() - 1);
   console.time('start');

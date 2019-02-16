@@ -26,7 +26,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    this.loggedIn = !!settingsService.username.getValue();
+    this.loggedIn = !!settingsService.user.getValue();
   }
 
   ngOnInit() {

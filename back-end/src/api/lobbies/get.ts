@@ -35,6 +35,8 @@ async function getData(id: string) {
       players: 1,
       winningUser: 1,
       minRank: 1,
+      maxRank: 1,
+      owner: 1,
     })
     .lean();
 

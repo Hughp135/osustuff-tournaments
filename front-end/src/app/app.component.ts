@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { Component } from '@angular/core';
 import { filter } from 'rxjs/operators';
 import { ApiService } from './services/api.service';
+import { IUser } from './components/user-profile/user-profile.component';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class AppComponent {
   public url;
   public isAdmin: boolean;
   public currentGame: CurrentGame;
-  public currentUsername: string;
+  public currentUser: IUser;
   public gameId: string;
   public connectionLost = false;
 
@@ -29,7 +30,7 @@ export class AppComponent {
     router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        this.showMenu = !event.url.startsWith('/lobbies/');
+        this.showMenu = event.url === '/lobbies/create' || !event.url.startsWith('/lobbies/');
         this.url = event.url;
         if (event.url.startsWith('/lobbies/')) {
           const idx = event.url.indexOf('?');
@@ -41,8 +42,12 @@ export class AppComponent {
       });
     this.isAdmin = !!settingsService.adminPw;
     settingsService.currentGame.subscribe(val => (this.currentGame = val));
-    settingsService.username.subscribe(val => (this.currentUsername = val));
+    settingsService.user.subscribe(val => (this.currentUser = val));
     this.apiService.connectionLost.subscribe(val => this.connectionLost = val);
+  }
+
+  get currentUsername() {
+    return this.currentUser && this.currentUser.username;
   }
 
   public async clearDb() {

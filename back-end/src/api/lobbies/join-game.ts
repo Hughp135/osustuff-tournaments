@@ -14,7 +14,7 @@ export async function joinGame(req: Request, res: Response) {
   }
 
   const claim = (<any>req).claim;
-  if (!claim) {
+  if (!claim || !claim.username) {
     return res.status(401).end();
   }
 
@@ -32,7 +32,17 @@ export async function joinGame(req: Request, res: Response) {
       .json({
         error: `Only rank ${
           game.minRank
-        } players and above can join this lobby.`,
+        } and above players can join this lobby.`,
+      });
+  }
+
+  if (game.maxRank && osuUser.pp_rank > game.maxRank) {
+    return res
+      .status(401)
+      .json({
+        error: `Only rank ${
+          game.maxRank
+        } and under players can join this lobby.`,
       });
   }
 
@@ -46,7 +56,7 @@ export async function joinGame(req: Request, res: Response) {
     return res.status(400).end();
   }
 
-  if (game.players.length >= 1000) {
+  if (game.players.length >= 450) {
     return res.status(423).end();
   }
 

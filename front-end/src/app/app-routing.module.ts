@@ -11,6 +11,7 @@ import { LeaderboardComponent } from './components/leaderboard/leaderboard.compo
 import { LobbiesComponent } from './components/lobbies/lobbies.component';
 import { LoginComponent } from './components/login/login.component';
 import { FaqComponent } from './components/faq/faq.component';
+import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,10 @@ const routes: Routes = [
     component: LobbiesComponent,
     resolve: { data: LobbiesResolver },
     runGuardsAndResolvers: 'always',
+  },
+  {
+    path: 'lobbies/create',
+    component: CreateLobbyComponent,
   },
   {
     path: 'lobbies/:id',

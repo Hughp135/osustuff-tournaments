@@ -1,3 +1,4 @@
+import { Role } from './../../models/User.model';
 import { Request, Response } from 'express';
 import got from 'got';
 import config from 'config';
@@ -8,6 +9,7 @@ import { logger } from '../../logger';
 const OSU_OAUTH_ID = config.get('OSU_OAUTH_ID');
 const OSU_OAUTH_SECRET = config.get('OSU_OAUTH_SECRET');
 const OSU_OAUTH_REDIRECT = config.get('OSU_OAUTH_REDIRECT');
+const TEST_MODE = config.get('TEST_MODE');
 
 export async function loginVerify(req: Request, res: Response) {
   const { code, state } = req.query;
@@ -44,13 +46,18 @@ export async function loginVerify(req: Request, res: Response) {
       throw new Error('get user v2/me request didnt have right data: ');
     }
 
-    await updateOrCreateUser({
-      user_id: body.id,
-      username: body.username,
-      country: body.country.code,
-      pp_rank: body.statistics.rank.global,
-      pp_country_rank: body.statistics.rank.country,
-    });
+    const roles: Role[] | undefined = TEST_MODE ? ['creator'] : undefined;
+
+    await updateOrCreateUser(
+      {
+        user_id: body.id,
+        username: body.username,
+        country: body.country.code,
+        pp_rank: body.statistics.rank.global,
+        pp_country_rank: body.statistics.rank.country,
+      },
+      roles,
+    );
 
     const token = createJWT({
       username: body.username,

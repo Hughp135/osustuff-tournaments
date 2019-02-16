@@ -222,9 +222,9 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
 
     const date = new Date();
     date.setSeconds(date.getSeconds() + this.secondsLeft);
-    const { seconds, minutes } = getTimeComponents(date.getTime() - Date.now());
+    const { hours, seconds, minutes } = getTimeComponents(date.getTime() - Date.now());
 
-    this.timeLeft.next(`${minutes}:${seconds}`);
+    this.timeLeft.next(`${hours ? `${hours}:` : ''}${minutes}:${seconds}`);
   }
 }
 

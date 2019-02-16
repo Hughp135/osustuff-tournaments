@@ -1,9 +1,11 @@
+import { SettingsService } from './../../services/settings.service';
 import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription, interval } from 'rxjs';
 import { getTimeComponents } from 'src/app/resolvers/game-lobby.resolver';
 import { GameService } from '../../game.service';
+import { IGame } from '../game-lobby/game-lobby.component';
 
 @Component({
   selector: 'app-lobbies',
@@ -11,15 +13,17 @@ import { GameService } from '../../game.service';
   styleUrls: ['./lobbies.component.scss'],
 })
 export class LobbiesComponent implements OnInit, OnDestroy {
-  public lobbies: any[];
+  public lobbies: IGame[];
   public subscriptions: Subscription[] = [];
   public fetching = false;
   public onlinePlayersCount: number;
+  public canCreate = false;
 
   constructor(
     private route: ActivatedRoute,
     private gameService: GameService,
     private apiService: ApiService,
+    private settingsService: SettingsService,
   ) {}
 
   ngOnInit() {
@@ -49,14 +53,24 @@ export class LobbiesComponent implements OnInit, OnDestroy {
         this.fetch();
       }),
     );
+
+    this.subscriptions.push(
+      this.settingsService.user.subscribe(user => {
+        this.canCreate = user.roles.includes('creator');
+      }),
+    );
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  get scheduledGames() {
+    return this.lobbies.filter(l => l.status === 'scheduled');
+  }
+
   get joinableGames() {
-    return this.lobbies.filter(l => ['new', 'scheduled'].includes(l.status));
+    return this.lobbies.filter(l => ['new'].includes(l.status));
   }
 
   get inProgressGames() {
