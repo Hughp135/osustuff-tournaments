@@ -57,6 +57,10 @@ export class GameService {
     });
   }
 
+  public async kickUser(gameId: string, playerId: string) {
+    return await this.apiService.post(`lobbies/${gameId}/players/${playerId}/kick`, {});
+  }
+
   public async createScheduledGame(
     options: ICreateScheduledGameOptions,
   ): Promise<{ gameId: string }> {

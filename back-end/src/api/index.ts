@@ -27,6 +27,7 @@ import { toggleAutoCreateReq } from './admin/toggle-auto-create';
 import { deleteLobby } from './admin/delete-lobby';
 import { getOnlineUsers } from './users/get-online-users';
 import { getBeatmap } from './beatmap/get';
+import { kickPlayer } from './lobbies/players/kick-player';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -59,10 +60,11 @@ app.use(cookieParser());
 
 const router = Router();
 
-router.get('', async (req, res) => res.send('Hello world!'));
+router.get('', async (_, res) => res.send('Hello world!'));
 router.get('/lobbies', getLobbies);
 router.post('/lobbies/schedule-game', authMiddleware, makeScheduledGame);
 router.get('/lobbies/:id/rounds/:roundNum', getRound);
+router.post('/lobbies/:gameId/players/:osuUserId/kick', smallLimit, authMiddleware, kickPlayer);
 router.post('/lobbies/:id/join', smallLimit, authMiddleware, joinGame);
 router.post('/lobbies/:id/leave', authMiddleware, leaveGame);
 router.post('/lobbies/:id/skip-round', skipRound);

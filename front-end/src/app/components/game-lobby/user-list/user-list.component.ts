@@ -1,5 +1,7 @@
+import { GameService } from './../../../game.service';
+import { IUser } from './../../user-profile/user-profile.component';
 import { BehaviorSubject } from 'rxjs';
-import { IPlayer } from './../game-lobby.component';
+import { IPlayer, IGame } from './../game-lobby.component';
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
@@ -10,15 +12,16 @@ import { Component, OnInit, Input } from '@angular/core';
 export class UserListComponent implements OnInit {
   @Input() players: IPlayer[];
   @Input() winningUser: string;
-  @Input() currentUser: string;
+  @Input() currentUser: IUser;
   @Input() usersFetched: BehaviorSubject<undefined>;
+  @Input() game: IGame;
 
   public hiddenPlayers: number;
   public playerCount: number;
   public showUserStats: string;
   public ignoreClickEvent = false;
 
-  constructor() {}
+  constructor(private gameService: GameService) {}
 
   ngOnInit() {}
 
@@ -32,6 +35,10 @@ export class UserListComponent implements OnInit {
       this.showUserStats = undefined;
     }
     this.ignoreClickEvent = false;
+  }
+
+  public async kickPlayer(player) {
+    await this.gameService.kickUser(this.game._id, player.osuUserId);
   }
 
   get alivePlayers() {
@@ -55,9 +62,9 @@ export class UserListComponent implements OnInit {
         return a.ppRank - b.ppRank;
       })
       .sort((a, b) => {
-        if (a.username === this.currentUser) {
+        if (a.username === this.currentUsername) {
           return -1;
-        } else if (b.username === this.currentUser) {
+        } else if (b.username === this.currentUsername) {
           return 1;
         } else {
           return 0;
@@ -70,5 +77,17 @@ export class UserListComponent implements OnInit {
     }
 
     return filtered;
+  }
+
+  get currentUsername() {
+    return this.currentUser && this.currentUser.username;
+  }
+
+  get isModerator() {
+    return (
+      this.currentUser &&
+      this.currentUser.roles &&
+      this.currentUser.roles.includes('moderator')
+    );
   }
 }

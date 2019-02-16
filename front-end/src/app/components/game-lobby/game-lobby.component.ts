@@ -23,6 +23,7 @@ export interface IPlayer {
   gamesPlayed: number;
   wins: number;
   percentiles: IUser['percentiles'];
+  kicked?: boolean;
 }
 
 export interface IGame {

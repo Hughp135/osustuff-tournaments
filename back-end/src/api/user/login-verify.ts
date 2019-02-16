@@ -46,7 +46,7 @@ export async function loginVerify(req: Request, res: Response) {
       throw new Error('get user v2/me request didnt have right data: ');
     }
 
-    const roles: Role[] | undefined = TEST_MODE ? ['creator'] : undefined;
+    const roles: Role[] | undefined = TEST_MODE ? ['creator', 'admin', 'moderator'] : undefined;
 
     await updateOrCreateUser(
       {

@@ -1,4 +1,3 @@
-import { IUser } from './User.model';
 import { IBeatmap } from './Beatmap.model';
 import mongoose from 'mongoose';
 
@@ -12,6 +11,7 @@ export interface IPlayer {
   countryRank: number;
   country: string;
   gameRank?: number;
+  kicked?: boolean;
 }
 
 export interface IGame extends mongoose.Document {
@@ -59,6 +59,7 @@ const GameSchema = new mongoose.Schema(
           ppRank: { type: Number, required: true },
           countryRank: { type: Number, required: true },
           country: { type: String, required: true },
+          kicked: { type: Boolean },
         },
       ],
       default: [],

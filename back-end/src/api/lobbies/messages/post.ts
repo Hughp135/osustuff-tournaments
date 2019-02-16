@@ -31,7 +31,13 @@ export async function sendMessage(req: Request, res: Response) {
   const user = await User.findOne({ username });
   const game = await Game.findById(id);
 
-  if (!user || !game || !game.players.some(p => p.userId.toString() === user._id.toString())) {
+  if (!user || !game) {
+    return res.status(401).end();
+  }
+
+  const player = game.players.find(p => p.userId.toString() === user._id.toString());
+
+  if (!player || player.kicked) {
     return res.status(401).end();
   }
 

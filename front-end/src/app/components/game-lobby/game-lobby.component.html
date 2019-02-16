@@ -22,7 +22,7 @@
       </app-chat>
     </div>
     <div class="right">
-      <app-user-list [currentUser]="currentUsername" [players]="players" [winningUser]="game.winningUser && game.winningUser.username"></app-user-list>
+      <app-user-list [game]="game" [currentUser]="currentUser" [players]="players" [winningUser]="game.winningUser && game.winningUser.username"></app-user-list>
     </div>
   </div>
 

@@ -15,12 +15,16 @@
     <div class="content">
       <div class="header">
         <i class="fitted flag" [ngClass]="player.country.toLowerCase()"></i>
-        <span [class.my-name]="currentUser === player.username">{{
+        <span [class.my-name]="currentUsername === player.username">{{
           player.username }}</span>
       </div>
       <div class="description">
         {{ player.ppRank ? ('#' + (player.ppRank | number)) : '—' }}
         <span *ngIf="winningUser === player.username" class="text-muted">Winner</span>
+        <span *ngIf="player.kicked"
+          class="text-muted">
+          Player Kicked
+        </span>
         <span *ngIf="player.gameRank && winningUser !== player.username"
           class="text-muted">
           Finished {{ player.gameRank | ordinal }}
@@ -29,12 +33,17 @@
     </div>
     <div class="user-rating" *ngIf="showUserStats === player.username">
       <div class="header"> <i class="fitted flag" [ngClass]="player.country.toLowerCase()"></i>
-        {{ player.username }}</div>
+        {{ player.username }}
+      </div>
       <div class="content">
         <a target="_blank" [routerLink]="['/user', player.username]"
           class="ui mini primary button">
           View Profile
         </a>
+        <div *ngIf="isModerator"
+          class="ui mini red button" (click)="kickPlayer(player)">
+          Kick player
+      </div>
         <p>
           <i class="blue globe icon"></i>
           Rank: {{ player.ppRank ? ('#' + (player.ppRank | number)) : '—' }}
