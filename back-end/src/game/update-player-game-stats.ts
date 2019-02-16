@@ -66,6 +66,7 @@ function updatePlayerRatings(
     const oldRating = player.user.rating;
     const ratingChange =  r.mu - oldRating.mu;
     const sigmaChange = r.sigma - oldRating.sigma;
+    // Rating changes are reduced by a factor of 5 if the game has a minRank requirement
     const newMu = game.minRank ? player.user.rating.mu + (ratingChange / 5) : r.mu;
     const newSigma = game.minRank ? player.user.rating.sigma + (sigmaChange / 5) : r.sigma;
 

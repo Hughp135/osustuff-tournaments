@@ -30,26 +30,14 @@ export class GameStatusComponent implements OnInit {
       if (this.game.nextStageStarts) {
         return {
           title: 'Game is starting soon',
-          message: `The game is starting in ${this.timeLeft}${
-            this.game.minRank
-              ? `
-This lobby is for rank ${this.game.minRank /
-                  1000}k and above players. You will still gain and lose rating, but at a lower rate compared to normal lobbies` // tslint:disable-line
-              : ''
-          }`,
+          message: `The game is starting in ${this.timeLeft}`,
         };
       }
       return {
         title: 'Waiting for players',
         message:
           `More players are needed before the game automatically starts (at least 4 players).` +
-          ` Have you tried inviting some friends to join?${
-            this.game.minRank
-              ? `
-This lobby is for rank ${this.game.minRank /
-                  1000}k and above players. You will still gain and lose rating, but at a lower rate compared to normal lobbies` // tslint:disable-line
-              : ''
-          }`,
+          ` Have you tried inviting some friends to join?`,
       };
     }
     if (this.game.status === 'in-progress') {
@@ -103,5 +91,9 @@ This lobby is for rank ${this.game.minRank /
       this.mePlayer &&
       this.game.winningUser.username === this.mePlayer.username
     );
+  }
+
+  get showAdditionalDescription() {
+    return ['new', 'scheduled'].includes(this.game.status);
   }
 }

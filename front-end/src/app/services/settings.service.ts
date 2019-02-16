@@ -1,3 +1,4 @@
+import { IUser } from './../components/user-profile/user-profile.component';
 import { ApiService } from './api.service';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
@@ -11,7 +12,7 @@ export interface CurrentGame {
 })
 export class SettingsService {
   public currentGame: BehaviorSubject<CurrentGame> = new BehaviorSubject(undefined);
-  public username: BehaviorSubject<string> = new BehaviorSubject(undefined);
+  public user: BehaviorSubject<IUser> = new BehaviorSubject(undefined);
 
   constructor(private apiService: ApiService) {
     this.checkCurrentGame();
@@ -25,7 +26,7 @@ export class SettingsService {
         const me: any = await this.apiService.get(`user/me`);
 
         if (me) {
-          this.setUsername(me.username);
+          this.setUser(me);
           if (me.currentGame) {
             this.setCurrentGame(me.currentGame);
           } else {
@@ -61,14 +62,13 @@ export class SettingsService {
     }
   }
 
-  public setUsername(username: string) {
-    localStorage.setItem('username', username);
-    this.username.next(username);
+  public setUser(user: IUser) {
+    this.user.next(user);
   }
 
   private clearUsername() {
     localStorage.removeItem('username');
-    this.username.next(undefined);
+    this.user.next(undefined);
   }
 
   public setAdmin(password: string) {

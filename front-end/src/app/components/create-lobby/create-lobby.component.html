@@ -1,0 +1,149 @@
+<div class="ui inverted container section">
+  <h1>Create a new Lobby</h1>
+
+  <div class="ui divider"></div>
+  <div class="ui inverted form">
+
+    <div class="field">
+      <h2>Lobby Title</h2>
+      <p>
+        Enter a name for your lobby. This could be your
+        tournament title, or some other description
+        of the match.
+      </p>
+      <input [(ngModel)]="title" maxlength="70" placeholder="Title of the Lobby">
+    </div>
+
+    <div class="ui divider"></div>
+    <h2>Start Date</h2>
+    <p>
+      Set what time you want the lobby to be open to join. This
+      is NOT the time the first round will start.
+    </p>
+    <p>
+      Your timezone offset has been detected as UTC{{
+      timezoneOffset >= 0 ? '+' : ''}}{{ timezoneOffset }}.
+      You can change the timezone of your lobby's start date if
+      required.
+    </p>
+    <div class="fields">
+      <div class="six wide field">
+        <label>Lobby open Date</label>
+        <div class="ui left icon input">
+          <i class="calendar icon"></i>
+          <input suiDatepicker [(ngModel)]="startDate"
+            [pickerMinDate]="pickerMinDate" placeholder="Scheduled Date">
+        </div>
+      </div>
+      <div class="three wide field">
+        <label>Time Zone (UTC+)</label>
+        <input style="width: 65px;" type="number" [(ngModel)]="timezoneOffset">
+      </div>
+    </div>
+
+    <div class="ui divider"></div>
+    <h2>Players Limit</h2>
+    <p>
+      Select the minimum players required to start the countdown
+      for your lobby.
+      If the min. number of players isn't reached within 1 hour
+      of the start date, the lobby will be closed.
+      These values can be changed in the lobby later.
+    </p>
+    <div class="two fields">
+      <div class="four wide field">
+        <label for="">Minimum # of players (from 4-100)</label>
+        <input type="number" min="4" max="100" [(ngModel)]="minPlayers">
+      </div>
+      <div class="four wide field">
+        <label for="">Maximum players (from 5-500)</label>
+        <input type="number" min="4" max="500" [(ngModel)]="maxPlayers">
+      </div>
+    </div>
+
+    <div class="ui divider"></div>
+    <h2>Players rank limit</h2>
+    <p>Apply a rank range. Note: Minimum rank = anyone with a
+      lower (<) rank number than this cannot join. Maximum rank=anyone
+        with a higher (>) rank number than this cannot join.
+    </p>
+
+    <div class="two fields">
+      <div class="six wide field">
+        <sui-checkbox class="toggle" [(ngModel)]="setMinRank">Set
+          a minimum rank</sui-checkbox>
+      </div>
+      <div class="six wide field">
+        <sui-checkbox class="toggle" [(ngModel)]="setMaxRank">Set
+          a maximum rank</sui-checkbox>
+      </div>
+    </div>
+    <div class="two fields" *ngIf="setMinRank || setMaxRank">
+      <div class="six wide field">
+        <label for="">Minimum Rank (lowest number that can join)</label>
+        <input type="number" min="50" max="1000000" [(ngModel)]="minRank"
+          [disabled]="!setMinRank">
+      </div>
+      <div class="six wide field">
+        <label for="">Maximum Rank (highest number that can
+          join)</label>
+        <input type="number" min="50" max="1000000" [(ngModel)]="maxRank"
+          [disabled]="!setMaxRank">
+      </div>
+    </div>
+
+    <div class="ui divider"></div>
+
+    <h2>Beatmap selection</h2>
+
+    <p>
+      Specify beatmap IDs for each round (optional). If not
+      filled in, the game will pick
+      beatmaps randomly.
+    </p>
+
+    <table class="ui unstackable inverted table">
+      <thead>
+        <th class="collapsing center aligned">Round #</th>
+        <th class="collapsing">Beatmap ID</th>
+        <th>Selected Beatmap</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let roundBeatmap of roundBeatmaps; let index = index;">
+          <td class="center aligned">
+            {{ index + 1}}
+          </td>
+          <td>
+            <input type="number" class="ui input"
+              (ngModelChange)="getBeatmap($event, index)"
+              [(ngModel)]="roundBeatmaps[index].beatmapId"
+              placeholder="e.g. 2485926">
+          </td>
+          <td>
+            <p *ngIf="!roundBeatmap.beatmap && !roundBeatmap.fetching">
+              None (A random beatmap will be picked)
+            </p>
+            <div class="ui active inline loader" *ngIf="roundBeatmap.fetching"></div>
+            <p *ngIf="!roundBeatmap.fetching && roundBeatmap.beatmap">
+              {{ getBeatmapString(roundBeatmap.beatmap) }}
+            </p>
+            <p class="error" *ngIf="!roundBeatmap.fetching && roundBeatmap.error">
+              {{ roundBeatmap.error }}
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="ui divider"></div>
+
+    <div class="ui inverted red segment" *ngIf="error">
+      <h3>An error occured</h3>
+      <p>{{ error }}</p>
+    </div>
+
+    <button [disabled]="creating" [class.loading]="creating"
+      class="ui green button" (click)="createGame()">Create Game
+    </button>
+  </div>
+</div>

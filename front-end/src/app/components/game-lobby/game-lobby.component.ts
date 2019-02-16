@@ -47,6 +47,9 @@ export interface IGame {
   round: any;
   timeLeft: string;
   minRank?: number;
+  maxRank?: number;
+  startsAt?: number;
+  startsAtString?: string;
 }
 
 @Component({
@@ -65,7 +68,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   public showBeatmapList: boolean;
   public timeLeft: string;
   private fetchingMessages = false;
-  public currentUsername: string;
+  public currentUser: IUser;
   private announcedStart = false;
   public isAdmin: boolean;
   public transitionController = new TransitionController();
@@ -92,7 +95,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
       this.settingsService.currentGame.subscribe(async val => {
         this.currentGame = val;
       }),
-      this.settingsService.username.subscribe(val => (this.currentUsername = val)),
+      this.settingsService.user.subscribe(val => (this.currentUser = val)),
     ];
 
     this.beatmaps = data.beatmaps;
@@ -248,7 +251,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   }
 
   get mePlayer() {
-    return this.players.find(p => p.username === this.currentUsername);
+    return this.currentUsername && this.players.find(p => p.username === this.currentUsername);
   }
 
   get currentBeatmap() {
@@ -257,6 +260,10 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     }
 
     return this.beatmaps[this.game.roundNumber];
+  }
+
+  get currentUsername() {
+    return this.currentUser && this.currentUser.username;
   }
 
   private async animate(direction: TransitionDirection) {

@@ -11,6 +11,18 @@
       </div>
     </div>
   </div>
+
+  <div class="rank-restrictions" *ngIf="showAdditionalDescription && (game.minRank || game.maxRank)">
+    <div class="ui grid">
+      <div class="column">
+        <h3>This game has rank restrictions</h3>
+        <p *ngIf="game.minRank">- Only players above rank
+          {{game.minRank}} can join</p>
+        <p *ngIf="game.maxRank">- Only players below rank
+          {{game.maxRank}} can join</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="ui inverted center aligned padded red segment" *ngIf="mePlayer && !isAlive && game.status !== 'new'">
@@ -18,7 +30,8 @@
     <i class="crosshairs icon"></i>
     You have been eliminated from the match.
   </div>
-  <p class="less-mr">You finished {{ rank | ordinal }} out of {{ totalPlayers }} players</p>
+  <p class="less-mr">You finished {{ rank | ordinal }} out of {{
+    totalPlayers }} players</p>
   <p>You may continue watching or join another lobby!</p>
 </div>
 

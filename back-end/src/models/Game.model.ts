@@ -34,6 +34,8 @@ export interface IGame extends mongoose.Document {
   beatmaps: IBeatmap[];
   estimatedEnd: Date;
   minRank?: number;
+  maxRank?: number;
+  owner?: mongoose.Schema.Types.ObjectId;
 }
 
 const GameSchema = new mongoose.Schema(
@@ -42,10 +44,11 @@ const GameSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    owner: { type: mongoose.Schema.Types.ObjectId },
     players: {
       type: [
         {
-          userId: { type: mongoose.Types.ObjectId, required: true },
+          userId: { type: mongoose.Schema.Types.ObjectId, required: true },
           osuUserId: { type: Number, required: true },
           username: { type: String, required: true },
           alive: { type: Boolean, required: true, default: true },
@@ -60,7 +63,7 @@ const GameSchema = new mongoose.Schema(
     },
     roundNumber: { type: Number },
     currentRound: { type: mongoose.Schema.Types.ObjectId },
-    status: { type: String, required: true, default: 'new' },
+    status: { type: String, required: true, default: 'new', index: true },
     winningUser: {
       type: {
         userId: { type: mongoose.Types.ObjectId, required: true },
@@ -71,6 +74,7 @@ const GameSchema = new mongoose.Schema(
     estimatedEnd: { type: Date },
     beatmaps: { type: [], required: true },
     minRank: { type: Number },
+    maxRank: { type: Number },
   },
   { timestamps: true },
 );

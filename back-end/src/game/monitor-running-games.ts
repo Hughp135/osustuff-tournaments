@@ -117,7 +117,7 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
       }
       if (!DISABLE_LOWER_LVL_LOBBIES && minRankGames.length === 0) {
         console.log('creating a new game with min rank');
-        await createGame(getRecentMaps, undefined, 45000).catch(e =>
+        await createGame(getRecentMaps, 45000).catch(e =>
           logger.error('Failed to create game', e),
         );
       }
@@ -234,8 +234,4 @@ export function clearGetLobbyCache(gameId: string | ObjectId) {
 
 export function toggleAutoCreation() {
   DISABLE_AUTO_GAME_CREATION = !DISABLE_AUTO_GAME_CREATION;
-}
-
-export async function createScheduledGame(date: Date) {
-  await createGame(getRecentBeatmaps, date);
 }

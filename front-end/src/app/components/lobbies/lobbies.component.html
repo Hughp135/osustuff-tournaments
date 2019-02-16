@@ -1,19 +1,30 @@
 <div class="ui inverted container section">
   <div class="ui grid">
-    <div class="fourteen wide column">
+    <div class="thirteen wide column">
       <h1 class="ui inverted header">Matches</h1>
-      <p>Matches run 24/7 and currently require at least 4 people to start.
-       Join the <a href="https://discord.gg/zk84VMm">Discord Server</a> for voice chat and other announcements!</p>
-       <p>
-         Players currently online: {{ onlinePlayersCount }}
-       </p>
+      <p>Matches run 24/7 and currently require at least 4
+        people to start.
+        Join the <a href="https://discord.gg/zk84VMm">Discord
+          Server</a> for voice chat and other announcements!</p>
+      <p>
+        Players currently online: {{ onlinePlayersCount }}
+      </p>
     </div>
-    <div class="two wide right aligned column">
-      <i class="large link icon" [class.redo]="!fetching" [class.spinner]="fetching" [class.loading]="fetching" (click)="fetch()"></i>
+    <div class="three wide right aligned column">
+      <a class="ui green button create" *ngIf="canCreate"
+        [routerLink]="'/lobbies/create'">
+        Create Lobby
+      </a>
+      <i class="large link icon" [class.redo]="!fetching"
+        [class.spinner]="fetching" [class.loading]="fetching"
+        (click)="fetch()"></i>
     </div>
   </div>
 
-  <h2>New Matches</h2>
+  <h2 *ngIf="scheduledGames.length">Scheduled Events</h2>
+  <app-lobbies-list *ngIf="scheduledGames.length" [lobbies]="scheduledGames"></app-lobbies-list>
+
+  <h2>Open Matches</h2>
   <div *ngIf="!joinableGames.length" class="ui inverted segment">
     <p>
       No matches are open to join at the moment

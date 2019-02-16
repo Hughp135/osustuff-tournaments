@@ -35,6 +35,7 @@ import { NotificationsComponent } from './notifications/notifications.component'
 import { FaqComponent } from './components/faq/faq.component';
 import { DatePipe } from '@angular/common';
 import { UsernameHighlightPipe } from '../pipes/username-highlight.pipe';
+import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { UsernameHighlightPipe } from '../pipes/username-highlight.pipe';
     LoginComponent,
     NotificationsComponent,
     FaqComponent,
+    CreateLobbyComponent,
   ],
   imports: [
     BrowserModule,

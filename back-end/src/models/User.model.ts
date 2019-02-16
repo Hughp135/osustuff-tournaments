@@ -22,6 +22,8 @@ export interface IUserResult {
   ratingAfter?: IRating;
 }
 
+export type Role = 'admin' | 'creator' | 'moderator';
+
 export interface IUser extends mongoose.Document {
   username: string;
   osuUserId: number;
@@ -40,12 +42,18 @@ export interface IUser extends mongoose.Document {
     top50: number;
   };
   results: IUserResult[];
+  roles: Role[];
 }
 
 const UserSchema = new mongoose.Schema(
   {
     username: { type: String, required: true, index: true },
     osuUserId: { type: Number, required: true, index: true },
+    roles: {
+      type: [{ type: String, required: true }],
+      default: [],
+      required: true,
+    },
     currentGame: { type: mongoose.Schema.Types.ObjectId },
     ppRank: { type: Number, required: true },
     countryRank: { type: Number, required: true },
@@ -73,7 +81,10 @@ const UserSchema = new mongoose.Schema(
     achievements: {
       type: [
         {
-          achievementId: { type: mongoose.Schema.Types.ObjectId, required: true },
+          achievementId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+          },
           read: { type: Boolean },
           progress: { type: Number, default: 0 },
         },
@@ -118,7 +129,7 @@ const User: mongoose.Model<IUser> = mongoose.model<IUser>('User', UserSchema);
 
 export { User };
 
-export async function updateOrCreateUser(osuUser: any): Promise<IUser> {
+export async function updateOrCreateUser(osuUser: any, roles?: Role[]): Promise<IUser> {
   const osuUserId = parseInt(osuUser.user_id, 10);
   const ppRank = parseInt(osuUser.pp_rank, 10);
   const countryRank = parseInt(osuUser.pp_country_rank, 10);
@@ -146,5 +157,6 @@ export async function updateOrCreateUser(osuUser: any): Promise<IUser> {
     ppRank,
     countryRank,
     country: osuUser.country,
+    roles,
   });
 }

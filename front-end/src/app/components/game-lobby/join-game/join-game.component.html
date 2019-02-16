@@ -24,8 +24,8 @@
             Make sure you are ready to play before joining.
           </div>
 
-          <div>
-            <p *ngIf="error" class="error">{{ error }}</p>
+          <div class="ui red inverted segment" *ngIf="error">
+            <p>{{ error }}</p>
           </div>
         </div>
       </div>

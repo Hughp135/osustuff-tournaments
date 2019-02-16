@@ -6,9 +6,31 @@ import { Beatmap } from '../models/Beatmap.model';
 
 const TEST_MODE = config.get('TEST_MODE');
 
+const numRounds = 10; // max number of rounds that will be played
+// Set Min/Max beatmap difficulties per round for each type of lobby
+export const standardStars: Array<[number, number]> = new Array(numRounds)
+  .fill(null)
+  .map((_, idx) => {
+    if (idx < 3) {
+      return <[number, number]>[3 + idx * 0.5, 3.8 + idx * 0.5];
+    }
+    return <[number, number]>[
+      Math.min(6, 4 + idx * 0.3),
+      idx > 7 ? 8 : 5 + idx * 0.3,
+    ];
+  });
+const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
+  .fill(null)
+  .map(
+    (_, idx) =>
+      <[number, number]>[
+        Math.max(5, 2 + idx * 0.4),
+        Math.min(5.5, 3 + idx * 0.4),
+      ],
+  );
+
 export async function createGame(
   getRecentBeatmaps: () => Promise<any>,
-  scheduledDate?: Date,
   minRank?: number,
   testPlayers?: number,
 ): Promise<IGame> {
@@ -18,30 +40,6 @@ export async function createGame(
   );
   beatmaps.push(...savedBeatmaps);
   console.log('total beatmaps', beatmaps.length);
-
-  const numRounds = 10; // max number of rounds that will be played
-
-  // Set Min/Max beatmap difficulties per round for each type of lobby
-  const standardStars: Array<[number, number]> = new Array(numRounds)
-    .fill(null)
-    .map((_, idx) => {
-      if (idx < 3) {
-        return <[number, number]>[3 + idx * 0.5, 3.8 + idx * 0.5];
-      }
-      return <[number, number]>[
-        Math.min(6, 4 + idx * 0.3),
-        idx > 7 ? 8 : 5 + idx * 0.3,
-      ];
-    });
-  const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
-    .fill(null)
-    .map(
-      (_, idx) =>
-        <[number, number]>[
-          Math.max(5, 2 + idx * 0.4),
-          Math.min(5.5, 3 + idx * 0.4),
-        ],
-    );
 
   const difficulties = minRank ? easyLobbyStars : standardStars;
   const roundBeatmaps = difficulties
@@ -64,8 +62,7 @@ export async function createGame(
   const game = await Game.create({
     title: `osu! Royale Match${minRank ? ` (rank ${minRank / 1000}k+)` : ''}`,
     beatmaps: roundBeatmaps,
-    status: scheduledDate ? 'scheduled' : 'new',
-    nextStageStarts: scheduledDate || undefined,
+    status: 'new',
     minRank,
   });
 
@@ -77,7 +74,7 @@ export async function createGame(
   return game;
 }
 
-function getBeatmapBetweenStars(
+export function getBeatmapBetweenStars(
   beatmaps: IBeatmap[],
   min: number,
   max?: number,

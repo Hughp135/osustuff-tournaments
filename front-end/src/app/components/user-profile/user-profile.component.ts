@@ -16,6 +16,8 @@ export interface IUserResult {
   ratingAfter?: number;
 }
 
+export type Role = 'admin' | 'creator' | 'moderator';
+
 export interface IUser {
   username: string;
   osuUserId: number;
@@ -34,6 +36,7 @@ export interface IUser {
     top50: number;
   };
   averageRank?: number;
+  roles: Role[];
 }
 
 @Component({

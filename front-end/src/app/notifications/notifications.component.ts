@@ -24,7 +24,7 @@ export class NotificationsComponent implements OnInit {
   constructor(private apiService: ApiService, private settingsService: SettingsService) {}
 
   ngOnInit() {
-    this.settingsService.username.subscribe(val => {
+    this.settingsService.user.subscribe(val => {
       if (val && !this.subscription) {
         this.subscription = interval(15000)
           .pipe(startWith(0))
