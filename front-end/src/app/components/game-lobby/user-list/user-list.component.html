@@ -33,7 +33,7 @@
     </div>
     <div class="user-rating" *ngIf="showUserStats === player.username">
       <div class="header"> <i class="fitted flag" [ngClass]="player.country.toLowerCase()"></i>
-        {{ player.username }}
+        <a target="_blank" [href]="'https://osu.ppy.sh/users/' + player.osuUserId"> {{ player.username }} </a>
       </div>
       <div class="content">
         <a target="_blank" [routerLink]="['/user', player.username]"
