@@ -89,7 +89,7 @@ export class LobbiesComponent implements OnInit, OnDestroy {
       .forEach(lobby => {
         const date = new Date();
         date.setSeconds(date.getSeconds() + lobby.startsAt);
-        const { seconds, minutes, hours } = getTimeComponents(
+        const { days, seconds, minutes, hours } = getTimeComponents(
           date.getTime() - Date.now(),
         );
 
@@ -97,7 +97,7 @@ export class LobbiesComponent implements OnInit, OnDestroy {
           return (lobby.startsAtString = `now`);
         }
 
-        lobby.startsAtString = `${
+        lobby.startsAtString = `${parseInt(days, 10) > 0 ? `${days}d ` : ''}${
           parseInt(hours, 10) > 0 ? `${hours}:` : ''
         }${minutes}:${seconds}s`;
       });

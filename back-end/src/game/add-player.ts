@@ -4,9 +4,10 @@ import { IUser } from '../models/User.model';
 export async function addPlayer(game: IGame, user: IUser): Promise<IUser> {
   const player: IPlayer = userToPlayer(user);
 
-  game.players = game.players.concat(player);
-
-  await game.save();
+  if (!game.players.some(p => p.userId.toString() === player.userId.toString())) {
+    game.players.push(player);
+    await game.save();
+  }
 
   user.currentGame = game._id;
 

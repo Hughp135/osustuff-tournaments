@@ -55,11 +55,6 @@ export async function kickPlayer(req: Request, res: Response) {
     if (game.roundNumber) {
       player.roundLostOn = game.roundNumber;
     }
-    if (game.status === 'new') {
-      game.players = game.players.filter(
-        p => p.osuUserId.toString() !== userToKick.osuUserId.toString(),
-      );
-    }
     game.markModified('players');
 
     await game.save();

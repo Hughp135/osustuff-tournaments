@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { Observable, interval, Observer, Subscription, BehaviorSubject } from 'rxjs';
+import {
+  Observable,
+  interval,
+  Observer,
+  Subscription,
+  BehaviorSubject,
+} from 'rxjs';
 import { GameService } from '../game.service';
 import { SettingsService, CurrentGame } from '../services/settings.service';
 import { IGame, IPlayer } from '../components/game-lobby/game-lobby.component';
@@ -21,18 +27,22 @@ export interface GameLobbyData {
 })
 export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
   private _game: BehaviorSubject<IGame> = new BehaviorSubject(undefined);
-  private statusChanged: BehaviorSubject<undefined> = new BehaviorSubject(undefined);
+  private statusChanged: BehaviorSubject<undefined> = new BehaviorSubject(
+    undefined,
+  );
   private _players: IPlayer[] = [];
   public currentGame: CurrentGame;
   public visibilityTimers: number[] = [];
-  private timeLeft: BehaviorSubject<string | undefined> = new BehaviorSubject(undefined);
+  private timeLeft: BehaviorSubject<string | undefined> = new BehaviorSubject(
+    undefined,
+  );
   private timeLeftInterval: Subscription;
   private secondsLeft?: number;
 
   constructor(
     private gameService: GameService,
     private router: Router,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
   ) {}
 
   async resolve(route: ActivatedRouteSnapshot): Promise<GameLobbyData> {
@@ -90,13 +100,13 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       subs.add(
         this.statusChanged.subscribe(async () => {
           await updatePlayers(true);
-        })
+        }),
       );
 
       subs.add(
         this.settingsService.currentGame.subscribe(async () => {
           await updatePlayers(true);
-        })
+        }),
       );
 
       subs.add(
@@ -106,11 +116,11 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
               const game = this._game.getValue();
 
               return game && game._id === gameId && game.status === 'new';
-            })
+            }),
           )
           .subscribe(async () => {
             await updatePlayers();
-          })
+          }),
       );
     });
   }
@@ -138,7 +148,8 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
         try {
           const game = await this.gameService.getLobby(id);
           const statusChanged =
-            !this._game.getValue() || game.status !== this._game.getValue().status;
+            !this._game.getValue() ||
+            game.status !== this._game.getValue().status;
 
           observer.next(game);
           this._game.next(game);
@@ -170,19 +181,22 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       subscriptions.add(
         this.settingsService.currentGame.subscribe(async val => {
           await updateGame();
-        })
+        }),
       );
 
       // Fetch on an interval
       subscriptions.add(
         this.getTimer(5000, 15000).subscribe(async () => {
           await updateGame();
-        })
+        }),
       );
     });
   }
 
-  private getTimer(timeVisible: number, timeHidden: number): Observable<undefined> {
+  private getTimer(
+    timeVisible: number,
+    timeHidden: number,
+  ): Observable<undefined> {
     return Observable.create(observer => {
       let visibleCbSet = false;
       let timeout;
@@ -222,9 +236,15 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
 
     const date = new Date();
     date.setSeconds(date.getSeconds() + this.secondsLeft);
-    const { hours, seconds, minutes } = getTimeComponents(date.getTime() - Date.now());
+    const { days, hours, seconds, minutes } = getTimeComponents(
+      date.getTime() - Date.now(),
+    );
 
-    this.timeLeft.next(`${hours ? `${hours}:` : ''}${minutes}:${seconds}`);
+    this.timeLeft.next(
+      `${parseInt(days, 10) > 0 ? `${days}d ` : ''}${
+        hours ? `${hours}:` : ''
+      }${minutes}:${seconds}`,
+    );
   }
 }
 
