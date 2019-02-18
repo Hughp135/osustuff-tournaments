@@ -12,7 +12,7 @@ export interface CurrentGame {
 })
 export class SettingsService {
   public currentGame: BehaviorSubject<CurrentGame> = new BehaviorSubject(undefined);
-  public user: BehaviorSubject<IUser> = new BehaviorSubject(undefined);
+  public user: BehaviorSubject<IUser | undefined> = new BehaviorSubject(undefined);
 
   constructor(private apiService: ApiService) {
     this.checkCurrentGame();

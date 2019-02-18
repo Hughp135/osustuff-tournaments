@@ -56,7 +56,7 @@ export class LobbiesComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.settingsService.user.subscribe(user => {
-        this.canCreate = user.roles.includes('creator');
+        this.canCreate = user && user.roles.includes('creator');
       }),
     );
   }
