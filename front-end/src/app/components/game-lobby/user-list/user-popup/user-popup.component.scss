@@ -1,0 +1,23 @@
+.user-popup {
+  position: absolute;
+  background: #191919;
+  border-radius: 5px;
+  box-shadow: 2px 2px 8px #1f211f;
+  padding: 14px;
+  color: white;
+  z-index: 50;
+  right: 20px;
+
+  i.icon {
+    color: grey !important;
+  }
+
+  .ui.button {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0;
+  }
+}

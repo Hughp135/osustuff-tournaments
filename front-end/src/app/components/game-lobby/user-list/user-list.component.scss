@@ -1,6 +1,5 @@
 :host {
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .ui.inverted.segment {
@@ -13,6 +12,7 @@
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  overflow-y: auto;
 
   .item {
     padding: 0.5em 1em;
@@ -76,31 +76,6 @@
 
 .white {
   color: white;
-}
-
-.user-rating {
-  position: absolute;
-  left: 33px;
-  background: #191919;
-  border-radius: 5px;
-  box-shadow: 2px 2px 8px #1f211f;
-  padding: 14px;
-  color: white;
-  top: 40px;
-  z-index: 50;
-
-  i.icon {
-    color: grey !important;
-  }
-
-  .ui.button {
-    margin-top: 8px;
-    margin-bottom: 8px;
-  }
-
-  p {
-    margin: 0;
-  }
 }
 
 .ui.list .list>a.item .user i.icon, .ui.list>a.item i.icon {

@@ -7,7 +7,7 @@
 <div class="ui relaxed inverted list" *ngIf="players.length">
   <a class="item user" *ngFor="let player of sortedPlayers"
     [ngClass]="player.alive ? 'alive' : 'dead'" [class.winner]="winningUser === player.username"
-    (click)="showPlayerStats(player)">
+    (click)="showPlayerStats($event, player)">
     <div class="image-container">
       <img class="ui mini image" [useSrcset]="true" [lazyLoad]="'//a.ppy.sh/' + player.osuUserId"
         alt="">
@@ -31,47 +31,6 @@
         </span>
       </div>
     </div>
-    <div class="user-rating" *ngIf="showUserStats === player.username">
-      <div class="header"> <i class="fitted flag" [ngClass]="player.country.toLowerCase()"></i>
-        <a target="_blank" [href]="'https://osu.ppy.sh/users/' + player.osuUserId"> {{ player.username }} </a>
-      </div>
-      <div class="content">
-        <a target="_blank" [routerLink]="['/user', player.username]"
-          class="ui mini primary button">
-          View Profile
-        </a>
-        <div *ngIf="isModerator"
-          class="ui mini red button" (click)="kickPlayer(player)">
-          Kick player
-      </div>
-        <p>
-          <i class="blue globe icon"></i>
-          Rank: {{ player.ppRank ? ('#' + (player.ppRank | number)) : '—' }}
-        </p>
-        <p>
-          <i class="teal crosshairs icon"></i>
-          Rating: {{ (player.rating.mu - 3* player.rating.sigma).toFixed(0) }}
-        </p>
-        <p>
-          <i class="green play icon"></i> Games Played: {{ player.gamesPlayed }}
-        </p>
-        <p>
-          <i class="trophy icon" [class.green]="player.wins > 0" [class.grey]="player.wins < 1"></i> Wins: {{ player.wins }}
-        </p>
-        <p>
-          <i class="grey crosshairs icon"></i> Top 10%: {{
-          player.percentiles.top10 }}
-        </p>
-        <p>
-          <i class="grey crosshairs icon"></i> Top 20%: {{
-          player.percentiles.top20 }}
-        </p>
-        <p>
-          <i class="grey crosshairs icon"></i> Top 50%: {{
-          player.percentiles.top50 }}
-        </p>
-      </div>
-    </div>
   </a>
   <div class="item" *ngIf="hiddenPlayers">
     <div class="content">
@@ -79,3 +38,4 @@
     </div>
   </div>
 </div>
+<app-user-popup *ngIf="popupData" [isModerator]="isModerator" [popupData]="popupData"></app-user-popup>

@@ -37,6 +37,7 @@ import { DatePipe } from '@angular/common';
 import { UsernameHighlightPipe } from '../pipes/username-highlight.pipe';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { GameDescriptionComponent } from './components/game-lobby/game-description/game-description.component';
+import { UserPopupComponent } from './components/game-lobby/user-list/user-popup/user-popup.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { GameDescriptionComponent } from './components/game-lobby/game-descripti
     FaqComponent,
     CreateLobbyComponent,
     GameDescriptionComponent,
+    UserPopupComponent,
   ],
   imports: [
     BrowserModule,

@@ -18,21 +18,21 @@ export class UserListComponent implements OnInit {
 
   public hiddenPlayers: number;
   public playerCount: number;
-  public showUserStats: string;
+  public popupData: { player: IPlayer; offsetTop: number };
   public ignoreClickEvent = false;
 
   constructor(private gameService: GameService) {}
 
   ngOnInit() {}
 
-  public showPlayerStats(player) {
-    this.showUserStats = player.username;
+  public showPlayerStats(event, player) {
+    this.popupData = { player, offsetTop: event.pageY };
     this.ignoreClickEvent = true;
   }
 
   public onDocumentClick() {
     if (!this.ignoreClickEvent) {
-      this.showUserStats = undefined;
+      this.popupData = undefined;
     }
     this.ignoreClickEvent = false;
   }
