@@ -32,9 +32,9 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
 
 function getOsuUser(index: number) {
   return {
-    user_id: userIds[index] || Math.floor(Math.random() * 100000) + 1,
+    user_id: userIds[index] || (Math.floor(Math.random() * 100000) + 1).toString(),
     username: faker.name.findName(),
-    pp_rank: Math.random() <= 0.04 ? 0 : faker.random.number(1000000),
+    pp_rank: (Math.random() <= 0.04 ? 0 : faker.random.number(1000000)).toString(),
     country: faker.address.countryCode(),
     pp_country_rank: '1',
   };

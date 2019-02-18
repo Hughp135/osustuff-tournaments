@@ -129,7 +129,15 @@ const User: mongoose.Model<IUser> = mongoose.model<IUser>('User', UserSchema);
 
 export { User };
 
-export async function updateOrCreateUser(osuUser: any, roles?: Role[]): Promise<IUser> {
+interface ICreateUserFields {
+  pp_rank: string;
+  user_id: string;
+  pp_country_rank: string;
+  username: string;
+  country: string;
+}
+
+export async function updateOrCreateUser(osuUser: ICreateUserFields, roles?: Role[]): Promise<IUser> {
   const osuUserId = parseInt(osuUser.user_id, 10);
   const ppRank = parseInt(osuUser.pp_rank, 10);
   const countryRank = parseInt(osuUser.pp_country_rank, 10);
@@ -140,6 +148,7 @@ export async function updateOrCreateUser(osuUser: any, roles?: Role[]): Promise<
     found.countryRank = countryRank;
     found.country = osuUser.country;
     found.osuUserId = osuUserId;
+    found.username = osuUser.username;
 
     return await found.save();
   }

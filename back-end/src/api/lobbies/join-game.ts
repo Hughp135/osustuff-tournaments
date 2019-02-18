@@ -26,7 +26,7 @@ export async function joinGame(req: Request, res: Response) {
       .json({ error: 'Failed to retrieve osu user details.' });
   }
 
-  if (game.minRank && osuUser.pp_rank < game.minRank) {
+  if (game.minRank && parseInt(osuUser.pp_rank, 10) < game.minRank) {
     return res
       .status(401)
       .json({
@@ -36,7 +36,7 @@ export async function joinGame(req: Request, res: Response) {
       });
   }
 
-  if (game.maxRank && osuUser.pp_rank > game.maxRank) {
+  if (game.maxRank && parseInt(osuUser.pp_rank, 10) > game.maxRank) {
     return res
       .status(401)
       .json({
