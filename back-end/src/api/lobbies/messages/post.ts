@@ -8,8 +8,7 @@ import { Game } from '../../../models/Game.model';
 const Filter = require('bad-words');
 
 const filter = new Filter();
-filter.addWords('rape');
-filter.addWords('mongoloid');
+filter.addWords('rape', 'mongoloid');
 
 filter.removeWords('god', 'damn');
 
