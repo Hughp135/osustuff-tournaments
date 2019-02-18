@@ -58,6 +58,19 @@ export class ApiService {
     }).toPromise();
   }
 
+  async put(
+    url: string,
+    data: any,
+    options: RequestOptions = {}
+  ): Promise<object> {
+    return await this.http.put(`${this.BASE_URL}${url}`, data, {
+      headers: new HttpHeaders({
+        ...this.baseHeaders,
+        ...options.headers
+      })
+    }).toPromise();
+  }
+
   async patch(
     url: string,
     data: any,

@@ -52,6 +52,7 @@ export interface IGame {
   startsAt?: number;
   startsAtString?: string;
   description?: string;
+  owner?: string;
 }
 
 @Component({
@@ -251,6 +252,10 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     } else {
       return true;
     }
+  }
+
+  get isOwner() {
+    return this.currentUser && this.currentUser._id === this.game.owner;
   }
 
   get mePlayer() {

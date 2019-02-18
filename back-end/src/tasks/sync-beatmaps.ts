@@ -1,16 +1,10 @@
-import mongoose from 'mongoose';
-import config from 'config';
 import { getBeatmaps } from '../services/osu-api';
 import got from 'got';
 import { Beatmap } from '../models/Beatmap.model';
+import { connectToMongo } from '../helpers/connect-to-mongo';
 
 async function start() {
-  await mongoose.connect(
-    'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br',
-    {
-      useNewUrlParser: true,
-    },
-  );
+  await connectToMongo();
 
   const downloadAvailable: string[] = [];
   const downloadUnavailable: string[] = [];

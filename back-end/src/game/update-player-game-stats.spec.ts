@@ -1,24 +1,20 @@
-import mongoose from 'mongoose';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
-import config from 'config';
 import { Game, IPlayer, IGame } from '../models/Game.model';
 import { User } from '../models/User.model';
 import { updatePlayerGameStats } from './update-player-game-stats';
 import { Skill } from '../services/trueskill';
+import { connectToMongo, disconnectFromMongo } from '../helpers/connect-to-mongo';
 
-mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
 chai.use(sinonChai);
 
 describe('update-player-game-stats', () => {
   before(async () => {
-    await mongoose.connect('mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test', {
-      useNewUrlParser: true,
-    });
+    await connectToMongo();
   });
   after(async () => {
-    await mongoose.disconnect();
+    await disconnectFromMongo();
   });
   beforeEach(async () => {
     await Game.deleteMany({});
@@ -28,7 +24,7 @@ describe('update-player-game-stats', () => {
     const players = await createPlayers(10);
     for (let i = 0; i < 3; i++) {
       const shuffled = shufflePlayerRanks(players);
-      await updatePlayerGameStats(<IGame> {
+      await updatePlayerGameStats(<IGame>{
         _id: '',
         players: shuffled,
       });
@@ -58,7 +54,7 @@ async function createPlayers(count: number) {
       country: 'GB',
     });
 
-    return <IPlayer> {
+    return <IPlayer>{
       alive: true,
       userId: user._id,
       osuUserId: user.osuUserId,

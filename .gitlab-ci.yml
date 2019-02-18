@@ -1,0 +1,21 @@
+image: node:10
+
+services:
+  - mongo:latest
+backend:
+  only:
+    - merge_requests
+  script:
+  - cd back-end
+  - npm install
+  - npm run lint
+  - npm run build
+  - npm run test:ci
+frontend:
+  only:
+    - merge_requests
+  script:
+  - cd front-end
+  - npm install
+  - npm run lint
+  - npm run build

@@ -38,6 +38,8 @@ import { UsernameHighlightPipe } from '../pipes/username-highlight.pipe';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { GameDescriptionComponent } from './components/game-lobby/game-description/game-description.component';
 import { UserPopupComponent } from './components/game-lobby/user-list/user-popup/user-popup.component';
+import { LobbyFormComponent } from './components/lobby-form/lobby-form.component';
+import { EditLobbyComponent } from './components/edit-lobby/edit-lobby.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +70,8 @@ import { UserPopupComponent } from './components/game-lobby/user-list/user-popup
     CreateLobbyComponent,
     GameDescriptionComponent,
     UserPopupComponent,
+    LobbyFormComponent,
+    EditLobbyComponent,
   ],
   imports: [
     BrowserModule,

@@ -33,10 +33,5 @@ export async function nextRound(game: IGame) {
   );
   game.nextStageStarts = date;
 
-  const totalBeatmapDuration = game.beatmaps.reduce(
-    (acc, curr) => acc + parseInt(curr.total_length, 10),
-    0,
-  );
-
   await game.save();
 }

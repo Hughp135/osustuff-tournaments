@@ -1,7 +1,7 @@
 import { GameService, ICreateScheduledGameOptions } from './../../game.service';
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
+import { EditLobbyData } from '../lobby-form/lobby-form.component';
 
 export interface IBeatmap {
   beatmapset_id: string;
@@ -22,80 +22,37 @@ export interface IBeatmap {
   styleUrls: ['./create-lobby.component.scss'],
 })
 export class CreateLobbyComponent implements OnInit {
-  public title: string;
-  public pickerMinDate = new Date();
-  public startDate: Date;
-  public timezoneOffset = new Date().getTimezoneOffset();
-  public minPlayers = 4;
-  public maxPlayers = 250;
-  public setMinRank = false;
-  public setMaxRank = false;
-  public minRank = 50;
-  public maxRank = 1000000;
-  public roundBeatmaps: {
-    beatmapId?: number;
-    beatmap?: IBeatmap;
-    fetching?: boolean;
-    error?: string;
-  }[] = new Array(10).fill(null).map(() => ({
-    beatmapId: undefined,
-    beatmap: undefined,
-  }));
   public creating = false;
   public error: string;
   public description?: string;
+  public createGame = this.doCreateGame.bind(this);
 
-  public getBeatmap = debounce(async (value: number, index: number) => {
-    const roundBeatmap = this.roundBeatmaps[index];
-    roundBeatmap.fetching = true;
-    roundBeatmap.error = undefined;
-
-    try {
-      const { beatmap } = <{ beatmap: IBeatmap | null }>(
-        await this.apiService.get(`beatmap/${value}`)
-      );
-
-      if (!beatmap) {
-        roundBeatmap.error = 'Beatmap not found with this ID';
-        roundBeatmap.fetching = false;
-
-        return;
-      }
-
-      roundBeatmap.beatmap = beatmap;
-    } catch (e) {
-      console.error(e);
-      roundBeatmap.error = 'Unable to retrieve the beatmap';
-    }
-
-    roundBeatmap.fetching = false;
-  }, 250);
-
-  constructor(
-    private apiService: ApiService,
-    private gameService: GameService,
-    private router: Router,
-  ) {}
+  constructor(private gameService: GameService, private router: Router) {}
 
   ngOnInit() {}
 
-  public async createGame() {
+  public async doCreateGame(formData: EditLobbyData) {
     this.error = undefined;
     this.creating = true;
-    const date = this.startDate;
-    if (this.timezoneOffset) {
-      date.setHours(date.getHours() + this.timezoneOffset);
+    if (!formData) {
+      this.error = 'A start date must be set';
+      this.creating = false;
+      return;
+    }
+    const date = formData.startDate;
+    if (formData.timezoneOffset) {
+      date.setHours(date.getHours() + formData.timezoneOffset);
     }
 
     const options: ICreateScheduledGameOptions = {
-      date: this.startDate,
-      title: this.title,
-      description: this.description,
-      minPlayers: this.minPlayers,
-      maxPlayers: this.maxPlayers,
-      roundBeatmaps: this.roundBeatmaps.map(r => r.beatmap),
-      minRank: this.setMinRank ? this.minRank : undefined,
-      maxRank: this.setMaxRank ? this.maxRank : undefined,
+      nextStageStarts: formData.startDate,
+      title: formData.title,
+      description: formData.description,
+      minPlayers: formData.minPlayers,
+      maxPlayers: formData.maxPlayers,
+      roundBeatmaps: formData.roundBeatmaps.map(r => r.beatmap),
+      minRank: formData.setMinRank ? formData.minRank : undefined,
+      maxRank: formData.setMaxRank ? formData.maxRank : undefined,
     };
 
     try {
@@ -117,33 +74,4 @@ export class CreateLobbyComponent implements OnInit {
     }
   }
 
-  public getBeatmapString(beatmap: IBeatmap) {
-    return `${beatmap.artist} - ${beatmap.title} [${
-      beatmap.version
-    }] (${parseFloat(beatmap.difficultyrating).toFixed(2)}*)`;
-  }
-}
-
-function debounce(
-  func: (...args: any) => Promise<any>,
-  wait: number,
-  immediate?: boolean,
-) {
-  let timeout;
-  return function() {
-    const context = this,
-      args = arguments;
-    const later = function() {
-      timeout = null;
-      if (!immediate) {
-        func.apply(context, args);
-      }
-    };
-    const callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) {
-      func.apply(context, args);
-    }
-  };
 }

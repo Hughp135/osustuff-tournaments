@@ -8,7 +8,7 @@ import { IBeatmap } from './components/create-lobby/create-lobby.component';
 export interface ICreateScheduledGameOptions {
   title: string;
   roundBeatmaps: Array<IBeatmap | undefined>;
-  date: Date;
+  nextStageStarts: Date;
   minPlayers: number;
   maxPlayers: number;
   minRank?: number;
@@ -66,6 +66,15 @@ export class GameService {
   ): Promise<{ gameId: string }> {
     return <{ gameId: string }>(
       await this.apiService.post(`lobbies/schedule-game`, options)
+    );
+  }
+
+  public async editGame(
+    gameId: string,
+    options: ICreateScheduledGameOptions,
+  ): Promise<{ gameId: string }> {
+    return <{ gameId: string }>(
+      await this.apiService.put(`lobbies/${gameId}`, options)
     );
   }
 }
