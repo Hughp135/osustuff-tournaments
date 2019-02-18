@@ -5,6 +5,7 @@ export interface IRound extends mongoose.Document {
   beatmap: IBeatmap;
   gameId: mongoose.Types.ObjectId;
   roundNumber: number;
+  createdAt?: Date;
 }
 
 const RoundSchema = new mongoose.Schema(

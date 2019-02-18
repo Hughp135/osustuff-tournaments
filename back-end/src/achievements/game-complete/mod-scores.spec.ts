@@ -126,5 +126,6 @@ function getBaseScoreData(userId: ObjectId, mods: number) {
     misses: 0,
     count100: 1,
     date: new Date(),
+    passedRound: true,
   };
 }

@@ -47,6 +47,7 @@ describe('check-player-scores', () => {
       beatmap: {
         beatmapId: 'asd123',
         title: 'b1',
+        total_length: 30,
       },
       gameId: game._id,
     });
@@ -79,6 +80,7 @@ describe('check-player-scores', () => {
       beatmap: {
         beatmap_id: '932223',
         title: 'b1',
+        total_length: 30,
       },
       gameId: game._id,
     });
@@ -111,6 +113,7 @@ describe('check-player-scores', () => {
       beatmap: {
         beatmap_id: '932223',
         title: 'b1',
+        total_length: 30,
       },
       gameId: game._id,
     });
@@ -143,6 +146,7 @@ describe('check-player-scores', () => {
       beatmap: {
         beatmap_id: '932223',
         title: 'b1',
+        total_length: 30,
       },
       gameId: game._id,
     });
@@ -176,6 +180,7 @@ describe('check-player-scores', () => {
       beatmap: {
         beatmap_id: '932223',
         title: 'b1',
+        total_length: 30,
       },
       gameId: game._id,
     });
@@ -219,5 +224,6 @@ function getScore(beatmapId: string, score: string, date?: string) {
     maxcombo: '256',
     date: date ? date : '2030-06-22 9:11:16',
     rank: 'C',
+    total_length: 60,
   };
 }

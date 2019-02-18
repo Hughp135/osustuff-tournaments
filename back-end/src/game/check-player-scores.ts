@@ -9,7 +9,6 @@ import { getAppliedMods } from '../helpers/get-applied-mods';
 
 const TEST_ENV = process.env.NODE_ENV === 'test';
 const TEST_MODE = config.get('TEST_MODE');
-const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 
 export async function checkRoundScores(
   game: IGame,
@@ -18,13 +17,14 @@ export async function checkRoundScores(
 ) {
   game.status = 'checking-scores';
 
-  // Set the timeout for checking scores should before it is re-checked
+  // Set the timeout date
   const date = new Date();
   date.setSeconds(date.getSeconds() + 120); // times out after 2 mins
   game.nextStageStarts = date;
   await game.save();
   cache.del(`get-lobby-${game._id}`);
 
+  // Wait a short period of time before checking scores
   await new Promise(res =>
     setTimeout(res, TEST_ENV ? 0 : TEST_MODE ? 1000 : 5000),
   );
@@ -100,8 +100,9 @@ function scoreValidAndUnique(
     (<any>round).createdAt.getTime() - 10 +
       parseInt(round.beatmap.total_length, 10) / 1.5 * 1000,
   );
+  const validDate = new Date(score.date) > minDate;
 
-  if (!correctBeatmap || !(new Date(score.date) > minDate)) {
+  if (!correctBeatmap || !validDate) {
     return false;
   }
 
