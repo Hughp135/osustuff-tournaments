@@ -1,4 +1,3 @@
-import { SERVER_START_DATE } from './../index';
 import { IGame } from './../models/Game.model';
 import { Game } from '../models/Game.model';
 import { Round, IRound } from '../models/Round.model';
@@ -22,6 +21,7 @@ const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 const PLAYERS_REQUIRED_TO_START = config.get('PLAYERS_REQUIRED_TO_START');
 const DISABLE_LOWER_LVL_LOBBIES = config.get('DISABLE_LOWER_LVL_LOBBIES');
 let DISABLE_AUTO_GAME_CREATION = config.get('DISABLE_AUTO_GAME_CREATION');
+const SERVER_START_DATE = new Date();
 export let isMonitoring = false;
 let gamesBeingUpdated: string[] = [];
 let creatingNewGame = false;
