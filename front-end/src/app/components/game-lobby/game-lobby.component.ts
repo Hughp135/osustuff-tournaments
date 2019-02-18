@@ -87,20 +87,21 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const { data } = <{ data: GameLobbyData }>this.route.snapshot.data;
 
+    // Map all the data to component state
     this.subscriptions = [
       data.lobby.subscribe(async game => {
         await this.announceRoundChanges(game);
         this.game = game;
       }),
-      data.players.subscribe(players => (this.players = players)),
-      data.timeLeft.subscribe(timeLeft => (this.timeLeft = timeLeft)),
+      data.players.subscribe(players => this.players = players),
+      data.timeLeft.subscribe(timeLeft => this.timeLeft = timeLeft),
+      data.beatmaps.subscribe(beatmaps => this.beatmaps = beatmaps),
       this.settingsService.currentGame.subscribe(async val => {
         this.currentGame = val;
       }),
-      this.settingsService.user.subscribe(val => (this.currentUser = val)),
+      this.settingsService.user.subscribe(val => this.currentUser = val),
     ];
 
-    this.beatmaps = data.beatmaps;
     this.messages = data.messages;
 
     this.visibilityTimers.push(

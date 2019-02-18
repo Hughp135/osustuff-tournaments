@@ -30,8 +30,8 @@ export class GameService {
     return <IGame>await this.apiService.get(`lobbies/${id}`);
   }
 
-  public async getLobbyBeatmaps(id: string) {
-    return await this.apiService.get(`lobbies/${id}/beatmaps`);
+  public async getLobbyBeatmaps(id: string): Promise<IBeatmap[]> {
+    return <IBeatmap[]> await this.apiService.get(`lobbies/${id}/beatmaps`);
   }
 
   public async getLobbyUsers(id: string): Promise<IPlayer[]> {

@@ -13,6 +13,7 @@ import { IGame, IPlayer } from '../components/game-lobby/game-lobby.component';
 import * as Visibility from 'visibilityjs';
 import { Message } from '../components/game-lobby/chat/chat.component';
 import { takeWhile } from 'rxjs/operators';
+import { IBeatmap } from '../components/create-lobby/create-lobby.component';
 
 export interface GameLobbyData {
   lobby: Observable<IGame>;
@@ -38,6 +39,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
   );
   private timeLeftInterval: Subscription;
   private secondsLeft?: number;
+  private beatmaps: BehaviorSubject<IBeatmap[]> = new BehaviorSubject([]);
 
   constructor(
     private gameService: GameService,
@@ -49,7 +51,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
     const { id } = route.params;
 
     try {
-      const beatmaps = await this.gameService.getLobbyBeatmaps(id);
+      await this.getBeatmaps(id);
       const messages = await this.gameService.getLobbyMessages(id);
       const lobby: Observable<IGame> = this.getLobby(id);
       const players: Observable<IPlayer[]> = this.getPlayers(id);
@@ -58,7 +60,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
 
       return {
         lobby,
-        beatmaps,
+        beatmaps: this.beatmaps,
         players,
         messages,
         timeLeft: this.timeLeft,
@@ -68,6 +70,10 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       setTimeout(() => this.router.navigate(['/lobbies']), 0);
       return undefined;
     }
+  }
+
+  private async getBeatmaps(gameId: string) {
+    this.beatmaps.next(await this.gameService.getLobbyBeatmaps(gameId));
   }
 
   private getPlayers(gameId: string) {
@@ -156,9 +162,13 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
 
           if (statusChanged) {
             this.statusChanged.next(undefined);
+            await this.getBeatmaps(id); // update beatmaps list
           }
 
-          if (statusChanged || !this.secondsLeft) {
+          if (
+            statusChanged ||
+            Math.abs(game.secondsToNextRound - this.secondsLeft) > 10
+          ) {
             this.secondsLeft = game.secondsToNextRound;
             if (this.timeLeftInterval) {
               this.timeLeftInterval.unsubscribe();
@@ -189,6 +199,19 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
         this.getTimer(5000, 15000).subscribe(async () => {
           await updateGame();
         }),
+      );
+
+      // Fetch beatmaps every 30 secs when game status is new
+      subscriptions.add(
+        interval(30000)
+          .pipe(
+            takeWhile(() =>
+              ['new', 'scheduled'].includes(this._game.getValue().status),
+            ),
+          )
+          .subscribe(async() => {
+            await this.getBeatmaps(id);
+          }),
       );
     });
   }
