@@ -8,7 +8,8 @@ import { Game } from '../../../models/Game.model';
 const Filter = require('bad-words');
 
 const filter = new Filter();
-filter.addWords('rape');
+filter.addWords('rape', 'mongoloid');
+
 filter.removeWords('god', 'damn');
 
 export async function sendMessage(req: Request, res: Response) {
