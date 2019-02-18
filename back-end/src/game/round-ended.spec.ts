@@ -2,13 +2,13 @@ import { ObjectId } from 'bson';
 import mongoose from 'mongoose';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
-import config from 'config';
 import { Game, IPlayer, IGame } from '../models/Game.model';
 import { Score } from '../models/Score.model';
 import { User, IUser } from '../models/User.model';
 import { Round, IRound } from '../models/Round.model';
 import { roundEnded } from './round-ended';
 import { addPlayer } from './add-player';
+import { connectToMongo, disconnectFromMongo } from '../helpers/connect-to-mongo';
 
 mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
@@ -16,12 +16,10 @@ chai.use(sinonChai);
 
 describe('round-ended', () => {
   before(async () => {
-    await mongoose.connect('mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test', {
-      useNewUrlParser: true,
-    });
+    await connectToMongo();
   });
   after(async () => {
-    await mongoose.disconnect();
+    await disconnectFromMongo();
   });
   beforeEach(async () => {
     await Game.deleteMany({});

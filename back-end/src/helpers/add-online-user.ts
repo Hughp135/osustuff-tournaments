@@ -3,7 +3,7 @@ import { cache } from '../services/cache';
 
 // Update online players
 setInterval(() => {
-  const onlinePlayers: string[] = <string[]>cache.get('online-players');
+  const onlinePlayers: string[] = <string[]>cache.get('online-players') || [];
   for (const userId of onlinePlayers) {
     const isActive = cache.get(`user-active-${userId}`);
     if (!isActive) {

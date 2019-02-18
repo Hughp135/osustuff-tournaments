@@ -1,25 +1,19 @@
 import { ObjectId } from 'bson';
 import { User, IUser } from '../../models/User.model';
-import mongoose from 'mongoose';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import { Score } from '../../models/Score.model';
-import config from 'config';
 import { Skill } from '../../services/trueskill';
 import { Achievement, IAchievement } from '../../models/Achievement.model';
 import { roundFailed } from './round-failed';
+import { connectToMongo, disconnectFromMongo } from '../../helpers/connect-to-mongo';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 
 describe('achievement - mods scores', async () => {
   before(async () => {
-    await mongoose.connect(
-      'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
-      {
-        useNewUrlParser: true,
-      },
-    );
+    await connectToMongo();
   });
   afterEach(async () => {
     await User.deleteMany({});
@@ -27,7 +21,7 @@ describe('achievement - mods scores', async () => {
     await Achievement.deleteMany({});
   });
   after(async () => {
-    await mongoose.disconnect();
+    await disconnectFromMongo();
   });
 
   it('gives achievement if S rank and within 95% of best combo', async () => {

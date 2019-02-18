@@ -13,6 +13,7 @@ export class GameInfoComponent implements OnInit, OnDestroy {
   @Input() game: any;
   @Input() timeLeft: string;
   @Input() inGame: boolean;
+  @Input() isOwner: boolean;
 
   public connectionLost: boolean;
   private subscription: Subscription;
@@ -62,6 +63,10 @@ export class GameInfoComponent implements OnInit, OnDestroy {
       case 'round-over':
         return `Round ${this.game.roundNumber + 1} starts in`;
     }
+  }
+
+  get canEdit() {
+    return this.isOwner && ['new', 'scheduled'].includes(this.game.status);
   }
 
   public async leaveGame() {

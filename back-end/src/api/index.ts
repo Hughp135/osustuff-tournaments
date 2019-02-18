@@ -28,6 +28,7 @@ import { deleteLobby } from './admin/delete-lobby';
 import { getOnlineUsers } from './users/get-online-users';
 import { getBeatmap } from './beatmap/get';
 import { kickPlayer } from './lobbies/players/kick-player';
+import { editLobby } from './lobbies/edit-game';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -73,6 +74,7 @@ router.get('/lobbies/:id/users', getLobbyUsers);
 router.get('/lobbies/:id/messages', getMessages);
 router.post('/lobbies/:id/messages', authMiddleware, sendMessage);
 router.get('/lobbies/:id', getLobby);
+router.put('/lobbies/:gameId', authMiddleware, editLobby);
 router.post('/toggle-monitoring', toggleMonitoring);
 router.post('/admin/clear-db', clearDb);
 router.post('/admin/toggle-autocreate', toggleAutoCreateReq);

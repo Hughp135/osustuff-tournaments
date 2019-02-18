@@ -8,8 +8,10 @@
     "start:prod": "pm2 start --env production",
     "start": "nodemon",
     "test": "cross-env NODE_ENV=test mocha --exit  -t 10000 -r ts-node/register  -r tsconfig-paths/register \"src/**/*.spec.ts\"",
+    "test:ci": "cross-env NODE_ENV=test CI_RUNNER=true mocha --exit  -t 10000 -r ts-node/register  -r tsconfig-paths/register \"src/**/*.spec.ts\"",
     "sync-beatmaps": "ts-node src/tasks/sync-beatmaps.ts",
-    "migrate": "ts-node src/tasks/remove-old-hd-main.ts"
+    "migrate": "ts-node src/tasks/remove-old-hd-main.ts",
+    "lint": "tslint -p ."
   },
   "author": "",
   "license": "ISC",

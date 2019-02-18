@@ -25,6 +25,11 @@
       <h5>{{ nextStageStartsMsg }}</h5>
       {{ game.status !== 'checking-scores' ? timeLeft : ''}}
     </div>
+    <div class="column" *ngIf="canEdit">
+      <a class="ui primary button" [routerLink]="['/lobbies', game._id, 'edit']">
+        Edit Lobby
+      </a>
+    </div>
     <div class="column" *ngIf="game.status === 'new' && inGame">
       <div class="ui red button" (click)="leaveGame()">Leave Game</div>
     </div>

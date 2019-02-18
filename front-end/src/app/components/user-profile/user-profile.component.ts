@@ -19,6 +19,7 @@ export interface IUserResult {
 export type Role = 'admin' | 'creator' | 'moderator';
 
 export interface IUser {
+  _id: string;
   username: string;
   osuUserId: number;
   currentGame?: string;

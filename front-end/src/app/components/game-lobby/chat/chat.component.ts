@@ -6,7 +6,6 @@ import {
   ViewChild,
   AfterViewInit,
 } from '@angular/core';
-import { SettingsService } from 'src/app/services/settings.service';
 import { IGame } from '../game-lobby.component';
 
 export interface Message {
@@ -44,7 +43,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
   constructor(
     private gameService: GameService,
-    private settingsService: SettingsService,
   ) {}
 
   ngOnInit() {}

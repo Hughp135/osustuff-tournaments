@@ -1,3 +1,4 @@
+import { EditLobbyResolver } from './resolvers/edit-lobby.resolver';
 import { UserProfileResolver } from './resolvers/user-profile.resolver';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { HomeComponent } from './components/home/home.component';
@@ -12,6 +13,7 @@ import { LobbiesComponent } from './components/lobbies/lobbies.component';
 import { LoginComponent } from './components/login/login.component';
 import { FaqComponent } from './components/faq/faq.component';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
+import { EditLobbyComponent } from './components/edit-lobby/edit-lobby.component';
 
 const routes: Routes = [
   {
@@ -27,6 +29,12 @@ const routes: Routes = [
   {
     path: 'lobbies/create',
     component: CreateLobbyComponent,
+  },
+  {
+    path: 'lobbies/:id/edit',
+    component: EditLobbyComponent,
+    resolve: { data: EditLobbyResolver },
+    runGuardsAndResolvers: 'always',
   },
   {
     path: 'lobbies/:id',
@@ -59,6 +67,6 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes, {enableTracing: false, onSameUrlNavigation: 'reload'})],
   exports: [RouterModule],
-  providers: [GameLobbyResolver, LobbiesResolver, LeaderboardResolver, UserProfileResolver],
+  providers: [GameLobbyResolver, LobbiesResolver, LeaderboardResolver, UserProfileResolver, EditLobbyResolver],
 })
 export class AppRoutingModule {}

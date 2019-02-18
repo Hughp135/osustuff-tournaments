@@ -1,0 +1,26 @@
+
+label {
+  text-transform: uppercase;
+}
+
+input,
+.ui.input {
+  max-width: 400px;
+}
+
+h5 {
+  margin: 0;
+  color: red;
+}
+
+table {
+  td {
+    input {
+      width: 130px;
+    }
+  }
+}
+
+.error {
+  color: red;
+}

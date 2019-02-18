@@ -9,18 +9,14 @@ import config from 'config';
 import { achievementModScores } from './mod-scores';
 import { Skill } from '../../services/trueskill';
 import { Achievement, IAchievement } from '../../models/Achievement.model';
+import { connectToMongo } from '../../helpers/connect-to-mongo';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 
 describe('achievement - mods scores', async () => {
   before(async () => {
-    await mongoose.connect(
-      'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
-      {
-        useNewUrlParser: true,
-      },
-    );
+    await connectToMongo();
   });
   after(async () => {
     await mongoose.disconnect();

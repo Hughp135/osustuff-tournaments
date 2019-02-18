@@ -21,20 +21,36 @@ export async function createScheduledGame(
   {
     title,
     roundBeatmaps,
-    date,
+    nextStageStarts,
     minRank,
     maxRank,
     description,
   }: ICreateScheduledGameOptions,
   user: IUser,
 ): Promise<IGame> {
-  const shouldUseRandombeatmaps = roundBeatmaps.some(b => !b) || undefined;
+  return await Game.create({
+    title,
+    beatmaps: await fillUndefinedBeatmapsWithRandom(roundBeatmaps),
+    status: 'scheduled',
+    nextStageStarts,
+    minRank,
+    maxRank,
+    owner: user._id,
+    description,
+  });
+}
+
+export async function fillUndefinedBeatmapsWithRandom(
+  roundBeatmaps: ICreateScheduledGameOptions['roundBeatmaps'],
+): Promise<IBeatmap[]> {
+  const shouldUseRandombeatmaps = !roundBeatmaps || roundBeatmaps.some(b => !b);
   let beatmaps =
     shouldUseRandombeatmaps &&
     (await Beatmap.aggregate([{ $sample: { size: 3000 } }]));
+  let finalBeatmaps: Array<IBeatmap | undefined> = roundBeatmaps;
 
   if (shouldUseRandombeatmaps) {
-    roundBeatmaps = roundBeatmaps.map((r, idx) => {
+    finalBeatmaps = roundBeatmaps.map((r, idx) => {
       if (r) {
         // If beatmap is already defined, use the given beatmap
         return r;
@@ -54,14 +70,5 @@ export async function createScheduledGame(
     });
   }
 
-  return await Game.create({
-    title,
-    beatmaps: roundBeatmaps,
-    status: 'scheduled',
-    nextStageStarts: date,
-    minRank,
-    maxRank,
-    owner: user._id,
-    description,
-  });
+  return <IBeatmap[]>finalBeatmaps;
 }

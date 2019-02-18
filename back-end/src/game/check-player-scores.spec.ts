@@ -1,8 +1,6 @@
 import { IPlayer } from './../models/Game.model';
-import mongoose from 'mongoose';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
-import config from 'config';
 import { Game } from '../models/Game.model';
 import { Score } from '../models/Score.model';
 import { User } from '../models/User.model';
@@ -10,18 +8,17 @@ import sinon from 'sinon';
 import { Round } from '../models/Round.model';
 import { checkRoundScores } from './check-player-scores';
 import { addPlayer } from './add-player';
+import { connectToMongo, disconnectFromMongo } from '../helpers/connect-to-mongo';
 
 const expect = chai.expect;
 chai.use(sinonChai);
 
 describe('check-player-scores', () => {
   before(async () => {
-    await mongoose.connect('mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test', {
-      useNewUrlParser: true,
-    });
+    await connectToMongo();
   });
   after(async () => {
-    await mongoose.disconnect();
+    await disconnectFromMongo();
   });
   beforeEach(async () => {
     await Game.deleteMany({});

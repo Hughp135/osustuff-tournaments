@@ -1,9 +1,7 @@
 import { IGame } from './../models/Game.model';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
-import mongoose from 'mongoose';
 import { Game } from '../models/Game.model';
-import config from 'config';
 import { createGame } from '../game/create-game';
 import { nextRound } from '../game/next-round';
 import { Round, IRound } from '../models/Round.model';
@@ -11,19 +9,16 @@ import { updateRunningGames } from '../game/monitor-running-games';
 import sinon from 'sinon';
 import { Score } from '../models/Score.model';
 import { User } from '../models/User.model';
+import { connectToMongo, disconnectFromMongo } from '../helpers/connect-to-mongo';
 const recentBeatmaps = require('./sample-beatmaps.json');
 
-mongoose.set('useCreateIndex', true);
 const expect = chai.expect;
 chai.use(sinonChai);
 
 describe('game', () => {
   const getRecentBeatmaps = async () => recentBeatmaps;
   before(async () => {
-    await mongoose.connect(
-      'mongodb://127.0.0.1:' + config.get('DB_PORT') + '/osu-br-test',
-      { useNewUrlParser: true },
-    );
+    await connectToMongo();
   });
   beforeEach(async () => {
     await Game.deleteMany({});
@@ -32,7 +27,7 @@ describe('game', () => {
     await Round.deleteMany({});
   });
   after(async () => {
-    await mongoose.disconnect();
+    await disconnectFromMongo();
   });
   it('creates a game', async () => {
     const game = await createGame(getRecentBeatmaps);
