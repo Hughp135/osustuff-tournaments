@@ -9,6 +9,11 @@
       background: #343954;
     }
   }
+  &.joinable {
+    .ui.inverted.segment {
+      background: #044a04;
+    }
+  }
 }
 
 .large.icon {

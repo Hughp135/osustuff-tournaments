@@ -21,7 +21,7 @@
     </div>
   </div>
 
-  <h2 *ngIf="scheduledGames.length">Scheduled Events</h2>
+  <h2 *ngIf="scheduledGames.length">Upcoming Events</h2>
   <app-lobbies-list *ngIf="scheduledGames.length" [lobbies]="scheduledGames"></app-lobbies-list>
 
   <h2>Open Matches</h2>
@@ -30,11 +30,11 @@
       No matches are open to join at the moment
     </p>
   </div>
-  <app-lobbies-list [lobbies]="joinableGames"></app-lobbies-list>
+  <app-lobbies-list class="joinable" [lobbies]="joinableGames"></app-lobbies-list>
 
   <h2 *ngIf="inProgressGames.length">In Progress Matches</h2>
   <app-lobbies-list class="inprogress" [lobbies]="inProgressGames"></app-lobbies-list>
 
-  <h3 *ngIf="completedGames.length">Complete Matches</h3>
+  <h2 *ngIf="completedGames.length">Recently Completed Matches</h2>
   <app-lobbies-list class="finished" [lobbies]="completedGames"></app-lobbies-list>
 </div>

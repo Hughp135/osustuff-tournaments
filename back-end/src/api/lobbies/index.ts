@@ -4,16 +4,36 @@ import { Request, Response } from 'express';
 
 export async function getLobbies(req: Request, res: Response) {
   const cacheKey = `get-lobbies`;
-  const data = await getDataOrCache(cacheKey, 5000, async () => await getGames());
+  const data = await getDataOrCache(
+    cacheKey,
+    5000,
+    async () => await getGames(),
+  );
 
   res.json(data);
 }
 
 async function getGames() {
-  const games = await Game.find({})
+  const activeGames = await Game.find({ status: { $nin: ['scheduled', 'complete'] } })
     .sort({ _id: -1 })
-    .limit(20)
+    .limit(10)
     .lean();
+
+  const scheduledGames = await Game.find({ status: 'scheduled' })
+    .sort({ nextStageStarts: -1 })
+    .limit(3)
+    .lean();
+
+  const completedGames = await Game.find({ status: 'complete' })
+  .sort({ _id: -1 })
+  .limit(12)
+  .lean();
+
+  const games = [
+    ...activeGames,
+    ...scheduledGames,
+    ...completedGames,
+  ];
 
   return games.map((game: any) => {
     game.playerCount = game.players.length;
