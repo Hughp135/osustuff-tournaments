@@ -20,6 +20,7 @@ export class UserListComponent implements OnInit {
   public playerCount: number;
   public popupData: { player: IPlayer; offsetTop: number };
   public ignoreClickEvent = false;
+  public kickPlayer = this.doKickPlayer.bind(this);
 
   constructor(private gameService: GameService) {}
 
@@ -37,7 +38,7 @@ export class UserListComponent implements OnInit {
     this.ignoreClickEvent = false;
   }
 
-  public async kickPlayer(player) {
+  public async doKickPlayer(player) {
     await this.gameService.kickUser(this.game._id, player.osuUserId);
   }
 
