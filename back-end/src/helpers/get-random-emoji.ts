@@ -1,4 +1,4 @@
-import { randomFromArray } from "./random-from-array";
+import { randomFromArray } from './random-from-array';
 
 const allEmojis = [
   35, 42, 48, 49, 50, 51, 52, 53,
