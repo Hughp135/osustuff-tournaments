@@ -1,17 +1,17 @@
-import { ObjectId } from 'bson';
-import { User, IUser } from '../../models/User.model';
+import { User } from '../../models/User.model';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import { Score } from '../../models/Score.model';
-import { Skill } from '../../services/trueskill';
-import { Achievement, IAchievement } from '../../models/Achievement.model';
+import { Achievement } from '../../models/Achievement.model';
 import { roundFailed } from './round-failed';
 import { connectToMongo, disconnectFromMongo } from '../../helpers/connect-to-mongo';
+import { createUser } from '../../helpers/create-user';
+import { createScore } from '../../helpers/create-score';
 
-const expect = chai.expect;
+const assert = chai.assert;
 chai.use(sinonChai);
 
-describe('achievement - mods scores', async () => {
+describe('roundFailed()', async () => {
   before(async () => {
     await connectToMongo();
   });
@@ -24,81 +24,167 @@ describe('achievement - mods scores', async () => {
     await disconnectFromMongo();
   });
 
-  it('gives achievement if S rank and within 95% of best combo', async () => {
-    const user = await getUser(1);
-    const user2 = await getUser(2);
+  describe('Short Straw', async () => {
+    it('gives achievement if S rank and within 95% of best combo', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
 
-    const passed = await Score.create({
-      ...getBaseScoreData(user._id, 100, 'S'),
-    });
-    const failed = await Score.create({
-      ...getBaseScoreData(user2._id, 95, 'S'),
-    });
+      const passed = await createScore(user1, { rank: 'S', maxCombo: 100 });
+      const failed = await createScore(user2, { rank: 'S', maxCombo: 95 });
 
-    const achieved = await roundFailed([failed], [passed], [user, user2]);
-    expect(achieved.length).to.equal(1);
-
-    const achievement = <IAchievement>await Achievement.findOne({
-      _id: achieved[0].achievement._id,
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isDefined(achieved.find(a =>
+        a.achievement.title === 'Short Straw' &&
+        a.user._id === user2._id));
     });
 
-    expect(achievement.title).to.equal('Short Straw');
+    it('gives achievement if SH rank and within 95% of best combo', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { rank: 'S', maxCombo: 100 });
+      const failed = await createScore(user2, { rank: 'SH', maxCombo: 95 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isDefined(achieved.find(a =>
+        a.achievement.title === 'Short Straw' &&
+        a.user._id === user2._id));
+    });
+
+    it('does not give achievement if under 95% of best combo', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { rank: 'S', maxCombo: 100 });
+      const failed = await createScore(user2, { rank: 'S', maxCombo: 94 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Short Straw' &&
+        a.user._id === user2._id));
+    });
+
+    it('does not give achievement if not S/SH rank', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { rank: 'S', maxCombo: 100 });
+      const failed = await createScore(user2, { rank: 'A', maxCombo: 99 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Short Straw' &&
+        a.user._id === user2._id));
+    });
   });
-  it('does not give achievement if under 95% of best combo', async () => {
-    const user = await getUser(1);
-    const user2 = await getUser(2);
 
-    const passed = await Score.create({
-      ...getBaseScoreData(user._id, 100, 'S'),
-    });
-    const failed = await Score.create({
-      ...getBaseScoreData(user2._id, 94, 'S'),
+  describe('Spin to Win', async () => {
+    it('gives achievement if X rank', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { rank: 'X', accuracy: 100 });
+      const failed = await createScore(user2, { rank: 'X', accuracy: 100 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isDefined(achieved.find(a =>
+        a.achievement.title === 'Spin to Win' &&
+        a.user._id === user2._id));
     });
 
-    const achieved = await roundFailed([failed], [passed], [user, user2]);
-    expect(achieved.length).to.equal(0);
+    it('gives achievement if XH rank', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { rank: 'X', accuracy: 100 });
+      const failed = await createScore(user2, { rank: 'XH', accuracy: 100 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isDefined(achieved.find(a =>
+        a.achievement.title === 'Spin to Win' &&
+        a.user._id === user2._id));
+    });
+
+    it('does not give achievement if not X/XH rank, even if 100% accuracy', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { rank: 'X', accuracy: 100 });
+      const failed = await createScore(user2, { rank: 'F', accuracy: 100 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Spin to Win' &&
+        a.user._id === user2._id));
+    });
   });
-  it('does not give achievement if not S rank', async () => {
-    const user = await getUser(1);
-    const user2 = await getUser(2);
 
-    const passed = await Score.create({
-      ...getBaseScoreData(user._id, 100, 'S'),
-    });
-    const failed = await Score.create({
-      ...getBaseScoreData(user2._id, 100, 'A'),
+  describe('Overconfident', async () => {
+    it('gives achievement if failed with HDDTHRFL', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { mods: 0 });
+      const failed = await createScore(user2, { mods: 1112 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isDefined(achieved.find(a =>
+        a.achievement.title === 'Overconfident' &&
+        a.user._id === user2._id));
     });
 
-    const achieved = await roundFailed([failed], [passed], [user, user2]);
-    expect(achieved.length).to.equal(0);
+    it('does not give achievement if passed with HDDTHRFL', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { mods: 1112 });
+      const failed = await createScore(user2, { mods: 0 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Overconfident' &&
+        a.user._id === user1._id));
+    });
+
+    it('does not give achievement if failed with HDDTHR', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { mods: 0 });
+      const failed = await createScore(user2, { mods: 88 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Overconfident' &&
+        a.user._id === user2._id));
+    });
+  });
+
+  describe('Press F', async () => {
+    it('gives achievement if score difference is <=1000', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { score: 2000 });
+      const failed = await createScore(user2, { score: 1000 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isDefined(achieved.find(a =>
+        a.achievement.title === 'Press F' &&
+        a.user._id === user2._id));
+    });
+
+    it('does not give achievement if score difference is >1000', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { score: 2001 });
+      const failed = await createScore(user2, { score: 1000 });
+
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Press F' &&
+        a.user._id === user2._id));
+    });
   });
 });
-
-async function getUser(id: number): Promise<IUser> {
-  const { mu, sigma } = Skill.createRating();
-  return await User.create({
-    username: `user${id}`,
-    ppRank: id,
-    countryRank: id,
-    osuUserId: id,
-    country: 'US',
-    rating: { mu, sigma },
-  });
-}
-
-function getBaseScoreData(userId: ObjectId, maxCombo: number, rank: string) {
-  return {
-    gameId: new ObjectId(),
-    score: Math.floor(Math.random() * 10),
-    username: userId,
-    roundId: new ObjectId(),
-    userId,
-    rank,
-    mods: 0,
-    maxCombo,
-    accuracy: 1,
-    misses: 0,
-    count100: 1,
-    date: new Date(),
-  };
-}

@@ -25,14 +25,14 @@ export interface IGame extends mongoose.Document {
     | 'checking-scores'
     | 'round-over'
     | 'complete';
-  winningUser: {
+  winningUser?: {
     userId: mongoose.Schema.Types.ObjectId;
     username: string;
   };
   roundNumber?: number;
   nextStageStarts?: Date;
   beatmaps: IBeatmap[];
-  estimatedEnd: Date;
+  estimatedEnd?: Date;
   minRank?: number;
   maxRank?: number;
   owner?: mongoose.Schema.Types.ObjectId;
@@ -72,6 +72,7 @@ const GameSchema = new mongoose.Schema(
         userId: { type: mongoose.Types.ObjectId, required: true },
         username: { type: String, required: true },
       },
+      required: false,
     },
     nextStageStarts: { type: Date },
     estimatedEnd: { type: Date },

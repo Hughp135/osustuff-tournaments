@@ -5,7 +5,6 @@ import { IScore } from '../models/Score.model';
 import { DURATION_ROUND_ENDED } from './durations';
 import { getAllUserBestScores } from './get-round-scores';
 import { User } from '../models/User.model';
-import { updatePlayerAchievements } from '../achievements/update-player-achievements';
 import { cache } from '../services/cache';
 import config from 'config';
 
@@ -36,7 +35,6 @@ export async function roundEnded(game: IGame, round: IRound) {
   }
   game.nextStageStarts = date;
 
-  await updatePlayerAchievements(game);
   await game.save();
   await cache.del(`get-lobby-users-${game._id}`);
 }

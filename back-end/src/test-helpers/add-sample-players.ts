@@ -1,5 +1,5 @@
 import { IGame, IPlayer } from '../models/Game.model';
-import { updateOrCreateUser } from '../models/User.model';
+import { updateOrCreateUser, User } from '../models/User.model';
 import { userToPlayer } from '../game/add-player';
 import faker from 'faker';
 import { cache } from '../services/cache';
@@ -12,7 +12,8 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
       .map(async (_, index) => {
         try {
           const osuUser = getOsuUser(index);
-          const user = await updateOrCreateUser(osuUser);
+          const existing = await User.findOne({ osuUserId: osuUser.user_id });
+          const user = existing || await updateOrCreateUser(osuUser);
           addOnlineUser(user);
           cache.put(`user-active-${user._id}`, true, 60000);
           user.currentGame = game._id;
@@ -30,9 +31,11 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
   await game.save();
 }
 
-function getOsuUser(index: number) {
+function getOsuUser(index?: number) {
   return {
-    user_id: userIds[index] || (Math.floor(Math.random() * 100000) + 1).toString(),
+    user_id: index === undefined
+      ? (Math.floor(Math.random() * 100000) + 1).toString()
+      : userIds[index],
     username: faker.name.findName(),
     pp_rank: (Math.random() <= 0.04 ? 0 : faker.random.number(1000000)).toString(),
     country: faker.address.countryCode(),
