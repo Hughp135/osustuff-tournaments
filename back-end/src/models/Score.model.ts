@@ -6,7 +6,7 @@ export interface IScore extends mongoose.Document {
   gameId: mongoose.Types.ObjectId;
   username: string;
   score: number;
-  rank: string;
+  rank: 'XH' | 'X' | 'SH' | 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
   mods: number;
   misses: number;
   maxCombo: number;

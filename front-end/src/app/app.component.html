@@ -50,10 +50,11 @@
     <ng-template let-popup #popupTemplate>
       <div class="content">
         <div class="ui blue button" *ngIf="url === '/lobbies'" (click)="toggleAutoCreation()">Toggle Lobbies AutoCreate</div>
-        <div class="ui red button" *ngIf="url === '/lobbies'" (click)="clearDb()">Clear DB</div>
+        <div class="ui red button" (click)="clearDb()">Clear DB</div>
         <div class="ui teal button" *ngIf="url.startsWith('/lobbies/')" (click)="toggleFreeze()">Freeze</div>
         <div class="ui orange button" *ngIf="url.startsWith('/lobbies/')" (click)="skipRound()">Skip Round</div>
         <div class="ui red button" *ngIf="url.startsWith('/lobbies/')" (click)="deleteLobby()">Delete Lobby</div>
+        <div class="ui green button" (click)="createTestUser()">Create Test User</div>
       </div>
     </ng-template>
     <div>

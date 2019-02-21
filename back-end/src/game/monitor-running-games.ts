@@ -15,6 +15,7 @@ import { ObjectId } from 'bson';
 import { Score } from '../models/Score.model';
 import { logger } from '../logger';
 import { removeAfkPlayers } from './remove-afk-players';
+import { updatePlayerAchievements } from '../achievements/update-player-achievements';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
@@ -178,6 +179,7 @@ async function checkRoundEnded(game: IGame) {
     const round = <IRound> await Round.findById(game.currentRound);
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
+    await updatePlayerAchievements(game);
     clearGetLobbyCache(game._id);
   }
 }
@@ -220,6 +222,7 @@ async function skipCheckingScore(game: IGame) {
     if (scoresCount >= alivePlayersCount / 2) {
       logger.info('Ending round as at least half alive players have set score');
       await roundEnded(game, round);
+      await updatePlayerAchievements(game);
     } else {
       logger.info('Checking scores again');
       await checkRoundEnded(game);

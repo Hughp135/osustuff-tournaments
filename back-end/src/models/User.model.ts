@@ -153,7 +153,7 @@ export async function updateOrCreateUser(osuUser: ICreateUserFields, roles?: Rol
     return await found.save();
   }
 
-  const rating = Skill.createRating(1650 - 20 * Math.log10(ppRank));
+  const rating = Skill.createRating(1650 - 20 * Math.log10(ppRank || 1000000));
 
   return await User.create({
     username: osuUser.username,

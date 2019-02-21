@@ -29,6 +29,7 @@ import { getOnlineUsers } from './users/get-online-users';
 import { getBeatmap } from './beatmap/get';
 import { kickPlayer } from './lobbies/players/kick-player';
 import { editLobby } from './lobbies/edit-game';
+import { createTestUser } from './admin/create-test-user';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -79,6 +80,7 @@ router.post('/toggle-monitoring', toggleMonitoring);
 router.post('/admin/clear-db', clearDb);
 router.post('/admin/toggle-autocreate', toggleAutoCreateReq);
 router.post('/admin/delete-lobby', deleteLobby);
+router.post('/admin/create-test-user', createTestUser);
 router.get('/users', getUsers);
 router.get('/unread-achievements', authMiddleware, getUnreadAchievements);
 router.get('/user/me', authMiddleware, getUser);

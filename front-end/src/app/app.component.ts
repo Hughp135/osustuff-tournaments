@@ -50,23 +50,27 @@ export class AppComponent {
     return this.currentUser && this.currentUser.username;
   }
 
-  public async clearDb() {
-    await this.adminService.clearDb();
-  }
-
   public async skipRound() {
     await this.adminService.skipRound(this.gameId);
-  }
-
-  public async deleteLobby() {
-    await this.adminService.deleteLobby(this.gameId);
   }
 
   public async toggleFreeze() {
     await this.adminService.toggleFreeze();
   }
 
+  public async clearDb() {
+    await this.adminService.clearDb();
+  }
+
   public async toggleAutoCreation() {
     await this.adminService.toggleAutoCreate();
+  }
+
+  public async deleteLobby() {
+    await this.adminService.deleteLobby(this.gameId);
+  }
+
+  public async createTestUser() {
+    await this.adminService.createTestUser();
   }
 }
