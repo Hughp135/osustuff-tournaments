@@ -17,7 +17,11 @@ export async function addSampleChatMessage(game: IGame) {
     osuUserId: player.osuUserId,
     gameId: game._id,
     userId: player.userId,
-    message: faker.lorem.sentence() + ' ' + getRandomEmoji(),
+    message: randomFromArray([
+      faker.lorem.sentence() + ' ' + getRandomEmoji(),
+      faker.lorem.sentence(),
+      getRandomEmoji(),
+    ]),
   });
 
   cache.put('last-message-id', _id.toString());
