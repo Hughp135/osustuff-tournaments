@@ -3,6 +3,7 @@ import { Message } from '../models/Message.model';
 import faker from 'faker';
 import { cache } from '../services/cache';
 import { randomFromArray } from '../helpers/random-from-array';
+import { getRandomEmoji } from '../helpers/get-random-emoji';
 
 export async function addSampleChatMessage(game: IGame) {
   if (Math.random() < 0.85 || !game.players.length) {
@@ -16,7 +17,7 @@ export async function addSampleChatMessage(game: IGame) {
     osuUserId: player.osuUserId,
     gameId: game._id,
     userId: player.userId,
-    message: faker.lorem.sentence(),
+    message: faker.lorem.sentence() + ' ' + getRandomEmoji(),
   });
 
   cache.put('last-message-id', _id.toString());
