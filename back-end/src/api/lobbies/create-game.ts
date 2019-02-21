@@ -30,7 +30,7 @@ export async function makeScheduledGame(req: Request, res: Response) {
   const canCreate =
     user.roles.includes('creator') || user.roles.includes('admin');
 
-  if (canCreate) {
+  if (!canCreate) {
     return res
       .status(401)
       .json({ error: 'You do not have the permission to create lobbies' });
