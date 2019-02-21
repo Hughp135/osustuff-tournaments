@@ -1,8 +1,8 @@
 import { IGame } from '../models/Game.model';
 import { Score } from '../models/Score.model';
-import { arrayRandVal } from '../game/create-game';
 import { cache } from '../services/cache';
 import { addOnlineUser } from '../helpers/add-online-user';
+import { randomFromArray } from '../helpers/random-from-array';
 
 export async function addSampleScores(game: IGame) {
   await Promise.all(
@@ -20,9 +20,9 @@ export async function addSampleScores(game: IGame) {
             userId: player.userId,
             username: player.username,
             score,
-            mods: arrayRandVal([64, 72, 80, 0, 8, 16, 32, 24]),
-            rank: arrayRandVal(['S']),
-            maxCombo: arrayRandVal([10, 9, 7]),
+            mods: randomFromArray([64, 72, 80, 0, 8, 16, 32, 24]),
+            rank: randomFromArray(['S']),
+            maxCombo: randomFromArray([10, 9, 7]),
             count100: Math.floor(Math.random() * 50),
             accuracy: parseFloat((Math.random() * 100).toFixed(2)),
             misses: Math.floor(Math.random() * 50),

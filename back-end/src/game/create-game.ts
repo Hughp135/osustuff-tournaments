@@ -3,6 +3,7 @@ import { Game, IGame } from '../models/Game.model';
 import { addSamplePlayers } from '../test-helpers/add-sample-players';
 import config from 'config';
 import { Beatmap } from '../models/Beatmap.model';
+import { randomFromArray } from '../helpers/random-from-array';
 
 const TEST_MODE = config.get('TEST_MODE');
 
@@ -108,14 +109,9 @@ export function getBeatmapBetweenStars(
     }
   }
 
-  const random = arrayRandVal(filtered);
+  const random = randomFromArray(filtered);
 
   beatmaps = beatmaps.filter(b => b.beatmapset_id !== random.beatmapset_id);
 
   return [random, beatmaps];
-}
-
-export function arrayRandVal(myArray: any[]) {
-  const index = Math.floor(Math.random() * myArray.length);
-  return myArray[index];
 }
