@@ -25,7 +25,7 @@
       </div>
       <div
         class="description chat-message"
-        [innerHTML]="message.message | twitchEmotes | emojify | userHighlight:currentUsername"
+        [innerHTML]="message.message | twitchEmotes | userHighlight:currentUsername | emojify | twemojify"
       ></div>
     </div>
   </div>
@@ -36,7 +36,7 @@
       #chatInput
       autocomplete="off"
       [disabled]="sendingMessage || !canChat"
-      [ngModel]="messageInput | emojify"
+      [ngModel]="messageInput | emojify | twemojify"
       (ngModelChange)="messageInput = $event"
       name="messageInput"
       type="text"

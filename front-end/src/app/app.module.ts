@@ -30,6 +30,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { SuiModule } from 'ng2-semantic-ui';
 import { LobbiesComponent } from './components/lobbies/lobbies.component';
 import { TwitchEmotesPipe } from 'src/pipes/twitch-emotes.pipe';
+import { TwemojifyPipe } from 'src/pipes/twemojify.pipe';
 import { LoginComponent } from './components/login/login.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { FaqComponent } from './components/faq/faq.component';
@@ -63,6 +64,7 @@ import { EditLobbyComponent } from './components/edit-lobby/edit-lobby.component
     UserProfileComponent,
     LobbiesComponent,
     TwitchEmotesPipe,
+    TwemojifyPipe,
     UsernameHighlightPipe,
     LoginComponent,
     NotificationsComponent,
