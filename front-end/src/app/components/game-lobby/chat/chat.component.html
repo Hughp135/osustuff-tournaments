@@ -15,8 +15,8 @@
           }}</span>
         <span class="text-muted"> {{ message.createdAt | date: 'short' }}</span>
       </div>
-      <div class="description chat-message">
-        {{ message.message | twitchEmotes | emojify | twemojify | userHighlight:currentUsername }}
+      <div class="description chat-message"
+        [innerHTML]="message.message | escape | twitchEmotes | emojify | twemojify | userHighlight:currentUsername">
       </div>
     </div>
   </div>

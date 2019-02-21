@@ -4,6 +4,7 @@ import faker from 'faker';
 import { cache } from '../services/cache';
 import { randomFromArray } from '../helpers/random-from-array';
 import { getRandomEmoji } from '../helpers/get-random-emoji';
+import { getRandomHtml } from '../helpers/get-random-html';
 
 export async function addSampleChatMessage(game: IGame) {
   if (Math.random() < 0.85 || !game.players.length) {
@@ -21,6 +22,7 @@ export async function addSampleChatMessage(game: IGame) {
       faker.lorem.sentence() + ' ' + getRandomEmoji(),
       faker.lorem.sentence(),
       getRandomEmoji(),
+      getRandomHtml(),
     ]),
   });
 
