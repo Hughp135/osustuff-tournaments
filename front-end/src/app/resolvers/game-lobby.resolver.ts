@@ -166,7 +166,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
           }
 
           if (
-            statusChanged ||
+            game.status === 'new' || statusChanged ||
             Math.abs(game.secondsToNextRound - this.secondsLeft) > 10
           ) {
             this.secondsLeft = game.secondsToNextRound;
