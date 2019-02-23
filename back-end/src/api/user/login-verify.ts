@@ -1,4 +1,4 @@
-import { Role } from './../../models/User.model';
+import { Role, User } from './../../models/User.model';
 import { Request, Response } from 'express';
 import got from 'got';
 import config from 'config';
@@ -10,7 +10,6 @@ const OSU_OAUTH_ID = config.get('OSU_OAUTH_ID');
 const OSU_OAUTH_SECRET = config.get('OSU_OAUTH_SECRET');
 const OSU_OAUTH_REDIRECT = config.get('OSU_OAUTH_REDIRECT');
 const TEST_MODE = config.get('TEST_MODE');
-const BANNED_PLAYERS = ['Reggie Wedgie'];
 
 export async function loginVerify(req: Request, res: Response) {
   const { code, state } = req.query;
@@ -47,7 +46,9 @@ export async function loginVerify(req: Request, res: Response) {
       throw new Error('get user v2/me request didnt have right data: ');
     }
 
-    if (BANNED_PLAYERS.includes(body.username)) {
+    const bannedPlayer = await User.findOne({ osuUserId: body.id, banned: true });
+
+    if (bannedPlayer) {
       return res.status(401).end();
     }
 
@@ -58,8 +59,8 @@ export async function loginVerify(req: Request, res: Response) {
         user_id: body.id,
         username: body.username,
         country: body.country.code,
-        pp_rank: body.statistics.rank.global,
-        pp_country_rank: body.statistics.rank.country,
+        pp_rank: body.statistics.rank.global || 0,
+        pp_country_rank: body.statistics.rank.country || 0,
       },
       roles,
     );

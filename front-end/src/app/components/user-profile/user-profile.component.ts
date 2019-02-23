@@ -1,5 +1,8 @@
+import { ApiService } from './../../services/api.service';
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { SettingsService } from '../../services/settings.service';
+import { Subscription } from 'rxjs';
 
 export interface IUserAchievement {
   title: string;
@@ -38,6 +41,7 @@ export interface IUser {
   };
   averageRank?: number;
   roles: Role[];
+  banned?: boolean;
 }
 
 @Component({
@@ -45,16 +49,25 @@ export interface IUser {
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss'],
 })
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit, OnDestroy {
   public user: IUser;
+  private currentUser: IUser;
+  private subscriptions: Subscription[] = [];
 
-  constructor(route: ActivatedRoute) {
-    route.data.subscribe(({ data }) => {
-      this.user = data.user;
-    });
+  constructor(route: ActivatedRoute, settingsService: SettingsService, private apiService: ApiService) {
+    this.subscriptions = [
+      route.data.subscribe(({ data }) => {
+        this.user = data.user;
+      }),
+      settingsService.user.subscribe(u => this.currentUser = u),
+    ];
   }
 
   ngOnInit() {}
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
 
   public getRatingChange(result) {
     if (!result.ratingAfter || !result.ratingBefore) {
@@ -80,5 +93,20 @@ export class UserProfileComponent implements OnInit {
     }
 
     return 'orange eye';
+  }
+
+  public async banUser () {
+    try {
+      await this.apiService.post(`admin/ban-user/`, {
+        osuUserId: this.user.osuUserId,
+      });
+      window.location.reload();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  get isMod() {
+    return this.currentUser && this.currentUser.roles.includes('moderator');
   }
 }

@@ -1,5 +1,5 @@
 <div class="ui container section">
-  <h1>{{ user.username }}'s Profile</h1>
+  <h1>{{ user.username }}'s Profile{{user.banned ? ' (Banned)' : ''}}</h1>
   <a
     class="ui purple button"
     target="_blank"
@@ -9,9 +9,14 @@
     View osu! Profile
   </a>
 
+  <div class="ui right floated red button" *ngIf="isMod" (click)="banUser()">
+    {{ user.banned ? 'Unban' : 'Ban'}} User
+  </div>
+
   <h2>Stats</h2>
   <div class="ui inverted padded segment">
     <div class="ui equal width center aligned grid">
+      .o
       <div class="column">
         <h5 class="ui inverted header">Games Played</h5>
         <h3>

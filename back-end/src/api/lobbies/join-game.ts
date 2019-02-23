@@ -48,6 +48,10 @@ export async function joinGame(req: Request, res: Response) {
 
   const user = await updateOrCreateUser(osuUser);
 
+  if (user.banned) {
+    return res.status(401).end();
+  }
+
   // Store that user is active
   addOnlineUser(user);
   cache.put(`user-active-${user._id}`, true, 60000);

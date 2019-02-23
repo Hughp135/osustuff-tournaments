@@ -43,6 +43,7 @@ export interface IUser extends mongoose.Document {
   };
   results: IUserResult[];
   roles: Role[];
+  banned?: boolean;
 }
 
 const UserSchema = new mongoose.Schema(
@@ -56,6 +57,7 @@ const UserSchema = new mongoose.Schema(
     },
     currentGame: { type: mongoose.Schema.Types.ObjectId },
     ppRank: { type: Number, required: true },
+    banned: { type: Boolean, index: true },
     countryRank: { type: Number, required: true },
     gamesPlayed: { type: Number, required: true, default: 0 },
     wins: { type: Number, required: true, default: 0 },
@@ -137,7 +139,10 @@ interface ICreateUserFields {
   country: string;
 }
 
-export async function updateOrCreateUser(osuUser: ICreateUserFields, roles?: Role[]): Promise<IUser> {
+export async function updateOrCreateUser(
+  osuUser: ICreateUserFields,
+  roles?: Role[],
+): Promise<IUser> {
   const osuUserId = parseInt(osuUser.user_id, 10);
   const ppRank = parseInt(osuUser.pp_rank, 10);
   const countryRank = parseInt(osuUser.pp_country_rank, 10);
