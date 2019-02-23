@@ -262,6 +262,10 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     return this.currentUsername && this.players.find(p => p.username === this.currentUsername);
   }
 
+  get isModOrAdmin() {
+    return this.currentUser.roles.includes('admin') || this.currentUser.roles.includes('moderator');
+  }
+
   get currentBeatmap() {
     if (this.game.status === 'in-progress') {
       return this.game.round.beatmap;
