@@ -97,7 +97,7 @@ function scoreValidAndUnique(
 ) {
   const correctBeatmap = score.beatmap_id === round.beatmap.beatmap_id;
   const minDate = new Date(
-    (<any>round).createdAt.getTime() - 10 +
+    (<any>round).createdAt.getTime() - 15000 +
       parseInt(round.beatmap.total_length, 10) / 1.5 * 1000,
   );
   const validDate = new Date(score.date) > minDate;
