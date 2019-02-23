@@ -63,9 +63,9 @@ const UserSchema = new mongoose.Schema(
     country: { type: String, required: true },
     rating: {
       type: {
-        mu: { type: Number, required: true, index: true },
+        mu: { type: Number, required: true },
         sigma: { type: Number, required: true },
-        weighted: { type: Number },
+        weighted: { type: Number, index: true },
       },
       required: true,
     },
@@ -102,14 +102,14 @@ const UserSchema = new mongoose.Schema(
           gameEndedAt: { type: Date },
           ratingBefore: {
             type: {
-              mu: { type: Number, required: true, index: true },
+              mu: { type: Number, required: true },
               sigma: { type: Number, required: true },
               weighted: { type: Number },
             },
           },
           ratingAfter: {
             type: {
-              mu: { type: Number, required: true, index: true },
+              mu: { type: Number, required: true },
               sigma: { type: Number, required: true },
               weighted: { type: Number },
             },

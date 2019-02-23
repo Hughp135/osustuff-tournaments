@@ -96,14 +96,16 @@ export async function roundPassed(
   passedScores.sort((a, b) => b.score - a.score);
 
   const highestScore = passedScores[0];
-  const highestScoreMods = getAppliedMods(highestScore.mods);
-  const highestScoreUser = <IUser>aliveUsers.find(u => u._id.toString() === highestScore.userId.toHexString());
+  if (highestScore) {
+    const highestScoreMods = getAppliedMods(highestScore.mods);
+    const highestScoreUser = <IUser>aliveUsers.find(u => u._id.toString() === highestScore.userId.toHexString());
 
-  if (highestScoreMods.includes('NF') && highestScoreMods.includes('SO')) {
-    achieved.push({
-      user: highestScoreUser,
-      achievement: aCutAbove,
-    });
+    if (highestScoreMods.includes('NF') && highestScoreMods.includes('SO')) {
+      achieved.push({
+        user: highestScoreUser,
+        achievement: aCutAbove,
+      });
+    }
   }
 
   return achieved;
