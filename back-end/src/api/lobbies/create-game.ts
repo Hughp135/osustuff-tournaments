@@ -48,10 +48,9 @@ export async function makeScheduledGame(req: Request, res: Response) {
 
     return res.status(200).json({ gameId: game._id });
   } catch (e) {
-    logger.error('Failed to create game', e);
+    logger.error('Failed to create game!', e);
+    return res.status(500).json({ error: 'Failed to create game' });
   }
-
-  return res.status(500).json({ error: 'Failed to create game' });
 }
 
 export function validateGameRequestBody(

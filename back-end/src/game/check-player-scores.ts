@@ -38,7 +38,7 @@ export async function checkRoundScores(
     await Promise.all(
       players.map(async p =>
         checkPlayerScores(p, round, getUserRecent).catch(e =>
-          logger.error('Failed to check player scores: ' + p, e),
+          logger.error(`Failed to check player scores!`, p, e),
         ),
       ),
     );

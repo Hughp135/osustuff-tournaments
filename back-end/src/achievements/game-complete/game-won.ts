@@ -19,10 +19,7 @@ export async function gameWon(
   );
 
   if (!user) {
-    logger.error('Winning user not found in gameWon()', {
-      gameId: game._id,
-      winningUser: game.winningUser,
-    });
+    logger.error(`(game id: ${game._id.toHexString()}) Winning user not found in gameWon()!`);
 
     return [];
   }

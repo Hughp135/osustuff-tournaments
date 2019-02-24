@@ -52,7 +52,7 @@ function updatePlayerRatings(
   game: IGame,
 ) {
   if (rankedPlayers.length < 1) {
-    logger.info('Not updating stats because only 1 or less players were ranked');
+    logger.info(`(game id: ${game._id.toHexString()}) Not updating stats because no players were ranked.`);
     return;
   }
   const ratings = rankedPlayers.map(p => [

@@ -6,6 +6,7 @@ import { Game } from '../../models/Game.model';
 import { getDataOrCache } from '../../services/cache';
 import got from 'got';
 import config from 'config';
+import { logger } from '../../logger';
 
 export async function getLobbyUsers(req: Request, res: Response) {
   const { id } = req.params;
@@ -85,7 +86,7 @@ async function getData(id: string) {
         });
       }
     } catch (e) {
-      logger.error('Failed to get channels from twitch', e.body || e);
+      logger.error('Failed to get channels from Twitch!', e.body || e);
     }
   }
 

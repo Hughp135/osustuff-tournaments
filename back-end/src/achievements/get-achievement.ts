@@ -6,10 +6,10 @@ import { logger } from '../logger';
 export async function getAchievement(id: mongoose.Types.ObjectId): Promise<IAchievement> {
   const achievement = await getDataOrCache(`achievement-${id}`, 60000 * 60, async () => {
     try {
-      const achi = await Achievement.findById(id);
-      return achi;
+      const found = await Achievement.findById(id);
+      return found;
     } catch (e) {
-      logger.error('Failed to get achievement', e);
+      logger.error(`(achievement id: ${id.toHexString()}) Failed to get achievement!`);
       return null;
     }
   });

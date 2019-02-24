@@ -35,13 +35,10 @@ export async function twitchVerify(req: Request, res: Response) {
       },
     });
     if (!tokenResponse.body || !tokenResponse.body.access_token) {
-      logger.error(
-        'Twitch oauth response did not contain a token. Body:',
-        tokenResponse.body,
-      );
+      logger.error('Twitch OAuth response did not contain a token.', tokenResponse.body);
       return res
         .status(401)
-        .json({ error: 'Failed to verify code from twitch' });
+        .json({ error: 'Failed to verify code from Twitch' });
     }
 
     const userResponse = await got.get('https://api.twitch.tv/helix/users', {
@@ -60,9 +57,9 @@ export async function twitchVerify(req: Request, res: Response) {
     user.twitch = { loginName: twitchUser.login, userId: twitchUser.id };
     await user.save();
   } catch (e) {
-    logger.error('Failed to verify twitch', e.body || e);
+    logger.error('Failed to verify Twitch!', e.body || e);
 
-    return res.status(400).json({ error: 'Failed to verify twitch oauth' });
+    return res.status(400).json({ error: 'Failed to verify Twitch OAuth' });
   }
 
   res.redirect('/user/' + user.username);

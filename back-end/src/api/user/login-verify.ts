@@ -42,8 +42,8 @@ export async function loginVerify(req: Request, res: Response) {
     });
 
     if (!body.id || !body.username || !body.country || !body.statistics) {
-      logger.error('get user request didnt have user data', body);
-      throw new Error('get user v2/me request didnt have right data: ');
+      logger.error('/api/v2/me didn\'t have necessary data!', body);
+      throw new Error();
     }
 
     const bannedPlayer = await User.findOne({ osuUserId: body.id, banned: true });
@@ -81,13 +81,13 @@ export async function loginVerify(req: Request, res: Response) {
 
         return res.redirect(`/lobbies/${gameId}?autoJoin=true`);
       } catch (e) {
-        logger.error('Failed to parse oauth state', state);
+        logger.error('Failed to parse OAuth state!', state);
       }
     }
 
     res.redirect('/lobbies');
   } catch (e) {
-    logger.error('Failed to verify oauth request', e);
+    logger.error('Failed to verify OAuth request!', e);
     res.status(400).end();
   }
 }

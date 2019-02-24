@@ -40,7 +40,7 @@ const app = express();
 const checkIp = (req: Request) => {
   // Use cloud-flare's connecting-ip to determine user's real IP
   if (!req.headers['cf-connecting-ip'] && process.env.NODE_ENV === 'production') {
-    logger.error('Request has no cf-connecting-ip', req.headers);
+    logger.error('Request has no cf-connecting-ip header', req.headers);
   }
   return <string>req.headers['cf-connecting-ip'] || Math.random().toString();
 };
@@ -98,7 +98,7 @@ router.get('/twitch-redirect', authMiddleware, twitchVerify);
 app.use('/api', router);
 
 export async function startServer() {
-  logger.info('Environment ' + process.env.NODE_ENV);
+  logger.info(`Environment is ${process.env.NODE_ENV}.`);
   await app.listen(PORT);
-  logger.info('API started on port ' + PORT);
+  logger.info(`API started on port ${PORT}.`);
 }

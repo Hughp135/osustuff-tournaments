@@ -38,10 +38,9 @@ export async function getUser(req: Request, res: Response) {
       .map(async ({ achievementId }: IUserAchievement) => {
         const achievement = await getAchievement(achievementId);
         if (!achievement) {
-          logger.error('Achievement ID no longer exists', [
-            'Achievement ID ' + achievementId.toHexString(),
-            'User ID: ' + user._id.toHexString(),
-          ]);
+          const aId = achievementId.toHexString();
+          const uId = user._id.toHexString();
+          logger.error(`(achievement id: ${aId}, user id: ${uId}) Achievement ID no longer exists!`);
         }
 
         return achievement;

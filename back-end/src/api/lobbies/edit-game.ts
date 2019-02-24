@@ -5,6 +5,7 @@ import { User } from '../../models/User.model';
 import { validateGameRequestBody } from './create-game';
 import { Game } from '../../models/Game.model';
 import { fillUndefinedBeatmapsWithRandom } from '../../game/create-scheduled-game';
+import { logger } from '../../logger';
 
 export interface ICreateScheduledGameOptions {
   title: string;
@@ -76,7 +77,7 @@ export async function editLobby(req: Request, res: Response) {
     await Game.updateOne({ _id: gameId }, { $set: gameData });
     return res.json({ gameId });
   } catch (e) {
-    logger.error('Failed to edit game', e);
+    logger.error('Failed to edit game!', e);
     return res.status(500).json({ error: 'Failed to create game' });
   }
 }

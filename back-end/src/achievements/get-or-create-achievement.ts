@@ -18,7 +18,7 @@ export async function getOrCreateAchievement(
       }
       return null;
     } catch (e) {
-      logger.error('Failed to create/get achievement ' + title, e);
+      logger.error(`Failed to create or get achievement ${title}!`);
       throw e;
     }
   });

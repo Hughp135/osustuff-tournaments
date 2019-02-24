@@ -10,7 +10,7 @@ export function verifyJWT(token: string) {
       if (err || !decodedToken) {
         /* istanbul ignore next */
         if (err) {
-          logger.error('Invalid token error', [err.message || err]);
+          logger.error('Invalid token error!', err.message || err);
         }
         return reject(err);
       }

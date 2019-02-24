@@ -21,7 +21,8 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
           await user.save();
           return userToPlayer(user);
         } catch (e) {
-          logger.error(e);
+          logger.error('Failed to create sample players!');
+          throw e;
         }
       })
       .filter(p => !!p),
