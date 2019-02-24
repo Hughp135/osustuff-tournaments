@@ -69,6 +69,7 @@ async function getData(id: string) {
           headers: {
             'Client-ID': config.get('TWITCH_CLIENT_ID'),
           },
+          timeout: 2000, // don't delay requests too long for this
         },
       );
 
