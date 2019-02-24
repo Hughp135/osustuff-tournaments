@@ -110,7 +110,9 @@ export async function modScores(
   }
 
   for (const user of allUsers) {
-    const userScores = passedScores.filter(score => score.userId.toHexString() === user._id.toString());
+    const userScores = passedScores.filter(score =>
+      score.userId.toHexString() === user._id.toString() &&
+      score.rank !== 'F');
 
     const dtScores = userScores.filter(score => getAppliedMods(score.mods).includes('DT'));
     if (dtScores.length >= 5) {
