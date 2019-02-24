@@ -43,33 +43,48 @@ if (logLevel === 'debug') {
 export const logger = {
   debug: (output: any, ...params: any[]) => {
     const timestamp = `[${getTimestamp()} DEBG]`;
+    const text = getOutput(output, params);
 
-    console.log(`${chalk.whiteBright(timestamp)} ${output} ${params.join(' ')}`);
-    debugStream.write(`${timestamp} ${output} ${params.map(x => JSON.stringify(x)).join(' ')}`);
+    if (logDebug) {
+      console.log(`${chalk.whiteBright(timestamp)} ${text}`);
+    }
+    debugStream.write(`${timestamp} ${text}\n`);
   },
   verbose: (output: any, ...params: any[]) => {
     const timestamp = `[${getTimestamp()} VERB]`;
+    const text = getOutput(output, params);
 
-    console.log(`${chalk.cyanBright(timestamp)} ${output} ${params.join(' ')}`);
-    verboseStream.write(`${timestamp} ${output} ${params.map(x => JSON.stringify(x)).join(' ')}`);
+    if (logVerbose) {
+      console.log(`${chalk.cyanBright(timestamp)} ${text}`);
+    }
+    verboseStream.write(`${timestamp} ${text}\n`);
   },
   info: (output: any, ...params: any[]) => {
     const timestamp = `[${getTimestamp()} INFO]`;
+    const text = getOutput(output, params);
 
-    console.log(`${chalk.greenBright(timestamp)} ${output} ${params.join(' ')}`);
-    infoStream.write(`${timestamp} ${output} ${params.map(x => JSON.stringify(x)).join(' ')}`);
+    if (logInfo) {
+      console.log(`${chalk.greenBright(timestamp)} ${text}`);
+    }
+    infoStream.write(`${timestamp} ${text}\n`);
   },
   warn: (output: any, ...params: any[]) => {
     const timestamp = `[${getTimestamp()} WARN]`;
+    const text = getOutput(output, params);
 
-    console.log(`${chalk.yellowBright(timestamp)} ${output} ${params.join(' ')}`);
-    warnStream.write(`${timestamp} ${output} ${params.map(x => JSON.stringify(x)).join(' ')}`);
+    if (logWarn) {
+      console.log(`${chalk.yellowBright(timestamp)} ${text}`);
+    }
+    warnStream.write(`${timestamp} ${text}\n`);
   },
   error: (output: any, ...params: any[]) => {
     const timestamp = `[${getTimestamp()} ERRR]`;
+    const text = getOutput(output, params);
 
-    console.log(`${chalk.redBright(timestamp)} ${output} ${params.join(' ')}`);
-    errorStream.write(`${timestamp} ${output} ${params.map(x => JSON.stringify(x)).join(' ')}`);
+    if (logError) {
+      console.log(`${chalk.redBright(timestamp)} ${text}`);
+    }
+    errorStream.write(`${timestamp} ${text}\n`);
   },
 };
 
@@ -90,4 +105,12 @@ function getTimestamp() {
   });
 
   return `${date} ${time}`;
+}
+
+function getOutput(output: any, ...params: any[]): string {
+  if (params.length === 0) {
+    return output;
+  }
+
+  return `${output} ${params.map(x => JSON.stringify(x)).join(' ')}`;
 }

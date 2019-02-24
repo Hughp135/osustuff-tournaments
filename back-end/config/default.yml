@@ -17,4 +17,4 @@ REMOVE_AFK_PLAYERS: true
 TWITCH_CLIENT_ID: 'asdasd'
 TWITCH_SECRET: 'oijoij'
 TWITCH_REDIRECT: 'http://localhost:4200/api/twitch-redirect'
-LOG_LEVEL: 'error'
+LOG_LEVEL: 'info'
