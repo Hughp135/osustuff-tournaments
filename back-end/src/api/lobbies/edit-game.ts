@@ -76,7 +76,7 @@ export async function editLobby(req: Request, res: Response) {
     await Game.updateOne({ _id: gameId }, { $set: gameData });
     return res.json({ gameId });
   } catch (e) {
-    console.error('Failed to edit game', e);
+    logger.error('Failed to edit game', e);
     return res.status(500).json({ error: 'Failed to create game' });
   }
 }

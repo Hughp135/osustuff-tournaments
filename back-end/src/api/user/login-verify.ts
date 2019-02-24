@@ -42,7 +42,7 @@ export async function loginVerify(req: Request, res: Response) {
     });
 
     if (!body.id || !body.username || !body.country || !body.statistics) {
-      console.error('get user request didnt have user data', body);
+      logger.error('get user request didnt have user data', body);
       throw new Error('get user v2/me request didnt have right data: ');
     }
 

@@ -28,10 +28,11 @@ let gamesBeingUpdated: string[] = [];
 let creatingNewGame = false;
 
 export async function startMonitoring() {
-  console.info('starting monitoring');
+  logger.info('Starting to monitor...');
 
   if (isMonitoring) {
-    throw new Error('Already monitoring');
+    logger.error('Already monitoring!');
+    throw new Error();
   }
 
   isMonitoring = true;
@@ -61,7 +62,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
         creatingNewGame = false;
       });
     } catch (e) {
-      console.error('Failed to create game', e);
+      logger.error('Failed to create game', e);
     }
   }
 
@@ -94,7 +95,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
           break;
       }
     } catch (e) {
-      console.error('Failed to update game with status ' + game.status, e);
+      logger.error('Failed to update game with status ' + game.status, e);
     }
     gamesBeingUpdated = gamesBeingUpdated.filter(g => g !== game._id.toString());
   });
@@ -123,7 +124,7 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
         );
       }
     } catch (e) {
-      console.error(e);
+      logger.error(e);
     }
   }
 }

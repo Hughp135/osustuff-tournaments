@@ -40,7 +40,7 @@ const app = express();
 const checkIp = (req: Request) => {
   // Use cloud-flare's connecting-ip to determine user's real IP
   if (!req.headers['cf-connecting-ip'] && process.env.NODE_ENV === 'production') {
-    console.error('Request has no cf-connecting-ip', req.headers);
+    logger.error('Request has no cf-connecting-ip', req.headers);
   }
   return <string>req.headers['cf-connecting-ip'] || Math.random().toString();
 };

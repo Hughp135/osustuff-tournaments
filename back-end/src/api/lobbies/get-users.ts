@@ -85,7 +85,7 @@ async function getData(id: string) {
         });
       }
     } catch (e) {
-      console.error('Failed to get channels from twitch', e.body || e);
+      logger.error('Failed to get channels from twitch', e.body || e);
     }
   }
 

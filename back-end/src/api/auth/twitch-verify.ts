@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { User } from '../../models/User.model';
 import got from 'got';
 import config from 'config';
+import { logger } from '../../logger';
 
 export async function twitchVerify(req: Request, res: Response) {
   const { username }: any = (<any>req).claim || {};
@@ -34,7 +35,7 @@ export async function twitchVerify(req: Request, res: Response) {
       },
     });
     if (!tokenResponse.body || !tokenResponse.body.access_token) {
-      console.error(
+      logger.error(
         'Twitch oauth response did not contain a token. Body:',
         tokenResponse.body,
       );
@@ -59,7 +60,7 @@ export async function twitchVerify(req: Request, res: Response) {
     user.twitch = { loginName: twitchUser.login, userId: twitchUser.id };
     await user.save();
   } catch (e) {
-    console.error('Failed to verify twitch', e.body || e);
+    logger.error('Failed to verify twitch', e.body || e);
 
     return res.status(400).json({ error: 'Failed to verify twitch oauth' });
   }
