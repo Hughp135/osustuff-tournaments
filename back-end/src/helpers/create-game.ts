@@ -1,14 +1,14 @@
-import { IUser, User } from '../models/User.model';
-import { Game } from '../models/Game.model';
+import { IUser } from '../models/User.model';
+import { Game, IPlayer } from '../models/Game.model';
 
-export async function createGame(user?: IUser) {
+export async function createGame(winningUser?: IUser, players?: IPlayer[]) {
   return await Game.create({
     title: 'test',
-    players: [],
+    players: players || [],
     beatmaps: [],
-    winningUser: user === undefined ? undefined : {
-      userId: user._id,
-      username: user.username,
+    winningUser: winningUser === undefined ? undefined : {
+      userId: winningUser._id,
+      username: winningUser.username,
     },
   });
 }

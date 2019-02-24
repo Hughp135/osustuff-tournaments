@@ -51,7 +51,6 @@ export async function updatePlayerAchievements(game: IGame) {
   );
 
   const results: IUserAchieved[][] = [];
-
   switch (game.status) {
     case 'round-over':
       results.push(
@@ -88,4 +87,6 @@ export async function updatePlayerAchievements(game: IGame) {
   }
 
   await sendAchievementMessages(achievementsAwarded, game);
+
+  return achievementsAwarded;
 }

@@ -1,5 +1,6 @@
 import { IGame, IPlayer } from './../models/Game.model';
 import { IUser } from '../models/User.model';
+import { userToPlayer } from '../helpers/user-to-player';
 
 export async function addPlayer(game: IGame, user: IUser): Promise<IUser> {
   const player: IPlayer = userToPlayer(user);
@@ -14,16 +15,4 @@ export async function addPlayer(game: IGame, user: IUser): Promise<IUser> {
   await user.save();
 
   return user;
-}
-
-export function userToPlayer(user: IUser): IPlayer {
-  return {
-    userId: user._id,
-    alive: true,
-    username: user.username,
-    osuUserId: user.osuUserId,
-    ppRank: user.ppRank,
-    countryRank: user.countryRank,
-    country: user.country,
-  };
 }

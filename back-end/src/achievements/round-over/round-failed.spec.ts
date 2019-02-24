@@ -7,6 +7,7 @@ import { roundFailed } from './round-failed';
 import { connectToMongo, disconnectFromMongo } from '../../helpers/connect-to-mongo';
 import { createUser } from '../../helpers/create-user';
 import { createScore } from '../../helpers/create-score';
+import { Game } from '../../models/Game.model';
 
 const assert = chai.assert;
 chai.use(sinonChai);
@@ -18,6 +19,7 @@ describe('roundFailed()', async () => {
   afterEach(async () => {
     await User.deleteMany({});
     await Score.deleteMany({});
+    await Game.deleteMany({});
     await Achievement.deleteMany({});
   });
   after(async () => {

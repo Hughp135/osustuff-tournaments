@@ -2,6 +2,7 @@ import { IUser } from '../models/User.model';
 import { ObjectId } from 'bson';
 import { Score } from '../models/Score.model';
 import { IGame } from '../models/Game.model';
+import { IRound } from '../models/Round.model';
 
 interface IScoreDataArguments {
   accuracy?: number;
@@ -11,6 +12,8 @@ interface IScoreDataArguments {
   maxCombo?: number;
   misses?: number;
   game?: IGame;
+  roundId?: ObjectId;
+  passedRound?: boolean;
 }
 
 function createScoreData(user: IUser, params: IScoreDataArguments) {
@@ -18,7 +21,7 @@ function createScoreData(user: IUser, params: IScoreDataArguments) {
     gameId: params.game === undefined ? new ObjectId() : params.game._id,
     score: params.score === undefined ? 10 : params.score,
     username: user.username,
-    roundId: new ObjectId(),
+    roundId: params.roundId === undefined ? new ObjectId() : params.roundId,
     userId: user._id,
     rank: params.rank === undefined ? 'S' : params.rank,
     mods: params.mods === undefined ? 0 : params.mods,
@@ -27,7 +30,7 @@ function createScoreData(user: IUser, params: IScoreDataArguments) {
     misses: params.misses === undefined ? 0 : params.misses,
     count100: 1,
     date: new Date(),
-    passedRound: true,
+    passedRound: params.passedRound === undefined ? true : params.passedRound,
   };
 }
 

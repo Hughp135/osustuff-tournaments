@@ -8,6 +8,7 @@ import { modScores } from './mod-scores';
 import { createScore } from '../../helpers/create-score';
 import { createUser } from '../../helpers/create-user';
 import { createGame } from '../../helpers/create-game';
+import { Game } from '../../models/Game.model';
 
 const assert = chai.assert;
 chai.use(sinonChai);
@@ -19,6 +20,7 @@ describe('modScores()', async () => {
   afterEach(async () => {
     await User.deleteMany({});
     await Score.deleteMany({});
+    await Game.deleteMany({});
     await Achievement.deleteMany({});
   });
   after(async () => {
