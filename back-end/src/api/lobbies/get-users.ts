@@ -7,8 +7,6 @@ import { getDataOrCache } from '../../services/cache';
 import got from 'got';
 import config from 'config';
 
-let lastTwitchRequest = new Date(0);
-
 export async function getLobbyUsers(req: Request, res: Response) {
   const { id } = req.params;
 
@@ -58,7 +56,7 @@ async function getData(id: string) {
 
   const usersWithTwitch = users.filter((u: IUser) => u.twitch);
 
-  if (usersWithTwitch.length && new Date().getTime() - lastTwitchRequest.getTime() > 2000) {
+  if (usersWithTwitch.length) {
     const queryString = usersWithTwitch
       .map((u: any) => u.twitch.loginName)
       .join(`&user_login=`);
@@ -74,8 +72,6 @@ async function getData(id: string) {
           timeout: 2000, // don't delay requests too long for this
         },
       );
-
-      lastTwitchRequest = new Date();
 
       const channels = body.data;
       if (channels && channels.length) {
