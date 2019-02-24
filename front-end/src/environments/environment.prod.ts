@@ -3,4 +3,6 @@ export const environment = {
   base_api_url: '/api/',
   osu_redirect_url: 'https://play.osustuff.org/api/login-verify',
   osu_oauth_id: '48',
+  twitch_redirect_url: 'https://play.osustuff.org/api/twitch-redirect',
+  twitch_client_id: 'le90ws5nsckurdggyl8geafm3uxb8w',
 };

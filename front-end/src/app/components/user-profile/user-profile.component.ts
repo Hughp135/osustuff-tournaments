@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SettingsService } from '../../services/settings.service';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface IUserAchievement {
   title: string;
@@ -42,6 +43,9 @@ export interface IUser {
   averageRank?: number;
   roles: Role[];
   banned?: boolean;
+  twitch?: {
+    loginName: string;
+  };
 }
 
 @Component({
@@ -54,12 +58,16 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   private currentUser: IUser;
   private subscriptions: Subscription[] = [];
 
-  constructor(route: ActivatedRoute, settingsService: SettingsService, private apiService: ApiService) {
+  constructor(
+    route: ActivatedRoute,
+    settingsService: SettingsService,
+    private apiService: ApiService,
+  ) {
     this.subscriptions = [
       route.data.subscribe(({ data }) => {
         this.user = data.user;
       }),
-      settingsService.user.subscribe(u => this.currentUser = u),
+      settingsService.user.subscribe(u => (this.currentUser = u)),
     ];
   }
 
@@ -95,7 +103,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     return 'orange eye';
   }
 
-  public async banUser () {
+  public async banUser() {
     try {
       await this.apiService.post(`admin/ban-user/`, {
         osuUserId: this.user.osuUserId,
@@ -106,7 +114,28 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  public async unlinkTwitch() {
+    await this.apiService.post('user/unlink-twitch', {});
+    window.location.reload();
+  }
+
   get isMod() {
     return this.currentUser && this.currentUser.roles.includes('moderator');
+  }
+
+  get isMyProfile() {
+    return (
+      this.currentUser && this.user.osuUserId === this.currentUser.osuUserId
+    );
+  }
+
+  get twitchVerifyHref() {
+    return (
+      'https://id.twitch.tv/oauth2/authorize' +
+      `?client_id=${environment.twitch_client_id}` +
+      `&redirect_uri=${environment.twitch_redirect_url}` +
+      '&response_type=code' +
+      '&force_verify=true'
+    );
   }
 }

@@ -44,6 +44,10 @@ export interface IUser extends mongoose.Document {
   results: IUserResult[];
   roles: Role[];
   banned?: boolean;
+  twitch?: {
+    loginName: string;
+    userId: string;
+  };
 }
 
 const UserSchema = new mongoose.Schema(
@@ -120,6 +124,12 @@ const UserSchema = new mongoose.Schema(
       ],
       required: true,
       default: [],
+    },
+    twitch: {
+      type: {
+        loginName: { type: String, required: true },
+        userId: { type: String, required: true },
+      },
     },
   },
   {

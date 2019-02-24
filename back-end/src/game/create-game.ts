@@ -39,7 +39,7 @@ export async function createGame(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
   beatmaps.push(...savedBeatmaps);
-  console.log('total beatmaps', beatmaps.length);
+  console.info('total beatmaps', beatmaps.length);
 
   const difficulties = minRank ? easyLobbyStars : standardStars;
   const roundBeatmaps = difficulties
@@ -67,7 +67,7 @@ export async function createGame(
   });
 
   if (TEST_MODE && game.status !== 'scheduled') {
-    console.log('Creating game with sample players');
+    console.info('Creating game with sample players');
     await addSamplePlayers(game, testPlayers || 3);
   }
 
