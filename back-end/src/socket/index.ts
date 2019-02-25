@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import { connectToMongo } from '../helpers/connect-to-mongo';
 import { sendMessage } from './messages/new-message';
 import { joinLobby } from './game/join';
-import { gameUpdated } from './game/updated';
+import { gameUpdated } from './game/game-updated-emit';
 import bodyParser from 'body-parser';
 
 export let io: Server;

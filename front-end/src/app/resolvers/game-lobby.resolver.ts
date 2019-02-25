@@ -57,7 +57,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       await this.socketService.connect(id);
       await this.getBeatmaps(id);
       const messages = await this.gameService.getLobbyMessages(id);
-      const lobby: Observable<IGame> = this.getLobby(id);
+      const lobby: Observable<IGame> = this.getLobby();
       const players: Observable<IPlayer[]> = this.getPlayers(id);
       console.log(2);
 
@@ -81,6 +81,12 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
   }
 
   private getPlayers(gameId: string) {
+    return Observable.create(async (observer: Observer<IPlayer[]>) => {
+      const subs: Subscription = new Subscription();
+    });
+  }
+
+  private getPlayersOld(gameId: string) {
     return Observable.create(async (observer: Observer<IPlayer[]>) => {
       let fetching = false;
       const subs: Subscription = new Subscription();
@@ -135,7 +141,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
     });
   }
 
-  private getLobby(id: string): Observable<IGame> {
+  private getLobby(): Observable<IGame> {
     return Observable.create(async (observer: Observer<IGame>) => {
       const subscriptions = new Subscription();
 
