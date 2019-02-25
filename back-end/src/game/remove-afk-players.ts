@@ -19,7 +19,7 @@ export async function removeAfkPlayers(game: IGame) {
   });
 
   for (const player of afkPlayers) {
-    console.log('removing afk player', player.username);
+    console.info('removing afk player', player.username);
     await User.updateOne(
       { _id: player.userId },
       { $set: { currentGame: undefined } },

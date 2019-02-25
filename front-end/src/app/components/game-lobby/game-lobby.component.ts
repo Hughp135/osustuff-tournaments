@@ -24,6 +24,8 @@ export interface IPlayer {
   wins: number;
   percentiles: IUser['percentiles'];
   kicked?: boolean;
+  isStreaming?: boolean;
+  twitch?: IUser['twitch'];
 }
 
 export interface IGame {
@@ -71,7 +73,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   public showBeatmapList: boolean;
   public timeLeft: string;
   private fetchingMessages = false;
-  public currentUser: IUser;
+  public currentUser?: IUser;
   private announcedStart = false;
   public isAdmin: boolean;
   public transitionController = new TransitionController();

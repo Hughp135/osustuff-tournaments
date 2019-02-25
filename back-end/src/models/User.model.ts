@@ -43,6 +43,11 @@ export interface IUser extends mongoose.Document {
   };
   results: IUserResult[];
   roles: Role[];
+  banned?: boolean;
+  twitch?: {
+    loginName: string;
+    userId: string;
+  };
 }
 
 const UserSchema = new mongoose.Schema(
@@ -56,6 +61,7 @@ const UserSchema = new mongoose.Schema(
     },
     currentGame: { type: mongoose.Schema.Types.ObjectId },
     ppRank: { type: Number, required: true },
+    banned: { type: Boolean, index: true },
     countryRank: { type: Number, required: true },
     gamesPlayed: { type: Number, required: true, default: 0 },
     wins: { type: Number, required: true, default: 0 },
@@ -63,9 +69,9 @@ const UserSchema = new mongoose.Schema(
     country: { type: String, required: true },
     rating: {
       type: {
-        mu: { type: Number, required: true, index: true },
+        mu: { type: Number, required: true },
         sigma: { type: Number, required: true },
-        weighted: { type: Number },
+        weighted: { type: Number, index: true },
       },
       required: true,
     },
@@ -102,14 +108,14 @@ const UserSchema = new mongoose.Schema(
           gameEndedAt: { type: Date },
           ratingBefore: {
             type: {
-              mu: { type: Number, required: true, index: true },
+              mu: { type: Number, required: true },
               sigma: { type: Number, required: true },
               weighted: { type: Number },
             },
           },
           ratingAfter: {
             type: {
-              mu: { type: Number, required: true, index: true },
+              mu: { type: Number, required: true },
               sigma: { type: Number, required: true },
               weighted: { type: Number },
             },
@@ -118,6 +124,12 @@ const UserSchema = new mongoose.Schema(
       ],
       required: true,
       default: [],
+    },
+    twitch: {
+      type: {
+        loginName: { type: String, required: true },
+        userId: { type: String, required: true },
+      },
     },
   },
   {
@@ -137,7 +149,10 @@ interface ICreateUserFields {
   country: string;
 }
 
-export async function updateOrCreateUser(osuUser: ICreateUserFields, roles?: Role[]): Promise<IUser> {
+export async function updateOrCreateUser(
+  osuUser: ICreateUserFields,
+  roles?: Role[],
+): Promise<IUser> {
   const osuUserId = parseInt(osuUser.user_id, 10);
   const ppRank = parseInt(osuUser.pp_rank, 10);
   const countryRank = parseInt(osuUser.pp_country_rank, 10);
@@ -153,7 +168,7 @@ export async function updateOrCreateUser(osuUser: ICreateUserFields, roles?: Rol
     return await found.save();
   }
 
-  const rating = Skill.createRating(1650 - 20 * Math.log10(ppRank));
+  const rating = Skill.createRating(1650 - 20 * Math.log10(ppRank || 1000000));
 
   return await User.create({
     username: osuUser.username,

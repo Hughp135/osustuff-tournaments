@@ -1,7 +1,6 @@
 import { IUserAchieved } from './update-player-achievements';
 import { IGame } from '../models/Game.model';
 import { cache } from '../services/cache';
-import { Message } from '../models/Message.model';
 import { sendSystemMessage } from '../game/send-system-message';
 
 export async function sendAchievementMessages(

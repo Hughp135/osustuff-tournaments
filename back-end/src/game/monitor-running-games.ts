@@ -15,6 +15,7 @@ import { ObjectId } from 'bson';
 import { Score } from '../models/Score.model';
 import { logger } from '../logger';
 import { removeAfkPlayers } from './remove-afk-players';
+import { updatePlayerAchievements } from '../achievements/update-player-achievements';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
@@ -27,7 +28,7 @@ let gamesBeingUpdated: string[] = [];
 let creatingNewGame = false;
 
 export async function startMonitoring() {
-  console.log('starting monitoring');
+  console.info('starting monitoring');
 
   if (isMonitoring) {
     throw new Error('Already monitoring');
@@ -112,11 +113,11 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
 
     try {
       if (anyRankGames.length === 0) {
-        console.log('creating a new game');
+        console.info('creating a new game');
         await createGame(getRecentMaps).catch(e => logger.error('Failed to create game', e));
       }
       if (!DISABLE_LOWER_LVL_LOBBIES && minRankGames.length === 0) {
-        console.log('creating a new game with min rank');
+        console.info('creating a new game with min rank');
         await createGame(getRecentMaps, 45000).catch(e =>
           logger.error('Failed to create game', e),
         );
@@ -129,7 +130,7 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
 
 async function openScheduledGame(game: IGame) {
   if (game.nextStageStarts && game.nextStageStarts < new Date()) {
-    console.log('Opening scheduled game');
+    console.info('Opening scheduled game');
     game.nextStageStarts = undefined;
     game.status = 'new';
     await game.save();
@@ -144,7 +145,7 @@ async function startGame(game: IGame) {
   const enoughPlayers = game.players.length >= PLAYERS_REQUIRED_TO_START;
   if (!enoughPlayers) {
     if (game.nextStageStarts) {
-      console.log('canceling countdown');
+      console.info('canceling countdown');
       // Cancel countdown
       game.nextStageStarts = undefined;
       await game.save();
@@ -155,7 +156,7 @@ async function startGame(game: IGame) {
   }
 
   if (!game.nextStageStarts) {
-    console.log('Beginning countdown....');
+    console.info('Beginning countdown....');
     // Set the countdown to start
     if (!FAST_FORWARD_MODE) {
       await setNextStageStartsAt(game, COUNTDOWN_START);
@@ -178,6 +179,7 @@ async function checkRoundEnded(game: IGame) {
     const round = <IRound> await Round.findById(game.currentRound);
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
+    await updatePlayerAchievements(game);
     clearGetLobbyCache(game._id);
   }
 }
@@ -220,6 +222,7 @@ async function skipCheckingScore(game: IGame) {
     if (scoresCount >= alivePlayersCount / 2) {
       logger.info('Ending round as at least half alive players have set score');
       await roundEnded(game, round);
+      await updatePlayerAchievements(game);
     } else {
       logger.info('Checking scores again');
       await checkRoundEnded(game);

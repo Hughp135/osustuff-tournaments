@@ -7,6 +7,8 @@ export const environment = {
   base_api_url: '/api/',
   osu_redirect_url: 'http://localhost:4200/api/login-verify',
   osu_oauth_id: '46',
+  twitch_redirect_url: 'http://localhost:4200/api/twitch-redirect',
+  twitch_client_id: 'a27rae8bkv7ypqtponiypw15wwzdy0',
 };
 
 /*

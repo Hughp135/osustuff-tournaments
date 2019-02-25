@@ -35,7 +35,6 @@ async function request(
           json: true,
         }),
     );
-    console.log('got Response from', requestUrl);
 
     return response.body;
   } catch (e) {

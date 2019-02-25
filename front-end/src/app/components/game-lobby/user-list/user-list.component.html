@@ -16,19 +16,29 @@
       <div class="header">
         <i class="fitted flag" [ngClass]="player.country.toLowerCase()"></i>
         <span [class.my-name]="currentUsername === player.username">{{
-          player.username }}</span>
+          player.username }}
+        </span>
+
+        <a class="ui mini blue label stream" target="_blank"
+          [href]="'https://www.twitch.tv/' + player.twitch.loginName"
+          *ngIf="player.isStreaming">
+          <i class="fitted red circle icon"></i>
+          Live
+        </a>
       </div>
       <div class="description">
-        {{ player.ppRank ? ('#' + (player.ppRank | number)) : '—' }}
-        <span *ngIf="winningUser === player.username" class="text-muted">Winner</span>
-        <span *ngIf="player.kicked"
-          class="text-muted">
-          Player Kicked
-        </span>
-        <span *ngIf="player.gameRank && winningUser !== player.username"
-          class="text-muted">
-          Finished {{ player.gameRank | ordinal }}
-        </span>
+        <div class="player info">
+          {{ player.ppRank ? ('#' + (player.ppRank | number)) :
+          '—' }}
+          <span *ngIf="winningUser === player.username" class="text-muted">Winner</span>
+          <span *ngIf="player.kicked" class="text-muted">
+            Player Kicked
+          </span>
+          <span *ngIf="player.gameRank && winningUser !== player.username"
+            class="text-muted">
+            Finished {{ player.gameRank | ordinal }}
+          </span>
+        </div>
       </div>
     </div>
   </a>
@@ -38,4 +48,5 @@
     </div>
   </div>
 </div>
-<app-user-popup *ngIf="popupData" [kickPlayer]="kickPlayer" [isModerator]="isModerator" [popupData]="popupData"></app-user-popup>
+<app-user-popup *ngIf="popupData" [kickPlayer]="kickPlayer"
+  [isModerator]="isModerator" [popupData]="popupData"></app-user-popup>

@@ -29,6 +29,10 @@ import { getOnlineUsers } from './users/get-online-users';
 import { getBeatmap } from './beatmap/get';
 import { kickPlayer } from './lobbies/players/kick-player';
 import { editLobby } from './lobbies/edit-game';
+import { createTestUser } from './admin/create-test-user';
+import { banUser } from './admin/ban-user';
+import { twitchVerify } from './auth/twitch-verify';
+import { unlinkTwitch } from './user/unlink-twitch';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -75,17 +79,21 @@ router.get('/lobbies/:id/messages', getMessages);
 router.post('/lobbies/:id/messages', authMiddleware, sendMessage);
 router.get('/lobbies/:id', getLobby);
 router.put('/lobbies/:gameId', authMiddleware, editLobby);
-router.post('/toggle-monitoring', toggleMonitoring);
-router.post('/admin/clear-db', clearDb);
-router.post('/admin/toggle-autocreate', toggleAutoCreateReq);
-router.post('/admin/delete-lobby', deleteLobby);
+router.post('/toggle-monitoring', authMiddleware, toggleMonitoring);
+router.post('/admin/clear-db', authMiddleware, clearDb);
+router.post('/admin/ban-user', authMiddleware, banUser);
+router.post('/admin/toggle-autocreate', authMiddleware, toggleAutoCreateReq);
+router.post('/admin/delete-lobby', authMiddleware, deleteLobby);
+router.post('/admin/create-test-user', authMiddleware, createTestUser);
 router.get('/users', getUsers);
 router.get('/unread-achievements', authMiddleware, getUnreadAchievements);
 router.get('/user/me', authMiddleware, getUser);
+router.post('/user/unlink-twitch', authMiddleware, unlinkTwitch);
 router.get('/user/:username', getUser);
 router.get('/login-verify', loginVerify);
 router.get('/online-players', getOnlineUsers);
 router.get('/beatmap/:beatmapId', authMiddleware, getBeatmap);
+router.get('/twitch-redirect', authMiddleware, twitchVerify);
 
 app.use('/api', router);
 

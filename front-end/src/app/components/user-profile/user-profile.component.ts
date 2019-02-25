@@ -1,5 +1,9 @@
+import { ApiService } from './../../services/api.service';
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { SettingsService } from '../../services/settings.service';
+import { Subscription } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface IUserAchievement {
   title: string;
@@ -38,6 +42,10 @@ export interface IUser {
   };
   averageRank?: number;
   roles: Role[];
+  banned?: boolean;
+  twitch?: {
+    loginName: string;
+  };
 }
 
 @Component({
@@ -45,16 +53,29 @@ export interface IUser {
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.scss'],
 })
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit, OnDestroy {
   public user: IUser;
+  private currentUser: IUser;
+  private subscriptions: Subscription[] = [];
 
-  constructor(route: ActivatedRoute) {
-    route.data.subscribe(({ data }) => {
-      this.user = data.user;
-    });
+  constructor(
+    route: ActivatedRoute,
+    settingsService: SettingsService,
+    private apiService: ApiService,
+  ) {
+    this.subscriptions = [
+      route.data.subscribe(({ data }) => {
+        this.user = data.user;
+      }),
+      settingsService.user.subscribe(u => (this.currentUser = u)),
+    ];
   }
 
   ngOnInit() {}
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
 
   public getRatingChange(result) {
     if (!result.ratingAfter || !result.ratingBefore) {
@@ -80,5 +101,41 @@ export class UserProfileComponent implements OnInit {
     }
 
     return 'orange eye';
+  }
+
+  public async banUser() {
+    try {
+      await this.apiService.post(`admin/ban-user/`, {
+        osuUserId: this.user.osuUserId,
+      });
+      window.location.reload();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  public async unlinkTwitch() {
+    await this.apiService.post('user/unlink-twitch', {});
+    window.location.reload();
+  }
+
+  get isMod() {
+    return this.currentUser && this.currentUser.roles.includes('moderator');
+  }
+
+  get isMyProfile() {
+    return (
+      this.currentUser && this.user.osuUserId === this.currentUser.osuUserId
+    );
+  }
+
+  get twitchVerifyHref() {
+    return (
+      'https://id.twitch.tv/oauth2/authorize' +
+      `?client_id=${environment.twitch_client_id}` +
+      `&redirect_uri=${environment.twitch_redirect_url}` +
+      '&response_type=code' +
+      '&force_verify=true'
+    );
   }
 }

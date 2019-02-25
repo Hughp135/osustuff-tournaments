@@ -25,7 +25,12 @@ export class AdminService {
   public async toggleAutoCreate() {
     await this.apiService.post(`admin/toggle-autocreate`, { pw: this.settingsService.adminPw });
   }
+
   public async deleteLobby(gameId: string) {
     await this.apiService.post(`admin/delete-lobby`, { pw: this.settingsService.adminPw, gameId });
+  }
+
+  public async createTestUser() {
+    await this.apiService.post(`admin/create-test-user`, { pw: this.settingsService.adminPw });
   }
 }
