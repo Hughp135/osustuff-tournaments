@@ -38,7 +38,9 @@ export async function sendMessage(req: Request, res: Response) {
 
   const player = game.players.find(p => p.userId.toString() === user._id.toString());
 
-  if (!player || player.kicked) {
+  if ((!player || player.kicked) &&
+    !user.roles.includes('moderator') &&
+    !user.roles.includes('admin')) {
     return res.status(401).end();
   }
 
