@@ -63,6 +63,8 @@ export async function getGamePayload(gameId: string | Types.ObjectId) {
     .select({ beatmap: 1 })
     .lean();
 
+  delete game.players; // players are obtained from separate request for performance
+
   return {
     ...game,
     round,

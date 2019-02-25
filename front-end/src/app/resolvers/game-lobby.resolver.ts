@@ -13,7 +13,7 @@ import { SettingsService, CurrentGame } from '../services/settings.service';
 import { IGame, IPlayer } from '../components/game-lobby/game-lobby.component';
 import * as Visibility from 'visibilityjs';
 import { Message } from '../components/game-lobby/chat/chat.component';
-import { takeWhile } from 'rxjs/operators';
+import { takeWhile, filter } from 'rxjs/operators';
 import { IBeatmap } from '../components/create-lobby/create-lobby.component';
 
 export interface GameLobbyData {
@@ -82,7 +82,28 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
 
   private getPlayers(gameId: string) {
     return Observable.create(async (observer: Observer<IPlayer[]>) => {
-      const subs: Subscription = new Subscription();
+      const subscriptions: Subscription = new Subscription();
+
+      const updatePlayers = (players, id) => {
+        if (observer.closed) {
+          subscriptions.unsubscribe();
+          observer.complete();
+
+          return;
+        }
+
+        observer.next(players);
+      };
+
+      subscriptions.add(
+        this.socketService.players.pipe(
+          filter(val => !!val)
+        ).subscribe(({ players, gameId: id }) => {
+          console.log('players changed', players);
+
+          updatePlayers(players, id);
+        }),
+      );
     });
   }
 
@@ -181,16 +202,18 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
           });
         }
       };
-      subscriptions.add(this.socketService.lobby.subscribe(game => {
-        console.log('loby changed', game);
-        const oldGame = this._game.getValue();
-        if (game) {
-          if (oldGame && game._id !== oldGame._id) {
-            this.socketService.socket.emit('leave-lobby-' + oldGame._id); // TODO
+      subscriptions.add(
+        this.socketService.lobby.subscribe(game => {
+          console.log('loby changed', game);
+          const oldGame = this._game.getValue();
+          if (game) {
+            if (oldGame && game._id !== oldGame._id) {
+              this.socketService.socket.emit('leave-lobby-' + oldGame._id); // TODO
+            }
+            onData(game);
           }
-          onData(game);
-        }
-      }));
+        }),
+      );
     });
   }
 

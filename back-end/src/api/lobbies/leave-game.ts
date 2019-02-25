@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Game } from '../../models/Game.model';
 import { User } from '../../models/User.model';
 import { cache } from '../../services/cache';
+import { updatePlayers } from '../../game/players/update-players';
 
 export async function leaveGame(req: Request, res: Response) {
   const { username }: any = (<any> req).claim || {};
@@ -36,4 +37,8 @@ export async function leaveGame(req: Request, res: Response) {
   }
 
   res.status(200).end();
+
+  if (game) {
+    await updatePlayers(game);
+  }
 }

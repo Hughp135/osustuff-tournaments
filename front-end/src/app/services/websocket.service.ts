@@ -3,18 +3,21 @@ import * as io from 'socket.io-client';
 import { environment } from '../../environments/environment';
 import { SettingsService } from './settings.service';
 import { BehaviorSubject } from 'rxjs';
-import { IGame } from '../components/game-lobby/game-lobby.component';
+import { IGame, IPlayer } from '../components/game-lobby/game-lobby.component';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WebsocketService {
   public socket: any;
   public connected = false;
   public reconnecting = false;
   public lobby = new BehaviorSubject<IGame>(undefined);
+  public players = new BehaviorSubject<{ players: IPlayer[]; gameId: string }>(
+    undefined,
+  );
 
-  constructor() { }
+  constructor() {}
 
   public async connect(gameId: string) {
     if (this.socket && this.socket.connected) {
@@ -47,7 +50,11 @@ export class WebsocketService {
       });
       this.socket.on('error', (data: Object) => {
         /* istanbul ignore next  */
-        if (data === 'No token provided' || data === 'Invalid token' || data === 'User not found') {
+        if (
+          data === 'No token provided' ||
+          data === 'Invalid token' ||
+          data === 'User not found'
+        ) {
           rej('unauthenticated');
         }
         console.error(data);
@@ -55,6 +62,10 @@ export class WebsocketService {
       this.socket.on('game-updated', (game: any) => {
         console.log('game Updated', game);
         this.lobby.next(game);
+      });
+      this.socket.on('players-updated', ({ players, gameId: id }: any) => {
+        console.log('players Updated', players);
+        this.players.next({players, gameId});
       });
     });
   }

@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 import { User } from '../../models/User.model';
 import { Game } from '../../models/Game.model';
 import { getGamePayload } from '../../api/lobbies/get';
+import { getGamePlayers } from '../../api/lobbies/get-users';
 
 export function joinLobby(io: Server) {
   io.on('connection', async (socket: Socket) => {
@@ -33,8 +34,8 @@ export function joinLobby(io: Server) {
       }
 
       socket.join(`lobby-${gameId}`);
-      const payload = await getGamePayload(gameId);
-      socket.emit('game-updated', payload);
+      const gamePayload = await getGamePayload(gameId);
+      socket.emit('game-updated', gamePayload);
     });
   });
 }

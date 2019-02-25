@@ -118,7 +118,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
             },
           );
         } catch (e) {
-          console.info('failed to p[ost to update', e.status, e.body);
+          console.info('failed to post to update game', e.status, e.body);
         }
       }
     } catch (e) {

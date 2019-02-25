@@ -9,6 +9,7 @@ import { sendMessage } from './messages/new-message';
 import { joinLobby } from './game/join';
 import { gameUpdated } from './game/game-updated-emit';
 import bodyParser from 'body-parser';
+import { playersUpdated } from './game/players-emit';
 
 export let io: Server;
 
@@ -19,7 +20,7 @@ export async function startWs() {
 
 // Set up the API for game updates
   const app = express();
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({ limit: '2mb' }));
   app.use(cookieParser());
   app.use((req, res, next) => {
   const ip = req.connection.remoteAddress;
@@ -60,6 +61,7 @@ export async function startWs() {
   joinLobby(io);
 
   gameUpdated(app, io);
+  playersUpdated(app, io);
 
   await server.listen(SOCKET_PORT);
 
