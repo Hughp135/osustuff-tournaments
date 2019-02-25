@@ -14,19 +14,19 @@ async function start() {
   console.time('start');
 
   while (date < lastMonth) {
-    console.log('getting beatmaps from date', date);
+    console.info('getting beatmaps from date', date);
     const beatmaps = (await getBeatmaps(date)).sort(
       (a, b) =>
         new Date(b.approved_date).getTime() -
         new Date(a.approved_date).getTime(),
     );
-    console.log('osu api beatmaps', beatmaps.length);
+    console.info('osu api beatmaps', beatmaps.length);
     const existingMaps: string[] = [];
     const added: string[] = [];
 
     for (const beatmap of beatmaps) {
       if (downloadUnavailable.includes(beatmap.beatmapset_id)) {
-        console.log('dl unavailable', beatmap.beatmapset_id);
+        console.info('dl unavailable', beatmap.beatmapset_id);
         continue;
       }
       const existing = await Beatmap.findOne({
@@ -52,20 +52,20 @@ async function start() {
       } catch (e) {
         if (e.statusCode === 404) {
           // Unavailable to download
-          console.log('Download not available', beatmap.beatmapset_id);
+          console.info('Download not available', beatmap.beatmapset_id);
           downloadUnavailable.push(beatmap.beatmapset_id);
         } else if (e.statusCode === 429) {
-          console.log('Timed out, waiting a minute');
+          console.info('Timed out, waiting a minute');
           console.timeEnd('start');
           await new Promise(res => setTimeout(res, 60000));
         } else {
           // Some unexpected error occured
-          console.log('failed', beatmap.beatmapset_id, e);
+          console.info('failed', beatmap.beatmapset_id, e);
         }
       }
 
-      console.log('added', added.length);
-      console.log('already added', existingMaps.length);
+      console.info('added', added.length);
+      console.info('already added', existingMaps.length);
     }
 
     const [lastBeatmap] = beatmaps.sort(
@@ -77,8 +77,8 @@ async function start() {
     date.setMonth(date.getMonth() + 4);
   }
 
-  console.log('beatmaps added', downloadAvailable.length);
-  console.log('beatmaps not available to download', downloadUnavailable.length);
+  console.info('beatmaps added', downloadAvailable.length);
+  console.info('beatmaps not available to download', downloadUnavailable.length);
 }
 
-start().catch(e => console.log(e));
+start().catch(e => console.info(e));

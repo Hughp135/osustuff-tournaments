@@ -14,7 +14,7 @@ const MessageSchema = new mongoose.Schema(
     gameId: {type: mongoose.Schema.Types.ObjectId, required: true, index: true},
     osuUserId: {type: Number, required: true, index: true},
     userId: {type: mongoose.Schema.Types.ObjectId, required: true, index: true},
-    message: { type: String, required: true, index: true },
+    message: { type: String, required: true },
   },
   {
     timestamps: true,

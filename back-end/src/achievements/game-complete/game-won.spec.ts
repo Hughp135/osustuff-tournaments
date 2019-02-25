@@ -5,9 +5,10 @@ import { Score } from '../../models/Score.model';
 import { Achievement } from '../../models/Achievement.model';
 import { connectToMongo, disconnectFromMongo } from '../../helpers/connect-to-mongo';
 import { gameWon } from './game-won';
-import { createUser } from '../../helpers/create-user';
-import { createGame } from '../../helpers/create-game';
-import { createScore } from '../../helpers/create-score';
+import { createUser } from '../../test-helpers/create-user';
+import { createGame } from '../../test-helpers/create-game';
+import { createScore } from '../../test-helpers/create-score';
+import { Game } from '../../models/Game.model';
 
 const assert = chai.assert;
 chai.use(sinonChai);
@@ -19,6 +20,7 @@ describe('gameWon()', async () => {
   afterEach(async () => {
     await User.deleteMany({});
     await Score.deleteMany({});
+    await Game.deleteMany({});
     await Achievement.deleteMany({});
   });
   after(async () => {

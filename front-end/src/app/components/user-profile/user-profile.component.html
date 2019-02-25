@@ -1,13 +1,29 @@
 <div class="ui container section">
-  <h1>{{ user.username }}'s Profile</h1>
-  <a
-    class="ui purple button"
-    target="_blank"
-    [href]="'https://osu.ppy.sh/users/' + user.osuUserId"
-  >
+  <h1>{{ user.username }}'s Profile{{user.banned ? ' (Banned)' :
+    ''}}</h1>
+  <a class="ui purple button" target="_blank" [href]="'https://osu.ppy.sh/users/' + user.osuUserId">
     <i class="external icon"></i>
-    View osu! Profile
+    osu! Profile
   </a>
+  <div class="ui buttons" *ngIf="user.twitch">
+    <a target="_blank" [href]="'https://www.twitch.tv/' + user.twitch.loginName"
+      class="ui teal button">
+      <i class="twitch icon"></i>
+      Twitch Channel
+    </a>
+    <div (click)="unlinkTwitch()" *ngIf="isMyProfile" class="ui grey icon button">
+      <i class="times icon"></i>
+    </div>
+  </div>
+  <a *ngIf="!user.twitch && isMyProfile" [href]="twitchVerifyHref"
+    class="ui teal button">
+    <i class="twitch icon"></i>
+    Connect with Twitch
+  </a>
+
+  <div class="ui right floated red button" *ngIf="isMod" (click)="banUser()">
+    {{ user.banned ? 'Unban' : 'Ban'}} User
+  </div>
 
   <h2>Stats</h2>
   <div class="ui inverted padded segment">
@@ -41,9 +57,9 @@
         <h3>
           <i class="yellow percent icon"></i>
           {{
-            user.wins && user.gamesPlayed
-              ? ((user.wins / user.gamesPlayed) * 100).toFixed(2)
-              : '0.00'
+          user.wins && user.gamesPlayed
+          ? ((user.wins / user.gamesPlayed) * 100).toFixed(2)
+          : '0.00'
           }}
         </h3>
       </div>
@@ -90,31 +106,26 @@
     No match history data available yet.
   </p>
   <div class="ui one column doubling grid">
-    <div
-      class="column result"
-      *ngFor="let result of user.results"
-      routerLink="/lobbies/{{ result.gameId }}"
-    >
+    <div class="column result" *ngFor="let result of user.results"
+      routerLink="/lobbies/{{ result.gameId }}">
       <div class="ui inverted segment flex">
         <i class="icon" [ngClass]="getResultIconClass(result)"></i>
 
         <div class="result-main">
-          <h3 class="ui sub header">Finished {{ result.place | ordinal }}</h3>
+          <h3 class="ui sub header">Finished {{ result.place |
+            ordinal }}</h3>
           <i class="game-date">{{
             result.gameEndedAt
-              ? (result.gameEndedAt | date: 'medium')
-              : 'Match still in progress...'
-          }}</i>
+            ? (result.gameEndedAt | date: 'medium')
+            : 'Match still in progress...'
+            }}</i>
         </div>
 
-        <span
-          class="elo"
-          [ngClass]="{
+        <span class="elo" [ngClass]="{
             green: getRatingChange(result) >= 0,
             red: getRatingChange(result) < 0
-          }"
-          >{{ getRatingChange(result) }}</span
-        >
+          }">{{
+          getRatingChange(result) }}</span>
       </div>
     </div>
   </div>
