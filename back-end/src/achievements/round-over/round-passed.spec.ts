@@ -5,8 +5,9 @@ import { Score } from '../../models/Score.model';
 import { Achievement } from '../../models/Achievement.model';
 import { connectToMongo, disconnectFromMongo } from '../../helpers/connect-to-mongo';
 import { roundPassed } from './round-passed';
-import { createUser } from '../../helpers/create-user';
-import { createScore } from '../../helpers/create-score';
+import { createUser } from '../../test-helpers/create-user';
+import { createScore } from '../../test-helpers/create-score';
+import { Game } from '../../models/Game.model';
 
 const assert = chai.assert;
 chai.use(sinonChai);
@@ -18,6 +19,7 @@ describe('roundPassed()', async () => {
   afterEach(async () => {
     await User.deleteMany({});
     await Score.deleteMany({});
+    await Game.deleteMany({});
     await Achievement.deleteMany({});
   });
   after(async () => {
@@ -128,6 +130,16 @@ describe('roundPassed()', async () => {
         a.achievement.title === 'Unconventional' &&
         a.user._id === user._id));
     });
+
+    it('does not give achievement if F-rank', async () => {
+      const user = await createUser(1, {});
+      const score = await createScore(user, { mods: 1026, rank: 'F' });
+
+      const achieved = await roundPassed([user], [score]);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Unconventional' &&
+        a.user._id === user._id));
+    });
   });
 
   describe('Ultra Instinct', async () => {
@@ -170,6 +182,16 @@ describe('roundPassed()', async () => {
         a.achievement.title === 'Ultra Instinct' &&
         a.user._id === user._id));
     });
+
+    it('does not give achievement if F-rank', async () => {
+      const user = await createUser(1, {});
+      const score = await createScore(user, { mods: 88, rank: 'F' });
+
+      const achieved = await roundPassed([user], [score]);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Ultra Instinct' &&
+        a.user._id === user._id));
+    });
   });
 
   describe('Ascension', async () => {
@@ -196,6 +218,16 @@ describe('roundPassed()', async () => {
     it('does not give achievement if HDHRDT', async () => {
       const user = await createUser(1, {});
       const score = await createScore(user, { mods: 88 });
+
+      const achieved = await roundPassed([user], [score]);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Ascension' &&
+        a.user._id === user._id));
+    });
+
+    it('does not give achievement if F-rank', async () => {
+      const user = await createUser(1, {});
+      const score = await createScore(user, { mods: 1112, rank: 'F' });
 
       const achieved = await roundPassed([user], [score]);
       assert.isUndefined(achieved.find(a =>

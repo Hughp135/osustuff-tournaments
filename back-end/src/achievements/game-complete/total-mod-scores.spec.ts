@@ -5,8 +5,9 @@ import { Score } from '../../models/Score.model';
 import { totalModScores } from './total-mod-scores';
 import { Achievement } from '../../models/Achievement.model';
 import { connectToMongo, disconnectFromMongo } from '../../helpers/connect-to-mongo';
-import { createScore } from '../../helpers/create-score';
-import { createUser } from '../../helpers/create-user';
+import { createScore } from '../../test-helpers/create-score';
+import { createUser } from '../../test-helpers/create-user';
+import { Game } from '../../models/Game.model';
 
 const assert = chai.assert;
 chai.use(sinonChai);
@@ -18,6 +19,7 @@ describe('totalModScores()', async () => {
   afterEach(async () => {
     await User.deleteMany({});
     await Score.deleteMany({});
+    await Game.deleteMany({});
     await Achievement.deleteMany({});
   });
   after(async () => {

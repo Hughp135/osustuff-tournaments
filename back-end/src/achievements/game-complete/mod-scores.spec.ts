@@ -5,9 +5,10 @@ import { Score } from '../../models/Score.model';
 import { Achievement } from '../../models/Achievement.model';
 import { connectToMongo, disconnectFromMongo } from '../../helpers/connect-to-mongo';
 import { modScores } from './mod-scores';
-import { createScore } from '../../helpers/create-score';
-import { createUser } from '../../helpers/create-user';
-import { createGame } from '../../helpers/create-game';
+import { createScore } from '../../test-helpers/create-score';
+import { createUser } from '../../test-helpers/create-user';
+import { createGame } from '../../test-helpers/create-game';
+import { Game } from '../../models/Game.model';
 
 const assert = chai.assert;
 chai.use(sinonChai);
@@ -19,6 +20,7 @@ describe('modScores()', async () => {
   afterEach(async () => {
     await User.deleteMany({});
     await Score.deleteMany({});
+    await Game.deleteMany({});
     await Achievement.deleteMany({});
   });
   after(async () => {
@@ -241,6 +243,21 @@ describe('modScores()', async () => {
         a.achievement.title === 'Speedy' &&
         a.user._id === user._id));
     });
+
+    it('does not give achievement if one score is F-rank', async () => {
+      const user = await createUser(1, {});
+      const game = await createGame();
+      const passedScores = [
+        await createScore(user, { game, mods: 64 }),
+        await createScore(user, { game, mods: 64 }),
+        await createScore(user, { game, mods: 64, rank: 'F' }),
+      ];
+
+      const achieved = await modScores([user], passedScores, game);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Speedy' &&
+        a.user._id === user._id));
+    });
   });
 
   describe('DT God', async () => {
@@ -307,6 +324,23 @@ describe('modScores()', async () => {
 
       const achieved = await modScores([user], passedScores, game);
       assert.isDefined(achieved.find(a =>
+        a.achievement.title === 'DT God' &&
+        a.user._id === user._id));
+    });
+
+    it('does not give achievement if one score is F-rank', async () => {
+      const user = await createUser(1, {});
+      const game = await createGame();
+      const passedScores = [
+        await createScore(user, { game, mods: 64 }),
+        await createScore(user, { game, mods: 64 }),
+        await createScore(user, { game, mods: 64 }),
+        await createScore(user, { game, mods: 64 }),
+        await createScore(user, { game, mods: 64, rank: 'F' }),
+      ];
+
+      const achieved = await modScores([user], passedScores, game);
+      assert.isUndefined(achieved.find(a =>
         a.achievement.title === 'DT God' &&
         a.user._id === user._id));
     });
@@ -379,6 +413,23 @@ describe('modScores()', async () => {
         a.achievement.title === 'Confidence' &&
         a.user._id === user._id));
     });
+
+    it('does not give achievement if one score is F-rank', async () => {
+      const user = await createUser(1, {});
+      const game = await createGame();
+      const passedScores = [
+        await createScore(user, { game, mods: 32 }),
+        await createScore(user, { game, mods: 32 }),
+        await createScore(user, { game, mods: 32 }),
+        await createScore(user, { game, mods: 32 }),
+        await createScore(user, { game, mods: 32, rank: 'F' }),
+      ];
+
+      const achieved = await modScores([user], passedScores, game);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Confidence' &&
+        a.user._id === user._id));
+    });
   });
 
   describe('Impeccable', async () => {
@@ -441,6 +492,23 @@ describe('modScores()', async () => {
         await createScore(user, { game, mods: 16416 }),
         await createScore(user, { game, mods: 32 }),
         await createScore(user, { game, mods: 32 }),
+      ];
+
+      const achieved = await modScores([user], passedScores, game);
+      assert.isUndefined(achieved.find(a =>
+        a.achievement.title === 'Impeccable' &&
+        a.user._id === user._id));
+    });
+
+    it('does not give achievement if one score is F-rank', async () => {
+      const user = await createUser(1, {});
+      const game = await createGame();
+      const passedScores = [
+        await createScore(user, { game, mods: 16416 }),
+        await createScore(user, { game, mods: 16416 }),
+        await createScore(user, { game, mods: 16416 }),
+        await createScore(user, { game, mods: 16416 }),
+        await createScore(user, { game, mods: 16416, rank: 'F' }),
       ];
 
       const achieved = await modScores([user], passedScores, game);

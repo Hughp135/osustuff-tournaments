@@ -19,8 +19,8 @@ export class TwitchEmotesPipe implements PipeTransform {
       .join(' ');
 
     return this._domSanitizer.sanitize(
-      SecurityContext.URL,
-      this._domSanitizer.bypassSecurityTrustUrl(result),
+      SecurityContext.HTML,
+      this._domSanitizer.bypassSecurityTrustHtml(result),
     );
   }
 }
