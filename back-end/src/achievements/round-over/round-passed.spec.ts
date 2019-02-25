@@ -5,8 +5,8 @@ import { Score } from '../../models/Score.model';
 import { Achievement } from '../../models/Achievement.model';
 import { connectToMongo, disconnectFromMongo } from '../../helpers/connect-to-mongo';
 import { roundPassed } from './round-passed';
-import { createUser } from '../../helpers/create-user';
-import { createScore } from '../../helpers/create-score';
+import { createUser } from '../../helpers/tests/create-user';
+import { createScore } from '../../helpers/tests/create-score';
 import { Game } from '../../models/Game.model';
 
 const assert = chai.assert;

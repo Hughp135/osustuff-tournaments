@@ -1,5 +1,5 @@
-import { IUser } from '../models/User.model';
-import { Game, IPlayer } from '../models/Game.model';
+import { IUser } from '../../models/User.model';
+import { Game, IPlayer } from '../../models/Game.model';
 
 export async function createGame(winningUser?: IUser, players?: IPlayer[]) {
   return await Game.create({

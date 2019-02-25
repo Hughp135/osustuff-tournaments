@@ -1,6 +1,6 @@
 import { IGame, IPlayer } from './../models/Game.model';
 import { IUser } from '../models/User.model';
-import { userToPlayer } from '../helpers/user-to-player';
+import { userToPlayer } from '../helpers/tests/user-to-player';
 
 export async function addPlayer(game: IGame, user: IUser): Promise<IUser> {
   const player: IPlayer = userToPlayer(user);

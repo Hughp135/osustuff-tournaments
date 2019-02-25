@@ -1,5 +1,5 @@
-import { User } from '../models/User.model';
-import { Skill } from '../services/trueskill';
+import { User } from '../../models/User.model';
+import { Skill } from '../../services/trueskill';
 
 interface IUserDataArguments {
   wins?: number;

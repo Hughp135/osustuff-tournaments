@@ -3,7 +3,7 @@ import { updateOrCreateUser, User } from '../models/User.model';
 import faker from 'faker';
 import { cache } from '../services/cache';
 import { addOnlineUser } from '../helpers/add-online-user';
-import { userToPlayer } from '../helpers/user-to-player';
+import { userToPlayer } from '../helpers/tests/user-to-player';
 
 export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
   const players = await Promise.all(
