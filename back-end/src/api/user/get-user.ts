@@ -6,7 +6,6 @@ import {
   IUserResult,
 } from '../../models/User.model';
 import { getAchievement } from '../../achievements/get-achievement';
-import { logger } from '../../logger';
 
 export async function getUser(req: Request, res: Response) {
   let { username } = req.params;
@@ -38,7 +37,7 @@ export async function getUser(req: Request, res: Response) {
       .map(async ({ achievementId }: IUserAchievement) => {
         const achievement = await getAchievement(achievementId);
         if (!achievement) {
-          logger.error('Achievement ID no longer exists', [
+          console.info('Achievement ID no longer exists', [
             'Achievement ID ' + achievementId.toHexString(),
             'User ID: ' + user._id.toHexString(),
           ]);

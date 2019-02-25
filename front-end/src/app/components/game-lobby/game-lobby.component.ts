@@ -1,3 +1,4 @@
+import { WebsocketService } from './../../services/websocket.service';
 import { IUser } from './../user-profile/user-profile.component';
 import { GameService } from './../../game.service';
 import { SettingsService, CurrentGame } from './../../services/settings.service';
@@ -72,7 +73,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   public beatmaps: any;
   public showBeatmapList: boolean;
   public timeLeft: string;
-  private fetchingMessages = false;
   public currentUser?: IUser;
   private announcedStart = false;
   public isAdmin: boolean;
@@ -82,7 +82,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private settingsService: SettingsService,
-    private gameService: GameService,
+    private socketService: WebsocketService,
   ) {
     this.isAdmin = !!settingsService.adminPw;
   }
@@ -106,12 +106,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     ];
 
     this.messages = data.messages;
-
-    this.visibilityTimers.push(
-      Visibility.every(2000, 2000 * 10, async () => {
-        await this.getMoreMessages();
-      }),
-    );
   }
 
   ngOnDestroy() {
@@ -124,28 +118,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     ) {
       this.settingsService.clearCurrentGame();
     }
-  }
-
-  public getMoreMessages = async () => {
-    if (this.fetchingMessages) {
-      return;
-    }
-
-    this.fetchingMessages = true;
-    const [lastMessage] = this.messages;
-
-    try {
-      const newMessages = await this.gameService.getLobbyMessages(
-        this.game._id,
-        lastMessage && lastMessage._id,
-      );
-
-      this.messages = newMessages.concat(this.messages);
-    } catch (e) {
-      console.error(e);
-    }
-
-    this.fetchingMessages = false;
+    this.socketService.socket.disconnect();
   }
 
   private async announceRoundChanges(game) {

@@ -1,3 +1,4 @@
+import { WebsocketService } from './../services/websocket.service';
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
 import {
@@ -45,12 +46,14 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
     private gameService: GameService,
     private router: Router,
     private settingsService: SettingsService,
+    private socketService: WebsocketService,
   ) {}
 
   async resolve(route: ActivatedRouteSnapshot): Promise<GameLobbyData> {
     const { id } = route.params;
 
     try {
+      this.socketService.connect(id);
       await this.getBeatmaps(id);
       const messages = await this.gameService.getLobbyMessages(id);
       const lobby: Observable<IGame> = this.getLobby(id);

@@ -51,12 +51,6 @@ export class GameService {
     });
   }
 
-  public async sendMessage(id: string, message: string) {
-    return await this.apiService.post(`lobbies/${id}/messages`, {
-      message,
-    });
-  }
-
   public async kickUser(gameId: string, playerId: string) {
     return await this.apiService.post(`lobbies/${gameId}/players/${playerId}/kick`, {});
   }

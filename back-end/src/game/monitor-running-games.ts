@@ -13,9 +13,10 @@ import { COUNTDOWN_START } from './durations';
 import { cache } from '../services/cache';
 import { ObjectId } from 'bson';
 import { Score } from '../models/Score.model';
-import { logger } from '../logger';
 import { removeAfkPlayers } from './remove-afk-players';
 import { updatePlayerAchievements } from '../achievements/update-player-achievements';
+import got from 'got';
+import { getGamePayload } from '../api/lobbies/get';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
@@ -50,14 +51,21 @@ export function stopMonitoring() {
 // Update games based on status
 export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   const games = await Game.find({
-    status: ['scheduled', 'new', 'in-progress', 'round-over', 'checking-scores'],
+    status: [
+      'scheduled',
+      'new',
+      'in-progress',
+      'round-over',
+      'checking-scores',
+    ],
   });
 
   if (!creatingNewGame) {
     creatingNewGame = true;
     try {
-       // NOT awaited intentionally
-      createNewGame(games, getRecentMaps).then(() => { // tslint:disable-line:no-floating-promises
+      // NOT awaited intentionally
+      createNewGame(games, getRecentMaps).then(() => {
+        // tslint:disable-line:no-floating-promises
         creatingNewGame = false;
       });
     } catch (e) {
@@ -74,35 +82,52 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
       // This game is being updated already, don't do anything.
       return;
     }
+
     gamesBeingUpdated.push(game._id.toString());
+    let gameUpdated = false;
+
     try {
       switch (game.status) {
         case 'scheduled':
-          await openScheduledGame(game);
+          gameUpdated = gameUpdated || (await openScheduledGame(game));
           break;
         case 'new':
-          await startGame(game);
+          gameUpdated = gameUpdated || (await startGame(game));
           break;
         case 'in-progress':
-          await checkRoundEnded(game);
+          gameUpdated = gameUpdated || (await checkRoundEnded(game));
           break;
         case 'checking-scores':
-          await skipCheckingScore(game);
+          gameUpdated = gameUpdated || (await skipCheckingScore(game));
           break;
         case 'round-over':
-          await completeRound(game);
+          gameUpdated = gameUpdated || (await completeRound(game));
           break;
+      }
+
+      if (gameUpdated) {
+        await got.post(`http://localhost:${config.get('SOCKET_PORT')}/game-updated`, {
+          json: true,
+          body: {
+            gameId: game._id,
+          },
+        });
       }
     } catch (e) {
       console.error('Failed to update game with status ' + game.status, e);
     }
-    gamesBeingUpdated = gamesBeingUpdated.filter(g => g !== game._id.toString());
+    gamesBeingUpdated = gamesBeingUpdated.filter(
+      g => g !== game._id.toString(),
+    );
   });
 
   await Promise.all(promises);
 }
 
-async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) {
+async function createNewGame(
+  games: IGame[],
+  getRecentMaps: () => Promise<any>,
+) {
   const newGames = games.filter(g => g.status === 'new');
   const testSkipCreate = TEST_MODE && newGames.length >= 2;
   const anyRankGames = newGames.filter(g => !g.minRank);
@@ -114,12 +139,14 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
     try {
       if (anyRankGames.length === 0) {
         console.info('creating a new game');
-        await createGame(getRecentMaps).catch(e => logger.error('Failed to create game', e));
+        await createGame(getRecentMaps).catch(e =>
+          console.info('Failed to create game', e),
+        );
       }
       if (!DISABLE_LOWER_LVL_LOBBIES && minRankGames.length === 0) {
         console.info('creating a new game with min rank');
         await createGame(getRecentMaps, 45000).catch(e =>
-          logger.error('Failed to create game', e),
+          console.info('Failed to create game', e),
         );
       }
     } catch (e) {
@@ -128,16 +155,19 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
   }
 }
 
-async function openScheduledGame(game: IGame) {
+async function openScheduledGame(game: IGame): Promise<boolean> {
   if (game.nextStageStarts && game.nextStageStarts < new Date()) {
     console.info('Opening scheduled game');
     game.nextStageStarts = undefined;
     game.status = 'new';
     await game.save();
+    return true;
+  } else {
+    return false;
   }
 }
 
-async function startGame(game: IGame) {
+async function startGame(game: IGame): Promise<boolean> {
   if (Date.now() - SERVER_START_DATE.getTime() > 30000) {
     await removeAfkPlayers(game);
   }
@@ -150,9 +180,10 @@ async function startGame(game: IGame) {
       game.nextStageStarts = undefined;
       await game.save();
       clearGetLobbyCache(game._id);
+      return true;
     }
 
-    return;
+    return false;
   }
 
   if (!game.nextStageStarts) {
@@ -165,39 +196,50 @@ async function startGame(game: IGame) {
       date.setSeconds(date.getSeconds() + 120);
       game.nextStageStarts = date;
       await game.save();
+      return true;
     }
   } else if (game.nextStageStarts < new Date()) {
     // Start the first round
     await nextRound(game);
     clearGetLobbyCache(game._id);
+    return true;
   }
+
+  return false;
 }
 
-async function checkRoundEnded(game: IGame) {
+async function checkRoundEnded(game: IGame): Promise<boolean> {
   // Check if next round should start
-  if (<Date> game.nextStageStarts < new Date()) {
-    const round = <IRound> await Round.findById(game.currentRound);
+  if (<Date>game.nextStageStarts < new Date()) {
+    const round = <IRound>await Round.findById(game.currentRound);
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
     await updatePlayerAchievements(game);
     clearGetLobbyCache(game._id);
+    return true;
   }
+
+  return false;
 }
 
 async function completeRound(game: IGame) {
   const alivePlayers = game.players.filter(p => p.alive);
 
-  if (<Date> game.nextStageStarts < new Date()) {
+  if (<Date>game.nextStageStarts < new Date()) {
     if (game.roundNumber !== 10 && alivePlayers.length > 1) {
       // Start the next round
       await nextRound(game);
       clearGetLobbyCache(game._id);
+      return true;
     } else {
       // End the game
       await endGame(game);
       clearGetLobbyCache(game._id);
+      return true;
     }
   }
+
+  return false;
 }
 
 async function setNextStageStartsAt(game: IGame, seconds: number) {
@@ -210,25 +252,36 @@ async function setNextStageStartsAt(game: IGame, seconds: number) {
 }
 
 async function skipCheckingScore(game: IGame) {
-  if (game.status === 'checking-scores' && <Date> game.nextStageStarts < new Date()) {
-    const round = <IRound> await Round.findById(game.currentRound);
-    logger.error('Checking scores not complete after 2 minutes', {
+  if (
+    game.status === 'checking-scores' &&
+    <Date>game.nextStageStarts < new Date()
+  ) {
+    const round = <IRound>await Round.findById(game.currentRound);
+
+    console.info('Checking scores not complete after 2 minutes', {
       gameId: game._id,
       round: round._id,
       playersAliveCount: game.players.filter(p => p.alive).length,
     });
+
     const scoresCount = await Score.countDocuments({ roundId: game._id });
     const alivePlayersCount = game.players.filter(p => p.alive).length;
+
     if (scoresCount >= alivePlayersCount / 2) {
-      logger.info('Ending round as at least half alive players have set score');
+      console.info(
+        'Ending round as at least half alive players have set score',
+      );
       await roundEnded(game, round);
       await updatePlayerAchievements(game);
     } else {
-      logger.info('Checking scores again');
+      console.info('Checking scores again');
       await checkRoundEnded(game);
     }
     clearGetLobbyCache(game._id);
+    return true;
   }
+
+  return false;
 }
 
 export function clearGetLobbyCache(gameId: string | ObjectId) {
