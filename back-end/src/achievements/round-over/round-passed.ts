@@ -97,7 +97,7 @@ export async function roundPassed(
 
   passedScores.sort((a, b) => b.score - a.score);
 
-  if (passedScores.length > 0) {
+  if (passedScores.length) {
     const highestScore = passedScores[0];
     const highestScoreMods = getAppliedMods(highestScore.mods);
     const highestScoreUser = <IUser>aliveUsers.find(u => u._id.toString() === highestScore.userId.toHexString());

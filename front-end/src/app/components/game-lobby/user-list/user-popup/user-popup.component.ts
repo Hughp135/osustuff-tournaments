@@ -9,7 +9,7 @@ import { IPlayer } from '../../game-lobby.component';
 export class UserPopupComponent implements OnInit {
   @Input() popupData: {player: IPlayer; offsetTop: number};
   @Input() isModerator: boolean;
-  @Input() kickPlayer;
+  @Input() kickPlayer: () => Promise<any>;
 
   constructor() {}
 

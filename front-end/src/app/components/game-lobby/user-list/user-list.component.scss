@@ -78,6 +78,51 @@
   color: white;
 }
 
-.ui.list .list>a.item .user i.icon, .ui.list>a.item i.icon {
+.ui.list .list>a.item .user i.icon,
+.ui.list>a.item i.icon {
   color: grey;
+}
+
+.player.info {
+  display: inline;
+  padding: 2px;
+  margin-right: 3px;
+}
+
+.description {
+  margin-top: 3px;
+}
+
+.ui.label.stream {
+  position: absolute;
+  right: 5px;
+  i {
+    animation: pulse 2s infinite;
+    border-radius: 50%;
+  }
+}
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(204, 44, 44, 0.4);
+  }
+  70% {
+      -webkit-box-shadow: 0 0 0 10px rgba(204, 44, 44, 0);
+  }
+  100% {
+      -webkit-box-shadow: 0 0 0 0 rgba(204, 44, 44, 0);
+  }
+}
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(204, 44, 44, 0.4);
+    box-shadow: 0 0 0 0 rgba(204, 44, 44, 0.4);
+  }
+  70% {
+      -moz-box-shadow: 0 0 0 10px rgba(204, 44, 44, 0);
+      box-shadow: 0 0 0 10px rgba(204, 44, 44, 0);
+  }
+  100% {
+      -moz-box-shadow: 0 0 0 0 rgba(204, 44, 44, 0);
+      box-shadow: 0 0 0 0 rgba(204, 44, 44, 0);
+  }
 }
