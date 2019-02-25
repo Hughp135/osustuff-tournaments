@@ -154,8 +154,8 @@ export async function updateOrCreateUser(
   roles?: Role[],
 ): Promise<IUser> {
   const osuUserId = parseInt(osuUser.user_id, 10);
-  const ppRank = parseInt(osuUser.pp_rank, 10);
-  const countryRank = parseInt(osuUser.pp_country_rank, 10);
+  const ppRank = parseInt(osuUser.pp_rank || '0', 10);
+  const countryRank = parseInt(osuUser.pp_country_rank || '0', 10);
   const found = await User.findOne({ osuUserId });
 
   if (found) {
