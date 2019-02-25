@@ -35,7 +35,7 @@ export async function createGame(
   minRank?: number,
   testPlayers?: number,
 ): Promise<IGame> {
-  const savedBeatmaps = await Beatmap.aggregate([{ $sample: { size: 500 } }]);
+  const savedBeatmaps = await Beatmap.aggregate([{ $sample: { size: 1500 } }]);
   let beatmaps = (await getRecentBeatmaps()).filter(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
