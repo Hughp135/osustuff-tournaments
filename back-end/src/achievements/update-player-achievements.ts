@@ -58,7 +58,7 @@ export async function updatePlayerAchievements(game: IGame) {
           TEST_MODE ? await joinGame(aliveGameUsers) : [],
           await modScores(allGameUsers, passedGameScores, game),
           await roundPassed(aliveGameUsers, passedRoundScores),
-          await roundFailed(allGameUsers, failedRoundScores, passedGameScores),
+          await roundFailed(allGameUsers, failedRoundScores, passedRoundScores),
         ],
       );
       break;
