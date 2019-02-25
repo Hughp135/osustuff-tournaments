@@ -1,5 +1,5 @@
-import { IUser } from '../../models/User.model';
-import { IPlayer } from '../../models/Game.model';
+import { IUser } from '../models/User.model';
+import { IPlayer } from '../models/Game.model';
 
 export function userToPlayer(user: IUser): IPlayer {
   return {

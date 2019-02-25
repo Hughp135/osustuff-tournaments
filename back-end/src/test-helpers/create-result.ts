@@ -1,5 +1,5 @@
-import { IUser } from '../../models/User.model';
-import { IGame } from '../../models/Game.model';
+import { IUser } from '../models/User.model';
+import { IGame } from '../models/Game.model';
 import { ObjectID } from 'bson';
 
 interface IResultDataArguments {

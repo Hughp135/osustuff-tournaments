@@ -5,11 +5,11 @@ import { Score } from '../models/Score.model';
 import { Achievement } from '../models/Achievement.model';
 import { connectToMongo, disconnectFromMongo } from '../helpers/connect-to-mongo';
 import { updatePlayerAchievements } from './update-player-achievements';
-import { createUser } from '../helpers/tests/create-user';
-import { createScore } from '../helpers/tests/create-score';
+import { createUser } from '../test-helpers/create-user';
+import { createScore } from '../test-helpers/create-score';
 import { Game } from '../models/Game.model';
-import { createGame } from '../helpers/tests/create-game';
-import { userToPlayer } from '../helpers/tests/user-to-player';
+import { createGame } from '../test-helpers/create-game';
+import { userToPlayer } from '../test-helpers/user-to-player';
 import { ObjectId } from 'bson';
 
 const assert = chai.assert;

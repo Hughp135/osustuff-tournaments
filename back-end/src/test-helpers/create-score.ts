@@ -1,8 +1,8 @@
-import { IUser } from '../../models/User.model';
+import { IUser } from '../models/User.model';
 import { ObjectId } from 'bson';
-import { Score } from '../../models/Score.model';
-import { IGame } from '../../models/Game.model';
-import { IRound } from '../../models/Round.model';
+import { Score } from '../models/Score.model';
+import { IGame } from '../models/Game.model';
+import { IRound } from '../models/Round.model';
 
 interface IScoreDataArguments {
   accuracy?: number;

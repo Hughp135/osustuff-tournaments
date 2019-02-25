@@ -5,9 +5,9 @@ import { Score } from '../../models/Score.model';
 import { Achievement } from '../../models/Achievement.model';
 import { connectToMongo, disconnectFromMongo } from '../../helpers/connect-to-mongo';
 import { gameWon } from './game-won';
-import { createUser } from '../../helpers/tests/create-user';
-import { createGame } from '../../helpers/tests/create-game';
-import { createScore } from '../../helpers/tests/create-score';
+import { createUser } from '../../test-helpers/create-user';
+import { createGame } from '../../test-helpers/create-game';
+import { createScore } from '../../test-helpers/create-score';
 import { Game } from '../../models/Game.model';
 
 const assert = chai.assert;
