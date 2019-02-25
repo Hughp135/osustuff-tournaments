@@ -1,6 +1,6 @@
 import { ObjectID } from 'bson';
 import { Server } from 'socket.io';
-import {  Message } from './../../models/Message.model';
+import { Message } from './../../models/Message.model';
 import { User } from '../../models/User.model';
 import { Game } from '../../models/Game.model';
 const Filter = require('bad-words');
@@ -46,7 +46,11 @@ export function sendMessage(io: Server) {
         p => p.userId.toString() === user._id.toString(),
       );
 
-      if (!player || player.kicked) {
+      if (
+        (!player || player.kicked) &&
+        !user.roles.includes('moderator') &&
+        !user.roles.includes('admin')
+      ) {
         console.error('player not found/kicked', player);
         return;
       }
@@ -68,7 +72,8 @@ export function sendMessage(io: Server) {
 
       recentMessages[user.username] = (recentMessages[user.username] || 0) + 1;
       setTimeout(() => {
-        recentMessages[user.username] = (recentMessages[user.username] || 1) - 1;
+        recentMessages[user.username] =
+          (recentMessages[user.username] || 1) - 1;
       }, 10000);
 
       delete message.userId;

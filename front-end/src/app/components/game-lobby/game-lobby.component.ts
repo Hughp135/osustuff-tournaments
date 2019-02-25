@@ -1,12 +1,11 @@
 import { WebsocketService } from './../../services/websocket.service';
 import { IUser } from './../user-profile/user-profile.component';
-import { GameService } from './../../game.service';
 import {
   SettingsService,
   CurrentGame,
 } from './../../services/settings.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import * as Visibility from 'visibilityjs';
 import {
@@ -90,12 +89,17 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private settingsService: SettingsService,
     private socketService: WebsocketService,
+    private router: Router,
   ) {
     this.isAdmin = !!settingsService.adminPw;
   }
 
   ngOnInit() {
     const { data } = <{ data: GameLobbyData }>this.route.snapshot.data;
+
+    if (!data) {
+      return this.router.navigate(['/lobbies']);
+    }
 
     // Map all the data to component state
     this.subscriptions = [

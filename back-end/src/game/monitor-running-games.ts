@@ -84,34 +84,42 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     }
 
     gamesBeingUpdated.push(game._id.toString());
-    let gameUpdated = false;
+    const updates: boolean[] = [];
 
     try {
       switch (game.status) {
         case 'scheduled':
-          gameUpdated = gameUpdated || (await openScheduledGame(game));
+          updates.push(await openScheduledGame(game));
           break;
         case 'new':
-          gameUpdated = gameUpdated || (await startGame(game));
+          updates.push(await startGame(game));
           break;
         case 'in-progress':
-          gameUpdated = gameUpdated || (await checkRoundEnded(game));
+          updates.push(await checkRoundEnded(game));
           break;
         case 'checking-scores':
-          gameUpdated = gameUpdated || (await skipCheckingScore(game));
+          updates.push(await skipCheckingScore(game));
           break;
         case 'round-over':
-          gameUpdated = gameUpdated || (await completeRound(game));
+          updates.push(await completeRound(game));
           break;
       }
 
-      if (gameUpdated) {
-        await got.post(`http://localhost:${config.get('SOCKET_PORT')}/game-updated`, {
-          json: true,
-          body: {
-            gameId: game._id,
-          },
-        });
+      if (updates.includes(true)) {
+        console.log('posting stuff', game._id);
+        try {
+          await got.post(
+            `http://localhost:${config.get('SOCKET_PORT')}/game-updated`,
+            {
+              json: true,
+              body: {
+                gameId: game._id,
+              },
+            },
+          );
+        } catch (e) {
+          console.info('failed to p[ost to update', e.status, e.body);
+        }
       }
     } catch (e) {
       console.error('Failed to update game with status ' + game.status, e);
@@ -196,8 +204,8 @@ async function startGame(game: IGame): Promise<boolean> {
       date.setSeconds(date.getSeconds() + 120);
       game.nextStageStarts = date;
       await game.save();
-      return true;
     }
+    return true;
   } else if (game.nextStageStarts < new Date()) {
     // Start the first round
     await nextRound(game);

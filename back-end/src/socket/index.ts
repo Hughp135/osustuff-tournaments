@@ -3,22 +3,45 @@ import { socketAuth, ISocket } from './auth/socket-auth';
 import http from 'http';
 import express from 'express';
 import config from 'config';
+import cookieParser from 'cookie-parser';
 import { connectToMongo } from '../helpers/connect-to-mongo';
 import { sendMessage } from './messages/new-message';
 import { joinLobby } from './game/join';
 import { gameUpdated } from './game/updated';
+import bodyParser from 'body-parser';
 
 export let io: Server;
-const app = express();
-const server = http.createServer(app);
-const SOCKET_PORT = config.get('SOCKET_PORT');
 
 export async function startWs() {
-  await connectToMongo();
-
   if (process.env.MODE === 'api') {
     throw new Error('Attempted to start socket server in API process');
   }
+
+// Set up the API for game updates
+  const app = express();
+  app.use(bodyParser.json());
+  app.use(cookieParser());
+  app.use((req, res, next) => {
+  const ip = req.connection.remoteAddress;
+  const isLocal =
+    ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+
+  if (!isLocal) {
+    console.error(
+      'socket api called from non-localhost address',
+      req.connection.remoteAddress,
+      (<any>req).claim,
+    );
+    return res.status(401).end();
+  }
+
+  next();
+});
+
+  const server = http.createServer(app);
+  const SOCKET_PORT = config.get('SOCKET_PORT');
+
+  await connectToMongo();
 
   io = socketIo(server);
   io.use(socketAuth(io));

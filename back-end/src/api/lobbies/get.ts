@@ -62,10 +62,20 @@ export async function getGamePayload(gameId: string | Types.ObjectId) {
   const round = await Round.findById(game.currentRound)
     .select({ beatmap: 1 })
     .lean();
+
+  return {
+    ...game,
+    round,
+    secondsToNextRound,
+    scores: await getScores(game),
+  };
+}
+
+async function getScores(game: IGame) {
   const scores = ['complete', 'round-over'].includes(game.status)
     ? await getAllUserBestScores(game.currentRound)
     : [];
-  const scoresTransformed = scores.map((score: any) => {
+  return scores.map((score: any) => {
     const player = game.players.find(
       (p: any) => p.userId.toString() === score.userId.toString(),
     );
@@ -76,13 +86,4 @@ export async function getGamePayload(gameId: string | Types.ObjectId) {
 
     return score;
   });
-
-  delete game.players;
-
-  return {
-    ...game,
-    round,
-    secondsToNextRound,
-    scores: scoresTransformed,
-  };
 }

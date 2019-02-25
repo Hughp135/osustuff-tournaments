@@ -53,14 +53,16 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
     const { id } = route.params;
 
     try {
-      this.socketService.connect(id);
+      console.log(1);
+      await this.socketService.connect(id);
       await this.getBeatmaps(id);
       const messages = await this.gameService.getLobbyMessages(id);
       const lobby: Observable<IGame> = this.getLobby(id);
       const players: Observable<IPlayer[]> = this.getPlayers(id);
+      console.log(2);
 
       await this.settingsService.checkCurrentGame();
-
+      console.log(3);
       return {
         lobby,
         beatmaps: this.beatmaps,
@@ -70,7 +72,6 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       };
     } catch (e) {
       console.error(e);
-      setTimeout(() => this.router.navigate(['/lobbies']), 0);
       return undefined;
     }
   }
@@ -136,6 +137,59 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
 
   private getLobby(id: string): Observable<IGame> {
     return Observable.create(async (observer: Observer<IGame>) => {
+      const subscriptions = new Subscription();
+
+      const onData = (game: IGame) => {
+        if (observer.closed) {
+          subscriptions.unsubscribe();
+          observer.complete();
+          this._game.next(undefined);
+          this.statusChanged.next(undefined);
+
+          return;
+        }
+
+        observer.next(game);
+
+        const statusChanged =
+          !this._game.getValue() ||
+          game.status !== this._game.getValue().status;
+
+        this._game.next(game);
+
+        if (
+          game.status === 'new' ||
+          statusChanged ||
+          Math.abs(game.secondsToNextRound - this.secondsLeft) > 10
+        ) {
+          this.secondsLeft = game.secondsToNextRound;
+          if (this.timeLeftInterval) {
+            this.timeLeftInterval.unsubscribe();
+          }
+          this.updateTimeLeft();
+          this.timeLeftInterval = interval(1000).subscribe(() => {
+            if (this.secondsLeft >= 1) {
+              this.secondsLeft--;
+              this.updateTimeLeft();
+            }
+          });
+        }
+      };
+      subscriptions.add(this.socketService.lobby.subscribe(game => {
+        console.log('loby changed', game);
+        const oldGame = this._game.getValue();
+        if (game) {
+          if (oldGame && game._id !== oldGame._id) {
+            this.socketService.socket.emit('leave-lobby-' + oldGame._id); // TODO
+          }
+          onData(game);
+        }
+      }));
+    });
+  }
+
+  private getLobbyOld(id: string): Observable<IGame> {
+    return Observable.create(async (observer: Observer<IGame>) => {
       let fetching = false;
       const subscriptions = new Subscription();
 
@@ -169,7 +223,8 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
           }
 
           if (
-            game.status === 'new' || statusChanged ||
+            game.status === 'new' ||
+            statusChanged ||
             Math.abs(game.secondsToNextRound - this.secondsLeft) > 10
           ) {
             this.secondsLeft = game.secondsToNextRound;
@@ -186,6 +241,10 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
           }
         } catch (e) {
           console.error(e);
+          if (e.status === 404) {
+            console.log('navigating1');
+            this.router.navigate(['/lobbies']);
+          }
         }
         fetching = false;
       };
@@ -212,7 +271,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
               ['new', 'scheduled'].includes(this._game.getValue().status),
             ),
           )
-          .subscribe(async() => {
+          .subscribe(async () => {
             await this.getBeatmaps(id);
           }),
       );

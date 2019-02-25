@@ -2,5 +2,5 @@
   "watch": ["src"],
   "ext": "ts",
   "ignore": ["src/**/*.spec.ts"],
-  "exec": "tsc --sourceMap && concurrently \"node dist/index.js\" \"node dist/socket/index.js\""
+  "exec": "tsc --sourceMap && cross-env MODE=api node dist/index.js"
 }
