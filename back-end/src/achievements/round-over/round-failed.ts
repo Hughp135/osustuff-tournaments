@@ -61,7 +61,7 @@ export async function roundFailed(
       });
     }
 
-    if (worstPassingScore.score - score.score <= 1000) {
+    if (score.score > 0 && worstPassingScore.score - score.score <= 1000) {
       achieved.push({
         user,
         achievement: pressF,

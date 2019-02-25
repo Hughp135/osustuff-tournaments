@@ -22,47 +22,50 @@ export interface IUserAchieved {
 
 export async function updatePlayerAchievements(game: IGame) {
   const userOsuIds = game.players.map(p => p.osuUserId);
+
   const allGameUsers = await User.find({ osuUserId: userOsuIds });
-  const aliveUsers = allGameUsers.filter(u => {
+  const aliveGameUsers = allGameUsers.filter(u => {
     const player = game.players.find(p => p.osuUserId === u.osuUserId);
-    return player && !!player.alive;
+    return player && player.alive;
   });
-  const allRoundScores = await Score.find({
+
+  const gameScores = await Score.find({
     gameId: game._id,
   }).sort({
     roundId: 1,
     score: -1,
     date: 1,
   });
-  const allPassedScores = allRoundScores.filter(s => s.passedRound);
-  const failedScores = allRoundScores.filter(
-    s =>
-      !s.passedRound &&
-      !allPassedScores.some( // Does not have a passing score
-        s2 => s2.userId.toHexString() === s.userId.toHexString(),
-      ),
-  );
-  const passedRoundScores = allPassedScores.filter(
+  const roundScores = gameScores.filter(
     s => s.roundId.toHexString() === game.currentRound.toHexString(),
   );
 
-  const results: IUserAchieved[][] = [];
+  const passedGameScores = gameScores.filter(s => s.passedRound);
+  const passedRoundScores = roundScores.filter(s => s.passedRound);
+  const failedRoundScores = roundScores.filter(
+    s =>
+      !s.passedRound &&
+      !passedRoundScores.some( // Does not have a passing score
+        s2 => s2.userId.toHexString() === s.userId.toHexString(),
+      ),
+  );
 
+  const results: IUserAchieved[][] = [];
   switch (game.status) {
     case 'round-over':
       results.push(
         ...[
-          TEST_MODE ? await joinGame(aliveUsers) : [],
-          await modScores(allGameUsers, allPassedScores, game),
-          await roundPassed(aliveUsers, passedRoundScores),
-          await roundFailed(allGameUsers, failedScores, allPassedScores),
+          TEST_MODE ? await joinGame(aliveGameUsers) : [],
+          await modScores(allGameUsers, passedGameScores, game),
+          await roundPassed(aliveGameUsers, passedRoundScores),
+          await roundFailed(allGameUsers, failedRoundScores, passedRoundScores),
         ],
       );
       break;
     case 'complete':
       results.push(
         ...[
-          await gameWon(allGameUsers, allPassedScores, game),
+          await gameWon(allGameUsers, passedGameScores, game),
           await gameComplete(allGameUsers),
           await totalModScores(allGameUsers),
         ],
@@ -84,4 +87,6 @@ export async function updatePlayerAchievements(game: IGame) {
   }
 
   await sendAchievementMessages(achievementsAwarded, game);
+
+  return achievementsAwarded;
 }

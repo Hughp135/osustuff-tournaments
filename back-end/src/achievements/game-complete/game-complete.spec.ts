@@ -4,9 +4,10 @@ import sinonChai from 'sinon-chai';
 import { Score } from '../../models/Score.model';
 import { Achievement } from '../../models/Achievement.model';
 import { connectToMongo, disconnectFromMongo } from '../../helpers/connect-to-mongo';
-import { createUser } from '../../helpers/create-user';
+import { createUser } from '../../test-helpers/create-user';
 import { gameComplete } from './game-complete';
-import { createResult } from '../../helpers/create-result';
+import { createResult } from '../../test-helpers/create-result';
+import { Game } from '../../models/Game.model';
 
 const assert = chai.assert;
 chai.use(sinonChai);
@@ -18,6 +19,7 @@ describe('gameComplete()', async () => {
   afterEach(async () => {
     await User.deleteMany({});
     await Score.deleteMany({});
+    await Game.deleteMany({});
     await Achievement.deleteMany({});
   });
   after(async () => {
