@@ -70,7 +70,7 @@ export async function createGame(
 
   if (TEST_MODE && game.status !== 'scheduled') {
     logger.info(`(game id: ${game._id.toHexString()}) Creating game with sample players.`);
-    await addSamplePlayers(game, testPlayers || 3);
+    await addSamplePlayers(game, testPlayers || 10);
   }
 
   return game;

@@ -46,7 +46,7 @@ export const logger = {
     const text = getOutput(output, params);
 
     if (logDebug) {
-      console.log(`${chalk.whiteBright(timestamp)} ${text}`);
+      console.debug(`${chalk.whiteBright(timestamp)} ${text}`);
     }
     debugStream.write(`${timestamp} ${text}\n`);
   },
@@ -64,7 +64,7 @@ export const logger = {
     const text = getOutput(output, params);
 
     if (logInfo) {
-      console.log(`${chalk.greenBright(timestamp)} ${text}`);
+      console.info(`${chalk.greenBright(timestamp)} ${text}`);
     }
     infoStream.write(`${timestamp} ${text}\n`);
   },
@@ -73,7 +73,7 @@ export const logger = {
     const text = getOutput(output, params);
 
     if (logWarn) {
-      console.log(`${chalk.yellowBright(timestamp)} ${text}`);
+      console.warn(`${chalk.yellowBright(timestamp)} ${text}`);
     }
     warnStream.write(`${timestamp} ${text}\n`);
   },
@@ -82,7 +82,7 @@ export const logger = {
     const text = getOutput(output, params);
 
     if (logError) {
-      console.log(`${chalk.redBright(timestamp)} ${text}`);
+      console.error(`${chalk.redBright(timestamp)} ${text}`);
     }
     errorStream.write(`${timestamp} ${text}\n`);
   },
