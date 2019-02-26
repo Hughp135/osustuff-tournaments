@@ -15,17 +15,28 @@
           }}</span>
         <span class="text-muted"> {{ message.createdAt | date: 'short' }}</span>
       </div>
-      <div class="description chat-message">
-        {{ message.message | emojify }}
+      <div class="description chat-message"
+        [innerHTML]="message.message | escape | twitchEmotes | emojify | twemojify | userHighlight:currentUsername">
       </div>
     </div>
   </div>
 </div>
 <form (submit)="sendMessage()">
   <div class="ui fluid action inverted input">
-    <input #chatInput autocomplete="off" [disabled]="sendingMessage || !canChat" [ngModel]="messageInput | emojify"
-      (ngModelChange)="messageInput = $event" name="messageInput" type="text" [placeholder]="canChat ? 'Chat...' : 'You cannot chat'" />
-    <emoji-mart *ngIf="showEmojiPicker" (emojiClick)="addEmoji($event)"></emoji-mart>
+    <input
+      #chatInput
+      autocomplete="off"
+      [disabled]="sendingMessage || !canChat"
+      [ngModel]="messageInput | emojify"
+      (ngModelChange)="messageInput = $event"
+      name="messageInput"
+      type="text"
+      [placeholder]="canChat ? 'Chat...' : 'You cannot chat'"
+    />
+    <emoji-mart
+      *ngIf="showEmojiPicker"
+      (emojiClick)="addEmoji($event)"
+    ></emoji-mart>
 
     <button class="ui inverted icon button show-emoji-picker" (document:click)="windowClick($event)" [disabled]="sendingMessage || !canChat"
       type="button">

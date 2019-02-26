@@ -4,6 +4,7 @@ import { addSamplePlayers } from '../test-helpers/add-sample-players';
 import config from 'config';
 import { Beatmap } from '../models/Beatmap.model';
 import { logger } from '../logger';
+import { randomFromArray } from '../helpers/random-from-array';
 
 const TEST_MODE = config.get('TEST_MODE');
 
@@ -35,7 +36,7 @@ export async function createGame(
   minRank?: number,
   testPlayers?: number,
 ): Promise<IGame> {
-  const savedBeatmaps = await Beatmap.aggregate([{ $sample: { size: 500 } }]);
+  const savedBeatmaps = await Beatmap.aggregate([{ $sample: { size: 1500 } }]);
   let beatmaps = (await getRecentBeatmaps()).filter(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
@@ -109,14 +110,9 @@ export function getBeatmapBetweenStars(
     }
   }
 
-  const random = arrayRandVal(filtered);
+  const random = randomFromArray(filtered);
 
   beatmaps = beatmaps.filter(b => b.beatmapset_id !== random.beatmapset_id);
 
   return [random, beatmaps];
-}
-
-export function arrayRandVal(myArray: any[]) {
-  const index = Math.floor(Math.random() * myArray.length);
-  return myArray[index];
 }

@@ -96,7 +96,10 @@ async function getData(id: string) {
       const user = users.find(
         (u: any) => u._id.toString() === p.userId.toString(),
       );
-      if (user.twitch) {
+      if (!user) {
+        console.error('No user found for player', p.username, 'Game', game._id);
+      }
+      if (user && user.twitch) {
         delete user.twitch.userId;
       }
       return {

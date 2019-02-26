@@ -54,49 +54,51 @@ export async function roundPassed(
         user,
         achievement: bestOfTheWorst,
       });
-    } else if (score.accuracy < 60) { // Not F, but <60% accuracy
-      achieved.push({
-        user,
-        achievement: mingAcc,
-      });
-    }
+    } else {
+      if (score.accuracy < 60) { // Not F, but <60% accuracy
+        achieved.push({
+          user,
+          achievement: mingAcc,
+        });
+      }
 
-    const mods = getAppliedMods(score.mods);
+      const mods = getAppliedMods(score.mods);
 
-    // TODO: Split EZFLHD into its own mod because anyone who tries that is right mad.
-    if (mods.includes('EZ') || mods.includes('FL')) { // !?
-      achieved.push({
-        user,
-        achievement: unconventional,
-      });
-    }
+      // TODO: Split EZFLHD into its own mod because anyone who tries that is right mad.
+      if (mods.includes('EZ') || mods.includes('FL')) { // !?
+        achieved.push({
+          user,
+          achievement: unconventional,
+        });
+      }
 
-    if (mods.includes('HR') && mods.includes('DT') && !mods.includes('FL')) {
-      achieved.push({
-        user,
-        achievement: ultraInstinct,
-      });
-    }
+      if (mods.includes('HR') && mods.includes('DT') && !mods.includes('FL')) {
+        achieved.push({
+          user,
+          achievement: ultraInstinct,
+        });
+      }
 
-    if (mods.includes('HD') && mods.includes('DT') && mods.includes('HR') && mods.includes('FL')) { // HDDTHRFL
-      achieved.push({
-        user,
-        achievement: ascension,
-      });
-    }
+      if (mods.includes('HD') && mods.includes('DT') && mods.includes('HR') && mods.includes('FL')) { // HDDTHRFL
+        achieved.push({
+          user,
+          achievement: ascension,
+        });
+      }
 
-    if (score.score === 0) { // haha you MORON you didn't even get a single point
-      achieved.push({
-        user,
-        achievement: idlingIdler,
-      });
+      if (score.score === 0) { // haha you MORON you didn't even get a single point
+        achieved.push({
+          user,
+          achievement: idlingIdler,
+        });
+      }
     }
   }
 
   passedScores.sort((a, b) => b.score - a.score);
 
-  const highestScore = passedScores[0];
-  if (highestScore) {
+  if (passedScores.length) {
+    const highestScore = passedScores[0];
     const highestScoreMods = getAppliedMods(highestScore.mods);
     const highestScoreUser = <IUser>aliveUsers.find(u => u._id.toString() === highestScore.userId.toHexString());
 

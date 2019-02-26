@@ -1,10 +1,10 @@
 import { IGame, IPlayer } from '../models/Game.model';
 import { updateOrCreateUser, User } from '../models/User.model';
-import { userToPlayer } from '../game/add-player';
 import faker from 'faker';
 import { cache } from '../services/cache';
 import { addOnlineUser } from '../helpers/add-online-user';
 import { logger } from '../logger';
+import { userToPlayer } from './user-to-player';
 
 export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
   const players = await Promise.all(
