@@ -15,17 +15,6 @@ export function joinLobby(io: Server) {
         return;
       }
 
-      const username = (<any>socket).claim.username;
-      if (!username) {
-        console.error('invalid osuUserId', (<any>socket).claim.user_id);
-        return;
-      }
-
-      const user = await User.findOne({ username });
-      if (!user) {
-        console.error('user not found with username', username);
-        return;
-      }
       const game = await Game.findById(gameId);
 
       if (!game) {
@@ -36,6 +25,9 @@ export function joinLobby(io: Server) {
       socket.join(`lobby-${gameId}`);
       const gamePayload = await getGamePayload(gameId);
       socket.emit('game-updated', gamePayload);
+      const players = await getGamePlayers(game);
+      console.log('emiting players', players.length);
+      socket.emit('players-updated', { players: JSON.stringify(players), gameId });
     });
   });
 }

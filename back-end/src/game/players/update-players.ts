@@ -6,18 +6,18 @@ import config from 'config';
 export async function updatePlayers(game: IGame) {
   try {
     const players = await getGamePlayers(game);
-    console.log('posting players', game._id, 'players', players);
+    console.log('posting players', game._id, 'players', players.length);
     await got.post(
       `http://localhost:${config.get('SOCKET_PORT')}/players-updated`,
       {
         json: true,
         body: {
-          players,
+          players: JSON.stringify(players),
           gameId: game._id,
         },
       },
     );
   } catch (e) {
-    console.info('failed to post players update', e.status, e.body);
+    console.info('failed to post players update', e);
   }
 }

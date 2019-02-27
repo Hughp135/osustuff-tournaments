@@ -65,7 +65,7 @@ export class WebsocketService {
       });
       this.socket.on('players-updated', ({ players, gameId: id }: any) => {
         console.log('players Updated', players);
-        this.players.next({players, gameId});
+        this.players.next({players: JSON.parse(players), gameId});
       });
     });
   }
