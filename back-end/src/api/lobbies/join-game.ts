@@ -6,10 +6,10 @@ import { addPlayer } from '../../game/add-player';
 import { cache } from '../../services/cache';
 import { addOnlineUser } from '../../helpers/add-online-user';
 import { sendPlayersToSocket } from '../../game/players/update-players';
+import { getSampleOsuUser } from '../../test-helpers/add-sample-players';
 
 export async function joinGame(req: Request, res: Response) {
   const game = await Game.findById(req.params.id);
-
   if (!game) {
     return res.status(404).end();
   }
@@ -19,7 +19,10 @@ export async function joinGame(req: Request, res: Response) {
     return res.status(401).end();
   }
 
-  const osuUser = await getUser(claim.username);
+  const osuUser =
+    claim.username === 'x'
+      ? getSampleOsuUser() // test mode
+      : await getUser(claim.username);
 
   if (!osuUser) {
     return res
@@ -28,26 +31,20 @@ export async function joinGame(req: Request, res: Response) {
   }
 
   if (game.minRank && parseInt(osuUser.pp_rank, 10) < game.minRank) {
-    return res
-      .status(401)
-      .json({
-        error: `Only rank ${
-          game.minRank
-        } and above players can join this lobby.`,
-      });
+    return res.status(401).json({
+      error: `Only rank ${game.minRank} and above players can join this lobby.`,
+    });
   }
 
   if (game.maxRank && parseInt(osuUser.pp_rank, 10) > game.maxRank) {
-    return res
-      .status(401)
-      .json({
-        error: `Only rank ${
-          game.maxRank
-        } and under players can join this lobby.`,
-      });
+    return res.status(401).json({
+      error: `Only rank ${game.maxRank} and under players can join this lobby.`,
+    });
   }
 
   const user = await updateOrCreateUser(osuUser);
+
+  console.log('ading user', user.username, user._id);
 
   if (user.banned) {
     return res.status(401).end();
@@ -55,7 +52,7 @@ export async function joinGame(req: Request, res: Response) {
 
   // Store that user is active
   addOnlineUser(user);
-  cache.put(`user-active-${user._id}`, true, 60000);
+  cache.put(`user-active-${user._id}`, true, claim.username === 'x' ? 10000 : 60000);
 
   if (game.status !== 'new') {
     return res.status(400).end();
@@ -74,7 +71,6 @@ export async function joinGame(req: Request, res: Response) {
   await cache.del(`get-lobby-users-${game._id}`);
 
   res.status(200).end(); // end request
-  console.log(1);
 
   await sendPlayersToSocket(game); // after request ended (not critical for joining)
 }

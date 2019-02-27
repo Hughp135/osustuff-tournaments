@@ -71,6 +71,6 @@ export class GameInfoComponent implements OnInit, OnDestroy {
 
   public async leaveGame() {
     await this.settingsService.leaveGame(this.game._id);
-    // this.router.navigate(['/lobbies']);
+    this.router.navigate(['/lobbies']);
   }
 }

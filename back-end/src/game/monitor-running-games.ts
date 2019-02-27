@@ -63,8 +63,8 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
     creatingNewGame = true;
     try {
       // NOT awaited intentionally
+      // tslint:disable-next-line:no-floating-promises
       createNewGame(games, getRecentMaps).then(() => {
-        // tslint:disable-line:no-floating-promises
         creatingNewGame = false;
       });
     } catch (e) {
@@ -105,7 +105,6 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
       }
 
       if (updates.includes(true)) {
-        console.log('posting stuff', game._id);
         await sendGameToSocket(game);
       }
     } catch (e) {

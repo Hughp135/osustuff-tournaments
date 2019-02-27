@@ -11,7 +11,7 @@ export class TwitchEmotesPipe implements PipeTransform {
       .split(' ')
       .map(word => {
         if (globalEmotes[word]) {
-          return `<img onload="alert('hi')" src="https://static-cdn.jtvnw.net/emoticons/v1/${globalEmotes[word].id}/1.0" />`;
+          return `<img src="https://static-cdn.jtvnw.net/emoticons/v1/${globalEmotes[word].id}/1.0" />`;
         }
 
         return word;

@@ -10,6 +10,7 @@ import { joinLobby } from './game/join';
 import { gameUpdated } from './game/game-updated-emit';
 import bodyParser from 'body-parser';
 import { playersUpdated } from './game/players-emit';
+import { systemMessage } from './messages/message-emit';
 
 export let io: Server;
 
@@ -62,6 +63,7 @@ export async function startWs() {
 
   gameUpdated(app, io);
   playersUpdated(app, io);
+  systemMessage(app, io);
 
   await server.listen(SOCKET_PORT);
 

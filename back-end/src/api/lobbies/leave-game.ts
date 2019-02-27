@@ -14,14 +14,11 @@ export async function leaveGame(req: Request, res: Response) {
   const game = await Game.findById(req.params.id);
 
   if (game) {
-    console.log(1);
     if (game.status === 'new') {
-      console.log(2);
       game.players = game.players.filter(p => p.username !== username);
       await game.save();
       await cache.del(`get-lobby-users-${game._id}`);
     } else {
-      console.log(3);
       const player = game.players.find(p => p.username === username);
 
       if (player) {
@@ -42,8 +39,6 @@ export async function leaveGame(req: Request, res: Response) {
   res.status(200).end();
 
   if (game) {
-    console.log('send1');
     await sendPlayersToSocket(game);
-    console.log('send2');
   }
 }
