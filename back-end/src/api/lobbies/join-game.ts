@@ -44,8 +44,6 @@ export async function joinGame(req: Request, res: Response) {
 
   const user = await updateOrCreateUser(osuUser);
 
-  console.log('ading user', user.username, user._id);
-
   if (user.banned) {
     return res.status(401).end();
   }

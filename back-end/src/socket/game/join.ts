@@ -26,7 +26,6 @@ export function joinLobby(io: Server) {
       const gamePayload = await getGamePayload(gameId);
       socket.emit('game-updated', gamePayload);
       const players = await getGamePlayers(game);
-      console.log('player', players.length);
       socket.emit('players-updated', { players: JSON.stringify(players), gameId });
     });
   });

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client';
 import { environment } from '../../environments/environment';
-import { SettingsService } from './settings.service';
 import { BehaviorSubject } from 'rxjs';
 import { IGame, IPlayer } from '../components/game-lobby/game-lobby.component';
 
@@ -21,7 +20,6 @@ export class WebsocketService {
 
   public async connect(gameId: string) {
     if (this.socket && this.socket.connected) {
-      console.log('already connected');
       return;
     }
     this.socket = io.connect(environment.socket_url);
@@ -31,9 +29,7 @@ export class WebsocketService {
   private async addSocketListeners(gameId: string) {
     return new Promise((res, rej) => {
       this.socket.on('connect', async (data: Object) => {
-        console.log('connect1');
         if (this.reconnecting) {
-          console.log('reconnected');
         }
         this.socket.emit('join-game', gameId);
         this.connected = true;
@@ -41,7 +37,7 @@ export class WebsocketService {
         res();
       });
       this.socket.on('disconnect', (reason: string) => {
-        console.log('disconnected');
+        console.error('disconnected');
         // SOCKET CONNECTION LOST
         console.error(reason);
         this.connected = false;

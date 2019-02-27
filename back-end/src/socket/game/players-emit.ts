@@ -4,7 +4,6 @@ import { Server } from 'socket.io';
 export function playersUpdated(app: Express, io: Server) {
   app.post('/players-updated', async (req, res) => {
     const { players, gameId }: any = req.body || {};
-    console.log('players emit', new Date(), `lobby-${gameId}`);
 
     if (gameId) {
       io.in(`lobby-${gameId}`).emit('players-updated', { players, gameId });

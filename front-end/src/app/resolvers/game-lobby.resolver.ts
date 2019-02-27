@@ -13,7 +13,7 @@ import { SettingsService, CurrentGame } from '../services/settings.service';
 import { IGame, IPlayer } from '../components/game-lobby/game-lobby.component';
 import * as Visibility from 'visibilityjs';
 import { Message } from '../components/game-lobby/chat/chat.component';
-import { takeWhile, filter } from 'rxjs/operators';
+import { filter, throttleTime } from 'rxjs/operators';
 import { IBeatmap } from '../components/create-lobby/create-lobby.component';
 
 export interface GameLobbyData {
@@ -53,16 +53,13 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
     const { id } = route.params;
 
     try {
-      console.log(1);
       await this.socketService.connect(id);
       await this.getBeatmaps(id);
       const messages = await this.gameService.getLobbyMessages(id);
       const lobby: Observable<IGame> = this.getLobby();
       const players: Observable<IPlayer[]> = this.getPlayers(id);
-      console.log(2);
 
       await this.settingsService.checkCurrentGame();
-      console.log(3);
       return {
         lobby,
         beatmaps: this.beatmaps,
@@ -94,69 +91,14 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
 
         observer.next(players);
       };
-
       subscriptions.add(
-        this.socketService.players.pipe(
-          filter(val => !!val)
-        ).subscribe(({ players, gameId: id }) => {
-          console.log('players changed', players);
-
-          updatePlayers(players, id);
-        }),
-      );
-    });
-  }
-
-  private getPlayersOld(gameId: string) {
-    return Observable.create(async (observer: Observer<IPlayer[]>) => {
-      let fetching = false;
-      const subs: Subscription = new Subscription();
-
-      const updatePlayers = async (forceUpdate?: boolean) => {
-        if (observer.closed) {
-          subs.unsubscribe();
-          observer.complete();
-        }
-        if (fetching) {
-          return;
-        }
-
-        fetching = true;
-        try {
-          const players = await this.gameService.getLobbyUsers(gameId);
-          if (forceUpdate || players.length !== this._players.length) {
-            this._players = players;
-            observer.next(players);
-          }
-        } catch (e) {
-          console.error(e);
-        }
-        fetching = false;
-      };
-
-      subs.add(
-        this.statusChanged.subscribe(async () => {
-          await updatePlayers(true);
-        }),
-      );
-
-      subs.add(
-        this.settingsService.currentGame.subscribe(async () => {
-          await updatePlayers(true);
-        }),
-      );
-
-      subs.add(
-        this.getTimer(5000, 15000)
+        this.socketService.players
           .pipe(
-            takeWhile(() => {
-              const game = this._game.getValue();
-
-              return game && game._id === gameId && game.status === 'new';
-            }),
+            filter(val => !!val),
+            throttleTime(1000)
           )
-          .subscribe(async () => {
-            await updatePlayers();
+          .subscribe(({ players, gameId: id }) => {
+            updatePlayers(players, id);
           }),
       );
     });
@@ -204,7 +146,6 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       };
       subscriptions.add(
         this.socketService.lobby.subscribe(game => {
-          console.log('loby changed', game);
           const oldGame = this._game.getValue();
           if (game) {
             if (oldGame && game._id !== oldGame._id) {
@@ -213,96 +154,6 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
             onData(game);
           }
         }),
-      );
-    });
-  }
-
-  private getLobbyOld(id: string): Observable<IGame> {
-    return Observable.create(async (observer: Observer<IGame>) => {
-      let fetching = false;
-      const subscriptions = new Subscription();
-
-      const updateGame = async () => {
-        if (observer.closed) {
-          subscriptions.unsubscribe();
-          observer.complete();
-          this._game.next(undefined);
-          this.statusChanged.next(undefined);
-
-          return;
-        }
-
-        if (fetching) {
-          return;
-        }
-
-        fetching = true;
-        try {
-          const game = await this.gameService.getLobby(id);
-          const statusChanged =
-            !this._game.getValue() ||
-            game.status !== this._game.getValue().status;
-
-          observer.next(game);
-          this._game.next(game);
-
-          if (statusChanged) {
-            this.statusChanged.next(undefined);
-            await this.getBeatmaps(id); // update beatmaps list
-          }
-
-          if (
-            game.status === 'new' ||
-            statusChanged ||
-            Math.abs(game.secondsToNextRound - this.secondsLeft) > 10
-          ) {
-            this.secondsLeft = game.secondsToNextRound;
-            if (this.timeLeftInterval) {
-              this.timeLeftInterval.unsubscribe();
-            }
-            this.updateTimeLeft();
-            this.timeLeftInterval = interval(1000).subscribe(() => {
-              if (this.secondsLeft >= 1) {
-                this.secondsLeft--;
-                this.updateTimeLeft();
-              }
-            });
-          }
-        } catch (e) {
-          console.error(e);
-          if (e.status === 404) {
-            console.log('navigating1');
-            this.router.navigate(['/lobbies']);
-          }
-        }
-        fetching = false;
-      };
-
-      // Fetch when currentGame changes
-      subscriptions.add(
-        this.settingsService.currentGame.subscribe(async val => {
-          await updateGame();
-        }),
-      );
-
-      // Fetch on an interval
-      subscriptions.add(
-        this.getTimer(5000, 15000).subscribe(async () => {
-          await updateGame();
-        }),
-      );
-
-      // Fetch beatmaps every 30 secs when game status is new
-      subscriptions.add(
-        interval(30000)
-          .pipe(
-            takeWhile(() =>
-              ['new', 'scheduled'].includes(this._game.getValue().status),
-            ),
-          )
-          .subscribe(async () => {
-            await this.getBeatmaps(id);
-          }),
       );
     });
   }

@@ -3,10 +3,11 @@ config:
   phases:
     - duration: 30
       arrivalRate: 1
+      rampTo: 20
       name: 'Warm up the application'
 scenarios:
   - flow:
       - post:
-          url: "/lobbies/5c76f2d9352c682e98595eae/join"
+          url: "/lobbies/5c76fe50f693661650654cc1/join"
           headers:
             TEST_SECRET: 'asd123'
