@@ -93,7 +93,7 @@ export async function getGamePlayers(game: IGame) {
     }
   }
 
-  return game.players
+  return JSON.parse(JSON.stringify(game.players))
     .sort((a: any, b: any) => b.alive - a.alive)
     .map((p: any) => {
       const user = users.find(

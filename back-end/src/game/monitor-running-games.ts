@@ -219,6 +219,7 @@ async function startGame(game: IGame): Promise<boolean> {
 async function checkRoundEnded(game: IGame): Promise<boolean> {
   // Check if next round should start
   if (<Date>game.nextStageStarts < new Date()) {
+    console.info('round', game.roundNumber, 'ended');
     const round = <IRound>await Round.findById(game.currentRound);
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);

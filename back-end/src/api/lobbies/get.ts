@@ -58,10 +58,10 @@ export async function getGamePayload(gameId: string | Types.ObjectId) {
   const secondsToNextRound = game.nextStageStarts
     ? (game.nextStageStarts.getTime() - Date.now()) / 1000
     : undefined;
-
   const round = await Round.findById(game.currentRound)
     .select({ beatmap: 1 })
     .lean();
+  const scores = await getScores(game);
 
   delete game.players; // players are obtained from separate request for performance
 
@@ -69,7 +69,7 @@ export async function getGamePayload(gameId: string | Types.ObjectId) {
     ...game,
     round,
     secondsToNextRound,
-    scores: await getScores(game),
+    scores,
   };
 }
 
@@ -77,6 +77,10 @@ async function getScores(game: IGame) {
   const scores = ['complete', 'round-over'].includes(game.status)
     ? await getAllUserBestScores(game.currentRound)
     : [];
+  if (!game.players) {
+    console.error(game);
+    throw new Error('game has no players');
+  }
   return scores.map((score: any) => {
     const player = game.players.find(
       (p: any) => p.userId.toString() === score.userId.toString(),
