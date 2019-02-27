@@ -79,10 +79,3 @@ function getFormattingFromLevel(level: string) {
 function getTimestamp(timestamp: string) {
   return timestamp.replace(isoRegex, '$1/$2/$3 $4:$5:$6');
 }
-
-logger.debug('asd');
-logger.verbose('asd');
-logger.info('asd');
-logger.warn('asd');
-logger.error('asd');
-console.log(logLevel);
