@@ -1,7 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import cookie from 'cookie';
 import { verifyJWT } from '../../api/auth/jwt';
-import { User } from '../../models/User.model';
 
 export interface ISocket extends SocketIO.Socket {
   claim: {

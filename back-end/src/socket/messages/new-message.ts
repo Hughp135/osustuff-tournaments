@@ -21,7 +21,7 @@ export function sendMessage(io: Server) {
     socket.on('send-message', async (request: INewMessage) => {
       const username = socket.claim.username;
       if (!username) {
-        console.error('invalid osuUserId', socket.claim.user_id);
+        console.error('send-message: no socket claim', socket.claim.user_id);
         return;
       }
       if (request.message.length < 1 || request.message.length > 500) {

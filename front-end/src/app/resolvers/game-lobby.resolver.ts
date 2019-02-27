@@ -1,6 +1,6 @@
 import { WebsocketService } from './../services/websocket.service';
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import {
   Observable,
   interval,
@@ -32,7 +32,6 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
   private statusChanged: BehaviorSubject<undefined> = new BehaviorSubject(
     undefined,
   );
-  private _players: IPlayer[] = [];
   public currentGame: CurrentGame;
   public visibilityTimers: number[] = [];
   private timeLeft: BehaviorSubject<string | undefined> = new BehaviorSubject(
@@ -44,7 +43,6 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
 
   constructor(
     private gameService: GameService,
-    private router: Router,
     private settingsService: SettingsService,
     private socketService: WebsocketService,
   ) {}
@@ -146,11 +144,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       };
       subscriptions.add(
         this.socketService.lobby.subscribe(game => {
-          const oldGame = this._game.getValue();
           if (game) {
-            if (oldGame && game._id !== oldGame._id) {
-              this.socketService.socket.emit('leave-lobby-' + oldGame._id); // TODO
-            }
             onData(game);
           }
         }),

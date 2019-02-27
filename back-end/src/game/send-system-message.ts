@@ -18,15 +18,17 @@ export async function sendSystemMessage(
   delete msg.userId;
   delete msg.__v;
 
-  await got.post(
-    `http://localhost:${config.get('SOCKET_PORT')}/system-message`,
-    {
-      json: true,
-      body: {
-        message: msg,
+  if (process.env.NODE_ENV !== 'test') {
+    await got.post(
+      `http://localhost:${config.get('SOCKET_PORT')}/system-message`,
+      {
+        json: true,
+        body: {
+          message: msg,
+        },
       },
-    },
-  );
+    );
+  }
 
   return msg;
 }

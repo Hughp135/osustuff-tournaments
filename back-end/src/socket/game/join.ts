@@ -1,6 +1,5 @@
 import { Server, Socket } from 'socket.io';
 import { Types } from 'mongoose';
-import { User } from '../../models/User.model';
 import { Game } from '../../models/Game.model';
 import { getGamePayload } from '../../api/lobbies/get';
 import { getGamePlayers } from '../../api/lobbies/get-users';
