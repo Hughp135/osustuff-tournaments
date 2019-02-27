@@ -1,116 +1,62 @@
-import chalk from 'chalk';
+import chalk, { Chalk } from 'chalk';
 import fs from 'fs';
 import config from 'config';
 
-const debugStream = fs.createWriteStream('./logs/debug.log');
-const verboseStream = fs.createWriteStream('./logs/verbose.log');
-const infoStream = fs.createWriteStream('./logs/info.log');
-const warnStream = fs.createWriteStream('./logs/warn.log');
-const errorStream = fs.createWriteStream('./logs/error.log');
-
-let logDebug = false;
-let logVerbose = false;
-let logInfo = false;
-let logWarn = false;
-let logError = false;
-
 const logLevel = config.get('LOG_LEVEL');
+const logToFile = config.get('LOG_TO_FILE');
 
-if (logLevel === 'debug') {
-  logDebug = true;
-  logVerbose = true;
-  logInfo = true;
-  logWarn = true;
-  logError = true;
-} else if (logLevel === 'verbose') {
-  logVerbose = true;
-  logInfo = true;
-  logWarn = true;
-  logError = true;
-} else if (logLevel === 'info') {
-  logInfo = true;
-  logWarn = true;
-  logError = true;
-} else if (logLevel === 'warn') {
-  logWarn = true;
-  logError = true;
-} else if (logLevel === 'error') {
-  logError = true;
-} else {
-  throw new TypeError('LOG_LEVEL must be one of ["debug", "verbose", "info", "warn", "error"].');
+const levelStream: { [level: string]: fs.WriteStream; } = {};
+
+if (logToFile) {
+  levelStream.debug = fs.createWriteStream('./logs/debug.log');
+  levelStream.verbose = fs.createWriteStream('./logs/verbose.log');
+  levelStream.info = fs.createWriteStream('./logs/info.log');
+  levelStream.warn = fs.createWriteStream('./logs/warn.log');
+  levelStream.error = fs.createWriteStream('./logs/error.log');
 }
 
 export const logger = {
-  debug: (output: any, ...params: any[]) => {
-    const timestamp = `[${getTimestamp()} DEBG]`;
-    const text = getOutput(output, params);
+  log(
+    level: number,
+    name: string,
+    short: string,
+    input: any,
+    params: any[],
+    color?: Chalk,
+    output?: (m: any, ...o: any[]) => void) {
 
-    if (logDebug) {
-      console.debug(`${chalk.whiteBright(timestamp)} ${text}`);
+    const timestamp = `[${getTimestamp()} ${short}]`;
+
+    if (logLevel <= level && output && color) {
+      output(`${color(timestamp)} ${input}`, ...params);
     }
-    debugStream.write(`${timestamp} ${text}\n`);
+
+    if (logToFile && levelStream[name]) {
+      levelStream[name].write(`${timestamp} ${input} ${params.join(' ')}\n`);
+    }
   },
-  verbose: (output: any, ...params: any[]) => {
-    const timestamp = `[${getTimestamp()} VERB]`;
-    const text = getOutput(output, params);
 
-    if (logVerbose) {
-      console.log(`${chalk.cyanBright(timestamp)} ${text}`);
-    }
-    verboseStream.write(`${timestamp} ${text}\n`);
+  debug(input: any, ...params: any[]) {
+    this.log(5, 'debug', 'DEBG', input, params, chalk.whiteBright, console.debug);
   },
-  info: (output: any, ...params: any[]) => {
-    const timestamp = `[${getTimestamp()} INFO]`;
-    const text = getOutput(output, params);
-
-    if (logInfo) {
-      console.info(`${chalk.greenBright(timestamp)} ${text}`);
-    }
-    infoStream.write(`${timestamp} ${text}\n`);
+  verbose(input: any, ...params: any[]) {
+    this.log(4, 'verbose', 'VERB', input, params, chalk.cyanBright, console.debug);
   },
-  warn: (output: any, ...params: any[]) => {
-    const timestamp = `[${getTimestamp()} WARN]`;
-    const text = getOutput(output, params);
-
-    if (logWarn) {
-      console.warn(`${chalk.yellowBright(timestamp)} ${text}`);
-    }
-    warnStream.write(`${timestamp} ${text}\n`);
+  info(input: any, ...params: any[]) {
+    this.log(3, 'info', 'INFO', input, params, chalk.greenBright, console.info);
   },
-  error: (output: any, ...params: any[]) => {
-    const timestamp = `[${getTimestamp()} ERRR]`;
-    const text = getOutput(output, params);
-
-    if (logError) {
-      console.error(`${chalk.redBright(timestamp)} ${text}`);
-    }
-    errorStream.write(`${timestamp} ${text}\n`);
+  warn(input: any, ...params: any[]) {
+    this.log(2, 'warn', 'WARN', input, params, chalk.yellowBright, console.warn);
+  },
+  error(input: any, ...params: any[]) {
+    this.log(1, 'error', 'ERRR', input, params, chalk.redBright, console.error);
   },
 };
 
+const isoRegex = /(?:\d*?)(\d{2})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2}).+/g;
 function getTimestamp() {
-  const dateTime = new Date();
+  const now = new Date();
+  const dateTime = new Date(now.getTime() - 60000 * now.getTimezoneOffset()).toISOString();
 
-  const date = dateTime.toLocaleDateString('en', {
-    year: '2-digit',
-    month: '2-digit',
-    day: '2-digit',
-  });
-
-  const time = dateTime.toLocaleTimeString('en', {
-    hour12: false,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-
-  return `${date} ${time}`;
-}
-
-function getOutput(output: any, ...params: any[]): string {
-  if (params.length === 0) {
-    return output;
-  }
-
-  return `${output} ${params.map(x => JSON.stringify(x)).join(' ')}`;
+  return dateTime.replace(isoRegex, '$1/$2/$3 $4:$5:$6');
 }
