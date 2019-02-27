@@ -16,6 +16,7 @@ import { Score } from '../models/Score.model';
 import { removeAfkPlayers } from './remove-afk-players';
 import { updatePlayerAchievements } from '../achievements/update-player-achievements';
 import { sendGameToSocket } from './update-game';
+import { sendPlayersToSocket } from './players/update-players';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
@@ -211,6 +212,7 @@ async function checkRoundEnded(game: IGame): Promise<boolean> {
     await roundEnded(game, round);
     await updatePlayerAchievements(game);
     clearGetLobbyCache(game._id);
+    await sendPlayersToSocket(game);
     return true;
   }
 
@@ -225,13 +227,12 @@ async function completeRound(game: IGame) {
       // Start the next round
       await nextRound(game);
       clearGetLobbyCache(game._id);
-      return true;
     } else {
       // End the game
       await endGame(game);
       clearGetLobbyCache(game._id);
-      return true;
     }
+    return true;
   }
 
   return false;

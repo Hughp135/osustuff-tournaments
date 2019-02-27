@@ -52,7 +52,7 @@ export async function joinGame(req: Request, res: Response) {
 
   // Store that user is active
   addOnlineUser(user);
-  cache.put(`user-active-${user._id}`, true, claim.username === 'x' ? 10000 : 60000);
+  cache.put(`user-active-${user._id}`, true, 60000);
 
   if (game.status !== 'new') {
     return res.status(400).end();

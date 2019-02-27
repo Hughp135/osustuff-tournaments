@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
+    "start": "concurrently \" npm run start:api \" \" npm run start:socket \"",
     "start:prod": "pm2 start --env production",
     "start:api": "nodemon",
     "start:socket": "nodemon --config nodemon.socket.json",
