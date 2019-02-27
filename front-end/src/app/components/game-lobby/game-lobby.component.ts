@@ -207,7 +207,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   get showBeatmap() {
     const alivePlayers = this.players.filter(p => p.alive);
     return (
-      !['new', 'complete', 'scheduled'].includes(this.game.status) &&
+      (this.game && !['new', 'complete', 'scheduled'].includes(this.game.status)) &&
       !this.viewResults &&
       (alivePlayers.length > 1 || this.game.roundNumber === 1)
     );
@@ -215,7 +215,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
   get showScores() {
     return (
-      ['round-over', 'checking-scores'].includes(this.game.status) &&
+      (this.game && ['round-over', 'checking-scores'].includes(this.game.status)) &&
       !this.viewResults
     );
   }
@@ -231,13 +231,13 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   get showJoinGame() {
     return (
       !(this.mePlayer || this.inGame) &&
-      !['complete', 'scheduled'].includes(this.game.status)
+      (this.game && !['complete', 'scheduled'].includes(this.game.status))
     );
   }
 
   get showBeatmaps() {
     return (
-      ['new', 'scheduled'].includes(this.game.status) || this.showBeatmapList
+      this.game && (['new', 'scheduled'].includes(this.game.status) || this.showBeatmapList)
     );
   }
 
@@ -282,7 +282,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
   get showDescription() {
     return (
-      this.game.description && ['new', 'scheduled'].includes(this.game.status)
+      this.game.description && this.game && ['new', 'scheduled'].includes(this.game.status)
     );
   }
 
