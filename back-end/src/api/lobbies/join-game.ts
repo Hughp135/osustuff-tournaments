@@ -5,7 +5,7 @@ import { updateOrCreateUser } from '../../models/User.model';
 import { addPlayer } from '../../game/add-player';
 import { cache } from '../../services/cache';
 import { addOnlineUser } from '../../helpers/add-online-user';
-import { updatePlayers } from '../../game/players/update-players';
+import { sendPlayersToSocket } from '../../game/players/update-players';
 
 export async function joinGame(req: Request, res: Response) {
   const game = await Game.findById(req.params.id);
@@ -75,5 +75,6 @@ export async function joinGame(req: Request, res: Response) {
 
   res.status(200).end(); // end request
   console.log(1);
-  await updatePlayers(game); // after request ended (not critical for joining)
+
+  await sendPlayersToSocket(game); // after request ended (not critical for joining)
 }

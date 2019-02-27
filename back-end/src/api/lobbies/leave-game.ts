@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Game } from '../../models/Game.model';
 import { User } from '../../models/User.model';
 import { cache } from '../../services/cache';
-import { updatePlayers } from '../../game/players/update-players';
+import { sendPlayersToSocket } from '../../game/players/update-players';
 
 export async function leaveGame(req: Request, res: Response) {
   const { username }: any = (<any> req).claim || {};
@@ -14,11 +14,14 @@ export async function leaveGame(req: Request, res: Response) {
   const game = await Game.findById(req.params.id);
 
   if (game) {
+    console.log(1);
     if (game.status === 'new') {
+      console.log(2);
       game.players = game.players.filter(p => p.username !== username);
       await game.save();
       await cache.del(`get-lobby-users-${game._id}`);
     } else {
+      console.log(3);
       const player = game.players.find(p => p.username === username);
 
       if (player) {
@@ -39,6 +42,8 @@ export async function leaveGame(req: Request, res: Response) {
   res.status(200).end();
 
   if (game) {
-    await updatePlayers(game);
+    console.log('send1');
+    await sendPlayersToSocket(game);
+    console.log('send2');
   }
 }

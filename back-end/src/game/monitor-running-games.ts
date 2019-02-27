@@ -15,8 +15,7 @@ import { ObjectId } from 'bson';
 import { Score } from '../models/Score.model';
 import { removeAfkPlayers } from './remove-afk-players';
 import { updatePlayerAchievements } from '../achievements/update-player-achievements';
-import got from 'got';
-import { getGamePayload } from '../api/lobbies/get';
+import { sendGameToSocket } from './update-game';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
@@ -107,19 +106,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
 
       if (updates.includes(true)) {
         console.log('posting stuff', game._id);
-        try {
-          await got.post(
-            `http://localhost:${config.get('SOCKET_PORT')}/game-updated`,
-            {
-              json: true,
-              body: {
-                gameId: game._id,
-              },
-            },
-          );
-        } catch (e) {
-          console.info('failed to post to update game', e.status, e.body);
-        }
+        await sendGameToSocket(game);
       }
     } catch (e) {
       console.error('Failed to update game with status ' + game.status, e);
