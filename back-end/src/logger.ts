@@ -1,62 +1,88 @@
-import chalk, { Chalk } from 'chalk';
-import fs from 'fs';
 import config from 'config';
+import winston from 'winston';
+import Chalk from 'chalk';
+import { TransformableInfo } from 'logform';
 
-const logLevel = config.get('LOG_LEVEL');
-const logToFile = config.get('LOG_TO_FILE');
+const isoRegex = /(?:\d*?)(\d{2})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2}).+/g;
 
-const levelStream: { [level: string]: fs.WriteStream; } = {};
+const logLevel: string = config.get('LOG_LEVEL');
+const logToFile: string = config.get('LOG_TO_FILE');
 
-if (logToFile) {
-  levelStream.debug = fs.createWriteStream('./logs/debug.log');
-  levelStream.verbose = fs.createWriteStream('./logs/verbose.log');
-  levelStream.info = fs.createWriteStream('./logs/info.log');
-  levelStream.warn = fs.createWriteStream('./logs/warn.log');
-  levelStream.error = fs.createWriteStream('./logs/error.log');
-}
+const consoleTransport = new winston.transports.Console({
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(formatFunction)),
+});
+
+// Multiple loggers to ensure log-file exclusivity.
+const debugLogger = winston.createLogger({ level: logLevel });
+const verboseLogger = winston.createLogger({ level: logLevel });
+const infoLogger = winston.createLogger({ level: logLevel });
+const warnLogger = winston.createLogger({ level: logLevel });
+const errorLogger = winston.createLogger({ level: logLevel });
 
 export const logger = {
-  log(
-    level: number,
-    name: string,
-    short: string,
-    input: any,
-    params: any[],
-    color?: Chalk,
-    output?: (m: any, ...o: any[]) => void) {
-
-    const timestamp = `[${getTimestamp()} ${short}]`;
-
-    if (logLevel <= level && output && color) {
-      output(`${color(timestamp)} ${input}`, ...params);
-    }
-
-    if (logToFile && levelStream[name]) {
-      levelStream[name].write(`${timestamp} ${input} ${params.join(' ')}\n`);
-    }
+  debug(message?: any, ...meta: any[]) {
+    debugLogger.debug(message, ...meta);
   },
-
-  debug(input: any, ...params: any[]) {
-    this.log(5, 'debug', 'DEBG', input, params, chalk.whiteBright, console.debug);
+  verbose(message?: any, ...meta: any[]) {
+    verboseLogger.verbose(message, ...meta);
   },
-  verbose(input: any, ...params: any[]) {
-    this.log(4, 'verbose', 'VERB', input, params, chalk.cyanBright, console.debug);
+  info(message?: any, ...meta: any[]) {
+    infoLogger.info(message, ...meta);
   },
-  info(input: any, ...params: any[]) {
-    this.log(3, 'info', 'INFO', input, params, chalk.greenBright, console.info);
+  warn(message?: any, ...meta: any[]) {
+    warnLogger.warn(message, ...meta);
   },
-  warn(input: any, ...params: any[]) {
-    this.log(2, 'warn', 'WARN', input, params, chalk.yellowBright, console.warn);
-  },
-  error(input: any, ...params: any[]) {
-    this.log(1, 'error', 'ERRR', input, params, chalk.redBright, console.error);
+  error(message?: any, ...meta: any[]) {
+    errorLogger.error(message, ...meta);
   },
 };
 
-const isoRegex = /(?:\d*?)(\d{2})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2}).+/g;
-function getTimestamp() {
-  const now = new Date();
-  const dateTime = new Date(now.getTime() - 60000 * now.getTimezoneOffset()).toISOString();
+debugLogger.add(consoleTransport);
+verboseLogger.add(consoleTransport);
+infoLogger.add(consoleTransport);
+warnLogger.add(consoleTransport);
+errorLogger.add(consoleTransport);
 
-  return dateTime.replace(isoRegex, '$1/$2/$3 $4:$5:$6');
+if (logToFile) {
+  debugLogger.add(new winston.transports.File({ filename: './logs/debug.log', level: 'debug' }));
+  verboseLogger.add(new winston.transports.File({ filename: './logs/verbose.log', level: 'verbose' }));
+  infoLogger.add(new winston.transports.File({ filename: './logs/info.log', level: 'info' }));
+  warnLogger.add(new winston.transports.File({ filename: './logs/warn.log', level: 'warn' }));
+  errorLogger.add(new winston.transports.File({ filename: './logs/error.log', level: 'error' }));
 }
+
+function formatFunction(info: TransformableInfo) {
+  const formatting = getFormattingFromLevel(info.level);
+
+  return `${formatting.color(`[${getTimestamp(info.timestamp)} ${formatting.short}]`)} ${info.message}`;
+}
+
+function getFormattingFromLevel(level: string) {
+  switch (level) {
+    case 'debug':
+      return { short: 'DEBG', color: Chalk.gray, out: console.debug };
+    case 'verbose':
+      return { short: 'VERB', color: Chalk.cyanBright, out: console.debug };
+    case 'info':
+      return { short: 'INFO', color: Chalk.greenBright, out: console.info };
+    case 'warn':
+      return { short: 'WARN', color: Chalk.yellowBright, out: console.warn };
+    case 'error':
+      return { short: 'ERRR', color: Chalk.redBright, out: console.info };
+  }
+
+  return { short: '????', color: Chalk.blackBright, out: console.error };
+}
+
+function getTimestamp(timestamp: string) {
+  return timestamp.replace(isoRegex, '$1/$2/$3 $4:$5:$6');
+}
+
+logger.debug('asd');
+logger.verbose('asd');
+logger.info('asd');
+logger.warn('asd');
+logger.error('asd');
+console.log(logLevel);
