@@ -10,7 +10,7 @@ module.exports = {
       watch_options: {
         followSymlinks: false,
       },
-      max_memory_restart: "400M",
+      max_memory_restart: "700M",
       env: {
         NODE_ENV: "development",
       },
@@ -28,7 +28,7 @@ module.exports = {
       watch_options: {
         followSymlinks: false,
       },
-      max_memory_restart: "400M",
+      max_memory_restart: "700M",
       env: {
         NODE_ENV: "development",
       },

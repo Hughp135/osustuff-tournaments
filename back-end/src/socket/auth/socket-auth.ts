@@ -15,7 +15,6 @@ export function socketAuth(io: Server) {
     const cookies = cookie.parse(cookieString || '');
 
     if (!cookies.jwt_token) {
-      console.info('No token provided');
       return next();
     }
 
