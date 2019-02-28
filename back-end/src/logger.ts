@@ -2,6 +2,8 @@ import config from 'config';
 import winston from 'winston';
 import Chalk from 'chalk';
 import { TransformableInfo } from 'logform';
+import util from 'util';
+import { SPLAT } from 'triple-beam';
 
 const isoRegex = /(?:\d*?)(\d{2})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2}).+/g;
 
@@ -10,8 +12,11 @@ const logToFile: string = config.get('LOG_TO_FILE');
 
 const consoleTransport = new winston.transports.Console({
   format: winston.format.combine(
+    winston.format.errors({ stack: true }),
+    winston.format.splat(),
     winston.format.timestamp(),
-    winston.format.printf(formatFunction)),
+    winston.format.printf(formatFunction),
+  ),
 });
 
 // Multiple loggers to ensure log-file exclusivity.
@@ -23,19 +28,19 @@ const errorLogger = winston.createLogger({ level: logLevel });
 
 export const logger = {
   debug(message?: any, ...meta: any[]) {
-    debugLogger.debug(message, ...meta);
+    debugLogger.debug(message, meta);
   },
   verbose(message?: any, ...meta: any[]) {
-    verboseLogger.verbose(message, ...meta);
+    verboseLogger.verbose(message, meta);
   },
   info(message?: any, ...meta: any[]) {
-    infoLogger.info(message, ...meta);
+    infoLogger.info(message, meta);
   },
   warn(message?: any, ...meta: any[]) {
-    warnLogger.warn(message, ...meta);
+    warnLogger.warn(message, meta);
   },
   error(message?: any, ...meta: any[]) {
-    errorLogger.error(message, ...meta);
+    errorLogger.error(message, meta);
   },
 };
 
@@ -54,9 +59,12 @@ if (logToFile) {
 }
 
 function formatFunction(info: TransformableInfo) {
-  const formatting = getFormattingFromLevel(info.level);
+  const meta = (<any[]>info[SPLAT][0]).map(s => util.format('', s)).join('');
 
-  return `${formatting.color(`[${getTimestamp(info.timestamp)} ${formatting.short}]`)} ${info.message}`;
+  const formatting = getFormattingFromLevel(info.level);
+  const timestamp = getTimestamp(info.timestamp);
+
+  return `${formatting.color(`[${timestamp} ${formatting.short}]`)} ${info.message}${meta}`;
 }
 
 function getFormattingFromLevel(level: string) {
