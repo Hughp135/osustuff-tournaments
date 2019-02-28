@@ -23,8 +23,8 @@ export async function startWs() {
   // Set up the API for game updates
   const app = express();
   app.use(bodyParser.json({ limit: '2mb' }));
-  app.use(cookieParser());
   app.use(cors());
+  app.use(cookieParser());
   app.use((req, res, next) => {
     console.log(req.url);
     const ip = req.connection.remoteAddress;
@@ -66,6 +66,7 @@ export async function startWs() {
   gameUpdated(app, io);
   playersUpdated(app, io);
   systemMessage(app, io);
+  app.get('/', (req, res) => res.send('Hello world'));
 
   await server.listen(SOCKET_PORT);
 
