@@ -11,6 +11,7 @@ import { gameUpdated } from './game/game-updated-emit';
 import bodyParser from 'body-parser';
 import { playersUpdated } from './game/players-emit';
 import { systemMessage } from './messages/message-emit';
+import cors from 'cors';
 
 export let io: Server;
 
@@ -23,6 +24,7 @@ export async function startWs() {
   const app = express();
   app.use(bodyParser.json({ limit: '2mb' }));
   app.use(cookieParser());
+  app.use(cors());
   app.use((req, res, next) => {
     console.log(req.url);
     const ip = req.connection.remoteAddress;
