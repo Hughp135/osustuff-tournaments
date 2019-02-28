@@ -54,7 +54,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       await this.socketService.connect(id);
       await this.getBeatmaps(id);
       const messages = await this.gameService.getLobbyMessages(id);
-      const lobby: Observable<IGame> = this.getLobby();
+      const lobby: Observable<IGame> = this.getLobby(id);
       const players: Observable<IPlayer[]> = this.getPlayers(id);
 
       await this.settingsService.checkCurrentGame();
@@ -102,7 +102,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
     });
   }
 
-  private getLobby(): Observable<IGame> {
+  private getLobby(id: string): Observable<IGame> {
     return Observable.create(async (observer: Observer<IGame>) => {
       const subscriptions = new Subscription();
 
@@ -143,7 +143,9 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
         }
       };
       subscriptions.add(
-        this.socketService.lobby.subscribe(game => {
+        this.socketService.lobby.pipe(
+          filter((val) => val._id === id)
+        ).subscribe(game => {
           if (game) {
             onData(game);
           }
