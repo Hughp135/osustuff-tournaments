@@ -1,11 +1,11 @@
+import { WebsocketService } from './../../services/websocket.service';
 import { IUser } from './../user-profile/user-profile.component';
-import { GameService } from './../../game.service';
 import {
   SettingsService,
   CurrentGame,
 } from './../../services/settings.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import * as Visibility from 'visibilityjs';
 import {
@@ -79,7 +79,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   public beatmaps: any;
   public showBeatmapList: boolean;
   public timeLeft: string;
-  private fetchingMessages = false;
   public currentUser?: IUser;
   private announcedStart = false;
   public isAdmin: boolean;
@@ -89,13 +88,18 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private settingsService: SettingsService,
-    private gameService: GameService,
+    private socketService: WebsocketService,
+    private router: Router,
   ) {
     this.isAdmin = !!settingsService.adminPw;
   }
 
   ngOnInit() {
     const { data } = <{ data: GameLobbyData }>this.route.snapshot.data;
+
+    if (!data) {
+      return this.router.navigate(['/lobbies']);
+    }
 
     // Map all the data to component state
     this.subscriptions = [
@@ -113,12 +117,6 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     ];
 
     this.messages = data.messages;
-
-    this.visibilityTimers.push(
-      Visibility.every(2000, 2000 * 10, async () => {
-        await this.getMoreMessages();
-      }),
-    );
   }
 
   ngOnDestroy() {
@@ -131,28 +129,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
     ) {
       this.settingsService.clearCurrentGame();
     }
-  }
-
-  public getMoreMessages = async () => {
-    if (this.fetchingMessages) {
-      return;
-    }
-
-    this.fetchingMessages = true;
-    const [lastMessage] = this.messages;
-
-    try {
-      const newMessages = await this.gameService.getLobbyMessages(
-        this.game._id,
-        lastMessage && lastMessage._id,
-      );
-
-      this.messages = newMessages.concat(this.messages);
-    } catch (e) {
-      console.error(e);
-    }
-
-    this.fetchingMessages = false;
+    this.socketService.socket.disconnect();
   }
 
   private async announceRoundChanges(game) {

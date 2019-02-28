@@ -21,7 +21,6 @@ import { getUser } from './user/get-user';
 import { loginVerify } from './user/login-verify';
 import { authMiddleware } from './auth/jwt-middleware';
 import { getUnreadAchievements } from './user/get-achievements';
-import { logger } from '../logger';
 import { makeScheduledGame } from './lobbies/create-game';
 import { toggleAutoCreateReq } from './admin/toggle-auto-create';
 import { deleteLobby } from './admin/delete-lobby';
@@ -65,7 +64,7 @@ app.use(cookieParser());
 
 const router = Router();
 
-router.get('', async (_, res) => res.send('Hello world!'));
+router.get('', async (_: any, res: any) => res.send('Hello world!'));
 router.get('/lobbies', getLobbies);
 router.post('/lobbies/schedule-game', authMiddleware, makeScheduledGame);
 router.get('/lobbies/:id/rounds/:roundNum', getRound);
@@ -99,6 +98,9 @@ app.use('/api', router);
 
 export async function startServer() {
   logger.info(`Environment is ${process.env.NODE_ENV}.`);
+  if (process.env.MODE === 'socket') {
+    throw new Error('Attempted to start API server in socket process.');
+  }
   await app.listen(PORT);
   logger.info(`API started on port ${PORT}.`);
 }

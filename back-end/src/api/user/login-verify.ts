@@ -4,7 +4,6 @@ import got from 'got';
 import config from 'config';
 import { updateOrCreateUser } from '../../models/User.model';
 import { createJWT } from '../auth/jwt';
-import { logger } from '../../logger';
 
 const OSU_OAUTH_ID = config.get('OSU_OAUTH_ID');
 const OSU_OAUTH_SECRET = config.get('OSU_OAUTH_SECRET');
@@ -81,13 +80,13 @@ export async function loginVerify(req: Request, res: Response) {
 
         return res.redirect(`/lobbies/${gameId}?autoJoin=true`);
       } catch (e) {
-        logger.error('Failed to parse OAuth state!', state);
+        logger.warn('Failed to parse OAuth state!', state);
       }
     }
 
     res.redirect('/lobbies');
   } catch (e) {
-    logger.error('Failed to verify OAuth request!', e);
+    logger.warn('Failed to verify OAuth request!', e);
     res.status(400).end();
   }
 }

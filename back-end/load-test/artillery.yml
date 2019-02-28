@@ -2,10 +2,12 @@ config:
   target: 'http://localhost:4008/api'
   phases:
     - duration: 30
-      arrivalRate: 10
-      rampTo: 500
+      arrivalRate: 1
+      rampTo: 20
       name: 'Warm up the application'
 scenarios:
   - flow:
-      - get:
-          url: "/lobbies"
+      - post:
+          url: "/lobbies/5c76fe50f693661650654cc1/join"
+          headers:
+            TEST_SECRET: 'asd123'

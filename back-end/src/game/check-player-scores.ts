@@ -3,7 +3,6 @@ import { IGame, IPlayer } from './../models/Game.model';
 import { Score, IScore } from '../models/Score.model';
 import config from 'config';
 import { addSampleScores } from '../test-helpers/add-sample-scores';
-import { logger } from '../logger';
 import { cache } from '../services/cache';
 import { getAppliedMods } from '../helpers/get-applied-mods';
 

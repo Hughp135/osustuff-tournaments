@@ -9,6 +9,7 @@ export const environment = {
   osu_oauth_id: '46',
   twitch_redirect_url: 'http://localhost:4200/api/twitch-redirect',
   twitch_client_id: 'a27rae8bkv7ypqtponiypw15wwzdy0',
+  socket_url: 'http://localhost:4100',
 };
 
 /*

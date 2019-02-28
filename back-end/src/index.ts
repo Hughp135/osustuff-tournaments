@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import config from 'config';
 import { startMonitoring } from './game/monitor-running-games';
 import { startServer } from './api';
 import { cache } from './services/cache';
@@ -13,7 +12,18 @@ process.on('unhandledRejection', logger.error);
 
 mongoose.set('useCreateIndex', true);
 
+let started = false;
+
 (async function start() {
+  if (process.env.MODE === 'socket') {
+    throw new Error('Attempted to start socket server in API process');
+  }
+
+  if (started) {
+    return;
+  }
+
+  started = true;
   await connectToMongo();
   cache.put('online-players', []);
   await startServer();

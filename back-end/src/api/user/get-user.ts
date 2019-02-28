@@ -6,7 +6,6 @@ import {
   IUserResult,
 } from '../../models/User.model';
 import { getAchievement } from '../../achievements/get-achievement';
-import { logger } from '../../logger';
 
 export async function getUser(req: Request, res: Response) {
   let { username } = req.params;

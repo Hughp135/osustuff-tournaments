@@ -13,9 +13,10 @@ import { COUNTDOWN_START } from './durations';
 import { cache } from '../services/cache';
 import { ObjectId } from 'bson';
 import { Score } from '../models/Score.model';
-import { logger } from '../logger';
 import { removeAfkPlayers } from './remove-afk-players';
 import { updatePlayerAchievements } from '../achievements/update-player-achievements';
+import { sendGameToSocket } from './update-game';
+import { sendPlayersToSocket } from './players/update-players';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
@@ -51,14 +52,21 @@ export function stopMonitoring() {
 // Update games based on status
 export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
   const games = await Game.find({
-    status: ['scheduled', 'new', 'in-progress', 'round-over', 'checking-scores'],
+    status: [
+      'scheduled',
+      'new',
+      'in-progress',
+      'round-over',
+      'checking-scores',
+    ],
   });
 
   if (!creatingNewGame) {
     creatingNewGame = true;
     try {
-       // NOT awaited intentionally
-      createNewGame(games, getRecentMaps).then(() => { // tslint:disable-line:no-floating-promises
+      // NOT awaited intentionally
+      // tslint:disable-next-line:no-floating-promises
+      createNewGame(games, getRecentMaps).then(() => {
         creatingNewGame = false;
       });
     } catch (e) {
@@ -75,35 +83,47 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
       // This game is being updated already, don't do anything.
       return;
     }
+
     gamesBeingUpdated.push(game._id.toString());
+    const updates: boolean[] = [];
+
     try {
       switch (game.status) {
         case 'scheduled':
-          await openScheduledGame(game);
+          updates.push(await openScheduledGame(game));
           break;
         case 'new':
-          await startGame(game);
+          updates.push(await startGame(game));
           break;
         case 'in-progress':
-          await checkRoundEnded(game);
+          updates.push(await checkRoundEnded(game));
           break;
         case 'checking-scores':
-          await skipCheckingScore(game);
+          updates.push(await skipCheckingScore(game));
           break;
         case 'round-over':
-          await completeRound(game);
+          updates.push(await completeRound(game));
           break;
+      }
+
+      if (updates.includes(true)) {
+        await sendGameToSocket(game);
       }
     } catch (e) {
       logger.error(`Failed to update game with status ${game.status}!`, e);
     }
-    gamesBeingUpdated = gamesBeingUpdated.filter(g => g !== game._id.toString());
+    gamesBeingUpdated = gamesBeingUpdated.filter(
+      g => g !== game._id.toString(),
+    );
   });
 
   await Promise.all(promises);
 }
 
-async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) {
+async function createNewGame(
+  games: IGame[],
+  getRecentMaps: () => Promise<any>,
+) {
   const newGames = games.filter(g => g.status === 'new');
   const testSkipCreate = TEST_MODE && newGames.length >= 2;
   const anyRankGames = newGames.filter(g => !g.minRank);
@@ -129,16 +149,19 @@ async function createNewGame(games: IGame[], getRecentMaps: () => Promise<any>) 
   }
 }
 
-async function openScheduledGame(game: IGame) {
+async function openScheduledGame(game: IGame): Promise<boolean> {
   if (game.nextStageStarts && game.nextStageStarts < new Date()) {
     logger.info('Opening scheduled game...');
     game.nextStageStarts = undefined;
     game.status = 'new';
     await game.save();
+    return true;
+  } else {
+    return false;
   }
 }
 
-async function startGame(game: IGame) {
+async function startGame(game: IGame): Promise<boolean> {
   if (Date.now() - SERVER_START_DATE.getTime() > 30000) {
     await removeAfkPlayers(game);
   }
@@ -150,9 +173,10 @@ async function startGame(game: IGame) {
       game.nextStageStarts = undefined;
       await game.save();
       clearGetLobbyCache(game._id);
+      return true;
     }
 
-    return;
+    return false;
   }
 
   if (!game.nextStageStarts) {
@@ -166,28 +190,37 @@ async function startGame(game: IGame) {
       game.nextStageStarts = date;
       await game.save();
     }
+    return true;
   } else if (game.nextStageStarts < new Date()) {
     // Start the first round
     await nextRound(game);
     clearGetLobbyCache(game._id);
+    return true;
   }
+
+  return false;
 }
 
-async function checkRoundEnded(game: IGame) {
+async function checkRoundEnded(game: IGame): Promise<boolean> {
   // Check if next round should start
-  if (<Date> game.nextStageStarts < new Date()) {
-    const round = <IRound> await Round.findById(game.currentRound);
+  if (<Date>game.nextStageStarts < new Date()) {
+    console.info('round', game.roundNumber, 'ended');
+    const round = <IRound>await Round.findById(game.currentRound);
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
     await updatePlayerAchievements(game);
     clearGetLobbyCache(game._id);
+    await sendPlayersToSocket(game);
+    return true;
   }
+
+  return false;
 }
 
 async function completeRound(game: IGame) {
   const alivePlayers = game.players.filter(p => p.alive);
 
-  if (<Date> game.nextStageStarts < new Date()) {
+  if (<Date>game.nextStageStarts < new Date()) {
     if (game.roundNumber !== 10 && alivePlayers.length > 1) {
       // Start the next round
       await nextRound(game);
@@ -197,7 +230,10 @@ async function completeRound(game: IGame) {
       await endGame(game);
       clearGetLobbyCache(game._id);
     }
+    return true;
   }
+
+  return false;
 }
 
 async function setNextStageStartsAt(game: IGame, seconds: number) {
@@ -212,13 +248,15 @@ async function setNextStageStartsAt(game: IGame, seconds: number) {
 async function skipCheckingScore(game: IGame) {
   if (game.status === 'checking-scores' && <Date> game.nextStageStarts < new Date()) {
     const round = <IRound> await Round.findById(game.currentRound);
-    logger.error('Checking scores not complete after 2 minutes!', {
+    logger.warn('Checking scores not complete after 2 minutes!', {
       gameId: game._id,
       round: round._id,
       playersAliveCount: game.players.filter(p => p.alive).length,
     });
+
     const scoresCount = await Score.countDocuments({ roundId: game._id });
     const alivePlayersCount = game.players.filter(p => p.alive).length;
+
     if (scoresCount >= alivePlayersCount / 2) {
       logger.info(`(game id: ${game._id.toHexString()}) Ending round as at least half alive players have set score.`);
       await roundEnded(game, round);
@@ -228,7 +266,10 @@ async function skipCheckingScore(game: IGame) {
       await checkRoundEnded(game);
     }
     clearGetLobbyCache(game._id);
+    return true;
   }
+
+  return false;
 }
 
 export function clearGetLobbyCache(gameId: string | ObjectId) {
