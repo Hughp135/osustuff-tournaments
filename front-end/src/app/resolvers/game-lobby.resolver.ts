@@ -92,7 +92,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       subscriptions.add(
         this.socketService.players
           .pipe(
-            filter(val => !!val),
+            filter(val => !!val && this._game.getValue() && val.gameId === this._game.getValue()._id),
             throttleTime(1000)
           )
           .subscribe(({ players, gameId: id }) => {
