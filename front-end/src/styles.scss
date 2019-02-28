@@ -86,3 +86,18 @@ body {
 .ui.toggle.checkbox label:before {
   background: rgba(0, 0, 0, 0.38);
 }
+
+.ui.active.progress.top-fixed {
+  z-index: 99999999;
+  height: 5px;
+  position: fixed !important;
+  top: 0;
+  border-radius: 0;
+  width: 100%;
+  background: rgb(146, 1, 1);
+
+  .bar {
+    position: fixed !important;
+    height: 5px;
+  }
+}

@@ -42,6 +42,7 @@ import { GameDescriptionComponent } from './components/game-lobby/game-descripti
 import { UserPopupComponent } from './components/game-lobby/user-list/user-popup/user-popup.component';
 import { LobbyFormComponent } from './components/lobby-form/lobby-form.component';
 import { EditLobbyComponent } from './components/edit-lobby/edit-lobby.component';
+import { PageLoaderComponent } from './components/page-loader/page-loader.component';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import { EditLobbyComponent } from './components/edit-lobby/edit-lobby.component
     UserPopupComponent,
     LobbyFormComponent,
     EditLobbyComponent,
+    PageLoaderComponent,
   ],
   imports: [
     BrowserModule,
