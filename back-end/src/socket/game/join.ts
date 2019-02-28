@@ -21,11 +21,20 @@ export function joinLobby(io: Server) {
         return;
       }
 
+      Object.values(socket.rooms).forEach(room => {
+        socket.leave(room);
+      });
+
       socket.join(`lobby-${gameId}`);
+
       const gamePayload = await getGamePayload(gameId);
       socket.emit('game-updated', gamePayload);
+
       const players = await getGamePlayers(game);
-      socket.emit('players-updated', { players: JSON.stringify(players), gameId });
+      socket.emit('players-updated', {
+        players: JSON.stringify(players),
+        gameId,
+      });
     });
   });
 }
