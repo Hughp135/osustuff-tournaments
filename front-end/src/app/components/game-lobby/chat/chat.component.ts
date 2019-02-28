@@ -1,3 +1,4 @@
+import { WebsocketService } from './../../../services/websocket.service';
 import { GameService } from './../../../game.service';
 import {
   Component,
@@ -25,10 +26,9 @@ export interface Message {
 export class ChatComponent implements OnInit, AfterViewInit {
   public sortedMessages: Message[] = [];
   @Input() set messages(msgs: Message[]) {
-    this.onMessagesUpdated(msgs);
+    this.setMessages(msgs);
   }
   @Input() canChat: boolean;
-  @Input() getMoreMessages: () => Promise<void>;
   @Input() game: IGame;
   @Input() currentUsername: string;
 
@@ -43,9 +43,14 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
   constructor(
     private gameService: GameService,
+    private socketService: WebsocketService,
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.socketService.socket.on('chat-message', (data: Message) => {
+      this.newMessage(data);
+    });
+  }
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -53,7 +58,12 @@ export class ChatComponent implements OnInit, AfterViewInit {
     }, 1000);
   }
 
-  private onMessagesUpdated(msgs: Message[]) {
+  private newMessage(msg: Message) {
+    this.sortedMessages.push(msg);
+    this.scrollToBottom();
+  }
+
+  private setMessages(msgs: Message[]) {
     const lengthChanged = msgs.length !== this.sortedMessages.length;
     if (!this.sortedMessages || lengthChanged) {
       this.sortedMessages = msgs.slice().reverse();
@@ -95,12 +105,13 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
     this.sendingMessage = true;
 
+    this.socketService.socket.emit('send-message', {
+      message: this.messageInput,
+      gameId: this.game._id,
+    });
+
     try {
-      await this.gameService.sendMessage(this.game._id, this.messageInput);
       this.messageInput = undefined;
-      setTimeout(async () => {
-        await this.getMoreMessages();
-      }, 250);
     } catch (e) {
       console.error(e);
     }

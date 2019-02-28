@@ -2,7 +2,6 @@ import { Skill } from './../services/trueskill';
 import { User, IUser, IUserResult } from '../models/User.model';
 import { IPlayer, IGame } from '../models/Game.model';
 import { Rating } from 'ts-trueskill';
-import { logger } from '../logger';
 
 export async function updatePlayerGameStats(game: IGame) {
   const playerCount = game.players.length;
@@ -52,7 +51,7 @@ function updatePlayerRatings(
   game: IGame,
 ) {
   if (rankedPlayers.length < 1) {
-    logger.info('Not updating stats because only 1 or less players were ranked');
+    console.info('Not updating stats because only 1 or less players were ranked');
     return;
   }
   const ratings = rankedPlayers.map(p => [

@@ -2,7 +2,7 @@ import { IUser } from './../../models/User.model';
 import { Request, Response } from 'express';
 import { Types } from 'mongoose';
 import { User } from '../../models/User.model';
-import { Game } from '../../models/Game.model';
+import { Game, IGame } from '../../models/Game.model';
 import { getDataOrCache } from '../../services/cache';
 import got from 'got';
 import config from 'config';
@@ -38,6 +38,10 @@ async function getData(id: string) {
     return null;
   }
 
+  return await getGamePlayers(game);
+}
+
+export async function getGamePlayers(game: IGame) {
   const users = await User.find({
     _id: game.players.map((p: any) => p.userId),
   })
@@ -89,7 +93,7 @@ async function getData(id: string) {
     }
   }
 
-  return game.players
+  return JSON.parse(JSON.stringify(game.players))
     .sort((a: any, b: any) => b.alive - a.alive)
     .map((p: any) => {
       const user = users.find(

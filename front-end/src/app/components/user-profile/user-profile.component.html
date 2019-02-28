@@ -106,8 +106,8 @@
     No match history data available yet.
   </p>
   <div class="ui one column doubling grid">
-    <div class="column result" *ngFor="let result of user.results"
-      routerLink="/lobbies/{{ result.gameId }}">
+    <a class="column result" *ngFor="let result of user.results"
+      [routerLink]="'/lobbies/' + result.gameId">
       <div class="ui inverted segment flex">
         <i class="icon" [ngClass]="getResultIconClass(result)"></i>
 
@@ -127,6 +127,6 @@
           }">{{
           getRatingChange(result) }}</span>
       </div>
-    </div>
+    </a>
   </div>
 </div>

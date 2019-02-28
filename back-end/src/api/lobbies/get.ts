@@ -1,9 +1,11 @@
+import { IGame } from './../../models/Game.model';
 import { getAllUserBestScores } from '../../game/get-round-scores';
 import { Game } from '../../models/Game.model';
 import { Request, Response } from 'express';
 import { Round } from '../../models/Round.model';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { getDataOrCache } from '../../services/cache';
+import { ObjectId } from 'bson';
 
 export async function getLobby(req: Request, res: Response) {
   const { id } = req.params;
@@ -13,7 +15,11 @@ export async function getLobby(req: Request, res: Response) {
   }
 
   const cacheKey = `get-lobby-${id}`;
-  const data = await getDataOrCache(cacheKey, 5000, async () => await getData(id));
+  const data = await getDataOrCache(
+    cacheKey,
+    5000,
+    async () => await await getGamePayload(id),
+  );
 
   if (!data) {
     return res.status(404).end();
@@ -22,8 +28,12 @@ export async function getLobby(req: Request, res: Response) {
   res.json(data);
 }
 
-async function getData(id: string) {
-  const game = await Game.findById(id)
+export async function getGamePayload(gameId: string | Types.ObjectId) {
+  if (!ObjectId.isValid(gameId)) {
+    return null;
+  }
+
+  const game = await Game.findById(gameId)
     .select({
       title: 1,
       nextStageStarts: 1,
@@ -48,25 +58,38 @@ async function getData(id: string) {
   const secondsToNextRound = game.nextStageStarts
     ? (game.nextStageStarts.getTime() - Date.now()) / 1000
     : undefined;
-
   const round = await Round.findById(game.currentRound)
     .select({ beatmap: 1 })
     .lean();
-  const scores = await getAllUserBestScores(game.currentRound);
-  const scoresTransformed = scores.map((score: any) => {
-    const player = game.players.find((p: any) => p.userId.toString() === score.userId.toString());
-    score.username = player.username;
-    score.userId = undefined;
+  const scores = await getScores(game);
 
-    return score;
-  });
-
-  game.players = undefined;
+  delete game.players; // players are obtained from separate request for performance
 
   return {
     ...game,
     round,
     secondsToNextRound,
-    scores: scoresTransformed,
+    scores,
   };
+}
+
+async function getScores(game: IGame) {
+  const scores = ['complete', 'round-over'].includes(game.status)
+    ? await getAllUserBestScores(game.currentRound)
+    : [];
+  if (!game.players) {
+    console.error(game);
+    throw new Error('game has no players');
+  }
+  return scores.map((score: any) => {
+    const player = game.players.find(
+      (p: any) => p.userId.toString() === score.userId.toString(),
+    );
+    if (player) {
+      score.username = player.username;
+    }
+    score.userId = undefined;
+
+    return score;
+  });
 }

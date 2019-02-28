@@ -69,7 +69,7 @@ export async function createGame(
 
   if (TEST_MODE && game.status !== 'scheduled') {
     console.info('Creating game with sample players');
-    await addSamplePlayers(game, testPlayers || 3);
+    await addSamplePlayers(game, testPlayers || 10);
   }
 
   return game;

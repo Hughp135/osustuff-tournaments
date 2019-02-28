@@ -11,7 +11,7 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
       .fill(null)
       .map(async (_, index) => {
         try {
-          const osuUser = getOsuUser(index);
+          const osuUser = getSampleOsuUser(index);
           const existing = await User.findOne({ osuUserId: osuUser.user_id });
           const user = existing || await updateOrCreateUser(osuUser);
           addOnlineUser(user);
@@ -31,7 +31,7 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
   await game.save();
 }
 
-function getOsuUser(index?: number) {
+export function getSampleOsuUser(index?: number) {
   return {
     user_id: index === undefined
       ? (Math.floor(Math.random() * 100000) + 1).toString()
