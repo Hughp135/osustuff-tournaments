@@ -10,21 +10,25 @@ const isoRegex = /(?:\d*?)(\d{2})\-(\d{2})\-(\d{2})T(\d{2}):(\d{2}):(\d{2}).+/g;
 const logLevel: string = config.get('LOG_LEVEL');
 const logToFile: string = config.get('LOG_TO_FILE');
 
-const consoleTransport = new winston.transports.Console({
-  format: winston.format.combine(
-    winston.format.errors({ stack: true }),
-    winston.format.splat(),
-    winston.format.timestamp(),
-    winston.format.printf(formatFunction),
-  ),
-});
+const loggerConfig = {
+  level: logLevel,
+  defaultMeta: { mode: process.env.MODE },
+  transports: [new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.errors({ stack: true }),
+      winston.format.splat(),
+      winston.format.timestamp(),
+      winston.format.printf(formatFunction),
+    ),
+  })],
+};
 
 // Multiple loggers to ensure log-file exclusivity.
-const debugLogger = winston.createLogger({ level: logLevel, transports: [consoleTransport] });
-const verboseLogger = winston.createLogger({ level: logLevel, transports: [consoleTransport] });
-const infoLogger = winston.createLogger({ level: logLevel, transports: [consoleTransport] });
-const warnLogger = winston.createLogger({ level: logLevel, transports: [consoleTransport] });
-const errorLogger = winston.createLogger({ level: logLevel, transports: [consoleTransport] });
+const debugLogger = winston.createLogger(loggerConfig);
+const verboseLogger = winston.createLogger(loggerConfig);
+const infoLogger = winston.createLogger(loggerConfig);
+const warnLogger = winston.createLogger(loggerConfig);
+const errorLogger = winston.createLogger(loggerConfig);
 
 export const logger = {
   debug(message?: any, ...meta: any[]) {
