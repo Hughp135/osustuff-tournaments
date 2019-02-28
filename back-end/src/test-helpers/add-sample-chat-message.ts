@@ -20,6 +20,7 @@ export async function addSampleChatMessage(game: IGame) {
     userId: player.userId,
     message: randomFromArray([
       faker.lorem.sentence() + ' ' + getRandomEmoji(),
+      randomFromArray(['Kappa', 'PogChamp']) + ' ' + faker.lorem.sentence(),
       faker.lorem.sentence(),
       getRandomEmoji(),
       getRandomHtml(),

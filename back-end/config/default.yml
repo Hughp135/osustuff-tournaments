@@ -1,6 +1,7 @@
 DB_PORT: 27017
 OSU_API_KEY: ''
 API_PORT: 4008
+SOCKET_PORT: 4100
 VERIFY_USER_TOKEN: ''
 TEST_MODE: false
 FAST_FORWARD_MODE: false
@@ -17,3 +18,4 @@ REMOVE_AFK_PLAYERS: true
 TWITCH_CLIENT_ID: 'asdasd'
 TWITCH_SECRET: 'oijoij'
 TWITCH_REDIRECT: 'http://localhost:4200/api/twitch-redirect'
+TEST_SECRET: 'asd123'

@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
-import { logger } from '../../logger';
 
 const JWT_SECRET: string = config.get('JWT_SECRET');
 
@@ -8,9 +7,8 @@ export function verifyJWT(token: string) {
   return new Promise((resolve, reject) => {
     jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
       if (err || !decodedToken) {
-        /* istanbul ignore next */
         if (err) {
-          logger.error('Invalid token error', [err.message || err]);
+          console.error('Invalid token error', [err.message || err]);
         }
         return reject(err);
       }

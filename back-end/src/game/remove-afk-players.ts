@@ -3,6 +3,7 @@ import { cache } from '../services/cache';
 import { User } from '../models/User.model';
 import { sendSystemMessage } from './send-system-message';
 import config from 'config';
+import { sendUpdatePlayersRequest } from './players/update-players';
 
 const REMOVE_AFK_PLAYERS = config.get('REMOVE_AFK_PLAYERS');
 
@@ -28,6 +29,8 @@ export async function removeAfkPlayers(game: IGame) {
       game,
       `${player.username} has been removed from the lobby after 60 seconds of inactivity.`,
     );
+
+    await sendUpdatePlayersRequest(game);
   }
 
   if (afkPlayers.length > 0) {

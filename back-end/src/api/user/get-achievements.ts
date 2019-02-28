@@ -30,6 +30,4 @@ export async function getUnreadAchievements(req: Request, res: Response) {
   }
 
   res.json(achievement);
-
-  await user.save();
 }

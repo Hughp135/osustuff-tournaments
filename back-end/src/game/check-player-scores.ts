@@ -3,7 +3,6 @@ import { IGame, IPlayer } from './../models/Game.model';
 import { Score, IScore } from '../models/Score.model';
 import config from 'config';
 import { addSampleScores } from '../test-helpers/add-sample-scores';
-import { logger } from '../logger';
 import { cache } from '../services/cache';
 import { getAppliedMods } from '../helpers/get-applied-mods';
 
@@ -38,7 +37,7 @@ export async function checkRoundScores(
     await Promise.all(
       players.map(async p =>
         checkPlayerScores(p, round, getUserRecent).catch(e =>
-          logger.error('Failed to check player scores: ' + p, e),
+          console.info('Failed to check player scores: ' + p, e),
         ),
       ),
     );

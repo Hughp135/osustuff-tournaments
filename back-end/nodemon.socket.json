@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "ts",
+  "ignore": ["src/**/*.spec.ts"],
+  "exec": "tsc --sourceMap && cross-env MODE=socket node dist/socket/index.js"
+}
