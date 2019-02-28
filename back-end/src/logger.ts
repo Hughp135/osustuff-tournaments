@@ -78,7 +78,7 @@ function getFormattingFromLevel(level: string) {
     case 'warn':
       return { short: 'WARN', color: Chalk.yellowBright, out: console.warn };
     case 'error':
-      return { short: 'ERRR', color: Chalk.redBright, out: console.info };
+      return { short: 'ERRR', color: Chalk.redBright, out: console.error };
   }
 
   return { short: '????', color: Chalk.blackBright, out: console.error };
