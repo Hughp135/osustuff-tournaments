@@ -5,5 +5,5 @@ export const environment = {
   osu_oauth_id: '48',
   twitch_redirect_url: 'https://play.osustuff.org/api/twitch-redirect',
   twitch_client_id: 'le90ws5nsckurdggyl8geafm3uxb8w',
-  socket_url: 'https://play.osustuff.org/socket',
+  socket_url: 'https://play.osustuff.org:2053',
 };
