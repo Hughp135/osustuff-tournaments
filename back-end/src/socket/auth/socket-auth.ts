@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import cookie from 'cookie';
 import { verifyJWT } from '../../api/auth/jwt';
+import { logger } from '../../logger';
 
 export interface ISocket extends SocketIO.Socket {
   claim: {
@@ -23,7 +24,7 @@ export function socketAuth(io: Server) {
 
       return next();
     } catch (e) {
-      console.error('Socket Auth Error', e);
+      logger.error('Socket auth error!', e);
       return next();
     }
   };

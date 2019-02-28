@@ -17,6 +17,7 @@ import { removeAfkPlayers } from './remove-afk-players';
 import { updatePlayerAchievements } from '../achievements/update-player-achievements';
 import { sendGameToSocket } from './update-game';
 import { sendPlayersToSocket } from './players/update-players';
+import { logger } from '../logger';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
@@ -204,7 +205,7 @@ async function startGame(game: IGame): Promise<boolean> {
 async function checkRoundEnded(game: IGame): Promise<boolean> {
   // Check if next round should start
   if (<Date>game.nextStageStarts < new Date()) {
-    console.info('round', game.roundNumber, 'ended');
+    logger.info(`(game id: ${game.id}) Round ${game.roundNumber} ended.`);
     const round = <IRound>await Round.findById(game.currentRound);
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);

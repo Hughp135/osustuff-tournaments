@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
+import { logger } from '../../logger';
 
 const JWT_SECRET: string = config.get('JWT_SECRET');
 

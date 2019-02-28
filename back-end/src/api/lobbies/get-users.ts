@@ -101,7 +101,7 @@ export async function getGamePlayers(game: IGame) {
         (u: any) => u._id.toString() === p.userId.toString(),
       );
       if (!user) {
-        console.error('No user found for player', p.username, 'Game', game._id);
+        logger.error(`(game id: ${game._id}) No user found for player ${p.username}`);
       }
       if (user && user.twitch) {
         delete user.twitch.userId;

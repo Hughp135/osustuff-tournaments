@@ -2,6 +2,7 @@ import { Skill } from './../services/trueskill';
 import { User, IUser, IUserResult } from '../models/User.model';
 import { IPlayer, IGame } from '../models/Game.model';
 import { Rating } from 'ts-trueskill';
+import { logger } from '../logger';
 
 export async function updatePlayerGameStats(game: IGame) {
   const playerCount = game.players.length;

@@ -3,6 +3,7 @@ import { Server } from 'socket.io';
 import { Message } from './../../models/Message.model';
 import { User } from '../../models/User.model';
 import { Game } from '../../models/Game.model';
+import { logger } from '../../logger';
 const Filter = require('bad-words');
 
 const filter = new Filter();
@@ -21,7 +22,7 @@ export function sendMessage(io: Server) {
     socket.on('send-message', async (request: INewMessage) => {
       const username = socket.claim.username;
       if (!username) {
-        console.error('send-message: no socket claim', socket.claim.user_id);
+        logger.error('No username in send message claim!', socket.claim);
         return;
       }
       if (request.message.length < 1 || request.message.length > 500) {
@@ -31,14 +32,14 @@ export function sendMessage(io: Server) {
 
       const user = await User.findOne({ username });
       if (!user) {
-        console.error('user not found with username', username);
+        logger.error(`No user found with username ${username}!`);
         return;
       }
 
       const game = await Game.findById(request.gameId);
 
       if (!game) {
-        console.error('game not found', request.gameId);
+        logger.error(`No game found with ID ${request.gameId}!`);
         return;
       }
 
@@ -46,12 +47,17 @@ export function sendMessage(io: Server) {
         p => p.userId.toString() === user._id.toString(),
       );
 
+      if (!player) {
+        logger.error(`(game id: ${game.id}) No player found with user id ${user.id}!`);
+        return;
+      }
+
       if (
-        (!player || player.kicked) &&
+        player.kicked &&
         !user.roles.includes('moderator') &&
         !user.roles.includes('admin')
       ) {
-        console.error('player not found/kicked', player);
+        logger.warn(`(game id: ${game.id}) Player with user id ${user.id} was kicked and tried to send message!`);
         return;
       }
 

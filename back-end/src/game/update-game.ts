@@ -1,6 +1,7 @@
 import got from 'got';
 import { IGame } from '../models/Game.model';
 import config from 'config';
+import { logger } from '../logger';
 
 export async function sendGameToSocket(game: IGame) {
   try {
@@ -14,6 +15,6 @@ export async function sendGameToSocket(game: IGame) {
       },
     );
   } catch (e) {
-    console.info('failed to post to update game', e.status, e.body);
+    logger.error(`(game id: ${game._id}) Failed to post game update!`, e);
   }
 }

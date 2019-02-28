@@ -4,6 +4,7 @@ import got from 'got';
 import config from 'config';
 import { updateOrCreateUser } from '../../models/User.model';
 import { createJWT } from '../auth/jwt';
+import { logger } from '../../logger';
 
 const OSU_OAUTH_ID = config.get('OSU_OAUTH_ID');
 const OSU_OAUTH_SECRET = config.get('OSU_OAUTH_SECRET');

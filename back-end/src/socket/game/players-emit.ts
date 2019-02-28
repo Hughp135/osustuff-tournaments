@@ -1,5 +1,6 @@
 import { Express } from 'express';
 import { Server } from 'socket.io';
+import { logger } from '../../logger';
 
 export function playersUpdated(app: Express, io: Server) {
   app.post('/players-updated', async (req, res) => {
@@ -8,7 +9,7 @@ export function playersUpdated(app: Express, io: Server) {
     if (gameId) {
       io.in(`lobby-${gameId}`).emit('players-updated', { players, gameId });
     } else {
-      console.error('gameUpdated() gameId not set', req.body);
+      logger.error('No game id received in players update!', req.body);
     }
 
     res.status(200).end();

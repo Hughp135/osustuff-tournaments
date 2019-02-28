@@ -32,6 +32,7 @@ import { createTestUser } from './admin/create-test-user';
 import { banUser } from './admin/ban-user';
 import { twitchVerify } from './auth/twitch-verify';
 import { unlinkTwitch } from './user/unlink-twitch';
+import { logger } from '../logger';
 
 const PORT = config.get('API_PORT');
 const app = express();
