@@ -20,11 +20,11 @@ const consoleTransport = new winston.transports.Console({
 });
 
 // Multiple loggers to ensure log-file exclusivity.
-const debugLogger = winston.createLogger({ level: logLevel });
-const verboseLogger = winston.createLogger({ level: logLevel });
-const infoLogger = winston.createLogger({ level: logLevel });
-const warnLogger = winston.createLogger({ level: logLevel });
-const errorLogger = winston.createLogger({ level: logLevel });
+const debugLogger = winston.createLogger({ level: logLevel, transports: [consoleTransport] });
+const verboseLogger = winston.createLogger({ level: logLevel, transports: [consoleTransport] });
+const infoLogger = winston.createLogger({ level: logLevel, transports: [consoleTransport] });
+const warnLogger = winston.createLogger({ level: logLevel, transports: [consoleTransport] });
+const errorLogger = winston.createLogger({ level: logLevel, transports: [consoleTransport] });
 
 export const logger = {
   debug(message?: any, ...meta: any[]) {
@@ -44,12 +44,6 @@ export const logger = {
   },
 };
 
-debugLogger.add(consoleTransport);
-verboseLogger.add(consoleTransport);
-infoLogger.add(consoleTransport);
-warnLogger.add(consoleTransport);
-errorLogger.add(consoleTransport);
-
 if (logToFile) {
   debugLogger.add(new winston.transports.File({ filename: './logs/debug.log', level: 'debug' }));
   verboseLogger.add(new winston.transports.File({ filename: './logs/verbose.log', level: 'verbose' }));
@@ -59,7 +53,11 @@ if (logToFile) {
 }
 
 function formatFunction(info: TransformableInfo) {
-  const meta = (<any[]>info[SPLAT][0]).map(s => util.format('', s)).join('');
+  let meta = '';
+
+  if (info[SPLAT]) {
+    meta = (<any[]>info[SPLAT][0]).map(s => util.format('', s)).join('');
+  }
 
   const formatting = getFormattingFromLevel(info.level);
   const timestamp = getTimestamp(info.timestamp);
