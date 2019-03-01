@@ -144,7 +144,7 @@ export class GameLobbyResolver implements Resolve<Promise<GameLobbyData>> {
       };
       subscriptions.add(
         this.socketService.lobby.pipe(
-          filter((val) => val._id === id)
+          filter((val) => val && val._id === id)
         ).subscribe(game => {
           if (game) {
             onData(game);

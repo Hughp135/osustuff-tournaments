@@ -47,17 +47,16 @@ export function sendMessage(io: Server) {
         p => p.userId.toString() === user._id.toString(),
       );
 
-      if (!player) {
-        logger.error(`(game id: ${game.id}) No player found with user id ${user.id}!`);
-        return;
-      }
-
       if (
+        player &&
         player.kicked &&
-        !user.roles.includes('moderator') &&
-        !user.roles.includes('admin')
+        (!user.roles.includes('moderator') && !user.roles.includes('admin'))
       ) {
-        logger.warn(`(game id: ${game.id}) Player with user id ${user.id} was kicked and tried to send message!`);
+        logger.warn(
+          `User with id ${
+            user.id
+          } tried to chat but does not have permissions for game ${game._id}`,
+        );
         return;
       }
 

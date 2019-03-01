@@ -46,9 +46,6 @@ export async function startWs() {
 
   io = socketIo(server);
   io.use(socketAuth(io));
-  io.on('connection', async (socket: ISocket) => {
-    logger.info(`(socket id: ${socket.id}) User connected.,`, socket.claim);
-  });
   (<any>io).setMaxListeners(50);
 
   // Add event listeners (endpoints)
