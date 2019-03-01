@@ -3,6 +3,7 @@ import { updateOrCreateUser, User } from '../models/User.model';
 import faker from 'faker';
 import { cache } from '../services/cache';
 import { addOnlineUser } from '../helpers/add-online-user';
+import { logger } from '../logger';
 import { userToPlayer } from './user-to-player';
 
 export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
@@ -20,7 +21,8 @@ export async function addSamplePlayers(game: IGame, numberOfPlayers: number) {
           await user.save();
           return userToPlayer(user);
         } catch (e) {
-          console.error(e);
+          logger.error('Failed to create sample players!');
+          throw e;
         }
       })
       .filter(p => !!p),

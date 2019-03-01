@@ -6,6 +6,7 @@ import { Game, IGame } from '../../models/Game.model';
 import { getDataOrCache } from '../../services/cache';
 import got from 'got';
 import config from 'config';
+import { logger } from '../../logger';
 
 export async function getLobbyUsers(req: Request, res: Response) {
   const { id } = req.params;
@@ -89,7 +90,7 @@ export async function getGamePlayers(game: IGame) {
         });
       }
     } catch (e) {
-      console.error('Failed to get channels from twitch', e.body || e);
+      logger.error('Failed to get channels from Twitch!', e.body || e);
     }
   }
 
@@ -100,7 +101,7 @@ export async function getGamePlayers(game: IGame) {
         (u: any) => u._id.toString() === p.userId.toString(),
       );
       if (!user) {
-        console.error('No user found for player', p.username, 'Game', game._id);
+        logger.error(`(game id: ${game._id}) No user found for player ${p.username}`);
       }
       if (user && user.twitch) {
         delete user.twitch.userId;

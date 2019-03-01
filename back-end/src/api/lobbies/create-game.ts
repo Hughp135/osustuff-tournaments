@@ -2,6 +2,7 @@ import { IBeatmap } from '../../models/Beatmap.model';
 import { Request, Response } from 'express';
 import { createScheduledGame } from '../../game/create-scheduled-game';
 import { User } from '../../models/User.model';
+import { logger } from '../../logger';
 
 export interface ICreateScheduledGameOptions {
   title: string;
@@ -47,10 +48,9 @@ export async function makeScheduledGame(req: Request, res: Response) {
 
     return res.status(200).json({ gameId: game._id });
   } catch (e) {
-    console.error('Failed to create game', e);
+    logger.error('Failed to create game!', e);
+    return res.status(500).json({ error: 'Failed to create game' });
   }
-
-  return res.status(500).json({ error: 'Failed to create game' });
 }
 
 export function validateGameRequestBody(

@@ -19,3 +19,5 @@ TWITCH_CLIENT_ID: 'asdasd'
 TWITCH_SECRET: 'oijoij'
 TWITCH_REDIRECT: 'http://localhost:4200/api/twitch-redirect'
 TEST_SECRET: 'asd123'
+LOG_LEVEL: 'info'
+LOG_TO_FILE: false

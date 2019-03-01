@@ -3,11 +3,12 @@ import { startMonitoring } from './game/monitor-running-games';
 import { startServer } from './api';
 import { cache } from './services/cache';
 import { connectToMongo } from './helpers/connect-to-mongo';
+import { logger } from './logger';
 
 if (process.env.NODE_ENV !== 'production') {
   require('source-map-support').install();
 }
-process.on('unhandledRejection', console.error);
+process.on('unhandledRejection', logger.error);
 
 mongoose.set('useCreateIndex', true);
 
@@ -27,4 +28,4 @@ let started = false;
   cache.put('online-players', []);
   await startServer();
   await startMonitoring();
-})().catch(e => console.error(e)); // tslint:disable-line
+})().catch(e => logger.error(e)); // tslint:disable-line

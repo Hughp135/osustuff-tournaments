@@ -17,6 +17,7 @@ import { removeAfkPlayers } from './remove-afk-players';
 import { updatePlayerAchievements } from '../achievements/update-player-achievements';
 import { sendGameToSocket } from './update-game';
 import { sendPlayersToSocket } from './players/update-players';
+import { logger } from '../logger';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
@@ -29,10 +30,11 @@ let gamesBeingUpdated: string[] = [];
 let creatingNewGame = false;
 
 export async function startMonitoring() {
-  console.info('starting monitoring');
+  logger.info('Starting to monitor...');
 
   if (isMonitoring) {
-    throw new Error('Already monitoring');
+    logger.error('Already monitoring!');
+    throw new Error();
   }
 
   isMonitoring = true;
@@ -69,7 +71,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
         creatingNewGame = false;
       });
     } catch (e) {
-      console.error('Failed to create game', e);
+      logger.error('Failed to create game!', e);
     }
   }
 
@@ -109,7 +111,7 @@ export async function updateRunningGames(getRecentMaps: () => Promise<any>) {
         await sendGameToSocket(game);
       }
     } catch (e) {
-      console.error('Failed to update game with status ' + game.status, e);
+      logger.error(`Failed to update game with status ${game.status}!`, e);
     }
     gamesBeingUpdated = gamesBeingUpdated.filter(
       g => g !== game._id.toString(),
@@ -133,26 +135,24 @@ async function createNewGame(
 
     try {
       if (anyRankGames.length === 0) {
-        console.info('creating a new game');
-        await createGame(getRecentMaps).catch(e =>
-          console.info('Failed to create game', e),
-        );
+        logger.info('Creating a new game...');
+        await createGame(getRecentMaps).catch(e => logger.error('Failed to create game!', e));
       }
       if (!DISABLE_LOWER_LVL_LOBBIES && minRankGames.length === 0) {
-        console.info('creating a new game with min rank');
+        logger.info('Creating a new game with a minimum rank...');
         await createGame(getRecentMaps, 45000).catch(e =>
-          console.info('Failed to create game', e),
+          logger.error('Failed to create game!', e),
         );
       }
     } catch (e) {
-      console.error(e);
+      logger.error('Failed to create new games!', e);
     }
   }
 }
 
 async function openScheduledGame(game: IGame): Promise<boolean> {
   if (game.nextStageStarts && game.nextStageStarts < new Date()) {
-    console.info('Opening scheduled game');
+    logger.info('Opening scheduled game...');
     game.nextStageStarts = undefined;
     game.status = 'new';
     await game.save();
@@ -170,8 +170,7 @@ async function startGame(game: IGame): Promise<boolean> {
   const enoughPlayers = game.players.length >= PLAYERS_REQUIRED_TO_START;
   if (!enoughPlayers) {
     if (game.nextStageStarts) {
-      console.info('canceling countdown');
-      // Cancel countdown
+      logger.info('Canceling countdown.');
       game.nextStageStarts = undefined;
       await game.save();
       clearGetLobbyCache(game._id);
@@ -182,7 +181,7 @@ async function startGame(game: IGame): Promise<boolean> {
   }
 
   if (!game.nextStageStarts) {
-    console.info('Beginning countdown....');
+    logger.info('Beginning countdown...');
     // Set the countdown to start
     if (!FAST_FORWARD_MODE) {
       await setNextStageStartsAt(game, COUNTDOWN_START);
@@ -206,7 +205,7 @@ async function startGame(game: IGame): Promise<boolean> {
 async function checkRoundEnded(game: IGame): Promise<boolean> {
   // Check if next round should start
   if (<Date>game.nextStageStarts < new Date()) {
-    console.info('round', game.roundNumber, 'ended');
+    logger.info(`(game id: ${game.id}) Round ${game.roundNumber} ended.`);
     const round = <IRound>await Round.findById(game.currentRound);
     await checkRoundScores(game, round, getUserRecent);
     await roundEnded(game, round);
@@ -248,13 +247,9 @@ async function setNextStageStartsAt(game: IGame, seconds: number) {
 }
 
 async function skipCheckingScore(game: IGame) {
-  if (
-    game.status === 'checking-scores' &&
-    <Date>game.nextStageStarts < new Date()
-  ) {
-    const round = <IRound>await Round.findById(game.currentRound);
-
-    console.info('Checking scores not complete after 2 minutes', {
+  if (game.status === 'checking-scores' && <Date> game.nextStageStarts < new Date()) {
+    const round = <IRound> await Round.findById(game.currentRound);
+    logger.warn('Checking scores not complete after 2 minutes!', {
       gameId: game._id,
       round: round._id,
       playersAliveCount: game.players.filter(p => p.alive).length,
@@ -264,13 +259,11 @@ async function skipCheckingScore(game: IGame) {
     const alivePlayersCount = game.players.filter(p => p.alive).length;
 
     if (scoresCount >= alivePlayersCount / 2) {
-      console.info(
-        'Ending round as at least half alive players have set score',
-      );
+      logger.info(`(game id: ${game._id.toHexString()}) Ending round as at least half alive players have set score.`);
       await roundEnded(game, round);
       await updatePlayerAchievements(game);
     } else {
-      console.info('Checking scores again');
+      logger.info(`(game id: ${game._id.toHexString()}) Checking scores again.`);
       await checkRoundEnded(game);
     }
     clearGetLobbyCache(game._id);

@@ -1,5 +1,6 @@
 import { IAchievement, Achievement } from '../models/Achievement.model';
 import { getDataOrCache } from '../services/cache';
+import { logger } from '../logger';
 
 export async function getOrCreateAchievement(
   title: string,
@@ -17,14 +18,10 @@ export async function getOrCreateAchievement(
       }
       return null;
     } catch (e) {
-      console.error('Failed to create/get achievement ' + title, e);
-      return null;
+      logger.error(`Failed to create or get achievement ${title}!`);
+      throw e;
     }
   });
-
-  if (!achievement) {
-    throw new Error('Failed to get achievement');
-  }
 
   if (description && achievement.description !== description) {
     achievement.description = description;

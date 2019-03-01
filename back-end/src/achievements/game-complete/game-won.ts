@@ -3,6 +3,7 @@ import { IGame } from '../../models/Game.model';
 import { getOrCreateAchievement } from '../get-or-create-achievement';
 import { IUserAchieved } from '../update-player-achievements';
 import { IScore } from '../../models/Score.model';
+import { logger } from '../../logger';
 
 export async function gameWon(
   users: IUser[],
@@ -18,10 +19,7 @@ export async function gameWon(
   );
 
   if (!user) {
-    console.error('Winning user not found in gameWon()', {
-      gameId: game._id,
-      winningUser: game.winningUser,
-    });
+    logger.error(`(game id: ${game._id.toHexString()}) Winning user not found in gameWon()!`);
 
     return [];
   }

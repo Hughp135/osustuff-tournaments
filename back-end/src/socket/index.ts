@@ -12,6 +12,7 @@ import bodyParser from 'body-parser';
 import { playersUpdated } from './game/players-emit';
 import { systemMessage } from './messages/message-emit';
 import cors from 'cors';
+import { logger } from '../logger';
 
 export let io: Server;
 
@@ -26,17 +27,12 @@ export async function startWs() {
   app.use(cors());
   app.use(cookieParser());
   app.use((req, res, next) => {
-    console.log(req.url);
     const ip = req.connection.remoteAddress;
     const isLocal =
       ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
 
     if (!isLocal) {
-      console.error(
-        'socket api called from non-localhost address',
-        req.connection.remoteAddress,
-        (<any>req).claim,
-      );
+      logger.error(`Socket API called from non-localhost address ${req.connection.remoteAddress}!`, (<any>req).claim);
       return res.status(401).end();
     }
 
@@ -51,11 +47,7 @@ export async function startWs() {
   io = socketIo(server);
   io.use(socketAuth(io));
   io.on('connection', async (socket: ISocket) => {
-    console.info(
-      'info',
-      `User connected: ${socket.id}, claim: ${socket.claim &&
-        `${socket.claim.username} ${socket.claim.user_id}`}`,
-    );
+    logger.info(`(socket id: ${socket.id}) User connected.,`, socket.claim);
   });
   (<any>io).setMaxListeners(50);
 
@@ -70,7 +62,7 @@ export async function startWs() {
 
   await server.listen(SOCKET_PORT);
 
-  console.info('Socket server started on port ' + SOCKET_PORT);
+  logger.info(`Socket server started on port ${SOCKET_PORT}.`);
 }
 
-startWs().catch(e => console.error(e));
+startWs().catch(e => logger.error('Websocket error!', e));

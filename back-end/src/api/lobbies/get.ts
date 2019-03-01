@@ -78,7 +78,6 @@ async function getScores(game: IGame) {
     ? await getAllUserBestScores(game.currentRound)
     : [];
   if (!game.players) {
-    console.error(game);
     throw new Error('game has no players');
   }
   return scores.map((score: any) => {

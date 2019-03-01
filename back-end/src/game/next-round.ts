@@ -2,6 +2,7 @@ import { IGame } from '../models/Game.model';
 import { Round } from '../models/Round.model';
 import { DURATION_ROUND_ADDITIONAL } from './durations';
 import config from 'config';
+import { logger } from '../logger';
 
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 
@@ -23,7 +24,7 @@ export async function nextRound(game: IGame) {
   game.currentRound = round._id;
   game.roundNumber = nextRoundNumber;
 
-  console.info('starting round', game.roundNumber);
+  logger.info(`(game id: ${game._id.toHexString()}) Starting round ${game.roundNumber}`);
 
   // Set time that round should last
   const date = new Date();

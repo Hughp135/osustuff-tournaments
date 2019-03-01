@@ -2,6 +2,7 @@ import { getBeatmaps } from '../services/osu-api';
 import got from 'got';
 import { Beatmap } from '../models/Beatmap.model';
 import { connectToMongo } from '../helpers/connect-to-mongo';
+import { logger } from '../logger';
 
 async function start() {
   await connectToMongo();
@@ -14,19 +15,19 @@ async function start() {
   console.time('start');
 
   while (date < lastMonth) {
-    console.info('getting beatmaps from date', date);
+    logger.info(`Getting beatmaps from date ${date}...`);
     const beatmaps = (await getBeatmaps(date)).sort(
       (a, b) =>
         new Date(b.approved_date).getTime() -
         new Date(a.approved_date).getTime(),
     );
-    console.info('osu api beatmaps', beatmaps.length);
+    logger.info(`API returned ${beatmaps.length} beatmaps.`);
     const existingMaps: string[] = [];
     const added: string[] = [];
 
     for (const beatmap of beatmaps) {
       if (downloadUnavailable.includes(beatmap.beatmapset_id)) {
-        console.info('dl unavailable', beatmap.beatmapset_id);
+        logger.info(`Download unavailable for ${beatmap.beatmapset_id}.`);
         continue;
       }
       const existing = await Beatmap.findOne({
@@ -52,20 +53,20 @@ async function start() {
       } catch (e) {
         if (e.statusCode === 404) {
           // Unavailable to download
-          console.info('Download not available', beatmap.beatmapset_id);
+          logger.info(`Download not available for beatmap ${beatmap.beatmapset_id}.`);
           downloadUnavailable.push(beatmap.beatmapset_id);
         } else if (e.statusCode === 429) {
-          console.info('Timed out, waiting a minute');
+          logger.info('Timed out, waiting one minute...');
           console.timeEnd('start');
           await new Promise(res => setTimeout(res, 60000));
         } else {
           // Some unexpected error occured
-          console.info('failed', beatmap.beatmapset_id, e);
+          logger.info(`Failed to get beatmap ${beatmap.beatmapset_id}!`, e);
         }
       }
 
-      console.info('added', added.length);
-      console.info('already added', existingMaps.length);
+      logger.info(`Added ${added.length} beatmaps.`);
+      logger.info(`${existingMaps.length} existing beatmaps.`);
     }
 
     const [lastBeatmap] = beatmaps.sort(
@@ -77,8 +78,8 @@ async function start() {
     date.setMonth(date.getMonth() + 4);
   }
 
-  console.info('beatmaps added', downloadAvailable.length);
-  console.info('beatmaps not available to download', downloadUnavailable.length);
+  logger.info(`Added ${downloadAvailable.length} beatmaps.`);
+  logger.info(`${downloadUnavailable.length} beatmaps not available to download.`);
 }
 
-start().catch(e => console.info(e));
+start().catch(e => logger.info(e));

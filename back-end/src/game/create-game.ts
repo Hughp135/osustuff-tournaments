@@ -3,6 +3,7 @@ import { Game, IGame } from '../models/Game.model';
 import { addSamplePlayers } from '../test-helpers/add-sample-players';
 import config from 'config';
 import { Beatmap } from '../models/Beatmap.model';
+import { logger } from '../logger';
 import { randomFromArray } from '../helpers/random-from-array';
 
 const TEST_MODE = config.get('TEST_MODE');
@@ -40,7 +41,7 @@ export async function createGame(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
   beatmaps.push(...savedBeatmaps);
-  console.info('total beatmaps', beatmaps.length);
+  logger.info(`Total beatmap count: ${beatmaps.length}`);
 
   const difficulties = minRank ? easyLobbyStars : standardStars;
   const roundBeatmaps = difficulties
@@ -68,7 +69,7 @@ export async function createGame(
   });
 
   if (TEST_MODE && game.status !== 'scheduled') {
-    console.info('Creating game with sample players');
+    logger.info(`(game id: ${game._id.toHexString()}) Creating game with sample players.`);
     await addSamplePlayers(game, testPlayers || 10);
   }
 

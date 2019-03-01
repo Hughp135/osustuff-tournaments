@@ -3,6 +3,7 @@ import { cache } from '../services/cache';
 import { User } from '../models/User.model';
 import { sendSystemMessage } from './send-system-message';
 import config from 'config';
+import { logger } from '../logger';
 import { sendUpdatePlayersRequest } from './players/update-players';
 
 const REMOVE_AFK_PLAYERS = config.get('REMOVE_AFK_PLAYERS');
@@ -20,7 +21,7 @@ export async function removeAfkPlayers(game: IGame) {
   });
 
   for (const player of afkPlayers) {
-    console.info('removing afk player', player.username);
+    logger.info(`(game id: ${game._id.toHexString()}) Removing AFK player ${player.username} (id: ${player.userId})`);
     await User.updateOne(
       { _id: player.userId },
       { $set: { currentGame: undefined } },

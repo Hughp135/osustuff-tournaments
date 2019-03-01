@@ -32,6 +32,7 @@ import { createTestUser } from './admin/create-test-user';
 import { banUser } from './admin/ban-user';
 import { twitchVerify } from './auth/twitch-verify';
 import { unlinkTwitch } from './user/unlink-twitch';
+import { logger } from '../logger';
 
 const PORT = config.get('API_PORT');
 const app = express();
@@ -39,7 +40,7 @@ const app = express();
 const checkIp = (req: Request) => {
   // Use cloud-flare's connecting-ip to determine user's real IP
   if (!req.headers['cf-connecting-ip'] && process.env.NODE_ENV === 'production') {
-    console.error('Request has no cf-connecting-ip', req.headers);
+    logger.error('Request has no cf-connecting-ip header', req.headers);
   }
   return <string>req.headers['cf-connecting-ip'] || Math.random().toString();
 };
@@ -97,10 +98,10 @@ router.get('/twitch-redirect', authMiddleware, twitchVerify);
 app.use('/api', router);
 
 export async function startServer() {
-  console.info('Environment ' + process.env.NODE_ENV);
+  logger.info(`Environment is ${process.env.NODE_ENV}.`);
   if (process.env.MODE === 'socket') {
-    throw new Error('Attempted to start API server in socket process');
+    throw new Error('Attempted to start API server in socket process.');
   }
   await app.listen(PORT);
-  console.info('API started on port ' + PORT);
+  logger.info(`API started on port ${PORT}.`);
 }

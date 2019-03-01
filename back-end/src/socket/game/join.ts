@@ -3,21 +3,22 @@ import { Types } from 'mongoose';
 import { Game } from '../../models/Game.model';
 import { getGamePayload } from '../../api/lobbies/get';
 import { getGamePlayers } from '../../api/lobbies/get-users';
+import { logger } from '../../logger';
 
 export function joinLobby(io: Server) {
   io.on('connection', async (socket: Socket) => {
     socket.on('join-game', async (gameId: string) => {
-      console.info('user joining game room', gameId);
+      logger.info(`(game id: ${gameId}) User joining game room.`);
       if (!Types.ObjectId.isValid(gameId)) {
         socket.emit('soft-error', 'Invalid channel ID');
-        console.error('invalid id', gameId);
+        logger.error(`(game id: ${gameId}) Invalid game ID!`);
         return;
       }
 
       const game = await Game.findById(gameId);
 
       if (!game) {
-        console.error('game not found', gameId);
+        logger.error(`(game id: ${gameId}) No game found!`);
         return;
       }
 

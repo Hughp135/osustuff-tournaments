@@ -5,6 +5,7 @@ import config from 'config';
 import { addSampleScores } from '../test-helpers/add-sample-scores';
 import { cache } from '../services/cache';
 import { getAppliedMods } from '../helpers/get-applied-mods';
+import { logger } from '../logger';
 
 const TEST_ENV = process.env.NODE_ENV === 'test';
 const TEST_MODE = config.get('TEST_MODE');
@@ -37,7 +38,7 @@ export async function checkRoundScores(
     await Promise.all(
       players.map(async p =>
         checkPlayerScores(p, round, getUserRecent).catch(e =>
-          console.info('Failed to check player scores: ' + p, e),
+          logger.error(`Failed to check player scores!`, p, e),
         ),
       ),
     );

@@ -4,6 +4,7 @@ import got from 'got';
 import config from 'config';
 import { updateOrCreateUser } from '../../models/User.model';
 import { createJWT } from '../auth/jwt';
+import { logger } from '../../logger';
 
 const OSU_OAUTH_ID = config.get('OSU_OAUTH_ID');
 const OSU_OAUTH_SECRET = config.get('OSU_OAUTH_SECRET');
@@ -41,8 +42,8 @@ export async function loginVerify(req: Request, res: Response) {
     });
 
     if (!body.id || !body.username || !body.country || !body.statistics) {
-      console.error('get user request didnt have user data', body);
-      throw new Error('get user v2/me request didnt have right data: ');
+      logger.error('/api/v2/me didn\'t have necessary data!', body);
+      throw new Error();
     }
 
     const bannedPlayer = await User.findOne({ osuUserId: body.id, banned: true });
@@ -80,13 +81,13 @@ export async function loginVerify(req: Request, res: Response) {
 
         return res.redirect(`/lobbies/${gameId}?autoJoin=true`);
       } catch (e) {
-        console.info('Failed to parse oauth state', state);
+        logger.warn('Failed to parse OAuth state!', state);
       }
     }
 
     res.redirect('/lobbies');
   } catch (e) {
-    console.info('Failed to verify oauth request', e);
+    logger.warn('Failed to verify OAuth request!', e);
     res.status(400).end();
   }
 }
