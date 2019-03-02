@@ -207,7 +207,8 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   get showBeatmap() {
     const alivePlayers = this.players.filter(p => p.alive);
     return (
-      (this.game && !['new', 'complete', 'scheduled'].includes(this.game.status)) &&
+      this.game &&
+      !['new', 'complete', 'scheduled'].includes(this.game.status) &&
       !this.viewResults &&
       (alivePlayers.length > 1 || this.game.roundNumber === 1)
     );
@@ -215,7 +216,8 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
   get showScores() {
     return (
-      (this.game && ['round-over', 'checking-scores'].includes(this.game.status)) &&
+      this.game &&
+      ['round-over', 'checking-scores'].includes(this.game.status) &&
       !this.viewResults
     );
   }
@@ -237,7 +239,8 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
   get showBeatmaps() {
     return (
-      this.game && (['new', 'scheduled'].includes(this.game.status) || this.showBeatmapList)
+      this.game &&
+      (['new', 'scheduled'].includes(this.game.status) || this.showBeatmapList)
     );
   }
 
@@ -263,6 +266,7 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
   get isModOrAdmin() {
     return (
       this.currentUser &&
+      this.currentUser.roles &&
       (this.currentUser.roles.includes('admin') ||
         this.currentUser.roles.includes('moderator'))
     );
@@ -282,7 +286,9 @@ export class GameLobbyComponent implements OnInit, OnDestroy {
 
   get showDescription() {
     return (
-      this.game.description && this.game && ['new', 'scheduled'].includes(this.game.status)
+      this.game.description &&
+      this.game &&
+      ['new', 'scheduled'].includes(this.game.status)
     );
   }
 

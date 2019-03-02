@@ -26,7 +26,7 @@ export class SettingsService {
         const me: any = await this.apiService.get(`user/me`);
 
         if (me) {
-          this.setUser(me);
+          this.user.next(me);
           if (me.currentGame) {
             this.setCurrentGame(me.currentGame);
           } else {
@@ -38,7 +38,6 @@ export class SettingsService {
 
       } catch (e) {
         if ([404, 408, 401].includes(e.status)) {
-          this.clearUsername();
           this.clearCurrentGame();
         } else {
           console.error(e);
@@ -60,15 +59,6 @@ export class SettingsService {
     if (this.currentGame.getValue() !== undefined) {
       this.currentGame.next(undefined);
     }
-  }
-
-  public setUser(user: IUser) {
-    this.user.next(user);
-  }
-
-  private clearUsername() {
-    localStorage.removeItem('username');
-    this.user.next(undefined);
   }
 
   public setAdmin(password: string) {

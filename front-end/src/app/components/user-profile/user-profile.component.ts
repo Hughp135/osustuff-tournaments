@@ -120,7 +120,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   get isMod() {
-    return this.currentUser && this.currentUser.roles.includes('moderator');
+    return this.currentUser && this.currentUser.roles && this.currentUser.roles.includes('moderator');
   }
 
   get isMyProfile() {
