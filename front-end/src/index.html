@@ -23,8 +23,6 @@
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80879723-2"></script>
   <script>
-    ga('set', 'anonymizeIp', true);
-
     if (window.location.hostname !== 'localhost') {
       window.dataLayer = window.dataLayer || [];
 
@@ -33,7 +31,7 @@
       }
       gtag('js', new Date());
 
-      gtag('config', 'UA-80879723-2');
+      gtag('config', 'UA-80879723-2', { anonymize_ip: true });
     }
 
   </script>
