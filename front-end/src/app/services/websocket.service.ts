@@ -37,9 +37,8 @@ export class WebsocketService {
         res();
       });
       this.socket.on('disconnect', (reason: string) => {
-        console.error('disconnected');
+        console.warn('disconnected', reason);
         // SOCKET CONNECTION LOST
-        console.error(reason);
         this.connected = false;
         this.reconnecting = true;
         rej(reason);
@@ -56,11 +55,9 @@ export class WebsocketService {
         console.error(data);
       });
       this.socket.on('game-updated', (game: any) => {
-        console.log('game Updated', game);
         this.lobby.next(game);
       });
       this.socket.on('players-updated', ({ players, gameId: id }: any) => {
-        console.log('players Updated');
         this.players.next({players: JSON.parse(players), gameId});
       });
     });
