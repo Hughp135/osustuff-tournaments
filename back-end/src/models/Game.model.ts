@@ -37,6 +37,7 @@ export interface IGame extends mongoose.Document {
   maxRank?: number;
   owner?: mongoose.Schema.Types.ObjectId;
   description?: string;
+  gameMode: '0' | '1' | '2' | '3'; // 0 = osu!, 1 = Taiko, 2 = CtB, 3 = osu!mania
 }
 
 const GameSchema = new mongoose.Schema(
@@ -79,6 +80,7 @@ const GameSchema = new mongoose.Schema(
     beatmaps: { type: [], required: true },
     minRank: { type: Number },
     maxRank: { type: Number },
+    gameMode: { type: String, default : '0' },
   },
   { timestamps: true },
 );

@@ -23,6 +23,7 @@ const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
 const PLAYERS_REQUIRED_TO_START = config.get('PLAYERS_REQUIRED_TO_START');
 const DISABLE_LOWER_LVL_LOBBIES = config.get('DISABLE_LOWER_LVL_LOBBIES');
+const DISABLE_MANIA_LOBBIES = config.get('DISABLE_MANIA');
 let DISABLE_AUTO_GAME_CREATION = config.get('DISABLE_AUTO_GAME_CREATION');
 const SERVER_START_DATE = new Date();
 export let isMonitoring = false;
@@ -126,9 +127,10 @@ async function createNewGame(
   getRecentMaps: () => Promise<any>,
 ) {
   const newGames = games.filter(g => g.status === 'new');
-  const testSkipCreate = TEST_MODE && newGames.length >= 2;
+  const testSkipCreate = TEST_MODE && newGames.length >= 3;
   const anyRankGames = newGames.filter(g => !g.minRank);
   const minRankGames = newGames.filter(g => !!g.minRank);
+  const maniaGames = newGames.filter(g => g.gameMode === '3');
 
   if (!DISABLE_AUTO_GAME_CREATION && !testSkipCreate) {
     // If no games are active, create a new one
@@ -143,6 +145,11 @@ async function createNewGame(
         await createGame(getRecentMaps, 45000).catch(e =>
           logger.error('Failed to create game!', e),
         );
+      }
+      if (!DISABLE_MANIA_LOBBIES && maniaGames.length === 0) {
+        logger.info('Creating mania game');
+        await createGame(getRecentMaps, undefined, undefined, '3')
+          .catch(e => logger.error('Failed to create game!', e));
       }
     } catch (e) {
       logger.error('Failed to create new games!', e);

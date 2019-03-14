@@ -32,12 +32,16 @@ const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
   );
 
 export async function createGame(
-  getRecentBeatmaps: () => Promise<any>,
+  getRecentBeatmaps: (mode?: string) => Promise<any>,
   minRank?: number,
   testPlayers?: number,
+  gameMode?: '0' | '1' | '2' | '3',
 ): Promise<IGame> {
-  const savedBeatmaps = await Beatmap.aggregate([{ $sample: { size: 1500 } }]);
-  let beatmaps = (await getRecentBeatmaps()).filter(
+  const savedBeatmaps = await Beatmap.aggregate([
+    { $match: { gameMode: gameMode || '0' } },
+    { $sample: { size: 1500 } },
+  ]);
+  let beatmaps = (await getRecentBeatmaps(gameMode)).filter(
     (b: any) => parseInt(b.total_length, 10) <= 600,
   );
   beatmaps.push(...savedBeatmaps);
@@ -61,15 +65,22 @@ export async function createGame(
       (a, b) => parseFloat(a.difficultyrating) - parseFloat(b.difficultyrating),
     );
 
+  const gameModeStr = gameMode === '3' ? 'mania' : '';
+
   const game = await Game.create({
-    title: `osu! Royale Match${minRank ? ` (rank ${minRank / 1000}k+)` : ''}`,
+    title: `osu!${gameModeStr} Royale Match${
+      minRank ? ` (rank ${minRank / 1000}k+)` : ''
+    }`,
     beatmaps: roundBeatmaps,
     status: 'new',
     minRank,
+    gameMode,
   });
 
   if (TEST_MODE && game.status !== 'scheduled') {
-    logger.info(`(game id: ${game._id.toHexString()}) Creating game with sample players.`);
+    logger.info(
+      `(game id: ${game._id.toHexString()}) Creating game with sample players.`,
+    );
     await addSamplePlayers(game, testPlayers || 10);
   }
 
