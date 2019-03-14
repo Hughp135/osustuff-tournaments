@@ -73,7 +73,7 @@ export class SettingsService {
   }
 
   public getGameModes(): Array<'0' | '1' | '2' | '3'> {
-    return JSON.parse(localStorage.getItem('enabledGameModes') || '[]');
+    return JSON.parse(localStorage.getItem('enabledGameModes') || '["0"]');
   }
 
   get adminPw(): string | undefined {
