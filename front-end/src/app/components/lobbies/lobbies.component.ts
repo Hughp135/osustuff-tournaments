@@ -13,22 +13,43 @@ import { IGame } from '../game-lobby/game-lobby.component';
   styleUrls: ['./lobbies.component.scss'],
 })
 export class LobbiesComponent implements OnInit, OnDestroy {
+  private allLobbies: IGame[];
   public lobbies: IGame[];
   public subscriptions: Subscription[] = [];
   public fetching = false;
   public onlinePlayersCount: number;
   public canCreate = false;
+  public showGameModes: { [key in '0' | '1' | '2' | '3']: boolean } = {
+    '0': true,
+    '1': false,
+    '2': false,
+    '3': false,
+  };
 
   constructor(
     private route: ActivatedRoute,
     private gameService: GameService,
     private apiService: ApiService,
     private settingsService: SettingsService,
-  ) {}
+  ) {
+    const enabledGameModes = settingsService.getGameModes();
+    const notEnabled = Object.keys(this.showGameModes).filter(
+      (k: any) => !enabledGameModes.includes(k),
+    );
+
+    for (const k of notEnabled) {
+      this.showGameModes[k] = false;
+    }
+
+    for (const mode of enabledGameModes) {
+      this.showGameModes[mode] = true;
+    }
+  }
 
   ngOnInit() {
     this.route.data.subscribe(({ data }) => {
-      this.lobbies = data.lobbies;
+      this.allLobbies = data.lobbies;
+      this.applyGameModeFilters();
       this.onlinePlayersCount = data.onlinePlayers;
       this.setLobbiesStartString();
     });
@@ -56,13 +77,37 @@ export class LobbiesComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       this.settingsService.user.subscribe(user => {
-        this.canCreate = user && (user.roles.includes('creator') || user.roles.includes('admin'));
+        this.canCreate =
+          user &&
+          (user.roles.includes('creator') || user.roles.includes('admin'));
       }),
     );
   }
 
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  public applyGameModeFilters() {
+    const gameModes = <Array<'0' | '1' | '2' | '3'>>(
+      Object.keys(this.showGameModes)
+    );
+    this.settingsService.setGameModes(
+      gameModes.filter(k => !!this.showGameModes[k]),
+    );
+    const enabledGameModes = Object.keys(this.showGameModes)
+      .map(key => {
+        const value = this.showGameModes[key];
+        if (value) {
+          return key;
+        }
+      })
+      .filter(k => !!k);
+    this.lobbies = enabledGameModes.length
+      ? this.allLobbies.filter(({ gameMode }) =>
+          [undefined, ...enabledGameModes].includes(gameMode),
+        )
+      : this.allLobbies;
   }
 
   get scheduledGames() {

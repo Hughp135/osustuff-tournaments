@@ -11,8 +11,12 @@ export interface CurrentGame {
   providedIn: 'root',
 })
 export class SettingsService {
-  public currentGame: BehaviorSubject<CurrentGame> = new BehaviorSubject(undefined);
-  public user: BehaviorSubject<IUser | undefined> = new BehaviorSubject(undefined);
+  public currentGame: BehaviorSubject<CurrentGame> = new BehaviorSubject(
+    undefined,
+  );
+  public user: BehaviorSubject<IUser | undefined> = new BehaviorSubject(
+    undefined,
+  );
 
   constructor(private apiService: ApiService) {
     this.checkCurrentGame();
@@ -22,27 +26,26 @@ export class SettingsService {
   }
 
   public async checkCurrentGame() {
-      try {
-        const me: any = await this.apiService.get(`user/me`);
+    try {
+      const me: any = await this.apiService.get(`user/me`);
 
-        if (me) {
-          this.user.next(me);
-          if (me.currentGame) {
-            this.setCurrentGame(me.currentGame);
-          } else {
-            this.clearCurrentGame();
-          }
+      if (me) {
+        this.user.next(me);
+        if (me.currentGame) {
+          this.setCurrentGame(me.currentGame);
         } else {
           this.clearCurrentGame();
         }
-
-      } catch (e) {
-        if ([404, 408, 401].includes(e.status)) {
-          this.clearCurrentGame();
-        } else {
-          console.error(e);
-        }
+      } else {
+        this.clearCurrentGame();
       }
+    } catch (e) {
+      if ([404, 408, 401].includes(e.status)) {
+        this.clearCurrentGame();
+      } else {
+        console.error(e);
+      }
+    }
   }
 
   public setCurrentGame(gameId: string) {
@@ -63,6 +66,14 @@ export class SettingsService {
 
   public setAdmin(password: string) {
     localStorage.setItem('adminPw', password);
+  }
+
+  public setGameModes(enabledGameModes: Array<'0' | '1' | '2' | '3'>) {
+    localStorage.setItem('enabledGameModes', JSON.stringify(enabledGameModes));
+  }
+
+  public getGameModes(): Array<'0' | '1' | '2' | '3'> {
+    return JSON.parse(localStorage.getItem('enabledGameModes') || '[]');
   }
 
   get adminPw(): string | undefined {

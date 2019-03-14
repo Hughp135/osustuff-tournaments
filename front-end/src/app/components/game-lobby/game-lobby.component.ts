@@ -62,6 +62,7 @@ export interface IGame {
   startsAtString?: string;
   description?: string;
   owner?: string;
+  gameMode?: '0' | '1' | '2' | '3'; // (0 = osu!, 1 = Taiko, 2 = CtB, 3 = osu!mania)
 }
 
 @Component({

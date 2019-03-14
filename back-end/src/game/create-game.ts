@@ -35,10 +35,10 @@ export async function createGame(
   getRecentBeatmaps: (mode?: string) => Promise<any>,
   minRank?: number,
   testPlayers?: number,
-  gameMode?: '0' | '1' | '2' | '3',
+  gameMode: '0' | '1' | '2' | '3' = '0',
 ): Promise<IGame> {
   const savedBeatmaps = await Beatmap.aggregate([
-    { $match: { mode: gameMode ? gameMode : '0' } },
+    { $match: { mode: gameMode } },
     { $sample: { size: 1500 } },
   ]);
   let beatmaps = (await getRecentBeatmaps(gameMode)).filter(
@@ -65,7 +65,7 @@ export async function createGame(
       (a, b) => parseFloat(a.difficultyrating) - parseFloat(b.difficultyrating),
     );
 
-  const gameModeStr = gameMode === '3' ? 'mania' : '';
+  const gameModeStr = gameMode === '3' ? 'mania' : gameMode === '2' ? 'ctb' : gameMode === '1' ? 'taiko' : '';
 
   const game = await Game.create({
     title: `osu!${gameModeStr} Royale Match${
