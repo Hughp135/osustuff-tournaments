@@ -22,7 +22,7 @@ export class BeatmapListComponent implements OnInit {
   }
 
   public beatmapHref(beatmap) {
-    return `https://osu.ppy.sh/beatmaps/${beatmap.beatmapset_id}#${getBeatmapHrefString(this.game.gameMode)}/${
+    return `https://osu.ppy.sh/beatmapsets/${beatmap.beatmapset_id}#${getBeatmapHrefString(this.game.gameMode)}/${
       beatmap.beatmap_id
     }`;
   }
