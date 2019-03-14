@@ -50,10 +50,11 @@ export async function getUser(username: string, gameMode: '0' | '1' | '2'| '3' =
   })))[0];
 }
 
-export async function getUserRecent(username: string) {
+export async function getUserRecent(username: string, mode: '0' | '1' | '2' | '3' = '0') {
   return await request('get_user_recent', {
     u: username,
     type: 'string',
+    m: mode,
   });
 }
 

@@ -13,7 +13,7 @@ const TEST_MODE = config.get('TEST_MODE');
 export async function checkRoundScores(
   game: IGame,
   round: IRound,
-  getUserRecent: (u: string) => Promise<any>,
+  getUserRecent: (u: string, m?: '0' | '1' | '2' | '3') => Promise<any>,
 ) {
   game.status = 'checking-scores';
 
@@ -36,11 +36,12 @@ export async function checkRoundScores(
     const players = game.players.filter(p => p.alive);
 
     await Promise.all(
-      players.map(async p =>
-        checkPlayerScores(p, round, getUserRecent).catch(e =>
+      players.map(async p => {
+        const scores = await getUserRecent(p.username, game.gameMode);
+        await checkPlayerScores(p, round, scores).catch(e =>
           logger.error(`Failed to check player scores!`, p, e),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
@@ -48,9 +49,8 @@ export async function checkRoundScores(
 async function checkPlayerScores(
   player: IPlayer,
   round: IRound,
-  getUserRecent: any,
+  scores: IScore[],
 ) {
-  const scores = await getUserRecent(player.username);
   const existingScores = await Score.find({
     roundId: round._id,
     userId: player.userId,
