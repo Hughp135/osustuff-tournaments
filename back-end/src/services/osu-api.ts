@@ -42,11 +42,11 @@ async function request(
   }
 }
 
-export async function getUser(username: string) {
+export async function getUser(username: string, gameMode: '0' | '1' | '2'| '3' = '0') {
   return (await (<any> request('get_user', {
     u: username,
     type: 'string',
-    m: '0', // osu game mode
+    m: gameMode, // osu game mode
   })))[0];
 }
 

@@ -128,17 +128,18 @@ async function createNewGame(
 ) {
   const newGames = games.filter(g => g.status === 'new');
   const testSkipCreate = TEST_MODE && newGames.length >= 3;
-  const anyRankGames = newGames.filter(g => !g.minRank);
+  const rankedStandardGames = newGames.filter(g => g.gameMode === '0' && !g.minRank);
   const minRankGames = newGames.filter(g => !!g.minRank);
   const maniaGames = newGames.filter(g => g.gameMode === '3');
 
   if (!DISABLE_AUTO_GAME_CREATION && !testSkipCreate) {
     // If no games are active, create a new one
-
     try {
-      if (anyRankGames.length === 0) {
+      if (rankedStandardGames.length === 0) {
         logger.info('Creating a new game...');
-        await createGame(getRecentMaps).catch(e => logger.error('Failed to create game!', e));
+        await createGame(getRecentMaps).catch(e =>
+          logger.error('Failed to create game!', e),
+        );
       }
       if (!DISABLE_LOWER_LVL_LOBBIES && minRankGames.length === 0) {
         logger.info('Creating a new game with a minimum rank...');
@@ -148,8 +149,9 @@ async function createNewGame(
       }
       if (!DISABLE_MANIA_LOBBIES && maniaGames.length === 0) {
         logger.info('Creating mania game');
-        await createGame(getRecentMaps, undefined, undefined, '3')
-          .catch(e => logger.error('Failed to create game!', e));
+        await createGame(getRecentMaps, undefined, undefined, '3').catch(e =>
+          logger.error('Failed to create game!', e),
+        );
       }
     } catch (e) {
       logger.error('Failed to create new games!', e);
@@ -254,8 +256,11 @@ async function setNextStageStartsAt(game: IGame, seconds: number) {
 }
 
 async function skipCheckingScore(game: IGame) {
-  if (game.status === 'checking-scores' && <Date> game.nextStageStarts < new Date()) {
-    const round = <IRound> await Round.findById(game.currentRound);
+  if (
+    game.status === 'checking-scores' &&
+    <Date>game.nextStageStarts < new Date()
+  ) {
+    const round = <IRound>await Round.findById(game.currentRound);
     logger.warn('Checking scores not complete after 2 minutes!', {
       gameId: game._id,
       round: round._id,
@@ -266,11 +271,15 @@ async function skipCheckingScore(game: IGame) {
     const alivePlayersCount = game.players.filter(p => p.alive).length;
 
     if (scoresCount >= alivePlayersCount / 2) {
-      logger.info(`(game id: ${game._id.toHexString()}) Ending round as at least half alive players have set score.`);
+      logger.info(
+        `(game id: ${game._id.toHexString()}) Ending round as at least half alive players have set score.`,
+      );
       await roundEnded(game, round);
       await updatePlayerAchievements(game);
     } else {
-      logger.info(`(game id: ${game._id.toHexString()}) Checking scores again.`);
+      logger.info(
+        `(game id: ${game._id.toHexString()}) Checking scores again.`,
+      );
       await checkRoundEnded(game);
     }
     clearGetLobbyCache(game._id);

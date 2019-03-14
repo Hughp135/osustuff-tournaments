@@ -22,7 +22,7 @@ export async function joinGame(req: Request, res: Response) {
   const osuUser =
     claim.username === 'x'
       ? getSampleOsuUser() // test mode
-      : await getUser(claim.username);
+      : await getUser(claim.username, game.gameMode || '0');
 
   if (!osuUser) {
     return res

@@ -38,7 +38,7 @@ export async function createGame(
   gameMode?: '0' | '1' | '2' | '3',
 ): Promise<IGame> {
   const savedBeatmaps = await Beatmap.aggregate([
-    { $match: { gameMode: gameMode || '0' } },
+    { $match: { mode: gameMode ? gameMode : '0' } },
     { $sample: { size: 1500 } },
   ]);
   let beatmaps = (await getRecentBeatmaps(gameMode)).filter(
