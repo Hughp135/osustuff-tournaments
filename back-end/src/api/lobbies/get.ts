@@ -48,6 +48,7 @@ export async function getGamePayload(gameId: string | Types.ObjectId) {
       maxRank: 1,
       owner: 1,
       description: 1,
+      gameMode: 1,
     })
     .lean();
 

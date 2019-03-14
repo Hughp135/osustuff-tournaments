@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { getTimeComponents } from 'src/app/resolvers/game-lobby.resolver';
 import {DomSanitizer} from '@angular/platform-browser';
+import { getBeatmapHrefString } from '../beatmap-info/beatmap-info.component';
+import { IGame } from '../game-lobby.component';
 
 @Component({
   selector: 'app-beatmap-list',
@@ -9,6 +11,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 })
 export class BeatmapListComponent implements OnInit {
   @Input() beatmaps;
+  @Input() game: IGame;
 
   constructor(private sanitizer:DomSanitizer) {}
 
@@ -19,7 +22,7 @@ export class BeatmapListComponent implements OnInit {
   }
 
   public beatmapHref(beatmap) {
-    return `https://osu.ppy.sh/beatmapsets/${beatmap.beatmapset_id}#osu/${
+    return `https://osu.ppy.sh/beatmaps/${beatmap.beatmapset_id}#${getBeatmapHrefString(this.game.gameMode)}/${
       beatmap.beatmap_id
     }`;
   }

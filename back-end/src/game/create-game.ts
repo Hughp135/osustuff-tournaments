@@ -1,3 +1,4 @@
+import { getModeName, modeName } from './../helpers/game-mode';
 import { IBeatmap } from './../models/Beatmap.model';
 import { Game, IGame } from '../models/Game.model';
 import { addSamplePlayers } from '../test-helpers/add-sample-players';
@@ -21,6 +22,15 @@ export const standardStars: Array<[number, number]> = new Array(numRounds)
       idx > 7 ? 8 : 5 + idx * 0.3,
     ];
   });
+export const maniaStars: Array<[number, number]> = new Array(numRounds)
+  .fill(null)
+  .map((_, idx) => {
+    return <[number, number]>[2 + idx * 0.5, 2.5 + idx * 0.5];
+  });
+// console.log(
+//   'maniaStars',
+//   maniaStars.map(([min, max], idx) => `Round ${idx + 1}: ${min}* - ${max}*`),
+// );
 const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
   .fill(null)
   .map(
@@ -37,17 +47,27 @@ export async function createGame(
   testPlayers?: number,
   gameMode: '0' | '1' | '2' | '3' = '0',
 ): Promise<IGame> {
+  const modeHumanReadable = getModeName(gameMode);
+  const beatmapFilters =
+    modeHumanReadable === 'mania'
+      ? {
+          diff_size: '4',
+        }
+      : {};
   const savedBeatmaps = await Beatmap.aggregate([
-    { $match: { mode: gameMode } },
+    { $match: { mode: gameMode, ...beatmapFilters } },
     { $sample: { size: 1500 } },
   ]);
-  let beatmaps = (await getRecentBeatmaps(gameMode)).filter(
-    (b: any) => parseInt(b.total_length, 10) <= 600,
-  );
+  let beatmaps = (await getRecentBeatmaps(gameMode)).filter((b: any) => {
+    const validLength = parseInt(b.total_length, 10) <= 600;
+    const validSize = modeHumanReadable === 'mania' ? b.diff_size === '4' : true;
+
+    return validLength && validSize;
+  });
   beatmaps.push(...savedBeatmaps);
   logger.info(`Total beatmap count: ${beatmaps.length}`);
 
-  const difficulties = minRank ? easyLobbyStars : standardStars;
+  const difficulties = getGameModeStars(modeHumanReadable);
   const roundBeatmaps = difficulties
     .map((_, idx) => {
       const [beatmap, remaining] = getBeatmapBetweenStars(
@@ -65,7 +85,14 @@ export async function createGame(
       (a, b) => parseFloat(a.difficultyrating) - parseFloat(b.difficultyrating),
     );
 
-  const gameModeStr = gameMode === '3' ? 'mania' : gameMode === '2' ? 'ctb' : gameMode === '1' ? 'taiko' : '';
+  const gameModeStr =
+    gameMode === '3'
+      ? 'mania [4K]'
+      : gameMode === '2'
+      ? 'ctb'
+      : gameMode === '1'
+      ? 'taiko'
+      : '';
 
   const game = await Game.create({
     title: `osu!${gameModeStr} Royale Match${
@@ -85,6 +112,14 @@ export async function createGame(
   }
 
   return game;
+}
+
+function getGameModeStars(mode: modeName, minRank?: number) {
+  if (mode === 'mania') {
+    return maniaStars;
+  }
+
+  return minRank ? easyLobbyStars : standardStars;
 }
 
 export function getBeatmapBetweenStars(

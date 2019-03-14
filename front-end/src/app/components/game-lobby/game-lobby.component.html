@@ -14,7 +14,7 @@
         <app-match-results [toggleViewResults]="toggleViewResults" *ngIf="game.status === 'complete' || viewResults"
           [game]="game">
         </app-match-results>
-        <app-beatmap-list [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
+        <app-beatmap-list [game]="game" [beatmaps]="beatmaps" *ngIf="showBeatmaps"></app-beatmap-list>
         <app-beatmap-info *ngIf="showBeatmap" [timeLeft]="timeLeft" [game]="game" [beatmap]="currentBeatmap" [isAlive]="isAlive"></app-beatmap-info>
         <app-scores-list *ngIf="showScores" [inGame]="inGame" [currentUser]="currentUsername" [players]="players" [game]="game" [scores]="game.scores"></app-scores-list>
       </div>

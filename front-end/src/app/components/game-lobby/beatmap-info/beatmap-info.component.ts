@@ -1,3 +1,4 @@
+import { IGame } from './../game-lobby.component';
 import { IBeatmap } from './../../create-lobby/create-lobby.component';
 import { Component, OnInit, Input } from '@angular/core';
 import { getTimeComponents } from 'src/app/resolvers/game-lobby.resolver';
@@ -36,7 +37,7 @@ export class BeatmapInfoComponent implements OnInit {
   get beatmapHref() {
     return (
       this.beatmap &&
-      `https://osu.ppy.sh/beatmapsets/${this.beatmap.beatmapset_id}#osu/${this.beatmap.beatmap_id}`
+      `https://osu.ppy.sh/beatmapsets/${this.beatmap.beatmapset_id}#${getBeatmapHrefString(this.game.gameMode)}/${this.beatmap.beatmap_id}`
     );
   }
 
@@ -60,5 +61,22 @@ export class BeatmapInfoComponent implements OnInit {
     const { minutes, seconds } = getTimeComponents(millis);
 
     return `${minutes}:${seconds}`;
+  }
+}
+
+export function getBeatmapHrefString(mode?: IGame['gameMode']): string {
+  if (!mode) {
+    return 'osu';
+  }
+
+  switch (mode) {
+    case '0':
+      return 'osu';
+    case '1':
+      return 'taiko';
+    case '2':
+      return 'fruits';
+    case '3':
+      return 'mania';
   }
 }
