@@ -27,9 +27,14 @@ export const maniaStars: Array<[number, number]> = new Array(numRounds)
   .map((_, idx) => {
     return <[number, number]>[2 + idx * 0.5, 2.5 + idx * 0.5];
   });
+export const taikoStars: Array<[number, number]> = new Array(numRounds)
+  .fill(null)
+  .map((_, idx) => {
+    return <[number, number]>[2 + idx * 0.4, 2.5 + idx * 0.4];
+  });
 // console.log(
-//   'maniaStars',
-//   maniaStars.map(([min, max], idx) => `Round ${idx + 1}: ${min}* - ${max}*`),
+//   'taikoStars',
+//   taikoStars.map(([min, max], idx) => `Round ${idx + 1}: ${min}* - ${max}*`),
 // );
 const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
   .fill(null)
@@ -60,7 +65,8 @@ export async function createGame(
   ]);
   let beatmaps = (await getRecentBeatmaps(gameMode)).filter((b: any) => {
     const validLength = parseInt(b.total_length, 10) <= 600;
-    const validSize = modeHumanReadable === 'mania' ? b.diff_size === '4' : true;
+    const validSize =
+      modeHumanReadable === 'mania' ? b.diff_size === '4' : true;
 
     return validLength && validSize;
   });
@@ -117,6 +123,10 @@ export async function createGame(
 function getGameModeStars(mode: modeName, minRank?: number) {
   if (mode === 'mania') {
     return maniaStars;
+  }
+
+  if (mode === 'taiko') {
+    return taikoStars;
   }
 
   return minRank ? easyLobbyStars : standardStars;
