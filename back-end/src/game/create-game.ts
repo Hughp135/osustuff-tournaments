@@ -67,7 +67,7 @@ export async function createGame(
   beatmaps.push(...savedBeatmaps);
   logger.info(`Total beatmap count: ${beatmaps.length}`);
 
-  const difficulties = getGameModeStars(modeHumanReadable);
+  const difficulties = getGameModeStars(modeHumanReadable, minRank);
   const roundBeatmaps = difficulties
     .map((_, idx) => {
       const [beatmap, remaining] = getBeatmapBetweenStars(
