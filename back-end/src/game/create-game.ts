@@ -32,9 +32,16 @@ export const taikoStars: Array<[number, number]> = new Array(numRounds)
   .map((_, idx) => {
     return <[number, number]>[2 + idx * 0.4, 2.5 + idx * 0.4];
   });
+export const harderStars: Array<[number, number]> = new Array(numRounds)
+  .fill(null)
+  .map((_, idx) => {
+    return <[number, number]>[
+      Math.min(6.5, 5 + idx * 0.2),
+      Math.min(8.5, 5.5 + idx * 0.3),
+    ];
+  });
 // console.log(
-//   'taikoStars',
-//   taikoStars.map(([min, max], idx) => `Round ${idx + 1}: ${min}* - ${max}*`),
+//   harderStars.map(([min, max], idx) => `Round ${idx + 1}: ${min}* - ${max}*`),
 // );
 const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
   .fill(null)
@@ -127,6 +134,10 @@ function getGameModeStars(mode: modeName, minRank?: number) {
 
   if (mode === 'taiko') {
     return taikoStars;
+  }
+
+  if (mode === 'ctb') {
+    return harderStars;
   }
 
   return minRank ? easyLobbyStars : standardStars;
