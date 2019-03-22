@@ -20,7 +20,7 @@ const recentMessages: { [key: string]: number } = {};
 export function sendMessage(io: Server) {
   io.on('connection', (socket: any) => {
     socket.on('send-message', async (request: INewMessage) => {
-      const username = socket.claim.username;
+      const { username }: any = socket.claim || {};
       if (!username) {
         logger.error('No username in send message claim!', socket.claim);
         return;
