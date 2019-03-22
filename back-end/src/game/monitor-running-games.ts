@@ -132,12 +132,13 @@ async function createNewGame(
   const rankedStandardGames = newGames.filter(
     g => g.gameMode === '0' && !g.minRank,
   );
-  const minRankGames = newGames.filter(g => !!g.minRank);
+  const minRankStandardGames = newGames.filter(g => !!g.minRank && g.gameMode === '0');
+  const minRankCtbGames = newGames.filter(g => !!g.minRank && g.gameMode === '2');
   const taikoGames = newGames.filter(g => g.gameMode === '1');
   const ctbGames = newGames.filter(g => g.gameMode === '2');
   const maniaGames = newGames.filter(g => g.gameMode === '3');
 
-  const testSkipCreate = TEST_MODE && newGames.length >= 5;
+  const testSkipCreate = TEST_MODE && newGames.length >= 6;
 
   if (!DISABLE_AUTO_GAME_CREATION && !testSkipCreate) {
     // If no games are active, create a new one
@@ -148,7 +149,7 @@ async function createNewGame(
           logger.error('Failed to create game!', e),
         );
       }
-      if (!DISABLE_LOWER_LVL_LOBBIES && minRankGames.length === 0) {
+      if (!DISABLE_LOWER_LVL_LOBBIES && minRankStandardGames.length === 0) {
         logger.info('Creating a new game with a minimum rank...');
         await createGame(getRecentMaps, 45000).catch(e =>
           logger.error('Failed to create game!', e),
@@ -169,6 +170,12 @@ async function createNewGame(
       if (!DISABLE_CTB_LOBBIES && ctbGames.length === 0) {
         logger.info('Creating ctb game');
         await createGame(getRecentMaps, undefined, undefined, '2').catch(e =>
+          logger.error('Failed to create game!', e),
+        );
+      }
+      if (!DISABLE_CTB_LOBBIES && !DISABLE_LOWER_LVL_LOBBIES && minRankCtbGames.length === 0) {
+        logger.info('Creating a new CTB game with a minimum rank...');
+        await createGame(getRecentMaps, 1500, undefined, '2').catch(e =>
           logger.error('Failed to create game!', e),
         );
       }

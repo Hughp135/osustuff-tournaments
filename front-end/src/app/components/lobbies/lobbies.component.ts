@@ -155,7 +155,8 @@ export class LobbiesComponent implements OnInit, OnDestroy {
 
     this.fetching = true;
     try {
-      this.lobbies = await this.gameService.getLobbies();
+      this.allLobbies = await this.gameService.getLobbies();
+      this.applyGameModeFilters();
       this.onlinePlayersCount = (<{ onlinePlayers: number }>(
         await this.apiService.get('online-players')
       )).onlinePlayers;
