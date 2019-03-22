@@ -137,7 +137,7 @@ function getGameModeStars(mode: modeName, minRank?: number) {
   }
 
   if (mode === 'ctb') {
-    return minRank ? standardStars : harderStars;
+    return minRank ? easyLobbyStars : harderStars;
   }
 
   return minRank ? easyLobbyStars : standardStars;
