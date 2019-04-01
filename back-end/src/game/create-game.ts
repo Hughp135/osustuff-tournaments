@@ -83,13 +83,12 @@ export async function createGame(
   const difficulties = getGameModeStars(modeHumanReadable, minRank);
   const roundBeatmaps = difficulties
     .map((_, idx) => {
-      const [beatmap, remaining] = getBeatmapBetweenStars(
-        beatmaps,
-        difficulties[idx][0],
-        difficulties[idx][1],
-        40 + 10 * idx, // min length starts 40 secs, increment by 10 per round
-        160 + 20 * idx, // max length starts 160, increments by 20
-      );
+      const [beatmap, remaining] = getBeatmapBetweenStars(beatmaps, gameMode, {
+        min: difficulties[idx][0],
+        max: difficulties[idx][1],
+        minLength: 40 + 10 * idx, // min length starts 40 secs, increment by 10 per round
+        maxLength: 160 + 20 * idx, // max length starts 160, increments by 20}
+      });
       beatmaps = remaining;
 
       return beatmap;
@@ -145,33 +144,50 @@ function getGameModeStars(mode: modeName, minRank?: number) {
 
 export function getBeatmapBetweenStars(
   beatmaps: IBeatmap[],
-  min: number,
-  max?: number,
-  minLength?: number,
-  maxLength?: number,
+  gameMode: string,
+  {
+    min,
+    max,
+    minLength,
+    maxLength,
+  }: {
+    min: number;
+    max?: number;
+    minLength?: number;
+    maxLength?: number;
+  },
 ): [IBeatmap, IBeatmap[]] {
   const filtered = beatmaps.filter((b: any) => {
     const stars = parseFloat(b.difficultyrating);
     const inStarRange = stars >= min && (max ? stars < max : true);
     const longEnough = minLength ? b.total_length >= minLength : true;
     const shortEnough = maxLength ? b.total_length <= maxLength : true;
+    const now = new Date();
+    const isAprilFirst = now.getDay() === 1 && now.getMonth() === 3;
+    const aprilFoolsCheck = isAprilFirst && gameMode === '0' ? b.creator_id === '4452992' : true;
 
-    return inStarRange && longEnough && shortEnough;
+    return inStarRange && longEnough && shortEnough && aprilFoolsCheck;
   });
 
   if (!filtered.length) {
     if (min >= 0) {
-      return getBeatmapBetweenStars(beatmaps, min - 0.5, max);
+      return getBeatmapBetweenStars(beatmaps, gameMode, {
+        min: min - 0.5,
+        max,
+      });
     } else if (minLength && minLength >= 0) {
-      return getBeatmapBetweenStars(beatmaps, min, max, minLength - 20);
+      return getBeatmapBetweenStars(beatmaps, gameMode, {
+        min,
+        max,
+        minLength: minLength - 20,
+      });
     } else if (maxLength && maxLength < 500) {
-      return getBeatmapBetweenStars(
-        beatmaps,
+      return getBeatmapBetweenStars(beatmaps, gameMode, {
         min,
         max,
         minLength,
-        maxLength + 20,
-      );
+        maxLength: maxLength + 20,
+      });
     } else {
       throw new Error('Ran out of beatmaps to pick from');
     }

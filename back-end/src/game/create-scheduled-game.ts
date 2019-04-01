@@ -58,10 +58,13 @@ export async function fillUndefinedBeatmapsWithRandom(
         // Get a random beatmap from the standard star ratings
         const [beatmap, remaining] = getBeatmapBetweenStars(
           <IBeatmap[]>beatmaps,
-          stars[idx][0],
-          stars[idx][1],
-          90 + 15 * idx, // min length
-          160 + 20 * idx, // max length
+          '0',
+          {
+            min: stars[idx][0],
+            max: stars[idx][1],
+            minLength: 90 + 15 * idx, // min length
+            maxLength: 160 + 20 * idx, // max length
+          },
         );
         beatmaps = remaining;
 
