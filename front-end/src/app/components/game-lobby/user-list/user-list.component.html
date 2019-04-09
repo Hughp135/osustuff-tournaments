@@ -9,9 +9,8 @@
     [ngClass]="player.alive ? 'alive' : 'dead'" [class.winner]="winningUser === player.username"
     (click)="showPlayerStats($event, player)">
     <div class="image-container">
-      <!-- <img class="ui mini image" [useSrcset]="true" [lazyLoad]="'//a.ppy.sh/' + player.osuUserId"
-        alt=""> -->
-        <img src="/assets/images/Kappa.png" alt="" class="ui mini image">
+      <img class="ui mini image" [useSrcset]="true" [lazyLoad]="'//a.ppy.sh/' + player.osuUserId"
+        alt="">
     </div>
     <div class="content">
       <div class="header">

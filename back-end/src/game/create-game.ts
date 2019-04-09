@@ -40,9 +40,6 @@ export const harderStars: Array<[number, number]> = new Array(numRounds)
       Math.min(8.5, 5.5 + idx * 0.3),
     ];
   });
-// console.log(
-//   harderStars.map(([min, max], idx) => `Round ${idx + 1}: ${min}* - ${max}*`),
-// );
 const easyLobbyStars: Array<[number, number]> = new Array(numRounds)
   .fill(null)
   .map(
@@ -136,7 +133,7 @@ function getGameModeStars(mode: modeName, minRank?: number) {
   }
 
   if (mode === 'ctb') {
-    return minRank ? easyLobbyStars : harderStars;
+    return minRank ? easyLobbyStars : standardStars;
   }
 
   return minRank ? easyLobbyStars : standardStars;
@@ -162,11 +159,8 @@ export function getBeatmapBetweenStars(
     const inStarRange = stars >= min && (max ? stars < max : true);
     const longEnough = minLength ? b.total_length >= minLength : true;
     const shortEnough = maxLength ? b.total_length <= maxLength : true;
-    const now = new Date();
-    const isAprilFirst = now.getDay() === 1 && now.getMonth() === 3;
-    const aprilFoolsCheck = isAprilFirst && gameMode === '0' ? b.creator_id === '4452992' : true;
 
-    return inStarRange && longEnough && shortEnough && aprilFoolsCheck;
+    return inStarRange && longEnough && shortEnough;
   });
 
   if (!filtered.length) {
