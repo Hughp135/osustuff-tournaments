@@ -27,7 +27,7 @@ export class AdminService {
   }
 
   public async deleteLobby(gameId: string) {
-    await this.apiService.post(`admin/delete-lobby`, { pw: this.settingsService.adminPw, gameId });
+    await this.apiService.post(`admin/delete-lobby`, { gameId });
   }
 
   public async createTestUser() {

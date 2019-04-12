@@ -19,10 +19,10 @@ export interface EditLobbyData {
     fetching?: boolean;
     error?: string;
   }[];
-  gameMode: '0' | '1' | '2' | '3'; // std / taiko / ctb / mania
+  gameMode: { value: '0' | '1' | '2' | '3' ; label: string; }; // std / taiko / ctb / mania
 }
 
-export const gameModeOpts = [
+export const gameModeOpts: EditLobbyData['gameMode'][] = [
   { value: '0', label: 'osu!Standard' },
   { value: '1', label: 'Taiko' },
   { value: '2', label: 'CtB' },
@@ -53,7 +53,7 @@ export class LobbyFormComponent implements OnInit {
       beatmapId: undefined,
       beatmap: undefined,
     })),
-    gameMode: '0',
+    gameMode: gameModeOpts[0],
   };
   @Input() onSubmit: (formData: EditLobbyData) => Promise<any>;
   @Input() creating = false;
@@ -61,7 +61,7 @@ export class LobbyFormComponent implements OnInit {
   @Input() isEditing: boolean;
 
   constructor(private apiService: ApiService) {
-    this.gameMode = this.gameModes.find(m => m.value === this.formData.gameMode);
+    this.gameMode = this.gameModes.find(m => m.value === this.formData.gameMode.value);
   }
 
   public getBeatmap = debounce(async (value: number, index: number) => {

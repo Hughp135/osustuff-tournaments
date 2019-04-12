@@ -2,10 +2,20 @@ import { ObjectId } from 'bson';
 import { Request, Response } from 'express';
 import config from 'config';
 import { Game } from '../../models/Game.model';
+import { User } from '../../models/User.model';
 
 export async function deleteLobby(req: Request, res: Response) {
-  if (req.body.pw !== config.get('ADMIN_PASS')) {
-    return res.status(401).end();
+  const { username }: any = (<any>req).claim || {};
+  const { gameId }: any = req.params;
+
+  if (!username) {
+    return res.status(401).json({ error: 'You must be logged in.' });
+  }
+
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    return res.status(401).json({ error: 'User not found.' });
   }
 
   if (!ObjectId.isValid(req.body.gameId)) {
@@ -16,6 +26,14 @@ export async function deleteLobby(req: Request, res: Response) {
 
   if (!game) {
     return res.status(404).end();
+  }
+
+  const canDelete =
+    user.roles.includes('admin') ||
+    (game.owner && game.owner.toString() === user._id.toString());
+
+  if (!canDelete) {
+    return res.status(401).json({ error: 'You do not have permissions to delete this lobby' });
   }
 
   await Game.deleteOne({ _id: game._id });

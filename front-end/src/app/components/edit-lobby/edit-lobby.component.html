@@ -1,9 +1,12 @@
 <div class="ui inverted container section">
-  <h1>Create a new Lobby</h1>
+  <div style="overflow: hidden;">
+    <h1 class="ui left floated inverted header">Edit Lobby</h1>
+    <div class="ui right floated red button" (click)="deleteGame()">Delete Lobby</div>
+  </div>
 
   <div class="ui divider"></div>
 
   <div class="ui active loader" *ngIf="!this.game"></div>
 
-  <app-lobby-form *ngIf="this.game" [formData]="formData" [isEditing]="true" [onSubmit]="editGame" [creating]="creating" [error]="error"></app-lobby-form>
+  <app-lobby-form *ngIf="this.game" [formData]="formData" [isEditing]="true" [onSubmit]="editGame" [creating]="creating || deleting" [error]="error"></app-lobby-form>
 </div>

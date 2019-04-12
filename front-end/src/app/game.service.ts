@@ -72,4 +72,8 @@ export class GameService {
       await this.apiService.put(`lobbies/${gameId}`, options)
     );
   }
+
+  public async deleteLobby(gameId: string) {
+    await this.apiService.post(`admin/delete-lobby`, { gameId });
+  }
 }

@@ -53,7 +53,7 @@ export class CreateLobbyComponent implements OnInit {
       roundBeatmaps: formData.roundBeatmaps.map(r => r.beatmap),
       minRank: formData.setMinRank ? formData.minRank : undefined,
       maxRank: formData.setMaxRank ? formData.maxRank : undefined,
-      gameMode: formData.gameMode,
+      gameMode: formData.gameMode.value,
     };
 
     try {

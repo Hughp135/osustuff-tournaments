@@ -16,6 +16,7 @@ export class EditLobbyComponent implements OnInit {
   public error: string;
   public formData: EditLobbyData;
   public editGame = this.doEditGame.bind(this);
+  public deleting = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +58,25 @@ export class EditLobbyComponent implements OnInit {
       })),
       gameMode: gameModeOpts[game.gameMode],
     };
+  }
+
+  public async deleteGame() {
+    this.deleting = true;
+    try {
+      await this.gameService.deleteLobby(this.game._id);
+      this.router.navigate(['/lobbies']);
+    } catch (e) {
+      if (e.error && e.error.error) {
+        this.error = e.error.error;
+      } else {
+        if (e.status === 401) {
+          this.error = 'You do not have the permissions to delete this lobby';
+        } else {
+          this.error = 'Failed to delete game';
+          console.error(e);
+        }
+      }
+    }
   }
 
   public async doEditGame(formData) {
