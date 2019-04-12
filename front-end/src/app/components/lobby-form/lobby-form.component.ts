@@ -42,7 +42,7 @@ export class LobbyFormComponent implements OnInit {
   @Input() formData: EditLobbyData = {
     title: '',
     description: '',
-    timezoneOffset: Math.round(new Date().getTimezoneOffset() / 60),
+    timezoneOffset: -Math.round(new Date().getTimezoneOffset() / 60),
     minPlayers: 4,
     maxPlayers: 250,
     setMinRank: false,

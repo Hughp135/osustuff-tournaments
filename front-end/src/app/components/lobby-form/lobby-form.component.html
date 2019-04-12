@@ -31,12 +31,15 @@
     Set what time you want the lobby to be open to join. This
     is NOT the time the first round will start.
   </p>
-  <p>
+  <p *ngIf="!isEditing">
     Your timezone offset has been detected as UTC{{
     formData.timezoneOffset >= 0 ? '+' : ''}}{{
     formData.timezoneOffset }}.
     You can change the timezone of your lobby's start date if
     required.
+  </p>
+  <p *ngIf="isEditing">
+    You cannot change the timezone offset when editing. Please enter the date in your local time.
   </p>
   <div class="fields">
     <div class="six wide field">
@@ -49,7 +52,7 @@
     </div>
     <div class="three wide field">
       <label>Time Zone (UTC+)</label>
-      <input style="width: 65px;" type="number" [(ngModel)]="formData.timezoneOffset">
+      <input [disabled]="isEditing" style="width: 65px;" type="number" [(ngModel)]="formData.timezoneOffset">
     </div>
   </div>
 

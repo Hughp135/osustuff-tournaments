@@ -35,11 +35,8 @@ export class EditLobbyComponent implements OnInit {
     this.game = game;
 
     const startDate = new Date(game.nextStageStarts);
-    const timezoneOffset = new Date().getTimezoneOffset();
-    if (timezoneOffset) {
-      // Change game's time zone back into local time zone
-      startDate.setHours(startDate.getHours() + timezoneOffset);
-    }
+    const timezoneOffset = -Math.round(new Date().getTimezoneOffset() / 60);
+
 
     this.formData = {
       startDate,
