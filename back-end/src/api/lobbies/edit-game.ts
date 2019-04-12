@@ -59,13 +59,14 @@ export async function editLobby(req: Request, res: Response) {
 
   const gameData: Partial<IGame> = {
     title: req.body.title,
-    beatmaps: await fillUndefinedBeatmapsWithRandom(req.body.roundBeatmaps),
+    beatmaps: await fillUndefinedBeatmapsWithRandom(req.body.roundBeatmaps, req.body.gameMode),
     status: 'scheduled',
     nextStageStarts: req.body.nextStageStarts,
     minRank: req.body.minRank,
     maxRank: req.body.maxRank,
     owner: user._id,
     description: req.body.description,
+    gameMode: req.body.gameMode,
   };
 
   // Remove 'nextStageStarts' if lobby is not new/scheduled

@@ -3,6 +3,8 @@ import { ICreateScheduledGameOptions } from '../api/lobbies/create-game';
 import { Game, IGame } from '../models/Game.model';
 import { Beatmap, IBeatmap } from '../models/Beatmap.model';
 import { getBeatmapBetweenStars } from './create-game';
+import { getModeName } from '../helpers/game-mode';
+import { getRecentBeatmaps } from '../services/osu-api';
 
 const stars = [
   [3, 3.8],
@@ -25,29 +27,54 @@ export async function createScheduledGame(
     minRank,
     maxRank,
     description,
+    gameMode,
   }: ICreateScheduledGameOptions,
   user: IUser,
 ): Promise<IGame> {
   return await Game.create({
     title,
-    beatmaps: await fillUndefinedBeatmapsWithRandom(roundBeatmaps),
+    beatmaps: await fillUndefinedBeatmapsWithRandom(roundBeatmaps, gameMode),
     status: 'scheduled',
     nextStageStarts,
     minRank,
     maxRank,
     owner: user._id,
     description,
+    gameMode,
   });
 }
 
 export async function fillUndefinedBeatmapsWithRandom(
   roundBeatmaps: ICreateScheduledGameOptions['roundBeatmaps'],
+  gameMode: IGame['gameMode'],
 ): Promise<IBeatmap[]> {
   const shouldUseRandombeatmaps = !roundBeatmaps || roundBeatmaps.some(b => !b);
+  const modeHumanReadable = getModeName(gameMode);
+  const beatmapFilters =
+    modeHumanReadable === 'mania'
+      ? {
+          diff_size: '4',
+        }
+      : {};
+
   let beatmaps =
     shouldUseRandombeatmaps &&
-    (await Beatmap.aggregate([{ $sample: { size: 3000 } }]));
+    (await Beatmap.aggregate([
+      { $match: { mode: gameMode, ...beatmapFilters } },
+      { $sample: { size: 3000 } },
+    ]));
   let finalBeatmaps: Array<IBeatmap | undefined> = roundBeatmaps;
+  if (!beatmaps || !beatmaps.length) {
+    beatmaps = [];
+    const recentBeatmaps = (await getRecentBeatmaps(gameMode)).filter((b: any) => {
+      const validLength = parseInt(b.total_length, 10) <= 600;
+      const validSize =
+        modeHumanReadable === 'mania' ? b.diff_size === '4' : true;
+
+      return validLength && validSize;
+    });
+    beatmaps.push(...recentBeatmaps);
+  }
 
   if (shouldUseRandombeatmaps) {
     finalBeatmaps = roundBeatmaps.map((r, idx) => {
@@ -58,7 +85,7 @@ export async function fillUndefinedBeatmapsWithRandom(
         // Get a random beatmap from the standard star ratings
         const [beatmap, remaining] = getBeatmapBetweenStars(
           <IBeatmap[]>beatmaps,
-          '0',
+          gameMode,
           {
             min: stars[idx][0],
             max: stars[idx][1],

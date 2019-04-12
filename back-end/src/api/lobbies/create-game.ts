@@ -1,8 +1,10 @@
+import { gameModeNames } from './../../helpers/game-mode';
 import { IBeatmap } from '../../models/Beatmap.model';
 import { Request, Response } from 'express';
 import { createScheduledGame } from '../../game/create-scheduled-game';
 import { User } from '../../models/User.model';
 import { logger } from '../../logger';
+import { IGame } from '../../models/Game.model';
 
 export interface ICreateScheduledGameOptions {
   title: string;
@@ -13,6 +15,7 @@ export interface ICreateScheduledGameOptions {
   minPlayers: number;
   maxPlayers: number;
   description?: string;
+  gameMode: IGame['gameMode'];
 }
 
 export async function makeScheduledGame(req: Request, res: Response) {
@@ -65,6 +68,7 @@ export function validateGameRequestBody(
     minPlayers,
     maxPlayers,
     description,
+    gameMode,
   } = body;
 
   if (!title || title.length < 5 || title.length > 70) {
@@ -105,5 +109,9 @@ export function validateGameRequestBody(
 
   if (minRank && maxRank && minRank >= maxRank) {
     return 'The min rank must be lower than the max rank';
+  }
+
+  if (!gameModeNames[gameMode] || typeof gameMode !== 'string') {
+    return 'Invalid game mode. Must be a string of: 0, 1, 2, 3';
   }
 }

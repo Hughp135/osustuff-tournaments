@@ -19,7 +19,15 @@ export interface EditLobbyData {
     fetching?: boolean;
     error?: string;
   }[];
+  gameMode: '0' | '1' | '2' | '3'; // std / taiko / ctb / mania
 }
+
+export const gameModeOpts = [
+  { value: '0', label: 'osu!Standard' },
+  { value: '1', label: 'Taiko' },
+  { value: '2', label: 'CtB' },
+  { value: '3', label: 'Mania' },
+];
 
 @Component({
   selector: 'app-lobby-form',
@@ -28,10 +36,13 @@ export interface EditLobbyData {
 })
 export class LobbyFormComponent implements OnInit {
   public pickerMinDate = new Date();
+  public gameModes = gameModeOpts;
+  public gameMode;
+
   @Input() formData: EditLobbyData = {
     title: '',
     description: '',
-    timezoneOffset: new Date().getTimezoneOffset(),
+    timezoneOffset: Math.round(new Date().getTimezoneOffset() / 60),
     minPlayers: 4,
     maxPlayers: 250,
     setMinRank: false,
@@ -42,13 +53,16 @@ export class LobbyFormComponent implements OnInit {
       beatmapId: undefined,
       beatmap: undefined,
     })),
+    gameMode: '0',
   };
   @Input() onSubmit: (formData: EditLobbyData) => Promise<any>;
   @Input() creating = false;
   @Input() error: string;
   @Input() isEditing: boolean;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService) {
+    this.gameMode = this.gameModes.find(m => m.value === this.formData.gameMode);
+  }
 
   public getBeatmap = debounce(async (value: number, index: number) => {
     const roundBeatmap = this.formData.roundBeatmaps[index];
@@ -78,6 +92,10 @@ export class LobbyFormComponent implements OnInit {
 
   ngOnInit() {}
 
+  public onGameModeChange($event) {
+    this.formData.gameMode = $event;
+  }
+
   public getBeatmapString(beatmap: IBeatmap) {
     return `${beatmap.artist} - ${beatmap.title} [${
       beatmap.version
@@ -93,6 +111,7 @@ export class LobbyFormComponent implements OnInit {
       round.error = undefined;
     }
   }
+
 }
 
 function debounce(

@@ -1,20 +1,25 @@
 <div class="ui inverted form">
 
   <div class="field">
-    <h2>Lobby Title and Description</h2>
-    <p>
+    <h2>Lobby Details</h2>
+    <p>Select the game mode:</p>
+    <sui-select class="selection" (selectedOptionChange)="onGameModeChange($event)" [ngModel]="formData.gameMode"
+      [options]="gameModes" labelField="label" #modeSelect>
+      <sui-select-option *ngFor="let o of modeSelect.filteredOptions" [value]="o">
+      </sui-select-option>
+    </sui-select>
+    <p style="margin-top: 20px;">
       Enter a name for your lobby. This could be your
       tournament title, or some other description
       of the match.
     </p>
     <div class="field">
-      <input [(ngModel)]="formData.title" maxlength="70"
-        placeholder="Title of the Lobby">
+      <input [(ngModel)]="formData.title" maxlength="70" placeholder="Title of the Lobby">
     </div>
 
     <div class="field">
-      <textarea rows="5" [(ngModel)]="formData.description"
-        maxlength="1500" placeholder="A description of your lobby (optional)">
+      <textarea rows="5" [(ngModel)]="formData.description" maxlength="1500"
+        placeholder="A description of your lobby (optional)">
 
         </textarea>
     </div>
@@ -38,8 +43,8 @@
       <label>Lobby open Date</label>
       <div class="ui left icon input">
         <i class="calendar icon"></i>
-        <input suiDatepicker [(ngModel)]="formData.startDate"
-          [pickerMinDate]="pickerMinDate" placeholder="Scheduled Date">
+        <input suiDatepicker [(ngModel)]="formData.startDate" [pickerMinDate]="pickerMinDate"
+          placeholder="Scheduled Date">
       </div>
     </div>
     <div class="three wide field">
@@ -60,21 +65,19 @@
   <div class="two fields">
     <div class="four wide field">
       <label for="">Minimum # of players (from 4-100)</label>
-      <input disabled=true type="number" min="4" max="100"
-        [(ngModel)]="formData.minPlayers">
+      <input disabled=true type="number" min="4" max="100" [(ngModel)]="formData.minPlayers">
     </div>
     <div class="four wide field">
       <label for="">Maximum players (from 5-500)</label>
-      <input disabled=true type="number" min="4" max="500"
-        [(ngModel)]="formData.maxPlayers">
+      <input disabled=true type="number" min="4" max="500" [(ngModel)]="formData.maxPlayers">
     </div>
   </div>
 
   <div class="ui divider"></div>
   <h2>Players rank limit</h2>
   <p>Apply a rank range. Note: Minimum rank = anyone with a
-    lower (<) rank number than this cannot join. Maximum rank=anyone
-      with a higher (>) rank number than this cannot join.
+    lower (<) rank number than this cannot join. Maximum rank=anyone with a higher (>) rank number than this cannot
+      join.
   </p>
 
   <div class="two fields">
@@ -90,15 +93,13 @@
   <div class="two fields" *ngIf="formData.setMinRank || formData.setMaxRank">
     <div class="six wide field">
       <label for="">Minimum Rank (lowest number that can join)</label>
-      <input type="number" min="50" max="1000000" [(ngModel)]="formData.minRank"
-        [disabled]="!formData.setMinRank">
+      <input type="number" min="50" max="1000000" [(ngModel)]="formData.minRank" [disabled]="!formData.setMinRank">
     </div>
     <div class="six wide field">
       <label for="">Maximum Rank (highest number that can
         join)
       </label>
-      <input type="number" min="50" max="1000000" [(ngModel)]="formData.maxRank"
-        [disabled]="!formData.setMaxRank">
+      <input type="number" min="50" max="1000000" [(ngModel)]="formData.maxRank" [disabled]="!formData.setMaxRank">
     </div>
   </div>
 
@@ -126,8 +127,7 @@
         </td>
         <td>
           <input type="number" class="ui input" (ngModelChange)="getBeatmap($event, index)"
-            [(ngModel)]="formData.roundBeatmaps[index].beatmapId"
-            placeholder="e.g. 2485926">
+            [(ngModel)]="formData.roundBeatmaps[index].beatmapId" placeholder="e.g. 2485926">
         </td>
         <td>
           <p *ngIf="!roundBeatmap.beatmap && !roundBeatmap.fetching">
@@ -157,8 +157,7 @@
     <p>{{ error }}</p>
   </div>
 
-  <button [disabled]="creating" [class.loading]="creating" class="ui green button"
-    (click)="onSubmit(formData)">
+  <button [disabled]="creating" [class.loading]="creating" class="ui green button" (click)="onSubmit(formData)">
     {{ isEditing ? 'Save Lobby': 'Create Lobby' }}
   </button>
 </div>

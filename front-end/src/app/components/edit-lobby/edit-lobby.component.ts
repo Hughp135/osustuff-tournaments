@@ -3,7 +3,7 @@ import { IBeatmap } from './../create-lobby/create-lobby.component';
 import { IGame } from './../game-lobby/game-lobby.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { EditLobbyData } from '../lobby-form/lobby-form.component';
+import { EditLobbyData, gameModeOpts } from '../lobby-form/lobby-form.component';
 
 @Component({
   selector: 'app-edit-lobby',
@@ -55,6 +55,7 @@ export class EditLobbyComponent implements OnInit {
         beatmapId: parseInt(b.beatmap_id, 10),
         beatmap: b,
       })),
+      gameMode: gameModeOpts[game.gameMode],
     };
   }
 
@@ -68,6 +69,7 @@ export class EditLobbyComponent implements OnInit {
       roundBeatmaps: formData.roundBeatmaps.map(r => r.beatmap),
       minRank: formData.setMinRank ? formData.minRank : undefined,
       maxRank: formData.setMaxRank ? formData.maxRank : undefined,
+      gameMode: formData.gameMode.value,
     };
 
     try {

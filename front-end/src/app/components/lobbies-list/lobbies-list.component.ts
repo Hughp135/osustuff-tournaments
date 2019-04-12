@@ -1,6 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
+
+const gameModeNames: {[key: string]: string} = {
+  0: 'osu!standard',
+  1: 'osu!taiko',
+  2: 'osu!ctb',
+  3: 'osu!mania',
+};
+
 @Component({
   selector: 'app-lobbies-list',
   templateUrl: './lobbies-list.component.html',
@@ -17,7 +25,7 @@ export class LobbiesListComponent implements OnInit {
   public getStatus(game) {
     switch (game.status) {
       case 'scheduled':
-        return 'Scheduled for ' +  this.datePipe.transform(game.nextStageStarts, ' MMM, d h:mma (z)');
+        return 'Opens ' +  this.datePipe.transform(game.nextStageStarts, ' MMM, d h:mma (z)');
       case 'new':
         return `Open ${game.minRank ? ` for lower ranked players (${game.minRank / 1000}k+)` : ' to join'}`;
       case 'complete':
@@ -38,5 +46,9 @@ export class LobbiesListComponent implements OnInit {
       default:
         return 'orange eye';
     }
+  }
+
+  public gameModeName(mode: string) {
+    return gameModeNames[mode];
   }
 }

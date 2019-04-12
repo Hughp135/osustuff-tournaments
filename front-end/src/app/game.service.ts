@@ -14,6 +14,7 @@ export interface ICreateScheduledGameOptions {
   minRank?: number;
   maxRank?: number;
   description?: string;
+  gameMode: '0' | '1' | '2' | '3'; // standard/taiko/ctb/mania
 }
 
 @Injectable({

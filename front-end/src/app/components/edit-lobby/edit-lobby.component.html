@@ -3,5 +3,7 @@
 
   <div class="ui divider"></div>
 
-  <app-lobby-form [formData]="formData" [isEditing]="true" [onSubmit]="editGame" [creating]="creating" [error]="error"></app-lobby-form>
+  <div class="ui active loader" *ngIf="!this.game"></div>
+
+  <app-lobby-form *ngIf="this.game" [formData]="formData" [isEditing]="true" [onSubmit]="editGame" [creating]="creating" [error]="error"></app-lobby-form>
 </div>
