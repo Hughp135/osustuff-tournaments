@@ -1,12 +1,10 @@
 import { ObjectId } from 'bson';
 import { Request, Response } from 'express';
-import config from 'config';
 import { Game } from '../../models/Game.model';
 import { User } from '../../models/User.model';
 
 export async function deleteLobby(req: Request, res: Response) {
   const { username }: any = (<any>req).claim || {};
-  const { gameId }: any = req.params;
 
   if (!username) {
     return res.status(401).json({ error: 'You must be logged in.' });
