@@ -34,7 +34,7 @@ export class EditLobbyComponent implements OnInit {
 
     this.game = game;
 
-    const startDate = new Date(game.nextStageStarts);
+    const startDate = game.nextStageStarts ? new Date(game.nextStageStarts) : new Date(Date.now() + 60000);
     const timezoneOffset = -Math.round(new Date().getTimezoneOffset() / 60);
 
 
@@ -87,6 +87,7 @@ export class EditLobbyComponent implements OnInit {
       minRank: formData.setMinRank ? formData.minRank : undefined,
       maxRank: formData.setMaxRank ? formData.maxRank : undefined,
       gameMode: formData.gameMode.value,
+      password: formData.password,
     };
 
     try {

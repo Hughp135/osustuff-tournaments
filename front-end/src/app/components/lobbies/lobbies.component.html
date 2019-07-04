@@ -19,20 +19,6 @@
     </div>
   </div>
 
-  <div class="ui green icon message">
-    <i class="info icon"></i>
-    <div class="content">
-      <div class="header">
-        Other game mode lobbies added!
-      </div>
-      <p>
-        Game lobbies now include the osu!mania/ctb/taiko mode. There are bound be issues with other game modes and
-        beatmap selection, so
-        please lease leave any feedback or suggestions in the <a href="https://discord.gg/zk84VMm">Discord Server</a>.
-      </p>
-    </div>
-  </div>
-
   <h2 *ngIf="scheduledGames.length">Upcoming Events</h2>
   <app-lobbies-list *ngIf="scheduledGames.length" [lobbies]="scheduledGames"></app-lobbies-list>
 
@@ -40,7 +26,7 @@
   <div class="ui inverted form">
     <div class="inline fields">
       <div class="field">
-        <label>Showing game modes:</label>
+        <label>Game Modes:</label>
       </div>
       <div class="field">
         <sui-checkbox [(ngModel)]="showGameModes['0']" (ngModelChange)="applyGameModeFilters()">

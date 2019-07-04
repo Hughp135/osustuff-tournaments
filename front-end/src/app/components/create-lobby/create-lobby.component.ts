@@ -54,6 +54,7 @@ export class CreateLobbyComponent implements OnInit {
       minRank: formData.setMinRank ? formData.minRank : undefined,
       maxRank: formData.setMaxRank ? formData.maxRank : undefined,
       gameMode: formData.gameMode.value,
+      password: formData.password,
     };
 
     try {

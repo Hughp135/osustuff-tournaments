@@ -49,6 +49,7 @@ export async function getGamePayload(gameId: string | Types.ObjectId) {
       owner: 1,
       description: 1,
       gameMode: 1,
+      hasPassword: 1,
     })
     .lean();
 

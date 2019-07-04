@@ -16,6 +16,7 @@ export interface ICreateScheduledGameOptions {
   minPlayers: number;
   maxPlayers: number;
   description?: string;
+  password?: string;
 }
 
 export async function editLobby(req: Request, res: Response) {
@@ -68,6 +69,11 @@ export async function editLobby(req: Request, res: Response) {
     description: req.body.description,
     gameMode: req.body.gameMode,
   };
+
+  if (req.body.password || req.body.password === '0') {
+    gameData.password = req.body.password;
+    gameData.hasPassword = !!req.body.password && req.body.password !== '0';
+  }
 
   // Remove 'nextStageStarts' if lobby is not new/scheduled
   if (!['new', 'scheduled'].includes(game.status)) {

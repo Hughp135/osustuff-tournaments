@@ -16,8 +16,12 @@
       </div>
       <div *ngIf="!inAnotherGame">
         <div *ngIf="!success">
+          <div class="ui icon input password-input" *ngIf="game.hasPassword">
+            <input type="password" placeholder="Enter Password..." [(ngModel)]="password">
+            <i class="lock icon"></i>
+          </div>
           <div class="small action input">
-            <button class="ui green button" [disabled]="requestingJoin"
+            <button class="ui green button" [disabled]="requestingJoin || noPasswordEntered"
               [class.loading]="requestingJoin" (click)="joinGame()">
               Join Game
             </button>

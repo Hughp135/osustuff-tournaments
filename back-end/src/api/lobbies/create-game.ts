@@ -16,6 +16,7 @@ export interface ICreateScheduledGameOptions {
   maxPlayers: number;
   description?: string;
   gameMode: IGame['gameMode'];
+  password?: string;
 }
 
 export async function makeScheduledGame(req: Request, res: Response) {

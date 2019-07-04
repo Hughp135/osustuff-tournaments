@@ -38,6 +38,8 @@ export interface IGame extends mongoose.Document {
   owner?: mongoose.Schema.Types.ObjectId;
   description?: string;
   gameMode: '0' | '1' | '2' | '3'; // 0 = osu!, 1 = Taiko, 2 = CtB, 3 = osu!mania
+  hasPassword?: boolean;
+  password?: string;
 }
 
 const GameSchema = new mongoose.Schema(
@@ -81,6 +83,8 @@ const GameSchema = new mongoose.Schema(
     minRank: { type: Number },
     maxRank: { type: Number },
     gameMode: { type: String, default : '0' },
+    hasPassword: {type: Boolean, default: false },
+    password: { type: String },
   },
   { timestamps: true },
 );

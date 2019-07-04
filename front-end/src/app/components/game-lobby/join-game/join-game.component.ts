@@ -19,6 +19,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
   public success = false;
   public error: string;
   public loggedIn: boolean;
+  public password = '';
 
   constructor(
     private apiService: ApiService,
@@ -53,13 +54,17 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     );
   }
 
+  get noPasswordEntered() {
+    return this.game.hasPassword ? !this.password : false;
+  }
+
   async joinGame() {
     this.requestingJoin = true;
     this.success = false;
     this.error = undefined;
 
     try {
-      await this.apiService.post(`lobbies/${this.game._id}/join`, {});
+      await this.apiService.post(`lobbies/${this.game._id}/join`, { password: this.password });
       this.success = true;
       this.settingsService.setCurrentGame(this.game._id);
       responsiveVoice.speak('You have joined the game');

@@ -20,6 +20,7 @@ export interface EditLobbyData {
     error?: string;
   }[];
   gameMode: { value: '0' | '1' | '2' | '3' ; label: string; }; // std / taiko / ctb / mania
+  password?: string;
 }
 
 export const gameModeOpts: EditLobbyData['gameMode'][] = [
@@ -54,6 +55,7 @@ export class LobbyFormComponent implements OnInit {
       beatmap: undefined,
     })),
     gameMode: gameModeOpts[0],
+    password: '',
   };
   @Input() onSubmit: (formData: EditLobbyData) => Promise<any>;
   @Input() creating = false;

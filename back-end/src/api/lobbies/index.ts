@@ -38,6 +38,7 @@ async function getGames() {
   return games.map((game: any) => {
     game.playerCount = game.players.length;
     game.players = undefined;
+    game.password = undefined;
     const secondsToStart =
       ['new', 'scheduled'].includes(game.status) && game.nextStageStarts
         ? (game.nextStageStarts.getTime() - Date.now()) / 1000

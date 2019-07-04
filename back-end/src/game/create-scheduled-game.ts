@@ -28,6 +28,7 @@ export async function createScheduledGame(
     maxRank,
     description,
     gameMode,
+    password,
   }: ICreateScheduledGameOptions,
   user: IUser,
 ): Promise<IGame> {
@@ -41,6 +42,8 @@ export async function createScheduledGame(
     owner: user._id,
     description,
     gameMode,
+    hasPassword: !!password,
+    password,
   });
 }
 

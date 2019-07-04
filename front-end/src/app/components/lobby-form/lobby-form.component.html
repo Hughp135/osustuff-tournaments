@@ -26,6 +26,15 @@
   </div>
 
   <div class="ui divider"></div>
+  <h2>Password protect lobby</h2>
+  <div class="field">
+    <div class="ui left icon input">
+      <input [(ngModel)]="formData.password" maxlength="70" placeholder="Enter a password (optional)">
+      <i class="lock icon"></i>
+    </div>
+  </div>
+
+  <div class="ui divider"></div>
   <h2>Start Date</h2>
   <p>
     Set what time you want the lobby to be open to join. This

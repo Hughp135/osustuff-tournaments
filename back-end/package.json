@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p ./tsconfig.json",
     "start": "concurrently -n API,SOC -c cyanBright,magentaBright -k \"npm:start:api\" \"npm:start:socket\"",
-    "start:prod": "pm2 start --env production",
+    "start:prod": "pm2 start ecosystem.config.js --env production",
     "start:api": "nodemon",
     "start:socket": "nodemon --config nodemon.socket.json",
     "test": "cross-env NODE_ENV=test mocha --exit  -t 10000 -r ts-node/register  -r tsconfig-paths/register \"src/**/*.spec.ts\"",

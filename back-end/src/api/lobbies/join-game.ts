@@ -42,6 +42,12 @@ export async function joinGame(req: Request, res: Response) {
     });
   }
 
+  if (game.hasPassword && game.password && req.body.password !== game.password) {
+    return res.status(401).json({
+      error: 'Wrong password. Please try again and enter the correct password.',
+    });
+  }
+
   const user = await updateOrCreateUser(osuUser);
 
   if (user.banned) {
