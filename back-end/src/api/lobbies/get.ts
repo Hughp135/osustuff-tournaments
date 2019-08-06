@@ -15,11 +15,7 @@ export async function getLobby(req: Request, res: Response) {
   }
 
   const cacheKey = `get-lobby-${id}`;
-  const data = await getDataOrCache(
-    cacheKey,
-    5000,
-    async () => await await getGamePayload(id),
-  );
+  const data = await getGamePayload(id);
 
   if (!data) {
     return res.status(404).end();

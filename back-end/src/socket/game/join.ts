@@ -4,6 +4,7 @@ import { Game } from '../../models/Game.model';
 import { getGamePayload } from '../../api/lobbies/get';
 import { getGamePlayers } from '../../api/lobbies/get-users';
 import { logger } from '../../logger';
+import { getDataOrCache } from '../../services/cache';
 
 export function joinLobby(io: Server) {
   io.on('connection', async (socket: Socket) => {
@@ -28,10 +29,14 @@ export function joinLobby(io: Server) {
 
       socket.join(`lobby-${gameId}`);
 
-      const gamePayload = await getGamePayload(gameId);
+      const cacheKey = `get-lobby-${gameId}`;
+      const gamePayload = await getDataOrCache(cacheKey, 2000, async () => await getGamePayload(gameId));
+
       socket.emit('game-updated', gamePayload);
 
-      const players = await getGamePlayers(game);
+      const playersCache = `get-lobby-players-${gameId}`;
+      const players = await getDataOrCache(playersCache, 2000, async () => await getGamePlayers(game));
+
       socket.emit('players-updated', {
         players: JSON.stringify(players),
         gameId,
