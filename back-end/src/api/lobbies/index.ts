@@ -14,20 +14,20 @@ export async function getLobbies(req: Request, res: Response) {
 }
 
 async function getGames() {
-  const activeGames = await Game.find({ status: { $nin: ['scheduled', 'complete'] } })
+  const activeGames = await Game.find({ status: { $nin: ['scheduled', 'complete'] } }, { beatmaps: 0 })
     .sort({ _id: -1 })
     .limit(10)
     .lean();
 
-  const scheduledGames = await Game.find({ status: 'scheduled' })
+  const scheduledGames = await Game.find({ status: 'scheduled' }, { beatmaps: 0 })
     .sort({ nextStageStarts: -1 })
     .limit(3)
     .lean();
 
-  const completedGames = await Game.find({ status: 'complete' })
-  .sort({ _id: -1 })
-  .limit(12)
-  .lean();
+  const completedGames = await Game.find({ status: 'complete' }, { beatmaps: 0 })
+    .sort({ _id: -1 })
+    .limit(12)
+    .lean();
 
   const games = [
     ...activeGames,
