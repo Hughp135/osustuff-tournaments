@@ -21,7 +21,7 @@ import { logger } from '../logger';
 
 const TEST_MODE = config.get('TEST_MODE');
 const FAST_FORWARD_MODE = config.get('FAST_FORWARD_MODE');
-const PLAYERS_REQUIRED_TO_START = config.get('PLAYERS_REQUIRED_TO_START');
+const PLAYERS_REQUIRED_TO_START = <number> config.get('PLAYERS_REQUIRED_TO_START');
 const DISABLE_LOWER_LVL_LOBBIES = config.get('DISABLE_LOWER_LVL_LOBBIES');
 const DISABLE_MANIA_LOBBIES = config.get('DISABLE_MANIA');
 const DISABLE_TAIKO_LOBBIES = config.get('DISABLE_TAIKO');
