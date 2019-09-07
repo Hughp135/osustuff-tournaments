@@ -8,8 +8,10 @@ addons:
 before_install:
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 install:
-  - cd ./back-end && npm i
-  - cd ./front-end && npm i
+  - cd back-end
+  - npm i
+  - cd ../front-end
+  - npm i
 env:
   - CI_RUNNER=true
 cache:
@@ -21,10 +23,10 @@ services:
   - mongodb
   - docker
 script:
-  - cd ./back-end && npm run lint
-  - cd ./back-end && npm run test
-  - cd ./front-end && npm run lint
-  - cd ./front-end && npm test
+  - cd back-end && npm run lint
+  - cd back-end && npm run test
+  - cd front-end && npm run lint
+  - cd front-end && npm test
 deploy:
   provider: script
   script: bash docker_push
