@@ -12,8 +12,6 @@ install:
   - npm i
   - cd ../front-end
   - npm i
-env:
-  - CI_RUNNER=true
 cache:
   directories:
     - "back-end/node_modules"
