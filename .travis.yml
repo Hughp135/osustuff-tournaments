@@ -23,10 +23,10 @@ services:
   - mongodb
   - docker
 script:
-  - cd back-end && npm run lint
-  - cd back-end && npm run test
-  - cd front-end && npm run lint
-  - cd front-end && npm test
+  - cd ../back-end && npm run lint
+  - npm run test
+  - cd ../front-end && npm run lint
+  - npm run build
 deploy:
   provider: script
   script: bash docker_push
