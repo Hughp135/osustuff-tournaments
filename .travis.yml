@@ -1,0 +1,29 @@
+language: node_js
+node_js:
+  - "10"
+notifications:
+  email: false
+addons:
+  chrome: stable
+before_install:
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+env:
+  - CI_RUNNER=true
+cache:
+  directories:
+    - "back-end/node_modules"
+    - "front-end/node_modules"
+sudo: required
+services:
+  - mongodb
+  - docker
+script:
+  - cd ./back-end && npm run lint
+  - cd ./back-end && npm run test
+  - cd ./front-end && npm run lint
+  - cd ./front-end && npm test
+deploy:
+  provider: script
+  script: bash docker_push
+  on:
+    branch: master
