@@ -3,10 +3,6 @@ node_js:
   - "10"
 notifications:
   email: false
-addons:
-  chrome: stable
-before_install:
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 install:
   - cd back-end
   - npm i
