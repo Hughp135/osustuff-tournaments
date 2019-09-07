@@ -14,29 +14,33 @@ export async function getLobbies(req: Request, res: Response) {
 }
 
 async function getGames() {
-  const activeGames = await Game.find({ status: { $nin: ['scheduled', 'complete'] } }, { beatmaps: 0 })
+  const fieldsToGet: { [k: string]: number } = {
+    beatmaps: 0,
+    password: 0,
+  };
+
+  const activeGames = await Game.find(
+    { status: { $nin: ['scheduled', 'complete'] } },
+    fieldsToGet,
+  )
     .sort({ _id: -1 })
     .limit(10)
     .lean();
 
-  const scheduledGames = await Game.find({ status: 'scheduled' }, { beatmaps: 0 })
+  const scheduledGames = await Game.find({ status: 'scheduled' }, fieldsToGet)
     .sort({ nextStageStarts: -1 })
     .limit(3)
     .lean();
 
-  const completedGames = await Game.find({ status: 'complete' }, { beatmaps: 0 })
+  const completedGames = await Game.find({ status: 'complete' }, fieldsToGet)
     .sort({ _id: -1 })
     .limit(12)
     .lean();
 
-  const games = [
-    ...activeGames,
-    ...scheduledGames,
-    ...completedGames,
-  ];
+  const games = [...activeGames, ...scheduledGames, ...completedGames];
 
   return games.map((game: any) => {
-    game.playerCount = game.players.length;
+    game.playerCount = game.players ? game.players.length : 0;
     game.players = undefined;
     game.password = undefined;
     const secondsToStart =
