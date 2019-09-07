@@ -50,7 +50,7 @@ Assuming you have set up the config, you can now run the site locally:
 
 You should now have 2 processes running. You can now go to localhost:4200 in your browser and test the website locally.
 
-For testing purposes, there is an 'admin logon' defautre which is used by executing some commands in the chrome console while on the website:
+For testing purposes, there is an 'admin logon' feature which is used to display admin commands on the front-end. Activate them by executing some commands in the chrome console while on the website:
 
 Google chrome console:
 ```
