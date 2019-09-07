@@ -24,7 +24,9 @@ npm i
 
 You will need to set up back-end configuration before you can test lobbies locally.
 
-Optional: If you want to test logging in with your osu! account locally you will need to create an osu oAuth client following this guide: https://github.com/int-and-his-friends/osu-api-v2/wiki/OAuth-clients (this is the minimum required for lobby creation, since it fetches beatmaps from the osu API).
+You need an osu! API key to be able to create tournaments since it fetches beatmaps from the osu API. Go to https://osu.ppy.sh/p/api to get an API key
+
+Optional: If you want to test logging in with your osu! account locally you will need to create an osu oAuth client following this guide: https://github.com/int-and-his-friends/osu-api-v2/wiki/OAuth-clients (this is the minimum required for lobby creation, since it fetches beatmaps from the osu API). Note: this is NOT the same as the osu api key. This is for the login flow (not for lobby creation).
 
 - Create a new file at `back-end/development.yml`. Leave out optional parameters if you don't need them.
 ```
