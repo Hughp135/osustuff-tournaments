@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import config from 'config';
 
 export async function connectToMongo() {
-  const baseUrl = process.env.CI_RUNNER ? 'mongodb://mongo' : config.get('DB_HOST')
+  const baseUrl = process.env.CI_RUNNER ? 'mongodb://mongo' : `mongodb://${config.get('DB_HOST')}`
   const dbName = process.env.NODE_ENV === 'test' ? 'osu-br-test' : 'osu-br';
 
   await mongoose.connect(
