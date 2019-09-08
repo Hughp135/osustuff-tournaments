@@ -26,3 +26,6 @@ jobs:
       script: "cd ../front-end && npm run build"
     - stage: "test"
       script: "cd ../back-end && npm run test"
+branches:
+  only:
+    - "master"
