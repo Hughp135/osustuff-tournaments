@@ -4,7 +4,7 @@ The project consists of 2 separate node packages. These are the `front-end` and 
 
 ### 1) Prerequisites
 - You must have node installed on your system
-- You must have a MongoDB server running on your system on the default port (27017)
+- You must have a MongoDB server. You can change the host and port as shown in step 3.
 
 ### 2)Install dependencies in the back-end and front-end folder
 
