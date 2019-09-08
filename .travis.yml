@@ -16,8 +16,13 @@ sudo: required
 services:
   - mongodb
   - docker
-script:
-  - cd ../back-end && npm run lint
-  - npm run test
-  - cd ../front-end && npm run lint
-  - npm run build
+jobs:
+  include:
+    - stage: "lint"
+      script: "cd ../back-end && npm run lint"
+      script: "cd ../front-end && npm run lint"
+    - stage: "build"
+      script: "cd ../back-end && npm run build"
+      script: "cd ../front-end && npm run build"
+    - stage: "test"
+      script: "cd ../back-end && npm run test"
