@@ -19,11 +19,11 @@
           Only scores set after the round starts will count.
         </p>
       </div>
-      <div class="title" (click)="activeQuestion = 10">
+      <div class="title" (click)="activeQuestion = 2">
         <i class="dropdown icon"></i>
         How are beatmaps chosen?
       </div>
-      <div class="content" [class.active]="activeQuestion === 10">
+      <div class="content" [class.active]="activeQuestion === 2">
         <p>
           The system will automatically select 10 beatmaps for
           every match from recently ranked/loved
@@ -37,26 +37,26 @@
           beatmaps will be added in the future.
         </p>
       </div>
-      <div class="title" (click)="activeQuestion = 11">
+      <div class="title" (click)="activeQuestion = 3">
         <i class="dropdown icon"></i>
         Are there any plans to add additional tournament
         formats?
       </div>
-      <div class="content" [class.active]="activeQuestion === 11">
+      <div class="content" [class.active]="activeQuestion === 3">
         <p>
           Currently the only tournament format is the 'Royale'
           format - e.g. elimination down to 1 winner.
         </p>
         <p>
           More game modes will most likely be added in future as
-          per popular demands.
+          per popular demands, and as contributors on <a href="https://github.com/Hughp135/osustuff-tournaments">our GitHub</a> add them.
         </p>
       </div>
-      <div class="title" (click)="activeQuestion = 2">
+      <div class="title" (click)="activeQuestion = 4">
         <i class="dropdown icon"></i>
         Can I play with any mods?
       </div>
-      <div class="content" [class.active]="activeQuestion === 2">
+      <div class="content" [class.active]="activeQuestion === 4">
         <p>
           Every round is currently freemod. This means you can
           play with any mods except mods that are not
@@ -69,24 +69,24 @@
           who pass without difficulty reduction mods.
         </p>
       </div>
-      <div class="title" (click)="activeQuestion = 3">
+      <div class="title" (click)="activeQuestion = 5">
         <i class="dropdown icon"></i>
         How many players pass/fail each round?
       </div>
-      <div class="content" [class.active]="activeQuestion === 3">
+      <div class="content" [class.active]="activeQuestion === 5">
         <p>
           A certain percent of players will fail each round. The
           percent value used depends on which round the match is
           currently in. It also varies with how many players are
           in the game, and attempts
-          to make the total number of rounds close to 10.
+          to make the total number of rounds close to 10. Players will fail
         </p>
       </div>
-      <div class="title" (click)="activeQuestion = 4">
+      <div class="title" (click)="activeQuestion = 6">
         <i class="dropdown icon"></i>
         How are players ranked in each match?
       </div>
-      <div class="content" [class.active]="activeQuestion === 4">
+      <div class="content" [class.active]="activeQuestion === 6">
         <p>
           After each round, players who set a score will be
           ranked using <a href="https://en.wikipedia.org/wiki/Ranking#Standard_competition_ranking_(%221224%22_ranking)">Standard
@@ -104,11 +104,11 @@
           remaining players in the match.
         </p>
       </div>
-      <div class="title" (click)="activeQuestion = 5">
+      <div class="title" (click)="activeQuestion = 7">
         <i class="dropdown icon"></i>
         How does the skill rating system work?
       </div>
-      <div class="content" [class.active]="activeQuestion === 5">
+      <div class="content" [class.active]="activeQuestion === 7">
         <p>
           The ranking system is a custom implementation of the
           TrueSkill algorithm.
@@ -131,11 +131,11 @@
           the same way as every other player.
         </p>
       </div>
-      <div class="title" (click)="activeQuestion = 14">
+      <div class="title" (click)="activeQuestion = 8">
         <i class="dropdown icon"></i>
         How do lower rank lobbies affect skill gains/losses?
       </div>
-      <div class="content" [class.active]="activeQuestion === 14">
+      <div class="content" [class.active]="activeQuestion === 8">
         <p>
           Currently, rating change for lower ranked lobbies is 1/5th
           that of normal lobies. This means that players in lower ranked lobbies will
@@ -143,11 +143,11 @@
           This amount is subject to change based on how it performs.
         </p>
       </div>
-      <div class="title" (click)="activeQuestion = 6">
+      <div class="title" (click)="activeQuestion = 9">
         <i class="dropdown icon"></i>
         How many rounds are played each match?
       </div>
-      <div class="content" [class.active]="activeQuestion === 6">
+      <div class="content" [class.active]="activeQuestion === 9">
         <p>
           A maximum of 10 rounds will be played, however in the
           majority of cases matches will not last
@@ -157,11 +157,11 @@
           players (>500) may continue to round 9 or 10.
         </p>
       </div>
-      <div class="title" (click)="activeQuestion = 7">
+      <div class="title" (click)="activeQuestion = 10">
         <i class="dropdown icon"></i>
         How can a match end with no winner?
       </div>
-      <div class="content" [class.active]="activeQuestion === 7">
+      <div class="content" [class.active]="activeQuestion === 10">
         <p>
           The conditions for a match to end with no winner are
           as follows:
@@ -178,11 +178,11 @@
           the results.
         </p>
       </div>
-      <div class="title" (click)="activeQuestion = 8">
+      <div class="title" (click)="activeQuestion = 11">
         <i class="dropdown icon"></i>
         What achievements are there and how are they obtained?
       </div>
-      <div class="content" [class.active]="activeQuestion === 8">
+      <div class="content" [class.active]="activeQuestion === 11">
         <p>
           There are currently multiple achievements that are
           possible to achieve.
@@ -197,14 +197,11 @@
       </div>
       <div class="title" (click)="activeQuestion = 12">
         <i class="dropdown icon"></i>
-        Will other game modes (mania/taiko/ctb etc) be supported
+        Are other game modes (mania/taiko/ctb etc) supported?
       </div>
       <div class="content" [class.active]="activeQuestion === 12">
         <p>
-          Yes! Currently only osu standard is supported (to keep
-          things simpler for launch), however
-          I intend to add lobbies for every game mode in the
-          near future.
+          Yes! You can find these lobbies by checking the checkboxes on the main lobby screen.
         </p>
       </div>
       <div class="title" (click)="activeQuestion = 13">
@@ -225,6 +222,15 @@
           Custom lobbies will also have the ability to limit
           players by country or rank (for example, a
           country-only tournament).
+        </p>
+      </div>
+      <div class="title" (click)="activeQuestion = 14">
+        <i class="dropdown icon"></i>
+        Is this open-source? Can I contribute?
+      </div>
+      <div class="content" [class.active]="activeQuestion === 14">
+        <p>
+          Yes, and yes! You can always contribute to the source code <a href="https://github.com/Hughp135/osustuff-tournaments">on GitHub</a>.
         </p>
       </div>
     </div>
