@@ -1,4 +1,6 @@
-# Setup
+# osuStuff Play
+**[A new fun way to play casual osu matches and tournaments.](https://play.osustuff.org)**
+## Setup
 
 The project consists of 2 separate node packages. These are the `front-end` and `back-end` folder
 
@@ -6,15 +8,15 @@ The project consists of 2 separate node packages. These are the `front-end` and 
 - You must have node installed on your system
 - You must have a MongoDB server. You can change the host and port as shown in step 3.
 
-### 2)Install dependencies in the back-end and front-end folder
+### 2) Install dependencies in the back-end and front-end folder
 
-from the project root
+From the project root, run:
 ```
 cd back-end
 npm i
 ```
 
-from the project root
+From the project root, run:
 ```
 cd front-end
 npm i
@@ -41,7 +43,7 @@ TWITCH_REDIRECT: (optional) twitch oAuth redirect URL
 
 Note: any other configuration values set in `back-end/default.yml` can be overwritten in `back-end/development.yml` if you want.
 
-# Running the project
+### 4) Running the project
 Assuming you have set up the config, you can now run the site locally:
 
 - Open up two terminals, one in the front-end folder, and the other in the back-end folder
@@ -50,12 +52,12 @@ Assuming you have set up the config, you can now run the site locally:
 
 You should now have 2 processes running. You can now go to localhost:4200 in your browser and test the website locally.
 
-For testing purposes, there is an 'admin logon' feature which is used to display admin commands on the front-end. Activate them by executing some commands in the chrome console while on the website:
+For testing purposes, there is an 'admin logon' feature which is used to display admin commands on the front-end. Activate them by executing some commands in the dev console (ctrl+shift+i) while on the website:
 
-Google chrome console:
+Developer console:
 ```
 window.adminLogon('asd123') // (default admin password)
 ```
 
-After entering this javascript command, you can refresh the page to see the 'admin' button on the lobbies page. This allows you to run testing commands such as clearing the database, toggling lobby auto-creation, and skipping the round.
+After entering this javascript command, you can refresh the page to see the 'admin' button on the lobbies page. This allows you to run testing commands such as clearing the database, toggling lobby auto-creation, and skipping the current round.
 
