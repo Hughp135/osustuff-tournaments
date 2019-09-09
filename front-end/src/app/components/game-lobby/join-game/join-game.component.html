@@ -4,7 +4,7 @@
       <a class="ui green button" [href]="loginLink">
         Join Game
       </a>
-      Your osu! account will be authorized
+      Your osu! account will be authorized.
     </div>
     <div *ngIf="loggedIn">
       <div *ngIf="inAnotherGame">
@@ -23,7 +23,7 @@
           <div class="small action input">
             <button class="ui green button" [disabled]="requestingJoin || noPasswordEntered"
               [class.loading]="requestingJoin" (click)="joinGame()">
-              Join
+              Join Game
             </button>
             Make sure you are ready to play before joining.
           </div>

@@ -27,7 +27,7 @@
     </div>
     <div class="column" *ngIf="canEdit">
       <a class="ui primary button" [routerLink]="['/lobbies', game._id, 'edit']">
-        Edit...
+        Edit Game
       </a>
     </div>
     <div class="column" *ngIf="game.status === 'new' && inGame">
