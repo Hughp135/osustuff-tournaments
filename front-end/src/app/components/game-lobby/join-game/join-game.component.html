@@ -9,7 +9,7 @@
     <div *ngIf="loggedIn">
       <div *ngIf="inAnotherGame">
         <p>You are in another game, so you must leave before you
-          can join.</p>
+          can join. Are you sure you want to leave another game to join this one?</p>
         <div class="ui tiny orange button" (click)="leaveGame()">
           Leave other game
         </div>
@@ -23,7 +23,7 @@
           <div class="small action input">
             <button class="ui green button" [disabled]="requestingJoin || noPasswordEntered"
               [class.loading]="requestingJoin" (click)="joinGame()">
-              Join Game
+              Join
             </button>
             Make sure you are ready to play before joining.
           </div>
