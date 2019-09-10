@@ -1,6 +1,10 @@
 <div class="ui container section">
-  <h1>{{ user.username }}'s Profile{{user.banned ? ' (Banned)' :
-    ''}}</h1>
+
+  <div class="username">
+    <img [src]="'https://a.ppy.sh/' + user.osuUserId" height=48px width=48px>
+    <h1>{{ user.username }}'s Profile{{user.banned ? ' (Banned)' :
+      ''}}</h1>
+  </div>
   <a class="ui purple button" target="_blank" [href]="'https://osu.ppy.sh/users/' + user.osuUserId">
     <i class="external icon"></i>
     osu! Profile

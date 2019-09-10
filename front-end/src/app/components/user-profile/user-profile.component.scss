@@ -53,3 +53,18 @@
     color: #8f8f8f;
   }
 }
+
+// I HATE CSS
+.username {
+  h1 {
+    display: inline-block;
+    padding: 20px;
+    font-size: 36px;
+    position: relative; // Is this good practice?
+    bottom: 10px; // I DONT KNOW! I SPENT 90 MINUTES ON THIS SO I DONT CARE, EITHER! AAAAA
+  }
+  img {
+    border-radius: 50%;
+  }
+}
+// but it do look kinda nice tho
