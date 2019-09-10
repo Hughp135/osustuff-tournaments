@@ -33,7 +33,7 @@
     <div class="column" *ngIf="game.status === 'new' && inGame">
       <div class="ui red button" (click)="leaveGame()">Leave Game</div>
     </div>
-    <div class="center aligned column" *ngIf="connectionLost"  suiPopup popupInverted="true" popupText="The server may be restarting or down for maintenance. Check your internet, maybe?">
+    <div class="center aligned column" *ngIf="connectionLost"  suiPopup popupInverted="true" popupText="The server may be restarting or down for maintenance.">
       <h5>Connection lost...</h5>
       <i class="red notched circle loading icon"></i>
     </div>
