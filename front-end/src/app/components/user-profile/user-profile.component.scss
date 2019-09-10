@@ -54,17 +54,15 @@
   }
 }
 
-// I HATE CSS
 .username {
   h1 {
     display: inline-block;
     padding: 20px;
     font-size: 36px;
-    position: relative; // Is this good practice?
-    bottom: 10px; // I DONT KNOW! I SPENT 90 MINUTES ON THIS SO I DONT CARE, EITHER! AAAAA
+    position: relative;
+    bottom: 10px;
   }
   img {
     border-radius: 15%;
   }
 }
-// but it do look kinda nice tho
