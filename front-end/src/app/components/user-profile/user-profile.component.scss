@@ -55,13 +55,16 @@
 }
 
 .username {
+  padding-bottom: 30px;
   h1 {
     display: inline-block;
-    padding: 20px;
+    padding-left: 20px;
     font-size: 36px;
+    margin-top: 0;
+    vertical-align: middle;
   }
   img {
     border-radius: 15%;
-    vertical-align: -10px;
+    vertical-align: middle;
   }
 }
