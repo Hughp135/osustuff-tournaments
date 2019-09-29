@@ -4,12 +4,12 @@
       <a class="ui green button" [href]="loginLink">
         Join Game
       </a>
-      Your osu! account will be authorized
+      Your osu! account will be authorized.
     </div>
     <div *ngIf="loggedIn">
       <div *ngIf="inAnotherGame">
         <p>You are in another game, so you must leave before you
-          can join.</p>
+          can join. Are you sure you want to leave another game to join this one?</p>
         <div class="ui tiny orange button" (click)="leaveGame()">
           Leave other game
         </div>
