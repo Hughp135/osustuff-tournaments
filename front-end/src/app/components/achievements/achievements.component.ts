@@ -1,3 +1,4 @@
+import { ApiService } from './../../services/api.service';
 import { Component, OnInit } from '@angular/core';
 
 export interface IAchievement {
@@ -12,27 +13,21 @@ export interface IAchievement {
   styleUrls: ['./achievements.component.scss']
 })
 export class AchievementsComponent implements OnInit {
-  public achievements: IAchievement[];
+  public achievements: object;
 
-  constructor() {
-    this.achievements = [
-      {
-        title: "a",
-        description: "b",
-        icon: "blue circle",
-      },
-      {
-        title: "these aren't real",
-        description: "i couldn't figure out how to pull all the achievements :(",
-        icon: "red checkered flag",
-      },
-      {
-        title: "shoutouts to simpleflips",
-        description: "aeaeaeaeaeae",
-        icon: "white github",
-      },
-    ]
+  constructor(private apiService: ApiService) {
+    this.run(); // work around for not being able to use async in constructor
+                // most likely not the best practice, TODO: fix?
   }
   ngOnInit() {}
 
+  public async run() {
+    try {
+      const apiAchievements = await this.apiService.get("achievements/get-all-achievements")
+      this.achievements = apiAchievements;
+    }
+    catch(e) {
+      console.error(e)
+    }
+  }
 }
