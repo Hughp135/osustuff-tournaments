@@ -22,7 +22,7 @@ cd front-end
 npm i
 ```
 
-### 3) Setting configuration values 
+### 3) Setting configuration values
 
 You will need to set up back-end configuration before you can test lobbies locally.
 
@@ -43,6 +43,10 @@ TWITCH_REDIRECT: (optional) twitch oAuth redirect URL
 
 Note: any other configuration values set in `back-end/default.yml` can be overwritten in `back-end/development.yml` if you want.
 
+If you changed your port/address for your back-end socket, you will have to change it accordingly in `front-end/environments/environment.ts`.
+
+
+
 ### 4) Running the project
 Assuming you have set up the config, you can now run the site locally:
 
@@ -59,5 +63,5 @@ Developer console:
 window.adminLogon('asd123') // (default admin password)
 ```
 
-After entering this javascript command, you can refresh the page to see the 'admin' button on the lobbies page. This allows you to run testing commands such as clearing the database, toggling lobby auto-creation, and skipping the current round.
 
+After entering this javascript command, you can refresh the page to see the 'admin' button on the lobbies page. This allows you to run testing commands such as clearing the database, toggling lobby auto-creation, and skipping the current round.

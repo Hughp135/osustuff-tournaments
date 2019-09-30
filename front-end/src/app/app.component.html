@@ -22,7 +22,7 @@
   </a>
 
   <div class="right menu">
-    <div class="item" *ngIf="connectionLost" suiPopup popupInverted="true" popupText="The server may be restarting or down for maintenance">
+    <div class="item" *ngIf="connectionLost" suiPopup popupInverted="true" popupText="The server may be restarting or down for maintenance.">
       <i class="red notched circle loading icon"></i>
       Connection Lost...
     </div>
@@ -38,8 +38,11 @@
       <i class="user icon"></i>
       {{ currentUsername }}
     </a>
-    <a class="icon link item" href="https://discord.gg/wFxEaE9">
+    <a class="icon link item" href="https://discord.gg/wFxEaE9" target="_blank">
       <i class="large discord icon"></i>
+    </a>
+    <a class="icon link item" href="https://github.com/Hughp135/osustuff-tournaments" target="_blank">
+      <i class="large github icon"></i>
     </a>
   </div>
 </div>
@@ -50,7 +53,7 @@
 <app-footer *ngIf="showMenu"></app-footer>
 
 <div *ngIf="isAdmin">
-  <div style="position: absolute; bottom: 10px; right: 40px; z-index:999;" class="ui mini button" suiPopup
+  <div style="position: fixed; bottom: 10px; right: 40px; z-index:999;" class="ui mini button" suiPopup
     popupPlacement="top left" [popupTemplate]="popupTemplate" popupTrigger="outsideClick">
     <ng-template let-popup #popupTemplate>
       <div class="content">
