@@ -13,8 +13,7 @@ export async function getAllAchievements(req: Request, res: Response) {
     }
     try {
       res.json(docs);
-    }
-    catch (e) {
+    } catch (e) {
       res.status(500).send(e).end();
       logger.error('Error while sending all achievements: ' + e);
     }
