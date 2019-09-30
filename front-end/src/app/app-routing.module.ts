@@ -14,6 +14,7 @@ import { LoginComponent } from './components/login/login.component';
 import { FaqComponent } from './components/faq/faq.component';
 import { CreateLobbyComponent } from './components/create-lobby/create-lobby.component';
 import { EditLobbyComponent } from './components/edit-lobby/edit-lobby.component';
+import { AchievementsComponent } from './components/achievements/achievements.component';
 
 const routes: Routes = [
   {
@@ -61,6 +62,10 @@ const routes: Routes = [
   {
     path: 'faq',
     component: FaqComponent,
+  },
+  {
+    path: 'achievements',
+    component: AchievementsComponent,
   }
 ];
 
