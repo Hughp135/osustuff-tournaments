@@ -95,7 +95,7 @@ router.get('/login-verify', loginVerify);
 router.get('/online-players', getOnlineUsers);
 router.get('/beatmap/:beatmapId', authMiddleware, getBeatmap);
 router.get('/twitch-redirect', authMiddleware, twitchVerify);
-router.get('/achievements/get-all-achievements', getAllAchievements)
+router.get('/achievements/get-all-achievements', getAllAchievements);
 
 app.use('/api', router);
 

@@ -23,11 +23,11 @@ export class AchievementsComponent implements OnInit {
 
   public async run() {
     try {
-      const apiAchievements = await this.apiService.get("achievements/get-all-achievements")
+      const apiAchievements = await this.apiService.get("achievements/get-all-achievements");
       this.achievements = apiAchievements;
     }
     catch(e) {
-      console.error(e)
+      console.error(e);
     }
   }
 }
