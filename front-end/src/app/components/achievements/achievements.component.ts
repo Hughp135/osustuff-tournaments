@@ -22,7 +22,7 @@ export class AchievementsComponent implements OnInit {
                 // most likely not the best practice, TODO: fix?
     this.subscriptions = [
       settingsService.user.subscribe(u => (this.currentUser = u))
-    ]
+    ];
   }
   ngOnInit() {}
 
