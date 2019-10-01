@@ -3,8 +3,6 @@ import { Achievement } from '../../models/Achievement.model';
 import { logger } from '../../logger';
 
 export async function getAllAchievements(req: Request, res: Response) {
-  // TODO: clean up the error checking
-  // turn into a function?
   Achievement.find({}, (err: Error, docs) => {
     if (err) {
       logError(res, err, false);
