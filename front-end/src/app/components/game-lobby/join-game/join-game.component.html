@@ -21,11 +21,11 @@
             <i class="lock icon"></i>
           </div>
           <div class="small action input">
-            <button class="ui green button" [disabled]="requestingJoin || noPasswordEntered"
+            <button class="ui green button" [disabled]="requestingJoin || noPasswordEntered || isBanned"
               [class.loading]="requestingJoin" (click)="joinGame()">
               Join Game
             </button>
-            Make sure you are ready to play before joining.
+            {{ isBanned ? 'You cannot join; you are banned.' : 'Make sure you are ready to play before joining.' }}
           </div>
 
           <div class="ui red inverted segment" *ngIf="error">
