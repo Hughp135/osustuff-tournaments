@@ -30,8 +30,9 @@
       <i class="large orange play circle outline icon"></i>
       Continue Game
     </a>
-    <a *ngIf="currentUsername" class="item" [routerLink]="['/user/', currentUsername]">
-      <i class="user icon"></i>
+    <a *ngIf="currentUsername" class="item" id="login" [routerLink]="['/user/', currentUsername]">
+      <img class="ui icon" [useSrcset]="true" [lazyLoad]="'//a.ppy.sh/' + currentUser.osuUserId"
+        alt="">
       {{ currentUsername }}
     </a>
     <a class="icon link item" href="https://discord.gg/wFxEaE9">
