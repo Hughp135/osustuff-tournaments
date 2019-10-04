@@ -65,3 +65,7 @@ window.adminLogon('asd123') // (default admin password)
 
 
 After entering this javascript command, you can refresh the page to see the 'admin' button on the lobbies page. This allows you to run testing commands such as clearing the database, toggling lobby auto-creation, and skipping the current round.
+
+### 5) Commit hook (optional)
+
+If you'd like a quick hook to make sure your lint passes before you commit code, head [here](https://gist.github.com/jvyden420/ef5962caa87fbe36c597ddd0018be501)
