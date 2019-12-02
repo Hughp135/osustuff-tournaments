@@ -43,6 +43,7 @@ import { UserPopupComponent } from './components/game-lobby/user-list/user-popup
 import { LobbyFormComponent } from './components/lobby-form/lobby-form.component';
 import { EditLobbyComponent } from './components/edit-lobby/edit-lobby.component';
 import { PageLoaderComponent } from './components/page-loader/page-loader.component';
+import { AchievementsComponent } from './components/achievements/achievements.component';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { PageLoaderComponent } from './components/page-loader/page-loader.compon
     LobbyFormComponent,
     EditLobbyComponent,
     PageLoaderComponent,
+    AchievementsComponent,
   ],
   imports: [
     BrowserModule,

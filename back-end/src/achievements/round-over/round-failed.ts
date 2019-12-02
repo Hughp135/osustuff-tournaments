@@ -25,8 +25,13 @@ export async function roundFailed(
   );
   const pressF = await getOrCreateAchievement(
     'Press F',
-    'Fail a round by a tiny margin',
+    'Fail a round by less than 1000 points',
     'blue user times',
+  );
+  const outOfBatteries = await getOrCreateAchievement(
+    'Out of Batteries',
+    'Fail a round with Flashlight',
+    'red battery quarter',
   );
 
   const achieved: IUserAchieved[] = [];
@@ -65,6 +70,13 @@ export async function roundFailed(
       achieved.push({
         user,
         achievement: pressF,
+      });
+    }
+
+    if (score.mods === 1024) {
+      achieved.push({
+        user,
+        achievement: outOfBatteries,
       });
     }
   }

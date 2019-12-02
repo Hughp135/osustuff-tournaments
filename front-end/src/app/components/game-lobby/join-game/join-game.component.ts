@@ -19,6 +19,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
   public success = false;
   public error: string;
   public loggedIn: boolean;
+  public isBanned: boolean;
   public password = '';
 
   constructor(
@@ -28,6 +29,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     private router: Router
   ) {
     this.loggedIn = !!settingsService.user.getValue();
+    settingsService.user.subscribe(val => (this.isBanned = val.banned));
   }
 
   ngOnInit() {

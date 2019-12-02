@@ -1,0 +1,20 @@
+<div class="ui container section">
+  <h1>Achievements</h1>
+  <div class="ui inverted link list" *ngIf="loggedIn">
+    <a class="item" [routerLink]="'/user/me'" fragment="achievements">View your achievements</a>
+  </div>
+  <!-- this is directly taken from user-profile... perhaps a component to unite them? -->
+  <div class="ui four column doubling grid">
+    <div class="column" *ngFor="let achievement of achievements">
+      <div class="ui center aligned inverted segment achievement">
+        <div>
+          <i class="big icon" [ngClass]="achievement.icon"></i>
+        </div>
+        <h3 class="ui sub header">
+          {{ achievement.title }}
+        </h3>
+        {{ achievement.description }}
+      </div>
+    </div>
+  </div>
+</div>
