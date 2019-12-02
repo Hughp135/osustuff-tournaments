@@ -42,15 +42,21 @@ async function request(
   }
 }
 
-export async function getUser(username: string, gameMode: '0' | '1' | '2'| '3' = '0') {
-  return (await (<any> request('get_user', {
-    u: username,
-    type: 'string',
-    m: gameMode, // osu game mode
-  })))[0];
+export async function getUser(
+  username: string,
+  gameMode: '0' | '1' | '2' | '3' = '0',
+) {
+  return (await (<any>request('get_user', {
+      u: username,
+      type: 'string',
+      m: gameMode, // osu game mode
+    })))[0];
 }
 
-export async function getUserRecent(username: string, mode: '0' | '1' | '2' | '3' = '0') {
+export async function getUserRecent(
+  username: string,
+  mode: '0' | '1' | '2' | '3' = '0',
+) {
   return await request('get_user_recent', {
     u: username,
     type: 'string',
@@ -58,7 +64,10 @@ export async function getUserRecent(username: string, mode: '0' | '1' | '2' | '3
   });
 }
 
-export async function getBeatmaps(from: Date, limit?: number): Promise<IBeatmap[]> {
+export async function getBeatmaps(
+  from: Date,
+  limit?: number,
+): Promise<IBeatmap[]> {
   return await request('get_beatmaps', {
     m: '0',
     since: from.toISOString(),
@@ -66,7 +75,7 @@ export async function getBeatmaps(from: Date, limit?: number): Promise<IBeatmap[
   });
 }
 export async function getBeatmapById(beatmapId: string): Promise<IBeatmap[]> {
-  const query: {[key: string]: string} = {
+  const query: { [key: string]: string } = {
     m: '0',
     b: beatmapId,
   };
@@ -74,13 +83,19 @@ export async function getBeatmapById(beatmapId: string): Promise<IBeatmap[]> {
   return (await request('get_beatmaps', query))[0];
 }
 
-export async function getRecentBeatmaps(mode?: '0' | '1' | '2' | '3'): Promise<IBeatmap[]> {
+export async function getRecentBeatmaps(
+  mode?: '0' | '1' | '2' | '3',
+): Promise<IBeatmap[]> {
   const date = new Date();
   date.setDate(date.getDate() - 30);
   const date2 = new Date();
   date2.setFullYear(date2.getFullYear() - Math.floor(Math.random() * 4) + 1);
   const date3 = new Date();
   date.setMonth(date3.getMonth() - 6);
+  const date4 = new Date();
+  date.setMonth(date3.getMonth() - 4);
+  const date5 = new Date();
+  date.setMonth(date3.getMonth() - 8);
   const m = mode || '0';
 
   const beatmaps1 = await request('get_beatmaps', {
@@ -100,6 +115,18 @@ export async function getRecentBeatmaps(mode?: '0' | '1' | '2' | '3'): Promise<I
     });
     allBeatmaps.push(...beatmaps2);
     allBeatmaps.push(...beatmaps3);
+    if (mode === '3') {
+      const beatmaps4 = await request('get_beatmaps', {
+        m,
+        since: date4.toISOString(),
+      });
+      const beatmaps5 = await request('get_beatmaps', {
+        m,
+        since: date5.toISOString(),
+      });
+      allBeatmaps.push(...beatmaps4);
+      allBeatmaps.push(...beatmaps5);
+    }
   }
 
   return allBeatmaps;
