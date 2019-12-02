@@ -85,7 +85,7 @@ export async function roundPassed(
           achievement: ascension,
         });
       }
-
+                              // Luigi wins by doing absolutely nothing
       if (score.score === 0) { // haha you MORON you didn't even get a single point
         achieved.push({
           user,

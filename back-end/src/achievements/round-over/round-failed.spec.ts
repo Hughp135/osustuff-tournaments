@@ -189,4 +189,39 @@ describe('roundFailed()', async () => {
         a.user._id === user2._id));
     });
   });
+
+  describe('Out of Batteries', async () => {
+    it('gives achievement if the score has FL', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { mods: 0 });
+      const failed = await createScore(user2, { mods: 1024 });
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+
+      assert.isDefined(achieved.find(a => a.achievement.title === 'Out of Batteries'));
+    });
+
+    it('does not give achievement if the score doesnt have FL', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { mods: 0 });
+      const failed = await createScore(user2, { mods: 0 });
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+
+      assert.isUndefined(achieved.find(a => a.achievement.title === 'Out of Batteries'));
+    });
+
+    it('does not give achievement if the user passed', async () => {
+      const user1 = await createUser(1, {});
+      const user2 = await createUser(2, {});
+
+      const passed = await createScore(user1, { mods: 1024 });
+      const failed = await createScore(user2, { mods: 0 });
+      const achieved = await roundFailed([user1, user2], [failed], [passed]);
+
+      assert.isUndefined(achieved.find(a => a.achievement.title === 'Out of Batteries'));
+    });
+  });
 });

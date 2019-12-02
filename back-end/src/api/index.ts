@@ -32,6 +32,7 @@ import { createTestUser } from './admin/create-test-user';
 import { banUser } from './admin/ban-user';
 import { twitchVerify } from './auth/twitch-verify';
 import { unlinkTwitch } from './user/unlink-twitch';
+import { getAllAchievements } from './achievements/get-all-achievements';
 import { logger } from '../logger';
 
 const PORT = config.get('API_PORT');
@@ -94,6 +95,7 @@ router.get('/login-verify', loginVerify);
 router.get('/online-players', getOnlineUsers);
 router.get('/beatmap/:beatmapId', authMiddleware, getBeatmap);
 router.get('/twitch-redirect', authMiddleware, twitchVerify);
+router.get('/achievements/get-all-achievements', getAllAchievements);
 
 app.use('/api', router);
 
