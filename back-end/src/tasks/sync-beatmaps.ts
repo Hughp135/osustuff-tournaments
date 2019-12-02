@@ -9,14 +9,18 @@ async function start() {
 
   const downloadAvailable: string[] = [];
   const downloadUnavailable: string[] = [];
-  let date = new Date('2014-11-01');
+  let date = new Date('2018-01-01');
   const lastMonth = new Date();
   lastMonth.setMonth(lastMonth.getMonth() - 1);
   console.time('start');
+  const mode = ['0', '1', '2', '3'].includes(process.env.GAME_MODE || '')
+    ? process.env.GAME_MODE
+    : '0';
+  console.log('game mode', mode);
 
   while (date < lastMonth) {
     logger.info(`Getting beatmaps from date ${date}...`);
-    const beatmaps = (await getBeatmaps(date)).sort(
+    const beatmaps = (await getBeatmaps(date, undefined, mode as any)).sort(
       (a, b) =>
         new Date(b.approved_date).getTime() -
         new Date(a.approved_date).getTime(),
@@ -53,7 +57,9 @@ async function start() {
       } catch (e) {
         if (e.statusCode === 404) {
           // Unavailable to download
-          logger.info(`Download not available for beatmap ${beatmap.beatmapset_id}.`);
+          logger.info(
+            `Download not available for beatmap ${beatmap.beatmapset_id}.`,
+          );
           downloadUnavailable.push(beatmap.beatmapset_id);
         } else if (e.statusCode === 429) {
           logger.info('Timed out, waiting one minute...');
@@ -79,7 +85,9 @@ async function start() {
   }
 
   logger.info(`Added ${downloadAvailable.length} beatmaps.`);
-  logger.info(`${downloadUnavailable.length} beatmaps not available to download.`);
+  logger.info(
+    `${downloadUnavailable.length} beatmaps not available to download.`,
+  );
 }
 
 start().catch(e => logger.info(e));

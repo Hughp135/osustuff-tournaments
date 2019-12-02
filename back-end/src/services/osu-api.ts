@@ -67,9 +67,10 @@ export async function getUserRecent(
 export async function getBeatmaps(
   from: Date,
   limit?: number,
+  mode?: '0' | '1' | '2' | '3',
 ): Promise<IBeatmap[]> {
   return await request('get_beatmaps', {
-    m: '0',
+    m: mode || '0',
     since: from.toISOString(),
     limit: limit ? limit.toString() : '500',
   });
@@ -93,9 +94,9 @@ export async function getRecentBeatmaps(
   const date3 = new Date();
   date.setMonth(date3.getMonth() - 6);
   const date4 = new Date();
-  date.setMonth(date3.getMonth() - 4);
+  date.setMonth(date4.getMonth() - 12);
   const date5 = new Date();
-  date.setMonth(date3.getMonth() - 8);
+  date.setMonth(date5.getMonth() - 18);
   const m = mode || '0';
 
   const beatmaps1 = await request('get_beatmaps', {
