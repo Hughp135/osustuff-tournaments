@@ -42,15 +42,12 @@ async function request(
   }
 }
 
-export async function getUser(
-  username: string,
-  gameMode: '0' | '1' | '2' | '3' = '0',
-) {
+export async function getUser(username: string, gameMode: '0' | '1' | '2' | '3' = '0') {
   return (await (<any>request('get_user', {
-      u: username,
-      type: 'string',
-      m: gameMode, // osu game mode
-    })))[0];
+    u: username,
+    type: 'string',
+    m: gameMode, // osu game mode
+  })))[0];
 }
 
 export async function getUserRecent(
@@ -75,9 +72,9 @@ export async function getBeatmaps(
     limit: limit ? limit.toString() : '500',
   });
 }
-export async function getBeatmapById(beatmapId: string): Promise<IBeatmap[]> {
+export async function getBeatmapById(beatmapId: string, mode: '0' | '1' | '2' | '3' = '0'): Promise<IBeatmap[]> {
   const query: { [key: string]: string } = {
-    m: '0',
+    m: mode,
     b: beatmapId,
   };
 

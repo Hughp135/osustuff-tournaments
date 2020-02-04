@@ -19,7 +19,7 @@ export interface EditLobbyData {
     fetching?: boolean;
     error?: string;
   }[];
-  gameMode: { value: '0' | '1' | '2' | '3' ; label: string; }; // std / taiko / ctb / mania
+  gameMode: { value: '0' | '1' | '2' | '3'; label: string; }; // std / taiko / ctb / mania
   password?: string;
 }
 
@@ -72,12 +72,13 @@ export class LobbyFormComponent implements OnInit {
     roundBeatmap.error = undefined;
 
     try {
+      const mode = this.formData.gameMode.value;
       const { beatmap } = <{ beatmap: IBeatmap | null }>(
-        await this.apiService.get(`beatmap/${value}`)
+        await this.apiService.get(`beatmap/${value}?m=${mode}`)
       );
 
       if (!beatmap) {
-        roundBeatmap.error = 'Beatmap not found with this ID';
+        roundBeatmap.error = 'Beatmap not found with this ID. Have you selected the right game mode?';
         roundBeatmap.fetching = false;
 
         return;
@@ -92,7 +93,7 @@ export class LobbyFormComponent implements OnInit {
     roundBeatmap.fetching = false;
   }, 250);
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   public onGameModeChange($event) {
     this.formData.gameMode = $event;
@@ -101,7 +102,7 @@ export class LobbyFormComponent implements OnInit {
   public getBeatmapString(beatmap: IBeatmap) {
     return `${beatmap.artist} - ${beatmap.title} [${
       beatmap.version
-    }] (${parseFloat(beatmap.difficultyrating).toFixed(2)}*)`;
+      }] (${parseFloat(beatmap.difficultyrating).toFixed(2)}*)`;
   }
 
   public clearBeatmap(index: number) {
@@ -122,10 +123,10 @@ function debounce(
   immediate?: boolean,
 ) {
   let timeout;
-  return function() {
+  return function () {
     const context = this,
       args = arguments;
-    const later = function() {
+    const later = function () {
       timeout = null;
       if (!immediate) {
         func.apply(context, args);
