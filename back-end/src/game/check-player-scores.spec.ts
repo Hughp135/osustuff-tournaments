@@ -38,7 +38,7 @@ describe('check-player-scores', () => {
     await addPlayer(game, u1);
     await addPlayer(game, u2);
     await addPlayer(game, u3);
-    (<IPlayer> game.players.find(p => p.userId.toString() === u3._id.toString())).alive = false;
+    (<IPlayer>game.players.find(p => p.userId.toString() === u3._id.toString())).alive = false;
     const round = await Round.create({
       roundNumber: 1,
       beatmap: {
@@ -70,7 +70,7 @@ describe('check-player-scores', () => {
     await addPlayer(game, u1);
     await addPlayer(game, u2);
     await addPlayer(game, u3);
-    (<IPlayer> game.players.find(p => p.userId.toString() === u3._id.toString())).alive = false;
+    (<IPlayer>game.players.find(p => p.userId.toString() === u3._id.toString())).alive = false;
 
     const round = await Round.create({
       roundNumber: 1,
@@ -196,6 +196,35 @@ describe('check-player-scores', () => {
 
     expect(scores.length).to.equal(2);
   });
+  it('saves a perfect mania score', async () => {
+    const u1 = await getUser(1);
+
+    const game = await Game.create({
+      title: 'test',
+      beatmaps: [],
+    });
+    await addPlayer(game, u1);
+    const round = await Round.create({
+      roundNumber: 1,
+      beatmap: {
+        beatmap_id: '932223',
+        title: 'b1',
+        total_length: 30,
+      },
+      gameId: game._id,
+    });
+
+    await checkRoundScores(game, round, async (u: string) => [
+      getPerfectManiaScore('932223'),
+    ]);
+
+    const scores = await Score.find({
+      userId: u1._id,
+      roundId: round._id,
+    });
+
+    expect(scores.length).to.equal(1);
+  });
 });
 
 async function getUser(id: number) {
@@ -222,5 +251,21 @@ function getScore(beatmapId: string, score: string, date?: string) {
     date: date ? date : '2030-06-22 9:11:16',
     rank: 'C',
     total_length: 60,
+  };
+}
+
+function getPerfectManiaScore(beatmapId: string) {
+  return {
+    beatmap_id: beatmapId, score: '1000000',
+    maxcombo: '231',
+    count50: '0',
+    count100: '0',
+    count300: '0',
+    countmiss: '0',
+    countkatu: '0',
+    countgeki: '190',
+    perfect: '1',
+    enabled_mods: '0',
+    user_id: '5767941', date: '2030-02-12 16:44:45', rank: 'X',
   };
 }

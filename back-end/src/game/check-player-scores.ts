@@ -64,12 +64,17 @@ async function checkPlayerScores(
       const count100 = parseInt(score.count100, 10);
       const count300 = parseInt(score.count300, 10);
       const misses = parseInt(score.countmiss, 10);
-      const accuracy = parseFloat(
+
+      let accuracy = score.perfect === '1' ? 100 : parseFloat(
         (
           (100 * (50 * count50 + 100 * count100 + 300 * count300)) /
           (300 * (misses + count50 + count100 + count300))
         ).toFixed(2),
       );
+
+      if (isNaN(accuracy)) {
+        accuracy = 100; // Failsafe fix for if count300s are 0 (e.g. mania gamemode on perfect scores)
+      }
 
       await Score.create({
         gameId: round.gameId,
@@ -98,8 +103,8 @@ function scoreValidAndUnique(
   const correctBeatmap = score.beatmap_id === round.beatmap.beatmap_id;
   const minDate = new Date(
     (<any>round).createdAt.getTime() -
-      15000 +
-      (parseInt(round.beatmap.total_length, 10) / 1.5) * 1000,
+    15000 +
+    (parseInt(round.beatmap.total_length, 10) / 1.5) * 1000,
   );
   const validDate = new Date(score.date) > minDate;
 
