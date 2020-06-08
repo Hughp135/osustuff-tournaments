@@ -61,7 +61,7 @@
     "lodash.debounce": "^4.0.8",
     "memory-cache": "^0.2.0",
     "mocha": "^5.2.0",
-    "mongoose": "^5.4.7",
+    "mongoose": "^5.7.5",
     "node-request-queue": "^1.0.2",
     "sinon": "^7.2.3",
     "sinon-chai": "^3.3.0",
