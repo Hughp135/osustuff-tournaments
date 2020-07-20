@@ -112,6 +112,12 @@ function scoreValidAndUnique(
     return false;
   }
 
+  const mods = getAppliedMods(parseInt(score.enabled_mods, 10));
+
+  if (mods.includes('V2')) {
+    return false;
+  }
+
   const scoreIsSaved = existingScores.some(
     existing => new Date(score.date).getTime() === existing.date.getTime(),
   );

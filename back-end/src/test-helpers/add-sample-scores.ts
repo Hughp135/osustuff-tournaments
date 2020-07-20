@@ -105,6 +105,10 @@ function generateMods() {
     if (Math.random() <= 0.05) {
       mods += 4; // TD
     }
+
+    if (Math.random() <= 0.9) {
+      mods += 536870912; // Score V2
+    }
   }
 
   return mods;

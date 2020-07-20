@@ -164,6 +164,40 @@ describe('check-player-scores', () => {
 
     expect(scores.length).to.equal(2);
   });
+  it('Does not count ScoreV2 mod scores', async () => {
+    const u1 = await getUser(1);
+
+    const game = await Game.create({
+      title: 'test',
+      beatmaps: [],
+    });
+    await addPlayer(game, u1);
+    const round = await Round.create({
+      roundNumber: 1,
+      beatmap: {
+        beatmap_id: '932223',
+        title: 'b1',
+        total_length: 30,
+      },
+      gameId: game._id,
+    });
+
+    const getUserRecent = sinon
+      .stub()
+      .callsFake(async (u: string) => [
+        getScore('932223', '1000000', undefined, 536870912),
+        getScore('932223', '2000000'),
+      ]);
+
+    await checkRoundScores(game, round, getUserRecent);
+
+    const scores = await Score.find({
+      userId: u1._id,
+      roundId: round._id,
+    });
+
+    expect(scores.length).to.equal(1);
+  });
   it('Saves different scores twice if checked twice', async () => {
     const u1 = await getUser(1);
 
@@ -238,7 +272,7 @@ async function getUser(id: number) {
   });
 }
 
-function getScore(beatmapId: string, score: string, date?: string) {
+function getScore(beatmapId: string, score: string, date?: string, mods?: number) {
   return {
     beatmap_id: beatmapId,
     score,
@@ -246,7 +280,7 @@ function getScore(beatmapId: string, score: string, date?: string) {
     count100: '1',
     count50: '1',
     count300: '2',
-    enabled_mods: '576',
+    enabled_mods: mods ? `${mods}` : '576',
     maxcombo: '256',
     date: date ? date : '2030-06-22 9:11:16',
     rank: 'C',

@@ -29,7 +29,7 @@ export class JoinGameComponent implements OnInit, OnDestroy {
     private router: Router
   ) {
     this.loggedIn = !!settingsService.user.getValue();
-    settingsService.user.subscribe(val => (this.isBanned = val.banned));
+    settingsService.user.subscribe(val => (this.isBanned = val && val.banned));
   }
 
   ngOnInit() {

@@ -1,4 +1,5 @@
 const modEnums: { [key: string]: string } = {
+  536870912: 'V2',
   4194304: 'CN',
   2097152: 'RD',
   1048576: 'FI',
@@ -38,7 +39,7 @@ export function getAppliedMods(value: number): string[] {
 
         return acc;
       },
-      { modsEnum: value, modsArray: <any> [] },
+      { modsEnum: value, modsArray: <any>[] },
     );
 
   return reduced.modsArray;
