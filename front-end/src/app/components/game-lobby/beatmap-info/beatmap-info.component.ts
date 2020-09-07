@@ -51,7 +51,7 @@ export class BeatmapInfoComponent implements OnInit {
   get osuDirectLink() {
     return (
       this.beatmap &&
-      this.sanitizer.bypassSecurityTrustUrl(`osu://dl/${this.beatmap.beatmapset_id}`)
+      this.sanitizer.bypassSecurityTrustUrl(`osu://b/${this.beatmap.beatmap_id}`)
     );
   }
 
